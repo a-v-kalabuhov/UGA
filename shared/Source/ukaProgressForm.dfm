@@ -1,0 +1,39 @@
+object kaProgressForm: TkaProgressForm
+  Left = 324
+  Top = 173
+  AutoSize = True
+  BorderIcons = []
+  BorderStyle = bsDialog
+  Caption = 'Progress'
+  ClientHeight = 73
+  ClientWidth = 307
+  Color = clBtnFace
+  Font.Charset = RUSSIAN_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Arial'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 14
+  object Text: TLabel
+    Left = 0
+    Top = 0
+    Width = 307
+    Height = 57
+    Align = alTop
+    Alignment = taCenter
+    AutoSize = False
+    Caption = 'Text'
+    Layout = tlCenter
+    WordWrap = True
+  end
+  object ProgressBar: TProgressBar
+    Left = 0
+    Top = 57
+    Width = 307
+    Height = 16
+    Align = alTop
+    TabOrder = 0
+  end
+end

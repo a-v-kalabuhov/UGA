@@ -1,0 +1,2 @@
+inherited LayerSideBar: TLayerSideBar
+end
