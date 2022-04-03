@@ -1,0 +1,29 @@
+object IWServerController: TIWServerController
+  OldCreateOrder = False
+  AuthBeforeNewSession = False
+  AllowSubFolders = False
+  AppName = 'MyIWApp'
+  CacheExpiry = 2
+  ComInitialization = ciNone
+  Description = 'My Intraweb Application'
+  ExceptionDisplayMode = smAlert
+  ExecCmd = 'EXEC'
+  HistoryEnabled = False
+  InternalFilesURL = '/'
+  Netscape4As32 = True
+  Port = 0
+  ReEntryOptions.AutoCreateSession = False
+  RestrictIPs = False
+  SessionTrackingMethod = tmURL
+  ShowResyncWarning = True
+  SessionTimeout = 10
+  SupportedBrowsers = [brIE, brNetscape6]
+  SSLOptions.NonSSLRequest = nsAccept
+  SSLOptions.Port = 0
+  Version = '5.1.23'
+  OnNewSession = IWServerControllerBaseNewSession
+  Left = 369
+  Top = 158
+  Height = 310
+  Width = 342
+end
