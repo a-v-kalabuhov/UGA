@@ -1,0 +1,19 @@
+:BASE tutorial.hlp
+:TITLE EzGIS components tutorial
+1 Introduction
+2 Welcome=Welcometopic@tutorial.hlp
+2 What is a GIS application=WhatisaGISapplication@tutorial.hlp
+2 EzGIS Components in a GIS Application=GraphicsConcepts@tutorial.hlp
+1 Tutorials
+2 Creating the first GIS/CAD application=CreatingthefirstGISapplication@tutorial.hlp
+2 Adding layers and entities to the map.=Addinglayersandentitiestothema@tutorial.hlp
+2 Editing entities=Editingentities@tutorial.hlp
+2 Selection tools and zooms tools=Selectiontoolsandzoomstools@tutorial.hlp
+2 Working with views=Workingwithviews@tutorial.hlp
+2 Working with the database information=Workingwiththedatabaseinformat@tutorial.hlp
+2 Showing hints=Exploitingthespatialandattribu@tutorial.hlp
+2 Creating thematic maps=Creatingthematicmaps@tutorial.hlp
+2 Print Preview and Printing=PrintPreviewandPrinting@tutorial.hlp
+2 Graphically querying the database=Graphicallyqueryingthedatabase@tutorial.hlp
+2 Advanced editing entities=Advancededitingentities@tutorial.hlp
+2 Connecting to external databases=Connectingtoexternaldatabases@tutorial.hlp
