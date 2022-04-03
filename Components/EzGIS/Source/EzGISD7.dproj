@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{b48a1457-8669-4323-9b41-209789f87cb4}</ProjectGuid>
+    <MainSource>EzGISD7.dpk</MainSource>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>C:\Users\Public\Documents\RAD Studio\5.0\Bpl\EzGISD7.bpl</DCC_DependencyCheckOutputName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_FullBooleanEvaluations>True</DCC_FullBooleanEvaluations>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_IOChecking>False</DCC_IOChecking>
+    <DCC_WriteableConstants>True</DCC_WriteableConstants>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_MapFile>3</DCC_MapFile>
+    <DCC_DcuOutput>..\bin\Release\Dcu</DCC_DcuOutput>
+    <DCC_ObjOutput>..\bin\Release\Dcu</DCC_ObjOutput>
+    <DCC_HppOutput>..\bin\Release\Dcu</DCC_HppOutput>
+    <DCC_UnitSearchPath>..\Res;..\Source;..\..\ECWCompress\bin\Release\Dcu;..\..\GIFImage\Dcu</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\Res;..\Source;..\..\ECWCompress\bin\Release\Dcu;..\..\GIFImage\Dcu</DCC_ResourcePath>
+    <DCC_ObjPath>..\Res;..\Source;..\..\ECWCompress\bin\Release\Dcu;..\..\GIFImage\Dcu</DCC_ObjPath>
+    <DCC_IncludePath>..\Res;..\Source;..\..\ECWCompress\bin\Release\Dcu;..\..\GIFImage\Dcu</DCC_IncludePath>
+    <DCC_Define>RELEASE</DCC_Define>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_FullBooleanEvaluations>True</DCC_FullBooleanEvaluations>
+    <DCC_IOChecking>False</DCC_IOChecking>
+    <DCC_WriteableConstants>True</DCC_WriteableConstants>
+    <DCC_MapFile>3</DCC_MapFile>
+    <DCC_DcuOutput>C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu</DCC_DcuOutput>
+    <DCC_ObjOutput>C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu</DCC_ObjOutput>
+    <DCC_HppOutput>C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu</DCC_HppOutput>
+    <DCC_UnitSearchPath>..\Res;..\Source;..\..\ECWCompress\bin\Debug\Dcu;..\..\GIFImage\Dcu</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\Res;..\Source;..\..\ECWCompress\bin\Debug\Dcu;..\..\GIFImage\Dcu</DCC_ResourcePath>
+    <DCC_ObjPath>..\Res;..\Source;..\..\ECWCompress\bin\Debug\Dcu;..\..\GIFImage\Dcu</DCC_ObjPath>
+    <DCC_IncludePath>..\Res;..\Source;..\..\ECWCompress\bin\Debug\Dcu;..\..\GIFImage\Dcu</DCC_IncludePath>
+    <DCC_Optimize>False</DCC_Optimize>
+    <DCC_Define>DEBUG</DCC_Define>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType>Package</Borland.ProjectType>
+    <BorlandProject>
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><Package_Options><Package_Options Name="PackageDescription">EzGIS Components Suite</Package_Options><Package_Options Name="ImplicitBuild">True</Package_Options><Package_Options Name="DesigntimeOnly">False</Package_Options><Package_Options Name="RuntimeOnly">False</Package_Options></Package_Options><Language><Language Name="ProjectLang">$00000409</Language><Language Name="RootDir">C:\Activemap2\</Language></Language><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">True</VersionInfo><VersionInfo Name="MajorVer">1</VersionInfo><VersionInfo Name="MinorVer">90</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">722</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">2058</VersionInfo><VersionInfo Name="CodePage">1252</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName"></VersionInfoKeys><VersionInfoKeys Name="FileDescription"></VersionInfoKeys><VersionInfoKeys Name="FileVersion">1.90.0.722</VersionInfoKeys><VersionInfoKeys Name="InternalName"></VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys><VersionInfoKeys Name="ProductName"></VersionInfoKeys><VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">EzGISD7.dpk</Source></Source><Excluded_Packages>
+      <Excluded_Packages Name="$(BDS)\bin\dcloffice2k100.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+      <Excluded_Packages Name="$(BDS)\bin\dclofficexp100.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+    </Excluded_Packages></Delphi.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="EzGISD7.dpk">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <DCCReference Include="..\..\..\kis\designide.dcp" />
+    <DCCReference Include="ADODB_TLB.pas" />
+    <DCCReference Include="ADOX_TLB.pas" />
+    <DCCReference Include="bdertl.dcp" />
+    <DCCReference Include="dbrtl.dcp" />
+    <DCCReference Include="deEcwCL.dcp" />
+    <DCCReference Include="desiEcwCL.dcp" />
+    <DCCReference Include="designEcwCL.dcp" />
+    <DCCReference Include="designidEcwCL.dcp" />
+    <DCCReference Include="EcwCL.dcp" />
+    <DCCReference Include="EzAccess2000.pas" />
+    <DCCReference Include="EzActionLaunch.pas" />
+    <DCCReference Include="ezactions.pas" />
+    <DCCReference Include="EzBase.pas" />
+    <DCCReference Include="EzBaseExpr.pas" />
+    <DCCReference Include="EzBaseGIS.pas" />
+    <DCCReference Include="EzBasicCtrls.pas" />
+    <DCCReference Include="EzCADCtrls.pas" />
+    <DCCReference Include="EzCmdLine.pas" />
+    <DCCReference Include="EzColorPicker.pas" />
+    <DCCReference Include="EzConsts.pas" />
+    <DCCReference Include="EzCtrls.pas" />
+    <DCCReference Include="EzDanhint.pas" />
+    <DCCReference Include="EzDGNImport.pas" />
+    <DCCReference Include="EzDGNLayer.pas" />
+    <DCCReference Include="ezdims.pas" />
+    <DCCReference Include="EzDxfImport.pas" />
+    <DCCReference Include="EzDxfRead.pas" />
+    <DCCReference Include="EzDxfUtil.pas" />
+    <DCCReference Include="EzDXFWrite.pas" />
+    <DCCReference Include="EzEntities.pas" />
+    <DCCReference Include="EzERMapper.pas" />
+    <DCCReference Include="EzExpressions.pas" />
+    <DCCReference Include="EzExprLex.pas" />
+    <DCCReference Include="EzExprYacc.pas" />
+    <DCCReference Include="EzGisTiff.pas" />
+    <DCCReference Include="EzGraphics.pas" />
+    <DCCReference Include="ezhtmlmap.pas" />
+    <DCCReference Include="EzIBGIS.pas" />
+    <DCCReference Include="EzImpl.pas" />
+    <DCCReference Include="EzImportBase.pas" />
+    <DCCReference Include="EzInspect.pas" />
+    <DCCReference Include="EzLexLib.pas" />
+    <DCCReference Include="EzLib.pas" />
+    <DCCReference Include="ezlinedraw.pas" />
+    <DCCReference Include="EzMIFIMport.pas" />
+    <DCCReference Include="EzMiscelCtrls.pas" />
+    <DCCReference Include="EzMiscelEntities.pas" />
+    <DCCReference Include="EzNetwork.pas" />
+    <DCCReference Include="eznumed.pas" />
+    <DCCReference Include="ezownimport.pas" />
+    <DCCReference Include="Ezpolyclip.pas" />
+    <DCCReference Include="EzPreview.pas" />
+    <DCCReference Include="EzProjections.pas" />
+    <DCCReference Include="EzProjimpl.pas" />
+    <DCCReference Include="EzReg.pas" />
+    <DCCReference Include="EzRichEditForm.pas">
+      <Form>frmRichEdit</Form>
+    </DCCReference>
+    <DCCReference Include="EzRtree.pas" />
+    <DCCReference Include="EzScrLex.pas" />
+    <DCCReference Include="EzScryacc.pas" />
+    <DCCReference Include="EzSDLImport.pas" />
+    <DCCReference Include="EzSHPImport.pas" />
+    <DCCReference Include="EzStrArru.pas" />
+    <DCCReference Include="EzSystem.pas" />
+    <DCCReference Include="EzTable.pas" />
+    <DCCReference Include="ezthematics.pas" />
+    <DCCReference Include="EzYacclib.pas" />
+    <DCCReference Include="ezzlib.pas" />
+    <DCCReference Include="ezzlibutil.pas" />
+    <DCCReference Include="fDXF.pas">
+      <Form>frmDXFDlg</Form>
+    </DCCReference>
+    <DCCReference Include="fEnumAndSetItemsEditor.pas">
+      <Form>FrmEnumAndSetItemsEditor</Form>
+    </DCCReference>
+    <DCCReference Include="fExpress.pas">
+      <Form>frmExprDlg</Form>
+    </DCCReference>
+    <DCCReference Include="fMemoEditor.pas">
+      <Form>frmMemoEditor</Form>
+    </DCCReference>
+    <DCCReference Include="fPictureDef.pas">
+      <Form>frmPict1</Form>
+    </DCCReference>
+    <DCCReference Include="fProj.pas">
+      <Form>frmGeoProj</Form>
+    </DCCReference>
+    <DCCReference Include="fRichEdit.pas">
+      <Form>frmRichTextEditor</Form>
+    </DCCReference>
+    <DCCReference Include="fTextEditor.pas">
+      <Form>frmTextEditor</Form>
+    </DCCReference>
+    <DCCReference Include="fVectorialText.pas">
+      <Form>frmVectorialText</Form>
+    </DCCReference>
+    <DCCReference Include="GIFImage.pas" />
+    <DCCReference Include="GraphicColor.pas" />
+    <DCCReference Include="GraphicCompression.pas" />
+    <DCCReference Include="GraphicEx.pas" />
+    <DCCReference Include="GraphicStrings.pas" />
+    <DCCReference Include="JPG.pas" />
+    <DCCReference Include="MZLib.pas" />
+    <DCCReference Include="rtl.dcp" />
+    <DCCReference Include="Tablet.pas" />
+    <DCCReference Include="uLtAdditionalEntities.pas" />
+    <DCCReference Include="vcl.dcp" />
+    <DCCReference Include="vclactnband.dcp" />
+    <DCCReference Include="vcldb.dcp" />
+    <DCCReference Include="vcljpg.dcp" />
+    <DCCReference Include="vclx.dcp" />
+    <DCCReference Include="WintabConsts.pas" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,2 @@
+inherited GtSmallFormsObjectModule: TGtSmallFormsObjectModule
+end

@@ -1,0 +1,112 @@
+// JCL_DEBUG_EXPERT_INSERTJDBG OFF
+package EzGISD7;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL ON}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS OFF}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'EzGIS Components Suite'}
+{$IMPLICITBUILD ON}
+{$DEFINE DEBUG}
+
+requires
+  dbrtl,
+  vcldb,
+  vcljpg,
+  vcl,
+  rtl,
+  vclactnband,
+  vclx,
+  bdertl,
+  EcwCL;
+
+contains
+  EzReg in 'EzReg.pas',
+  uLtAdditionalEntities in 'uLtAdditionalEntities.pas',
+  EzPreview in 'EzPreview.pas',
+  EzBaseGIS in 'EzBaseGIS.pas',
+  EzMiscelEntities in 'EzMiscelEntities.pas',
+  EzBase in 'EzBase.pas',
+  EzLib in 'EzLib.pas',
+  EzEntities in 'EzEntities.pas',
+  EzDXFWrite in 'EzDXFWrite.pas',
+  EzDxfRead in 'EzDxfRead.pas',
+  EzDxfUtil in 'EzDxfUtil.pas',
+  EzDxfImport in 'EzDxfImport.pas',
+  EzDGNLayer in 'EzDGNLayer.pas',
+  EzDGNImport in 'EzDGNImport.pas',
+  EzMIFIMport in 'EzMIFIMport.pas',
+  WintabConsts in 'WintabConsts.pas',
+  Tablet in 'Tablet.pas',
+  EzTable in 'EzTable.pas',
+  eznumed in 'eznumed.pas',
+  ezownimport in 'ezownimport.pas',
+  EzSDLImport in 'EzSDLImport.pas',
+  ezhtmlmap in 'ezhtmlmap.pas',
+  ezactions in 'ezactions.pas',
+  EzActionLaunch in 'EzActionLaunch.pas',
+  EzBaseExpr in 'EzBaseExpr.pas',
+  EzCmdLine in 'EzCmdLine.pas',
+  EzCtrls in 'EzCtrls.pas',
+  EzExpressions in 'EzExpressions.pas',
+  EzExprLex in 'EzExprLex.pas',
+  EzExprYacc in 'EzExprYacc.pas',
+  EzNetwork in 'EzNetwork.pas',
+  EzScrLex in 'EzScrLex.pas',
+  EzScryacc in 'EzScryacc.pas',
+  EzSHPImport in 'EzSHPImport.pas',
+  EzStrArru in 'EzStrArru.pas',
+  EzSystem in 'EzSystem.pas',
+  ezthematics in 'ezthematics.pas',
+  ezzlib in 'ezzlib.pas',
+  ezzlibutil in 'ezzlibutil.pas',
+  EzBasicCtrls in 'EzBasicCtrls.pas',
+  EzCADCtrls in 'EzCADCtrls.pas',
+  EzColorPicker in 'EzColorPicker.pas',
+  EzConsts in 'EzConsts.pas',
+  EzDanhint in 'EzDanhint.pas',
+  ezdims in 'ezdims.pas',
+  EzERMapper in 'EzERMapper.pas',
+  EzGisTiff in 'EzGisTiff.pas',
+  EzGraphics in 'EzGraphics.pas',
+  EzImpl in 'EzImpl.pas',
+  EzImportBase in 'EzImportBase.pas',
+  EzLexLib in 'EzLexLib.pas',
+  ezlinedraw in 'ezlinedraw.pas',
+  EzMiscelCtrls in 'EzMiscelCtrls.pas',
+  Ezpolyclip in 'Ezpolyclip.pas',
+  EzProjections in 'EzProjections.pas',
+  EzProjimpl in 'EzProjimpl.pas',
+  EzRtree in 'EzRtree.pas',
+  EzYacclib in 'EzYacclib.pas',
+  fPictureDef in 'fPictureDef.pas' {frmPict1},
+  fProj in 'fProj.pas' {frmGeoProj},
+  fTextEditor in 'fTextEditor.pas' {frmTextEditor},
+  fVectorialText in 'fVectorialText.pas' {frmVectorialText},
+  GraphicColor in 'GraphicColor.pas',
+  GraphicCompression in 'GraphicCompression.pas',
+  GraphicEx in 'GraphicEx.pas',
+  GraphicStrings in 'GraphicStrings.pas',
+  JPG in 'JPG.pas',
+  MZLib in 'MZLib.pas',
+  EzInspect in 'EzInspect.pas';
+
+end.
