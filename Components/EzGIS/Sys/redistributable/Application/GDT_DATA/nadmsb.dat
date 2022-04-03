@@ -1,0 +1,3 @@
+datum_change_name,no,control_file,grid_int_lat,grid_int_lon,usearea_id
+NAD27MTR>NAD83 ,1,context_msb.nad akext_msb.nad,0.2500000095825895,0.2500000095825895,1
+NAD27>NAD83 ,1,context_msb.nad akext_msb.nad ,0.2500000095825895,0.2500000095825895,1 

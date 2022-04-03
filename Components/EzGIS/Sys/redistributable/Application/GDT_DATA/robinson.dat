@@ -1,0 +1,4 @@
+proj_name,false_north,false_east,centre_merid,radius,eccentricity,flattening,prime_merid
+RO90E ,0.0 ,0.0 ,1.5707963267948966,6371000.0 ,0.0 ,1.0 ,1  
+RO90W ,0.0 ,0.0 ,-1.570796326794896 ,6371000.0 ,0.0 ,1.0 ,1  
+ROBINSON,0.0 ,0.0 ,0.0 ,6371000.0 ,0.0 ,1.0 ,1  

@@ -1,0 +1,8 @@
+proj_name,false_north,false_east,centre_merid,radius,eccentricity,flattening,prime_merid
+SNSPHERE,0.0 ,0.0 ,0.0 ,6371000.0 ,0.0 ,1.0 ,1  
+SNSPHERE,0.0 ,0.0 ,-1.413716694115407 ,6371000.0 ,0.0 ,1.0 ,1  
+LAVINIA,0.0,0.0,-.178198117,6051920.0,0.0,1.0,8
+VENRAD1,0.0,0.0,-2.541024858,6051920.0,0.0,1.0,8
+VENRAD2,0.0,0.0,2.660928978,6051920.0,0.0,1.0,8
+VGTDRSIN,0.0,0.0,0.0,6051920.0,0.0,1.0,8
+

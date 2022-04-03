@@ -1,0 +1,2 @@
+proj_name,false_north,false_east,centre_merid,radius,eccentricity,flattening,prime_merid
+MILLER,0.0,0.0,0.0,6371000.0,0.0,1.0,1

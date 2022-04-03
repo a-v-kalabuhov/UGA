@@ -1,0 +1,3 @@
+proj_name,false_north,false_east,origin_long,origin_lat,first_paral,radius,eccentricity,flattening,prime_merid
+AEAFRICA,10000000.0 ,5000000.0 ,0.296705972839036 ,-0.034906585039886 ,0.0 ,6378249.145 ,0.0824834000441851,293.465 ,1  
+AERUSS ,0.0 ,0.0 ,1.6755160819145564,1.5707963267948966,0.0 ,6378245.0 ,0.0818133340169312,298.3 ,1  

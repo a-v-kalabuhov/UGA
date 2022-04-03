@@ -1,0 +1,2 @@
+proj_name,false_north,false_east,centre_merid,centre_lat,num_const,coeff_a1,coeff_b1,coeff_a2,coeff_b2,coeff_a3,coeff_b3,coeff_a4,coeff_b4,coeff_a5,coeff_b5,coeff_a6,coeff_b6,coeff_a7,coeff_b7,coeff_a8,coeff_b8,coeff_a9,coeff_b9,coeff_a10,coeff_b10,radius,eccentricity,flattening,prime_merid
+MSAFRICA,10000000.0 ,5000000.0 ,0.3141592653589793,0.3141592653589793,3,0.9245 ,0.0 ,0.0 ,0.0 ,0.01943 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,6371221.0 ,0.0 ,1.0 ,1  

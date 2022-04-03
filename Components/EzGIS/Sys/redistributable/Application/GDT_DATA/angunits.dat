@@ -1,0 +1,5 @@
+angle_id,angle_name,description,radian_conversion
+1 ,DEGREE ,DEGREE ,0.0174532925199433 
+2 ,RADIAN ,RADIAN ,1.0  
+3 ,GRAD ,GRAD ,0.015707963267949  
+4 ,SECOND ,SECOND ,0.0000048481368111 

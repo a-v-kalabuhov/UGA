@@ -1,0 +1,2 @@
+proj_name,false_north,false_east,scale_factor,centre_merid,centre_lat,radius,eccentricity,flattening,prime_merid
+W3SPHERE,0.0 ,0.0 ,1.0 ,0.0 ,0.0 ,6371000.0 ,0.0 ,1.0 ,1  

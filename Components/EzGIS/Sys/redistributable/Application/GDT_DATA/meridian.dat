@@ -1,0 +1,9 @@
+merid_id,merid_name,description,green_value,angle_id
+1 ,GREENWICH ,GREENWICH ,0.0 ,1  
+2,ISTANBUL ,ISTANBUL ,28.9809583 ,1  
+3,LISBON ,LISBON ,-9.1318906 ,1  
+4,ROME ,ROME ,12.4523333 ,1  
+5,PARIS ,PARIS ,2.5968981 ,3  
+6,PARIS ,PARIS ,2.3372083 ,1  
+7,MADRID ,MADRID ,-3.687375 ,1  
+8,,,0.0 ,1  

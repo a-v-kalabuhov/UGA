@@ -1,0 +1,4 @@
+proj_name,false_north,false_east,centre_merid,radius,eccentricity,flattening,prime_merid
+BCNAMER ,5000000.0 ,10000000.0 ,-1.570796326794896 ,6378206.4 ,0.0822718542249391,294.9786982 ,1  
+BCSAMER ,0.0 ,0.0 ,-1.570796326794896 ,6371221.0 ,0.0 ,1.0 ,1  
+BCSPHERE,0.0 ,0.0 ,-1.570796326794896 ,6371000.0 ,0.0 ,1.0 ,1  

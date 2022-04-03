@@ -1,0 +1,5 @@
+proj_name,false_north,false_east,centre_merid,radius,eccentricity,flattening,prime_merid
+MW180E ,0.0 ,0.0 ,3.1415926535897933,6371000.0 ,0.0 ,1.0 ,1  
+MW90EAST,0.0 ,0.0 ,1.5707963267948966,6371000.0 ,0.0 ,1.0 ,1  
+MW90WEST,0.0 ,0.0 ,-1.570796326794896 ,6371000.0 ,0.0 ,1.0 ,1  
+MWSPHERE,0.0 ,0.0 ,0.0 ,6371000.0 ,0.0 ,1.0 ,1  

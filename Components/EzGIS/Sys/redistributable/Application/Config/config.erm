@@ -1,0 +1,110 @@
+ERMConfig Begin
+	Version		= "4.1"
+	PostScriptPrinter	= "lpr"
+	LinePrinter		= "lpr"
+	Units		= Metric
+	DefaultPseudoLUT	= "pseudocolor"
+	DefaultRGBLUT	= "rgb"
+	DefaultHSILUT	= "rgb"
+	DefaultRtShadeLUT	= "rtshade"
+	DefaultHardcopy = "Graphics/Xloadimage_to_display"
+	DefaultHistStyle	= DeQuantised
+	EnforceAspectRatio	= Yes
+	DoOptimisation	= Yes
+	CLibrarySwitches	= "-lm -lc"
+	FortranLibrarySwitches	= "-L/erm/ermadmin2/applic/lang/SC1.0 -lF77 -lm -lc"
+	DisplayDef Begin
+		ControlDisplay	= ":0.0"
+		PrimaryImageDisplay	= ":0.0"
+		SecondaryImageDisplays	= ":0.1"
+	DisplayDef End
+	DisplayDef Begin
+		ControlDisplay	= "unix:0.0"
+		PrimaryImageDisplay	= "unix:0.0"
+		SecondaryImageDisplays	= "unix:0.1"
+	DisplayDef End
+	DisplayDef Begin
+		ControlDisplay	= "unix:0.1"
+		PrimaryImageDisplay	= "unix:0.1"
+		SecondaryImageDisplays	= "unix:0.0"
+	DisplayDef End
+	DisplayDef Begin
+		ControlDisplay	= "neptune:0.1"
+		PrimaryImageDisplay	= "neptune:0.1"
+		SecondaryImageDisplays	= "neptune:0.0,neptune:0.1"
+	DisplayDef End
+	DisplayDef Begin
+		ControlDisplay	= "pulsar:0.0"
+		PrimaryImageDisplay	= "pulsar:0.0"
+		SecondaryImageDisplays	= "pulsar:0.0"
+	DisplayDef End
+	DisplayDef Begin
+		ControlDisplay	= "portia:0.0"
+		PrimaryImageDisplay	= "portia:0.0"
+		SecondaryImageDisplays	= "portia:0.1"
+	DisplayDef End
+	DisplayDef Begin
+		ControlDisplay	= "nitro:0.0"
+		PrimaryImageDisplay	= "nitro:0.0"
+		SecondaryImageDisplays	= "nitro:0.0,classic3:0.0,onyx:0.0,indy:0.0,pulsar:0.0,ermsparc:0.0,server:0.0,erm:0.1"
+	DisplayDef End
+	DisplayDef Begin
+		ControlDisplay	= "impact:0.0"
+		PrimaryImageDisplay	= "impact:0.0"
+		SecondaryImageDisplays	= "onyx:0.0"
+	DisplayDef End
+	DisplayDef Begin
+		ControlDisplay	= "vulcan:0.0"
+		PrimaryImageDisplay	= "vulcan:0.0"
+		SecondaryImageDisplays	= "vulcan:0.0,nitro:0.0,onyx:0.0,indy:0.0,pulsar:0.0,ermsparc:0.0,server:0.0,decalpha:0.0"
+	DisplayDef End
+	DisplayDef Begin
+		ControlDisplay	= "server:0.0"
+		PrimaryImageDisplay	= "server:0.0"
+		SecondaryImageDisplays	= "server:0.0,nitro:0.0,onyx:0.0,indy:0.0,pulsar:0.0,ermsparc:0.0"
+	DisplayDef End
+	DisplayDef Begin
+		ControlDisplay	= "onyx:0.0"
+		PrimaryImageDisplay	= "onyx:0.0"
+		SecondaryImageDisplays	= "nitro:0.0,onyx:0.0,indy:0.0,pulsar:0.0,ermsparc:0.0,server:0.0"
+	DisplayDef End
+	DisplayDef Begin	
+        ControlDisplay  = "erm:0.1"
+        PrimaryImageDisplay = "erm:0.1"
+        SecondaryImageDisplays  = "erm:0.0"
+    DisplayDef End
+	DisplayInfo Begin
+		Display		= "unix:0.0"
+		NumberReservedColors	= 32
+	DisplayInfo End
+	DisplayInfo Begin
+		Display		= "unix:0.1"
+		NumberReservedColors	= 32
+	DisplayInfo End
+	DisplayInfo Begin
+		Display		= ":0.0"
+		NumberReservedColors	= 32
+	DisplayInfo End
+	DisplayInfo Begin
+		Display		= ":0.1"
+		NumberReservedColors	= 32
+	DisplayInfo End
+	DisplayInfo Begin
+		Display		= "ph715:0.0"
+		NumberReservedColors	= 39
+	DisplayInfo End
+	DisplayInfo Begin
+		Display		= "neptune:0.0"
+		NumberReservedColors	= 32
+	DisplayInfo End
+	DisplayInfo Begin
+		Display     = "hp700:0.0"
+		NumberReservedColors    = 64
+	DisplayInfo End
+	DisplayInfo Begin
+		Display     = "nitro:0.0"
+		NumberReservedColors    = 32
+	DisplayInfo End
+ERMConfig End
+
+

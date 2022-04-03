@@ -1,0 +1,65 @@
+projdesc_id,description
+01_albersea ,Albers Equal Area  
+01_azimuted ,Azimuthal Equidistant  
+01_bioconco ,Bipolar Oblique Conic Conform  
+01_bonne ,Bonne for N.America  
+01_borneo ,Rectified Skew Orthomorphic  
+01_cassini ,Cassini-Soldner  
+01_coniced ,Conic Equidistant  
+02_coniced ,Equidistant Conic Bulgaria East  
+01_dutch ,Stereographic (oblique)  
+01_eckertiv ,Eckert IV  
+01_eckertvi ,Eckert VI  
+01_field ,Universal Transverse Mercator  
+01_gnomonic ,Gnomonic  
+01_grinten ,Van Der Grinten (sphere)  
+01_labordom ,Laborde Oblique Mercator  
+01_lambazea ,Lambert Azimuthal Equal Area  
+01_lambert1 ,Lambert Conic Conformal  
+02_lambert1 ,Lambert Conic Orthomorphic  
+01_lambert2 ,Lambert Conic Conformal  
+02_lambert2 ,Conica Secante de Lambert  
+03_lambert2 ,Lambert Conic Orthomorphic  
+01_lamcon2, Lambert Conic Conformal Updated 
+01_local ,Local  
+01_mercator ,Mercator  
+02_mercator ,Mercator (equatorial)  
+01_millercy ,Miller Cylindrical  
+01_modpol ,Modified Polyconic  
+01_modstero ,Miller Stereographic (sphere)  
+01_mollweid ,Mollweide Equal Area (sphere)  
+01_nzmapgrd ,Minimum Error Conformal  
+01_obmerc_b ,Hotine Oblique Mercator  
+02_obmerc_b ,Rectified Skew Orthomorphic  
+01_orthog ,Orthographic  
+02_orthog ,Orthographic (equatorial)  
+03_orthog ,Orthographic (oblique)  
+04_orthog ,Orthographic (polar)  
+01_placaree ,Plate Carree  
+01_regpol ,Regular Polyconic  
+01_robinson ,Robinson Pseudocylindrical  
+01_sinusoid ,Sinusoidal  
+01_stereo ,Stereographic  
+02_stereo ,Stereographic (oblique)  
+03_stereo ,Stereographic (polar)  
+04_stereo ,Universal Polar Stereographic  
+01_stm ,South Orientated Gauss Conform  
+01_swiss ,Swiss Cylindrical  
+01_townrang ,Township And Range  
+02_townrang ,Township And Range System 1  
+03_townrang ,Township And Range System 2  
+04_townrang ,Township And Range System 3  
+05_townrang ,Township And Range System 4  
+01_tranmerc ,Transverse Mercator  
+02_tranmerc ,Transverse Mercator (=tmmcbo4)  
+03_tranmerc ,Transverse Mercator (UTM)  
+04_tranmerc ,Transverse Mercator (Local)  
+05_tranmerc ,Transverse Mercator (sphere)  
+06_tranmerc ,Australian Map Grid  
+07_tranmerc ,Brealey Grid  
+08_tranmerc ,Field Grid  
+09_tranmerc ,Gauss-Boaga T.M. Grid  
+10_tranmerc ,Gauss-Kruger  
+11_tranmerc ,Universal Gauss-Kruger  
+01_utm ,Universal Transverse Mercator  
+01_winktrip ,Winkel's Tripel  
