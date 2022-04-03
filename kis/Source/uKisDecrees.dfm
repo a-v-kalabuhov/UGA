@@ -1,0 +1,2 @@
+inherited KisDecreeMngr: TKisDecreeMngr
+end

@@ -1,0 +1,170 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{9ee6edc2-c7a2-43bf-ba3a-e5bddffd1e8e}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Projects Include="..\Components\Clipper\Delphi\main demo\clipper_demo.dproj" />
+    <Projects Include="..\Components\ECWCompress\EcwCL.dproj" />
+    <Projects Include="..\Components\EzGIS\Demos\NewMain\NewMain.dproj" />
+    <Projects Include="..\Components\EzGIS\Source\EzGISD7.dproj">
+      <Dependencies>..\Components\ECWCompress\EcwCL.dproj</Dependencies>
+    </Projects>
+    <Projects Include="..\Components\FastReport\source\fr7.dproj" />
+    <Projects Include="..\Components\FastReport\source\ibx\FRIBX7.dproj" />
+    <Projects Include="..\Components\TDBF\Source\tdbf_d7d.dproj" />
+    <Projects Include="..\MapFile\mfTest1.dproj" />
+    <Projects Include="..\Ms3\Ms3.dproj">
+      <Dependencies>..\shared\Source\shared_make.dproj</Dependencies>
+    </Projects>
+    <Projects Include="..\Ms3\Test\Ms3Tests.dproj" />
+    <Projects Include="..\shared\Source\MyVCL.dproj" />
+    <Projects Include="..\shared\Source\shared_make.dproj" />
+    <Projects Include="Kis.dproj">
+      <Dependencies>..\shared\Source\shared_make.dproj</Dependencies>
+    </Projects>
+    <Projects Include="KisTestsProject.dproj" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Default.Personality</Borland.Personality>
+    <Borland.ProjectType />
+    <BorlandProject>
+<BorlandProject xmlns=""><Default.Personality></Default.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Target Name="fr7">
+    <MSBuild Projects="..\Components\FastReport\source\fr7.dproj" Targets="" />
+  </Target>
+  <Target Name="fr7:Clean">
+    <MSBuild Projects="..\Components\FastReport\source\fr7.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="fr7:Make">
+    <MSBuild Projects="..\Components\FastReport\source\fr7.dproj" Targets="Make" />
+  </Target>
+  <Target Name="FRIBX7">
+    <MSBuild Projects="..\Components\FastReport\source\ibx\FRIBX7.dproj" Targets="" />
+  </Target>
+  <Target Name="FRIBX7:Clean">
+    <MSBuild Projects="..\Components\FastReport\source\ibx\FRIBX7.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="FRIBX7:Make">
+    <MSBuild Projects="..\Components\FastReport\source\ibx\FRIBX7.dproj" Targets="Make" />
+  </Target>
+  <Target Name="tdbf_d7d">
+    <MSBuild Projects="..\Components\TDBF\Source\tdbf_d7d.dproj" Targets="" />
+  </Target>
+  <Target Name="tdbf_d7d:Clean">
+    <MSBuild Projects="..\Components\TDBF\Source\tdbf_d7d.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="tdbf_d7d:Make">
+    <MSBuild Projects="..\Components\TDBF\Source\tdbf_d7d.dproj" Targets="Make" />
+  </Target>
+  <Target Name="EcwCL">
+    <MSBuild Projects="..\Components\ECWCompress\EcwCL.dproj" Targets="" />
+  </Target>
+  <Target Name="EcwCL:Clean">
+    <MSBuild Projects="..\Components\ECWCompress\EcwCL.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="EcwCL:Make">
+    <MSBuild Projects="..\Components\ECWCompress\EcwCL.dproj" Targets="Make" />
+  </Target>
+  <Target Name="EzGISD7" DependsOnTargets="EcwCL">
+    <MSBuild Projects="..\Components\EzGIS\Source\EzGISD7.dproj" Targets="" />
+  </Target>
+  <Target Name="EzGISD7:Clean" DependsOnTargets="EcwCL:Clean">
+    <MSBuild Projects="..\Components\EzGIS\Source\EzGISD7.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="EzGISD7:Make" DependsOnTargets="EcwCL:Make">
+    <MSBuild Projects="..\Components\EzGIS\Source\EzGISD7.dproj" Targets="Make" />
+  </Target>
+  <Target Name="shared_make">
+    <MSBuild Projects="..\shared\Source\shared_make.dproj" Targets="" />
+  </Target>
+  <Target Name="shared_make:Clean">
+    <MSBuild Projects="..\shared\Source\shared_make.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="shared_make:Make">
+    <MSBuild Projects="..\shared\Source\shared_make.dproj" Targets="Make" />
+  </Target>
+  <Target Name="MyVCL">
+    <MSBuild Projects="..\shared\Source\MyVCL.dproj" Targets="" />
+  </Target>
+  <Target Name="MyVCL:Clean">
+    <MSBuild Projects="..\shared\Source\MyVCL.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="MyVCL:Make">
+    <MSBuild Projects="..\shared\Source\MyVCL.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Kis" DependsOnTargets="shared_make">
+    <MSBuild Projects="Kis.dproj" Targets="" />
+  </Target>
+  <Target Name="Kis:Clean" DependsOnTargets="shared_make:Clean">
+    <MSBuild Projects="Kis.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="Kis:Make" DependsOnTargets="shared_make:Make">
+    <MSBuild Projects="Kis.dproj" Targets="Make" />
+  </Target>
+  <Target Name="mfTest1">
+    <MSBuild Projects="..\MapFile\mfTest1.dproj" Targets="" />
+  </Target>
+  <Target Name="mfTest1:Clean">
+    <MSBuild Projects="..\MapFile\mfTest1.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="mfTest1:Make">
+    <MSBuild Projects="..\MapFile\mfTest1.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Ms3" DependsOnTargets="shared_make">
+    <MSBuild Projects="..\Ms3\Ms3.dproj" Targets="" />
+  </Target>
+  <Target Name="Ms3:Clean" DependsOnTargets="shared_make:Clean">
+    <MSBuild Projects="..\Ms3\Ms3.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="Ms3:Make" DependsOnTargets="shared_make:Make">
+    <MSBuild Projects="..\Ms3\Ms3.dproj" Targets="Make" />
+  </Target>
+  <Target Name="KisTestsProject">
+    <MSBuild Projects="KisTestsProject.dproj" Targets="" />
+  </Target>
+  <Target Name="KisTestsProject:Clean">
+    <MSBuild Projects="KisTestsProject.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="KisTestsProject:Make">
+    <MSBuild Projects="KisTestsProject.dproj" Targets="Make" />
+  </Target>
+  <Target Name="NewMain">
+    <MSBuild Projects="..\Components\EzGIS\Demos\NewMain\NewMain.dproj" Targets="" />
+  </Target>
+  <Target Name="NewMain:Clean">
+    <MSBuild Projects="..\Components\EzGIS\Demos\NewMain\NewMain.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="NewMain:Make">
+    <MSBuild Projects="..\Components\EzGIS\Demos\NewMain\NewMain.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Ms3Tests">
+    <MSBuild Projects="..\Ms3\Test\Ms3Tests.dproj" Targets="" />
+  </Target>
+  <Target Name="Ms3Tests:Clean">
+    <MSBuild Projects="..\Ms3\Test\Ms3Tests.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="Ms3Tests:Make">
+    <MSBuild Projects="..\Ms3\Test\Ms3Tests.dproj" Targets="Make" />
+  </Target>
+  <Target Name="clipper_demo">
+    <MSBuild Projects="..\Components\Clipper\Delphi\main demo\clipper_demo.dproj" Targets="" />
+  </Target>
+  <Target Name="clipper_demo:Clean">
+    <MSBuild Projects="..\Components\Clipper\Delphi\main demo\clipper_demo.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="clipper_demo:Make">
+    <MSBuild Projects="..\Components\Clipper\Delphi\main demo\clipper_demo.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Build">
+    <CallTarget Targets="fr7;FRIBX7;tdbf_d7d;EcwCL;EzGISD7;shared_make;MyVCL;Kis;mfTest1;Ms3;KisTestsProject;NewMain;Ms3Tests;clipper_demo" />
+  </Target>
+  <Target Name="Clean">
+    <CallTarget Targets="fr7:Clean;FRIBX7:Clean;tdbf_d7d:Clean;EcwCL:Clean;EzGISD7:Clean;shared_make:Clean;MyVCL:Clean;Kis:Clean;mfTest1:Clean;Ms3:Clean;KisTestsProject:Clean;NewMain:Clean;Ms3Tests:Clean;clipper_demo:Clean" />
+  </Target>
+  <Target Name="Make">
+    <CallTarget Targets="fr7:Make;FRIBX7:Make;tdbf_d7d:Make;EcwCL:Make;EzGISD7:Make;shared_make:Make;MyVCL:Make;Kis:Make;mfTest1:Make;Ms3:Make;KisTestsProject:Make;NewMain:Make;Ms3Tests:Make;clipper_demo:Make" />
+  </Target>
+  <Import Condition="Exists('$(MSBuildBinPath)\Borland.Group.Targets')" Project="$(MSBuildBinPath)\Borland.Group.Targets" />
+</Project>

@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1251">
+	<TITLE>TSelectSQLParser. Ограничения</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.0.2  (Win32)">
+	<META NAME="CREATED" CONTENT="20040318;10334341">
+	<META NAME="CHANGED" CONTENT="20040318;10353869">
+	<META NAME="ProgId" CONTENT="FrontPage.Editor.Document">
+</HEAD>
+<BODY LANG="ru-RU">
+<P><FONT FACE="Tahoma"><B>TSelectSQLParser. Ограничения</B></FONT></P>
+<HR>
+<UL>
+	<LI><PRE STYLE="margin-bottom: 0.5cm"><FONT FACE="Tahoma">обрабатываются только запросы на выборку (<SPAN LANG="en-US">SELECT</SPAN>)</FONT></PRE>
+	<LI><PRE STYLE="margin-bottom: 0.5cm"><FONT FACE="Tahoma"><FONT SIZE=2>нет поддержки подзапросов</FONT></FONT></PRE>
+	<LI><PRE STYLE="margin-bottom: 0.5cm"><FONT FACE="Tahoma"><FONT SIZE=2>нет поддержки объединений таблиц (JOIN)</FONT></FONT></PRE>
+	<LI><PRE STYLE="margin-bottom: 0.5cm"><FONT FACE="Tahoma"><FONT SIZE=2>в SELECT-запросах поддерживаются только операторы SELECT, FROM, WHERE, ORDER BY</FONT></FONT></PRE>
+	<LI><PRE STYLE="margin-bottom: 0.5cm"><FONT FACE="Tahoma"><FONT SIZE=2>практически отсутсвует проверка входного SQL на правильность, т.е. считаем, что парсер обрабатывает изначально синтксически корректный запрос</FONT></FONT></PRE>
+</UL>
+</BODY>
+</HTML>

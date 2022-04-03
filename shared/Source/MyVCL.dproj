@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{7ed3309a-db9b-4965-b3b6-ebcd5611dc15}</ProjectGuid>
+    <MainSource>MyVCL.dpk</MainSource>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>C:\Users\Public\Documents\RAD Studio\5.0\Bpl\MyVCL.bpl</DCC_DependencyCheckOutputName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_Optimize>False</DCC_Optimize>
+    <DCC_IntegerOverflowCheck>True</DCC_IntegerOverflowCheck>
+    <DCC_RangeChecking>True</DCC_RangeChecking>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_Define>RELEASE</DCC_Define>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_Optimize>False</DCC_Optimize>
+    <DCC_IntegerOverflowCheck>True</DCC_IntegerOverflowCheck>
+    <DCC_RangeChecking>True</DCC_RangeChecking>
+    <DCC_DcuOutput>C:\Projects\kis\shared\Dcu</DCC_DcuOutput>
+    <DCC_ObjOutput>C:\Projects\kis\shared\Dcu</DCC_ObjOutput>
+    <DCC_HppOutput>C:\Projects\kis\shared\Dcu</DCC_HppOutput>
+    <DCC_UnitSearchPath>C:\Projects\kis\shared\Dcu</DCC_UnitSearchPath>
+    <DCC_ResourcePath>C:\Projects\kis\shared\Dcu</DCC_ResourcePath>
+    <DCC_ObjPath>C:\Projects\kis\shared\Dcu</DCC_ObjPath>
+    <DCC_IncludePath>C:\Projects\kis\shared\Dcu</DCC_IncludePath>
+    <DCC_MapFile>3</DCC_MapFile>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType>Package</Borland.ProjectType>
+    <BorlandProject>
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><Package_Options><Package_Options Name="PackageDescription">VCL extensions for Kis</Package_Options><Package_Options Name="ImplicitBuild">False</Package_Options><Package_Options Name="DesigntimeOnly">False</Package_Options><Package_Options Name="RuntimeOnly">False</Package_Options></Package_Options><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">False</VersionInfo><VersionInfo Name="MajorVer">1</VersionInfo><VersionInfo Name="MinorVer">0</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">0</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1049</VersionInfo><VersionInfo Name="CodePage">1251</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName"></VersionInfoKeys><VersionInfoKeys Name="FileDescription"></VersionInfoKeys><VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys><VersionInfoKeys Name="InternalName"></VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys><VersionInfoKeys Name="ProductName"></VersionInfoKeys><VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">MyVCL.dpk</Source></Source><Excluded_Packages>
+      <Excluded_Packages Name="$(BDS)\bin\dcloffice2k100.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+      <Excluded_Packages Name="$(BDS)\bin\dclofficexp100.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+    </Excluded_Packages></Delphi.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="MyVCL.dpk">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <DCCReference Include="ATImageBox.dcr" />
+    <DCCReference Include="ATImageBox.pas" />
+    <DCCReference Include="ATPrintPreview.dcr" />
+    <DCCReference Include="ATPrintPreview.dcr" />
+    <DCCReference Include="ATPrintPreview.pas">
+      <Form>FormATPreview</Form>
+    </DCCReference>
+    <DCCReference Include="ATxPrintProc.pas" />
+    <DCCReference Include="ATxUpEdit.pas" />
+    <DCCReference Include="C:\Users\Катя\Desktop\dbrtl.dcp" />
+    <DCCReference Include="C:\Users\Катя\Desktop\ibxpress.dcp" />
+    <DCCReference Include="C:\Users\Катя\Desktop\inet.dcp" />
+    <DCCReference Include="C:\Users\Катя\Desktop\rtl.dcp" />
+    <DCCReference Include="C:\Users\Катя\Desktop\vcl.dcp" />
+    <DCCReference Include="C:\Users\Катя\Desktop\vcldb.dcp" />
+    <DCCReference Include="C:\Users\Катя\Desktop\vcljpg.dcp" />
+    <DCCReference Include="C:\Users\Катя\Desktop\xmlrtl.dcp" />
+    <DCCReference Include="KMAlert.pas" />
+    <DCCReference Include="PREVIEWLib_TLB.pas" />
+    <DCCReference Include="uClipboardSaver.pas" />
+    <DCCReference Include="uDataSet.pas" />
+    <DCCReference Include="uDBGrid.pas" />
+    <DCCReference Include="uIndexedDataSet.pas" />
+    <DCCReference Include="uLegend.pas" />
+    <DCCReference Include="uMyVCLReg.pas" />
+    <DCCReference Include="uSettingsBase.pas" />
+  </ItemGroup>
+</Project>

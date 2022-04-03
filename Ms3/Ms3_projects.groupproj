@@ -1,0 +1,76 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{419ab6b0-d3b7-4a8e-a03f-879ac802ec80}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Projects Include="..\..\fast-watermark_sources\Fast_Watermark\Fast_Watermark.dproj" />
+    <Projects Include="..\Components\ECWCompress\EcwCL.dproj" />
+    <Projects Include="..\Components\EzGIS\Source\EzGISD7.dproj" />
+    <Projects Include="Ms3.dproj">
+      <Dependencies>..\Components\EzGIS\Source\EzGISD7.dproj;..\Components\ECWCompress\EcwCL.dproj</Dependencies>
+    </Projects>
+    <Projects Include="Source\Expiriments\Exp.dproj" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Default.Personality</Borland.Personality>
+    <Borland.ProjectType />
+    <BorlandProject>
+<BorlandProject xmlns=""><Default.Personality></Default.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Target Name="EzGISD7">
+    <MSBuild Projects="..\Components\EzGIS\Source\EzGISD7.dproj" Targets="" />
+  </Target>
+  <Target Name="EzGISD7:Clean">
+    <MSBuild Projects="..\Components\EzGIS\Source\EzGISD7.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="EzGISD7:Make">
+    <MSBuild Projects="..\Components\EzGIS\Source\EzGISD7.dproj" Targets="Make" />
+  </Target>
+  <Target Name="EcwCL">
+    <MSBuild Projects="..\Components\ECWCompress\EcwCL.dproj" Targets="" />
+  </Target>
+  <Target Name="EcwCL:Clean">
+    <MSBuild Projects="..\Components\ECWCompress\EcwCL.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="EcwCL:Make">
+    <MSBuild Projects="..\Components\ECWCompress\EcwCL.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Ms3" DependsOnTargets="EzGISD7;EcwCL">
+    <MSBuild Projects="Ms3.dproj" Targets="" />
+  </Target>
+  <Target Name="Ms3:Clean" DependsOnTargets="EzGISD7:Clean;EcwCL:Clean">
+    <MSBuild Projects="Ms3.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="Ms3:Make" DependsOnTargets="EzGISD7:Make;EcwCL:Make">
+    <MSBuild Projects="Ms3.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Exp">
+    <MSBuild Projects="Source\Expiriments\Exp.dproj" Targets="" />
+  </Target>
+  <Target Name="Exp:Clean">
+    <MSBuild Projects="Source\Expiriments\Exp.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="Exp:Make">
+    <MSBuild Projects="Source\Expiriments\Exp.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Fast_Watermark">
+    <MSBuild Projects="..\..\fast-watermark_sources\Fast_Watermark\Fast_Watermark.dproj" Targets="" />
+  </Target>
+  <Target Name="Fast_Watermark:Clean">
+    <MSBuild Projects="..\..\fast-watermark_sources\Fast_Watermark\Fast_Watermark.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="Fast_Watermark:Make">
+    <MSBuild Projects="..\..\fast-watermark_sources\Fast_Watermark\Fast_Watermark.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Build">
+    <CallTarget Targets="EzGISD7;EcwCL;Ms3;Exp;Fast_Watermark" />
+  </Target>
+  <Target Name="Clean">
+    <CallTarget Targets="EzGISD7:Clean;EcwCL:Clean;Ms3:Clean;Exp:Clean;Fast_Watermark:Clean" />
+  </Target>
+  <Target Name="Make">
+    <CallTarget Targets="EzGISD7:Make;EcwCL:Make;Ms3:Make;Exp:Make;Fast_Watermark:Make" />
+  </Target>
+  <Import Condition="Exists('$(MSBuildBinPath)\Borland.Group.Targets')" Project="$(MSBuildBinPath)\Borland.Group.Targets" />
+</Project>

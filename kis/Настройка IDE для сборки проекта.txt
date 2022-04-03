@@ -1,0 +1,25 @@
+Required: 
+	- Delphi 7 Ent
+	- INTERBASE EXPRESS UPDATE KIT FOR InterBase 5, 6 & 7 (IBXDP708.EXE)
+	- Update d7_ent_upd1_1.exe
+
+Tools - Environment Options - Library
+Library path:
+D:\Projects\shared\Dcu
+D:\Projects\Components\EzGIS\Dcu
+D:\Projects\Components\Rx\Dcu
+D:\Projects\Components\FastReport\Dcu
+D:\Projects\Components\Jedi\JCL\dcu
+D:\Projects\Components\Rx\Res
+
+Open project group and Install:
+\Projects\Components\Rx\Units\Rx.bpg
+and install bpl components
+
+
+Run Install for:
+MyVCL.bpl
+DJCL70.bpl
+fr7.bpl
+
+	

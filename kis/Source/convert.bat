@@ -1,0 +1,1 @@
+"c:\Progra~1\CodeGear\RAD Studio\5.0\bin\convert.exe" -i -t *.dfm

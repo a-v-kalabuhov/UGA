@@ -1,0 +1,1536 @@
+object mstLotPropertiesForm: TmstLotPropertiesForm
+  Left = 257
+  Top = 101
+  BorderStyle = bsDialog
+  Caption = #1054#1090#1074#1086#1076
+  ClientHeight = 543
+  ClientWidth = 625
+  Color = clBtnFace
+  Font.Charset = RUSSIAN_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = True
+  Position = poMainFormCenter
+  ShowHint = True
+  DesignSize = (
+    625
+    543)
+  PixelsPerInch = 96
+  TextHeight = 13
+  object PageControl: TPageControl
+    Left = 0
+    Top = 0
+    Width = 625
+    Height = 508
+    ActivePage = tshData
+    Align = alTop
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    TabOrder = 0
+    ExplicitHeight = 441
+    object tshData: TTabSheet
+      Caption = #1044#1072#1085#1085#1099#1077
+      ExplicitLeft = 8
+      ExplicitTop = 28
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      DesignSize = (
+        617
+        480)
+      object Label1: TLabel
+        Left = 8
+        Top = 40
+        Width = 31
+        Height = 13
+        Caption = '&'#1040#1076#1088#1077#1089
+        FocusControl = dbeAddress
+      end
+      object Label2: TLabel
+        Left = 464
+        Top = 40
+        Width = 31
+        Height = 13
+        Caption = '&'#1056#1072#1081#1086#1085
+      end
+      object Label3: TLabel
+        Left = 8
+        Top = 81
+        Width = 47
+        Height = 13
+        Caption = '&'#1055#1083#1086#1097#1072#1076#1100
+        FocusControl = dbeArea
+      end
+      object Label12: TLabel
+        Left = 8
+        Top = 0
+        Width = 64
+        Height = 13
+        Caption = #1044#1072#1090#1072' '#1086#1090#1074#1086#1076#1072
+        FocusControl = dbeDocDate
+      end
+      object Label33: TLabel
+        Left = 88
+        Top = 81
+        Width = 53
+        Height = 13
+        Caption = #1043#1077#1086#1076#1077#1079#1080#1089#1090
+      end
+      object Label6: TLabel
+        Left = 16
+        Top = 427
+        Width = 59
+        Height = 13
+        Anchors = [akLeft, akBottom]
+        Caption = #1044#1086#1082#1091#1084#1077#1085#1090#1099
+        ExplicitTop = 360
+      end
+      object Label11: TLabel
+        Left = 88
+        Top = 0
+        Width = 34
+        Height = 13
+        Caption = #1053#1086#1084#1077#1088
+        FocusControl = dbeDocNumber
+      end
+      object Label10: TLabel
+        Left = 176
+        Top = 0
+        Width = 151
+        Height = 13
+        Caption = #1053#1086#1084#1077#1088' '#1088#1086#1076#1080#1090#1077#1083#1100#1089#1082#1086#1075#1086' '#1086#1090#1074#1086#1076#1072
+        FocusControl = dbeParentNumber
+      end
+      object Label15: TLabel
+        Left = 352
+        Top = 0
+        Width = 127
+        Height = 13
+        Caption = #1053#1086#1084#1077#1088' '#1076#1086#1095#1077#1088#1085#1077#1075#1086' '#1086#1090#1074#1086#1076#1072
+        FocusControl = dbeChildNumber
+      end
+      object Label19: TLabel
+        Left = 352
+        Top = 81
+        Width = 140
+        Height = 13
+        Caption = #1055#1086#1089#1090#1072#1085#1086#1074#1083#1077#1085#1080#1077' '#1087#1086#1076#1075#1086#1090#1086#1074#1080#1083
+      end
+      object Label20: TLabel
+        Left = 273
+        Top = 457
+        Width = 106
+        Height = 13
+        Anchors = [akLeft, akBottom]
+        Caption = #1044#1072#1090#1072' '#1072#1085#1085#1091#1083#1080#1088#1086#1074#1072#1085#1080#1103
+        ExplicitTop = 391
+      end
+      object Label21: TLabel
+        Left = 465
+        Top = 457
+        Width = 69
+        Height = 13
+        Anchors = [akLeft, akBottom]
+        Caption = #1053#1086#1074#1099#1081' '#1085#1086#1084#1077#1088
+        ExplicitTop = 391
+      end
+      object Label32: TLabel
+        Left = 7
+        Top = 135
+        Width = 313
+        Height = 13
+        Caption = #1057#1089#1099#1083#1082#1072' '#1085#1072' '#1087#1088#1072#1074#1086#1091#1089#1090#1072#1085#1072#1074#1083#1080#1074#1072#1102#1097#1080#1081' '#1076#1086#1082#1091#1084#1077#1085#1090' '#1074' '#1050#1086#1085#1089#1091#1083#1100#1090#1072#1085#1090#1077
+      end
+      object dbeAddress: TDBEdit
+        Left = 8
+        Top = 56
+        Width = 449
+        Height = 21
+        DataField = 'ADDRESS'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 1
+      end
+      object dbeArea: TDBEdit
+        Left = 8
+        Top = 97
+        Width = 73
+        Height = 21
+        DataField = 'AREA'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 2
+      end
+      object dbeCancelledInfo: TDBEdit
+        Left = 120
+        Top = 454
+        Width = 129
+        Height = 21
+        Anchors = [akLeft, akBottom]
+        DataField = 'CANCELLED_INFO'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 8
+        ExplicitTop = 388
+      end
+      object dbeDocDate: TDBEdit
+        Left = 8
+        Top = 16
+        Width = 65
+        Height = 21
+        DataField = 'DOC_DATE'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 0
+      end
+      object gbOwners: TGroupBox
+        Left = 8
+        Top = 189
+        Width = 601
+        Height = 113
+        Anchors = [akLeft, akBottom]
+        Caption = #1042#1083#1072#1076#1077#1083#1100#1094#1099
+        TabOrder = 4
+        ExplicitTop = 122
+        object dbgOwners: TDBGrid
+          Left = 8
+          Top = 16
+          Width = 505
+          Height = 92
+          DataSource = dsOwners
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
+          ParentFont = False
+          TabOrder = 0
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = []
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'NAME'
+              Title.Caption = #1042#1083#1072#1076#1077#1083#1077#1094
+              Width = 108
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'PERCENT'
+              Title.Caption = #1055#1088#1086#1094#1077#1085#1090
+              Width = 48
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'PURPOSE'
+              Title.Caption = #1053#1072#1079#1085#1072#1095#1077#1085#1080#1077
+              Width = 120
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'PROP_FORMS_NAME'
+              Title.Caption = #1060#1086#1088#1084#1072' '#1089#1086#1073#1089#1090#1074#1077#1085#1085#1086#1089#1090#1080
+              Width = 122
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'RENT_PERIOD'
+              Title.Caption = #1057#1088#1086#1082' '#1072#1088#1077#1085#1076#1099
+              Visible = True
+            end>
+        end
+        object btnOwnerEdit: TButton
+          Left = 520
+          Top = 18
+          Width = 75
+          Height = 25
+          Caption = #1055#1086#1076#1088#1086#1073#1085#1086
+          TabOrder = 1
+          Visible = False
+        end
+      end
+      object gbDecrees: TGroupBox
+        Left = 8
+        Top = 305
+        Width = 601
+        Height = 113
+        Anchors = [akLeft, akBottom]
+        Caption = #1053#1086#1088#1084#1072#1090#1080#1074#1085#1099#1077' '#1072#1082#1090#1099
+        TabOrder = 5
+        ExplicitTop = 238
+        object dbgDocs: TDBGrid
+          Left = 8
+          Top = 16
+          Width = 505
+          Height = 92
+          DataSource = dsDocs
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit]
+          ParentFont = False
+          TabOrder = 0
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = []
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'DOC_NUMBER'
+              Title.Caption = #1053#1086#1084#1077#1088
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DOC_DATE'
+              Title.Caption = #1044#1072#1090#1072
+              Width = 65
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'HEADER'
+              Title.Caption = #1057#1086#1076#1077#1088#1078#1072#1085#1080#1077
+              Width = 341
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DECREE_TYPES_NAME'
+              Title.Caption = #1058#1080#1087' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+              Visible = True
+            end>
+        end
+        object btnDecreeDetail: TButton
+          Left = 520
+          Top = 14
+          Width = 75
+          Height = 23
+          Caption = #1055#1086#1076#1088#1086#1073#1085#1086
+          TabOrder = 1
+          Visible = False
+        end
+      end
+      object dbchCancelled: TDBCheckBox
+        Left = 8
+        Top = 456
+        Width = 105
+        Height = 17
+        Anchors = [akLeft, akBottom]
+        Caption = #1053#1077#1076#1077#1081#1089#1090#1074#1080#1090#1077#1083#1077#1085
+        DataField = 'CANCELLED'
+        DataSource = dsLot
+        ReadOnly = True
+        TabOrder = 7
+        ValueChecked = '1'
+        ValueUnchecked = '0'
+        ExplicitTop = 390
+      end
+      object dbeExecutor: TDBEdit
+        Left = 88
+        Top = 97
+        Width = 257
+        Height = 21
+        DataField = 'EXECUTOR'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        MaxLength = 50
+        ParentFont = False
+        TabOrder = 3
+      end
+      object dbeDocuments: TDBEdit
+        Left = 81
+        Top = 424
+        Width = 529
+        Height = 21
+        Anchors = [akLeft, akRight, akBottom]
+        DataField = 'DOCUMENTS'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 6
+        ExplicitTop = 357
+      end
+      object dbeDocNumber: TDBEdit
+        Left = 88
+        Top = 16
+        Width = 65
+        Height = 21
+        DataField = 'DOC_NUMBER'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 9
+      end
+      object dbeParentNumber: TDBEdit
+        Left = 176
+        Top = 16
+        Width = 65
+        Height = 21
+        DataField = 'PARENT_NUMBER'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 10
+      end
+      object dbeChildNumber: TDBEdit
+        Left = 352
+        Top = 16
+        Width = 65
+        Height = 21
+        DataField = 'CHILD_NUMBER'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 11
+      end
+      object dbeDecreePrepared: TDBEdit
+        Left = 352
+        Top = 97
+        Width = 257
+        Height = 21
+        DataField = 'DECREE_PREPARED'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        MaxLength = 50
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 12
+      end
+      object dbeAnnulDate: TDBEdit
+        Left = 385
+        Top = 454
+        Width = 65
+        Height = 21
+        Anchors = [akLeft, akBottom]
+        DataField = 'ANNUL_DATE'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 13
+        ExplicitTop = 388
+      end
+      object dbeNewNumber: TDBEdit
+        Left = 536
+        Top = 454
+        Width = 65
+        Height = 21
+        Anchors = [akLeft, akBottom]
+        DataField = 'NEW_NUMBER'
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 14
+        ExplicitTop = 388
+      end
+      object dbeRegion: TDBEdit
+        Left = 464
+        Top = 56
+        Width = 145
+        Height = 21
+        DataField = 'REGIONS_NAME'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 15
+      end
+      object DBEdit1: TDBEdit
+        Left = 8
+        Top = 151
+        Width = 514
+        Height = 21
+        Color = clInfoBk
+        DataField = 'LINK_CONSULTANT'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        MaxLength = 50
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 16
+      end
+      object btnOpenLinkConsultant: TButton
+        Left = 528
+        Top = 149
+        Width = 75
+        Height = 25
+        Caption = #1054#1090#1082#1088#1099#1090#1100
+        TabOrder = 17
+        OnClick = btnOpenLinkConsultantClick
+      end
+    end
+    object tshInfo: TTabSheet
+      Caption = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 413
+      object Label16: TLabel
+        Left = 8
+        Top = 8
+        Width = 53
+        Height = 13
+        Caption = #1051#1072#1085#1076#1096#1072#1092#1090
+        FocusControl = dbmLandscape
+      end
+      object Label4: TLabel
+        Left = 8
+        Top = 72
+        Width = 77
+        Height = 13
+        Caption = #1053#1077#1076#1074#1080#1078#1080#1084#1086#1089#1090#1100
+        FocusControl = dbmRealty
+      end
+      object Label5: TLabel
+        Left = 8
+        Top = 128
+        Width = 57
+        Height = 13
+        Caption = #1055#1072#1084#1103#1090#1085#1080#1082#1080
+        FocusControl = dbmMonument
+      end
+      object Label8: TLabel
+        Left = 8
+        Top = 192
+        Width = 64
+        Height = 26
+        Caption = #1055#1086#1083#1077#1079#1085#1099#1077' '#1080#1089#1082#1086#1087#1072#1077#1084#1099#1077
+        FocusControl = dbmMinerals
+        WordWrap = True
+      end
+      object Label9: TLabel
+        Left = 8
+        Top = 256
+        Width = 82
+        Height = 13
+        Caption = #1056#1072#1089#1090#1080#1090#1077#1083#1100#1085#1086#1089#1090#1100
+        FocusControl = dbmFlora
+      end
+      object Label13: TLabel
+        Left = 8
+        Top = 328
+        Width = 37
+        Height = 13
+        Caption = #1055#1088#1086#1095#1072#1103
+        FocusControl = dbmInformation
+      end
+      object dbmLandscape: TDBMemo
+        Left = 96
+        Top = 0
+        Width = 513
+        Height = 58
+        DataField = 'INFO_LANDSCAPE'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        ScrollBars = ssVertical
+        TabOrder = 0
+      end
+      object dbmRealty: TDBMemo
+        Left = 96
+        Top = 63
+        Width = 513
+        Height = 58
+        DataField = 'INFO_REALTY'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        ScrollBars = ssVertical
+        TabOrder = 1
+      end
+      object dbmMonument: TDBMemo
+        Left = 96
+        Top = 126
+        Width = 513
+        Height = 58
+        DataField = 'INFO_MONUMENT'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        ScrollBars = ssVertical
+        TabOrder = 2
+      end
+      object dbmMinerals: TDBMemo
+        Left = 96
+        Top = 189
+        Width = 513
+        Height = 58
+        DataField = 'INFO_MINERALS'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        ScrollBars = ssVertical
+        TabOrder = 3
+      end
+      object dbmFlora: TDBMemo
+        Left = 96
+        Top = 252
+        Width = 513
+        Height = 58
+        DataField = 'INFO_FLORA'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        ScrollBars = ssVertical
+        TabOrder = 4
+      end
+      object dbmInformation: TDBMemo
+        Left = 96
+        Top = 317
+        Width = 513
+        Height = 58
+        DataField = 'INFORMATION'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        ScrollBars = ssVertical
+        TabOrder = 5
+      end
+    end
+    object tshOther: TTabSheet
+      Caption = #1054#1087#1080#1089#1072#1085#1080#1077
+      ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 413
+      object Label23: TLabel
+        Left = 8
+        Top = 48
+        Width = 58
+        Height = 13
+        Caption = #1057#1084#1077#1078#1077#1089#1090#1074#1072
+        FocusControl = dbmNeighbours
+      end
+      object Label22: TLabel
+        Left = 8
+        Top = 8
+        Width = 74
+        Height = 13
+        Caption = #1053#1086#1084#1077#1085#1082#1083#1072#1090#1091#1088#1072
+      end
+      object Label24: TLabel
+        Left = 8
+        Top = 120
+        Width = 77
+        Height = 13
+        Caption = #1041#1083#1080#1078#1072#1081#1096#1080#1077' '#1055#1047
+        FocusControl = dbmPZ
+      end
+      object Label25: TLabel
+        Left = 8
+        Top = 192
+        Width = 53
+        Height = 26
+        Caption = #1054#1087#1080#1089#1072#1085#1080#1077' '#13#10#1086#1090#1074#1086#1076#1072
+        FocusControl = dbmDescr
+      end
+      object dbmNeighbours: TDBMemo
+        Left = 96
+        Top = 40
+        Width = 513
+        Height = 58
+        DataField = 'NEIGHBOURS'
+        DataSource = dsLot
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        ScrollBars = ssVertical
+        TabOrder = 0
+      end
+      object dbeNomenclatura: TDBEdit
+        Left = 96
+        Top = 5
+        Width = 511
+        Height = 21
+        DataField = 'NOMENCLATURA'
+        DataSource = dsLot
+        ReadOnly = True
+        TabOrder = 1
+      end
+      object dbmPZ: TDBMemo
+        Left = 96
+        Top = 112
+        Width = 513
+        Height = 58
+        DataField = 'PZ'
+        DataSource = dsLot
+        ReadOnly = True
+        ScrollBars = ssVertical
+        TabOrder = 2
+      end
+      object dbmDescr: TDBMemo
+        Left = 96
+        Top = 184
+        Width = 513
+        Height = 58
+        DataField = 'DESCRIPTION'
+        DataSource = dsLot
+        ReadOnly = True
+        ScrollBars = ssVertical
+        TabOrder = 3
+      end
+    end
+  end
+  object btnOk: TButton
+    Left = 8
+    Top = 514
+    Width = 75
+    Height = 25
+    Anchors = [akLeft, akBottom]
+    Caption = #1047#1072#1082#1088#1099#1090#1100
+    Default = True
+    ModalResult = 1
+    TabOrder = 1
+    ExplicitTop = 447
+  end
+  object dbchChecked: TDBCheckBox
+    Left = 544
+    Top = 518
+    Width = 73
+    Height = 17
+    Anchors = [akRight, akBottom]
+    Caption = #1055#1088#1086#1074#1077#1088#1077#1085
+    DataField = 'CHECKED'
+    DataSource = dsLot
+    ReadOnly = True
+    TabOrder = 2
+    ValueChecked = '1'
+    ValueUnchecked = '0'
+    ExplicitTop = 451
+  end
+  object dsOwners: TDataSource
+    Left = 72
+    Top = 208
+  end
+  object dsDocs: TDataSource
+    Left = 72
+    Top = 304
+  end
+  object ImageList: TImageList
+    Left = 284
+    Top = 184
+    Bitmap = {
+      494C010110001300140010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      0000000000003600000028000000400000005000000001002000000000000050
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000FFFF00000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000FF000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000FF00FF00000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000FFFF0000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000FFFF0000FFFF0000FFFF000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000FF000000FF000000FF0000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000FF00FF00FF00FF00FF00FF000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000FFFF0000FFFF0000FFFF00000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000FF000000FF000000FF000000FF000000FF00000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF0000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF000000000000000000000000
+      00000000000000000000000000000000000000000000000000000000000000FF
+      FF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF00000000000000
+      000000000000000000000000000000000000000000000000000000000000FF00
+      0000FF000000FF000000FF000000FF000000FF000000FF000000000000000000
+      000000000000000000000000000000000000000000000000000000000000FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00000000000000
+      000000000000000000000000000000000000000000000000000000000000FFFF
+      0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000000000000000
+      000000000000000000000000000000000000000000000000000000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF000000
+      0000000000000000000000000000000000000000000000000000FF000000FF00
+      0000FF000000FF000000FF000000FF000000FF000000FF000000FF0000000000
+      0000000000000000000000000000000000000000000000000000FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF000000
+      0000000000000000000000000000000000000000000000000000FFFF0000FFFF
+      0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF00000000
+      0000000000000000000000000000000000000000000000FFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FF
+      FF000000000000000000000000000000000000000000FF000000FF000000FF00
+      0000FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF00
+      00000000000000000000000000000000000000000000FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF000000000000000000000000000000000000000000FFFF0000FFFF0000FFFF
+      0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF
+      00000000000000000000000000000000000000FFFF0000FFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FF
+      FF0000FFFF00000000000000000000000000FF000000FF000000FF000000FF00
+      0000FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF00
+      0000FF000000000000000000000000000000FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00000000000000000000000000FFFF0000FFFF0000FFFF0000FFFF
+      0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF
+      0000FFFF00000000000000000000000000000000000000FFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF00000000000000000000000000FF000000FF000000FF00
+      0000FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF00
+      0000FF000000FF000000000000000000000000000000FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00000000000000000000000000FFFF0000FFFF0000FFFF
+      0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF
+      0000FFFF0000FFFF00000000000000000000000000000000000000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF00000000000000000000000000FF000000FF00
+      0000FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF00
+      0000FF000000FF000000FF000000000000000000000000000000FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00000000000000000000000000FFFF0000FFFF
+      0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF
+      0000FFFF0000FFFF0000FFFF00000000000000000000000000000000000000FF
+      FF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF0000FFFF00000000000000000000000000FF00
+      0000FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF00
+      0000FF000000FF000000FF000000FF000000000000000000000000000000FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00FF00FF00000000000000000000000000FFFF
+      0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF
+      0000FFFF0000FFFF0000FFFF0000FFFF00000000000000000000000000000000
+      000000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF00000000000000000000000000000000000000
+      0000FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF00
+      0000FF000000FF000000FF000000000000000000000000000000000000000000
+      0000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF00FF00FF00000000000000000000000000000000000000
+      0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF
+      0000FFFF0000FFFF0000FFFF0000000000000000000000000000000000000000
+      00000000000000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000000000000000000000000000000000000000000000
+      000000000000FF000000FF000000FF000000FF000000FF000000FF000000FF00
+      0000FF000000FF00000000000000000000000000000000000000000000000000
+      000000000000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF00FF00FF0000000000000000000000000000000000000000000000
+      000000000000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF
+      0000FFFF0000FFFF000000000000000000000000000000000000000000000000
+      0000000000000000000000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FF
+      FF0000FFFF000000000000000000000000000000000000000000000000000000
+      00000000000000000000FF000000FF000000FF000000FF000000FF000000FF00
+      0000FF0000000000000000000000000000000000000000000000000000000000
+      00000000000000000000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00FF00FF000000000000000000000000000000000000000000000000000000
+      00000000000000000000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF
+      0000FFFF00000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000FFFF0000FFFF0000FFFF0000FFFF0000FF
+      FF00000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000FF000000FF000000FF000000FF000000FF00
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000FF00FF00FF00FF00FF00FF00FF00FF00FF00
+      FF00000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000FFFF0000FFFF0000FFFF0000FFFF0000FFFF
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000FFFF0000FFFF0000FFFF000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000FF000000FF000000FF0000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000FF00FF00FF00FF00FF00FF000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000FFFF0000FFFF0000FFFF00000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000FFFF00000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000FF000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000FF00FF00000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000FFFF0000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000084848400000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000C6C6C600000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000FF00000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000FF0000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000008484840084848400848484000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000C6C6C600C6C6C600C6C6C6000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000FF000000FF000000FF000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000FF000000FF000000FF00000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000848484008484840084848400848484008484840000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000C6C6C600C6C6C600C6C6C600C6C6C600C6C6C60000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000FF000000FF000000FF000000FF000000FF0000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000FF000000FF000000FF000000FF000000FF000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000008484
+      8400848484008484840084848400848484008484840084848400000000000000
+      000000000000000000000000000000000000000000000000000000000000C6C6
+      C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      FF000000FF000000FF000000FF000000FF000000FF000000FF00000000000000
+      00000000000000000000000000000000000000000000000000000000000000FF
+      000000FF000000FF000000FF000000FF000000FF000000FF0000000000000000
+      0000000000000000000000000000000000000000000000000000848484008484
+      8400848484008484840084848400848484008484840084848400848484000000
+      0000000000000000000000000000000000000000000000000000C6C6C600C6C6
+      C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C6000000
+      00000000000000000000000000000000000000000000000000000000FF000000
+      FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000
+      000000000000000000000000000000000000000000000000000000FF000000FF
+      000000FF000000FF000000FF000000FF000000FF000000FF000000FF00000000
+      0000000000000000000000000000000000000000000084848400848484008484
+      8400848484008484840084848400848484008484840084848400848484008484
+      84000000000000000000000000000000000000000000C6C6C600C6C6C600C6C6
+      C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6
+      C60000000000000000000000000000000000000000000000FF000000FF000000
+      FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000
+      FF00000000000000000000000000000000000000000000FF000000FF000000FF
+      000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF
+      0000000000000000000000000000000000008484840084848400848484008484
+      8400848484008484840084848400848484008484840084848400848484008484
+      840084848400000000000000000000000000C6C6C600C6C6C600C6C6C600C6C6
+      C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6
+      C600C6C6C6000000000000000000000000000000FF000000FF000000FF000000
+      FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000
+      FF000000FF0000000000000000000000000000FF000000FF000000FF000000FF
+      000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF
+      000000FF00000000000000000000000000000000000084848400848484008484
+      8400848484008484840084848400848484008484840084848400848484008484
+      84008484840084848400000000000000000000000000C6C6C600C6C6C600C6C6
+      C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6
+      C600C6C6C600C6C6C6000000000000000000000000000000FF000000FF000000
+      FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000
+      FF000000FF000000FF0000000000000000000000000000FF000000FF000000FF
+      000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF
+      000000FF000000FF000000000000000000000000000000000000848484008484
+      8400848484008484840084848400848484008484840084848400848484008484
+      8400848484008484840084848400000000000000000000000000C6C6C600C6C6
+      C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6
+      C600C6C6C600C6C6C600C6C6C6000000000000000000000000000000FF000000
+      FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000
+      FF000000FF000000FF000000FF0000000000000000000000000000FF000000FF
+      000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF
+      000000FF000000FF000000FF0000000000000000000000000000000000008484
+      8400848484008484840084848400848484008484840084848400848484008484
+      840084848400848484008484840084848400000000000000000000000000C6C6
+      C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6
+      C600C6C6C600C6C6C600C6C6C600C6C6C6000000000000000000000000000000
+      FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000
+      FF000000FF000000FF000000FF000000FF0000000000000000000000000000FF
+      000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF
+      000000FF000000FF000000FF000000FF00000000000000000000000000000000
+      0000848484008484840084848400848484008484840084848400848484008484
+      8400848484008484840084848400000000000000000000000000000000000000
+      0000C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6
+      C600C6C6C600C6C6C600C6C6C600000000000000000000000000000000000000
+      00000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000
+      FF000000FF000000FF000000FF00000000000000000000000000000000000000
+      000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF
+      000000FF000000FF000000FF0000000000000000000000000000000000000000
+      0000000000008484840084848400848484008484840084848400848484008484
+      8400848484008484840000000000000000000000000000000000000000000000
+      000000000000C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6
+      C600C6C6C600C6C6C60000000000000000000000000000000000000000000000
+      0000000000000000FF000000FF000000FF000000FF000000FF000000FF000000
+      FF000000FF000000FF0000000000000000000000000000000000000000000000
+      00000000000000FF000000FF000000FF000000FF000000FF000000FF000000FF
+      000000FF000000FF000000000000000000000000000000000000000000000000
+      0000000000000000000084848400848484008484840084848400848484008484
+      8400848484000000000000000000000000000000000000000000000000000000
+      00000000000000000000C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600C6C6
+      C600C6C6C6000000000000000000000000000000000000000000000000000000
+      000000000000000000000000FF000000FF000000FF000000FF000000FF000000
+      FF000000FF000000000000000000000000000000000000000000000000000000
+      0000000000000000000000FF000000FF000000FF000000FF000000FF000000FF
+      000000FF00000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000848484008484840084848400848484008484
+      8400000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000C6C6C600C6C6C600C6C6C600C6C6C600C6C6
+      C600000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000FF000000FF000000FF000000FF000000
+      FF00000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000FF000000FF000000FF000000FF000000FF
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000008484840084848400848484000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000C6C6C600C6C6C600C6C6C6000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000FF000000FF000000FF000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000FF000000FF000000FF00000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000084848400000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000C6C6C600000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000000000FF00000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000FF0000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000848400000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000084000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000084008400000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000084840000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000084840000848400008484000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000008400000084000000840000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000008400840084008400840084000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000008484000084840000848400000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000008484000084840000848400008484000084840000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000840000008400000084000000840000008400000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000840084008400840084008400840084008400840000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000848400008484000084840000848400008484000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000084
+      8400008484000084840000848400008484000084840000848400000000000000
+      0000000000000000000000000000000000000000000000000000000000008400
+      0000840000008400000084000000840000008400000084000000000000000000
+      0000000000000000000000000000000000000000000000000000000000008400
+      8400840084008400840084008400840084008400840084008400000000000000
+      0000000000000000000000000000000000000000000000000000000000008484
+      0000848400008484000084840000848400008484000084840000000000000000
+      0000000000000000000000000000000000000000000000000000008484000084
+      8400008484000084840000848400008484000084840000848400008484000000
+      0000000000000000000000000000000000000000000000000000840000008400
+      0000840000008400000084000000840000008400000084000000840000000000
+      0000000000000000000000000000000000000000000000000000840084008400
+      8400840084008400840084008400840084008400840084008400840084000000
+      0000000000000000000000000000000000000000000000000000848400008484
+      0000848400008484000084840000848400008484000084840000848400000000
+      0000000000000000000000000000000000000000000000848400008484000084
+      8400008484000084840000848400008484000084840000848400008484000084
+      8400000000000000000000000000000000000000000084000000840000008400
+      0000840000008400000084000000840000008400000084000000840000008400
+      0000000000000000000000000000000000000000000084008400840084008400
+      8400840084008400840084008400840084008400840084008400840084008400
+      8400000000000000000000000000000000000000000084840000848400008484
+      0000848400008484000084840000848400008484000084840000848400008484
+      0000000000000000000000000000000000000084840000848400008484000084
+      8400008484000084840000848400008484000084840000848400008484000084
+      8400008484000000000000000000000000008400000084000000840000008400
+      0000840000008400000084000000840000008400000084000000840000008400
+      0000840000000000000000000000000000008400840084008400840084008400
+      8400840084008400840084008400840084008400840084008400840084008400
+      8400840084000000000000000000000000008484000084840000848400008484
+      0000848400008484000084840000848400008484000084840000848400008484
+      0000848400000000000000000000000000000000000000848400008484000084
+      8400008484000084840000848400008484000084840000848400008484000084
+      8400008484000084840000000000000000000000000084000000840000008400
+      0000840000008400000084000000840000008400000084000000840000008400
+      0000840000008400000000000000000000000000000084008400840084008400
+      8400840084008400840084008400840084008400840084008400840084008400
+      8400840084008400840000000000000000000000000084840000848400008484
+      0000848400008484000084840000848400008484000084840000848400008484
+      0000848400008484000000000000000000000000000000000000008484000084
+      8400008484000084840000848400008484000084840000848400008484000084
+      8400008484000084840000848400000000000000000000000000840000008400
+      0000840000008400000084000000840000008400000084000000840000008400
+      0000840000008400000084000000000000000000000000000000840084008400
+      8400840084008400840084008400840084008400840084008400840084008400
+      8400840084008400840084008400000000000000000000000000848400008484
+      0000848400008484000084840000848400008484000084840000848400008484
+      0000848400008484000084840000000000000000000000000000000000000084
+      8400008484000084840000848400008484000084840000848400008484000084
+      8400008484000084840000848400008484000000000000000000000000008400
+      0000840000008400000084000000840000008400000084000000840000008400
+      0000840000008400000084000000840000000000000000000000000000008400
+      8400840084008400840084008400840084008400840084008400840084008400
+      8400840084008400840084008400840084000000000000000000000000008484
+      0000848400008484000084840000848400008484000084840000848400008484
+      0000848400008484000084840000848400000000000000000000000000000000
+      0000008484000084840000848400008484000084840000848400008484000084
+      8400008484000084840000848400000000000000000000000000000000000000
+      0000840000008400000084000000840000008400000084000000840000008400
+      0000840000008400000084000000000000000000000000000000000000000000
+      0000840084008400840084008400840084008400840084008400840084008400
+      8400840084008400840084008400000000000000000000000000000000000000
+      0000848400008484000084840000848400008484000084840000848400008484
+      0000848400008484000084840000000000000000000000000000000000000000
+      0000000000000084840000848400008484000084840000848400008484000084
+      8400008484000084840000000000000000000000000000000000000000000000
+      0000000000008400000084000000840000008400000084000000840000008400
+      0000840000008400000000000000000000000000000000000000000000000000
+      0000000000008400840084008400840084008400840084008400840084008400
+      8400840084008400840000000000000000000000000000000000000000000000
+      0000000000008484000084840000848400008484000084840000848400008484
+      0000848400008484000000000000000000000000000000000000000000000000
+      0000000000000000000000848400008484000084840000848400008484000084
+      8400008484000000000000000000000000000000000000000000000000000000
+      0000000000000000000084000000840000008400000084000000840000008400
+      0000840000000000000000000000000000000000000000000000000000000000
+      0000000000000000000084008400840084008400840084008400840084008400
+      8400840084000000000000000000000000000000000000000000000000000000
+      0000000000000000000084840000848400008484000084840000848400008484
+      0000848400000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000008484000084840000848400008484000084
+      8400000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000840000008400000084000000840000008400
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000840084008400840084008400840084008400
+      8400000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000848400008484000084840000848400008484
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000084840000848400008484000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000008400000084000000840000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000008400840084008400840084000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000008484000084840000848400000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000848400000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000084000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000084008400000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000084840000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000008400000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000840000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000840000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000840000008400000084000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000084000000840000008400000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000840000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000084000000840000008400000084000000840000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000008400000084000000840000008400000084000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000840000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      8400000084000000840000008400000084000000840000008400000000000000
+      0000000000000000000000000000000000000000000000000000000000000084
+      0000008400000084000000840000008400000084000000840000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000084000000840000008400000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000084000000
+      8400000084000000840000008400000084000000840000008400000084000000
+      0000000000000000000000000000000000000000000000000000008400000084
+      0000008400000084000000840000008400000084000000840000008400000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00008400000084000000FFFF000084000000FFFF000084000000840000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000008400000084000000
+      8400000084000000840000008400000084000000840000008400000084000000
+      8400000000000000000000000000000000000000000000840000008400000084
+      0000008400000084000000840000008400000084000000840000008400000084
+      0000000000000000000000000000000000000000000000000000000000000000
+      000084000000FFFF0000FFFF000084000000FFFF0000FFFF0000840000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000840000008400000084000000
+      8400000084000000840000008400000084000000840000008400000084000000
+      8400000084000000000000000000000000000084000000840000008400000084
+      0000008400000084000000840000008400000084000000840000008400000084
+      0000008400000000000000000000000000000000000000000000000000008400
+      0000FFFF0000FFFF0000FFFF000084000000FFFF0000FFFF0000FFFF00008400
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000008400000084000000
+      8400000084000000840000008400000084000000840000008400000084000000
+      8400000084000000840000000000000000000000000000840000008400000084
+      0000008400000084000000840000008400000084000000840000008400000084
+      0000008400000084000000000000000000008400000084000000840000008400
+      0000840000008400000084000000840000008400000084000000840000008400
+      0000840000008400000084000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000084000000
+      8400000084000000840000008400000084000000840000008400000084000000
+      8400000084000000840000008400000000000000000000000000008400000084
+      0000008400000084000000840000008400000084000000840000008400000084
+      0000008400000084000000840000000000000000000000000000000000008400
+      0000FFFF0000FFFF0000FFFF000084000000FFFF0000FFFF0000FFFF00008400
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      8400000084000000840000008400000084000000840000008400000084000000
+      8400000084000000840000008400000084000000000000000000000000000084
+      0000008400000084000000840000008400000084000000840000008400000084
+      0000008400000084000000840000008400000000000000000000000000000000
+      000084000000FFFF0000FFFF000084000000FFFF0000FFFF0000840000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000084000000840000008400000084000000840000008400000084000000
+      8400000084000000840000008400000000000000000000000000000000000000
+      0000008400000084000000840000008400000084000000840000008400000084
+      0000008400000084000000840000000000000000000000000000000000000000
+      00008400000084000000FFFF000084000000FFFF000084000000840000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000840000008400000084000000840000008400000084000000
+      8400000084000000840000000000000000000000000000000000000000000000
+      0000000000000084000000840000008400000084000000840000008400000084
+      0000008400000084000000000000000000000000000000000000000000000000
+      0000000000000000000084000000840000008400000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000008400000084000000840000008400000084000000
+      8400000084000000000000000000000000000000000000000000000000000000
+      0000000000000000000000840000008400000084000000840000008400000084
+      0000008400000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000840000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000084000000840000008400000084000000
+      8400000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000008400000084000000840000008400000084
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000840000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000840000008400000084000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000084000000840000008400000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000840000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000008400000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000840000000000000000
+      000000000000000000000000000000000000424D3E000000000000003E000000
+      2800000040000000500000000100010000000000800200000000000000000000
+      000000000000000000000000FFFFFF0000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000FDFFFDFFFDFFFDFFF8FFF8FFF8FFF8FF
+      F07FF07FF07FF07FE03FE03FE03FE03FC01FC01FC01FC01F800F800F800F800F
+      00070007000700078003800380038003C001C001C001C001E000E000E000E000
+      F001F001F001F001F803F803F803F803FC07FC07FC07FC07FE0FFE0FFE0FFE0F
+      FF1FFF1FFF1FFF1FFFBFFFBFFFBFFFBFFDFFFDFFFDFFFDFFF8FFF8FFF8FFF8FF
+      F07FF07FF07FF07FE03FE03FE03FE03FC01FC01FC01FC01F800F800F800F800F
+      00070007000700078003800380038003C001C001C001C001E000E000E000E000
+      F001F001F001F001F803F803F803F803FC07FC07FC07FC07FE0FFE0FFE0FFE0F
+      FF1FFF1FFF1FFF1FFFBFFFBFFFBFFFBFFDFFFDFFFDFFFDFFF8FFF8FFF8FFF8FF
+      F07FF07FF07FF07FE03FE03FE03FE03FC01FC01FC01FC01F800F800F800F800F
+      00070007000700078003800380038003C001C001C001C001E000E000E000E000
+      F001F001F001F001F803F803F803F803FC07FC07FC07FC07FE0FFE0FFE0FFE0F
+      FF1FFF1FFF1FFF1FFFBFFFBFFFBFFFBFFFFFFDFFFDFFFDFFFEFFF8FFF8FFF8FF
+      FEFFF07FF07FF07FFEFFE03FE03FE03FFC7FC01FC01FC01FF01F800F800F800F
+      F01F000700070007E00F8003800380030001C001C001C001E00FE000E000E000
+      F01FF001F001F001F01FF803F803F803FC7FFC07FC07FC07FEFFFE0FFE0FFE0F
+      FEFFFF1FFF1FFF1FFEFFFFBFFFBFFFBF00000000000000000000000000000000
+      000000000000}
+  end
+  object PopupMenu: TPopupMenu
+    Images = ImageList
+    Left = 148
+    Top = 248
+    object N1: TMenuItem
+      Action = actNew
+    end
+    object N2: TMenuItem
+      Action = actDel
+    end
+    object N3: TMenuItem
+      Action = actEdit
+    end
+  end
+  object ActionList: TActionList
+    Images = ImageList
+    Left = 220
+    Top = 248
+    object actNew: TAction
+      Caption = #1044#1086#1073#1072#1074#1080#1090#1100
+      Hint = #1044#1086#1073#1072#1074#1080#1090#1100
+      ImageIndex = 16
+      ShortCut = 45
+    end
+    object actDel: TAction
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+      Hint = #1059#1076#1072#1083#1080#1090#1100
+      ImageIndex = 17
+      ShortCut = 16430
+    end
+    object actEdit: TAction
+      Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+      Hint = #1048#1079#1084#1077#1085#1080#1090#1100
+      ImageIndex = 18
+      ShortCut = 16397
+    end
+  end
+  object dsLot: TDataSource
+    Left = 120
+    Top = 72
+  end
+end

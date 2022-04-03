@@ -1,0 +1,591 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{89ee6899-8c88-47d8-9316-05b6bc807525}</ProjectGuid>
+    <MainSource>Kis.dpr</MainSource>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>Exe\Kis.exe</DCC_DependencyCheckOutputName>
+    <DCC_UsePackage>EzGISD7</DCC_UsePackage>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_Define>RELEASE</DCC_Define>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_Define>DEBUG</DCC_Define>
+    <DCC_ExeOutput>Exe</DCC_ExeOutput>
+    <DCC_DcuOutput>Dcu</DCC_DcuOutput>
+    <DCC_ObjOutput>Dcu</DCC_ObjOutput>
+    <DCC_HppOutput>Dcu</DCC_HppOutput>
+    <DCC_UnitSearchPath>..\shared\Dcu;..\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;C:\Projects\kis\kis\Libs</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\shared\Dcu;..\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;C:\Projects\kis\kis\Libs</DCC_ResourcePath>
+    <DCC_ObjPath>..\shared\Dcu;..\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;C:\Projects\kis\kis\Libs</DCC_ObjPath>
+    <DCC_IncludePath>..\shared\Dcu;..\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;C:\Projects\kis\kis\Libs</DCC_IncludePath>
+    <DCC_MapFile>3</DCC_MapFile>
+    <DCC_Optimize>False</DCC_Optimize>
+    <DCC_IntegerOverflowCheck>True</DCC_IntegerOverflowCheck>
+    <DCC_RangeChecking>True</DCC_RangeChecking>
+    <DCC_GenerateStackFrames>True</DCC_GenerateStackFrames>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType>VCLApplication</Borland.ProjectType>
+    <BorlandProject>
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">True</VersionInfo><VersionInfo Name="MajorVer">2</VersionInfo><VersionInfo Name="MinorVer">7</VersionInfo><VersionInfo Name="Release">31</VersionInfo><VersionInfo Name="Build">916</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1049</VersionInfo><VersionInfo Name="CodePage">1251</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">МКП УГА г.Воронежа</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Информационная сиситема МКП УГА</VersionInfoKeys><VersionInfoKeys Name="FileVersion">2.7.31.916</VersionInfoKeys><VersionInfoKeys Name="InternalName">Kis</VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename">Kis.exe</VersionInfoKeys><VersionInfoKeys Name="ProductName">Информационная система МКП УГА</VersionInfoKeys><VersionInfoKeys Name="ProductVersion">2.7</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">Kis.dpr</Source></Source><Excluded_Packages>
+      <Excluded_Packages Name="$(BDS)\bin\dcloffice2k100.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+      <Excluded_Packages Name="$(BDS)\bin\dclofficexp100.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+    </Excluded_Packages></Delphi.Personality><ModelSupport>True</ModelSupport></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="Kis.dpr">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <DCCReference Include="..\Ms3\Source\uMStGISEzActionsAutoScroll.pas" />
+    <DCCReference Include="..\Ms3\Source\uMStModuleFTPConnection.pas">
+      <Form>MStFTPConnection</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Libs\AConnect6.pas">
+      <Form>ConnectForm</Form>
+    </DCCReference>
+    <DCCReference Include="Libs\ADBActns6.pas" />
+    <DCCReference Include="Libs\AFile6.pas" />
+    <DCCReference Include="Libs\AGraph6.pas" />
+    <DCCReference Include="Libs\AGrids6.pas" />
+    <DCCReference Include="Libs\APrinter6.pas" />
+    <DCCReference Include="Libs\AProc6.pas" />
+    <DCCReference Include="Libs\AString6.pas" />
+    <DCCReference Include="Libs\ComUtil.pas" />
+    <DCCReference Include="Libs\Geodesy.pas" />
+    <DCCReference Include="Libs\GeoObjects.pas" />
+    <DCCReference Include="Libs\GrphUtil.pas" />
+    <DCCReference Include="Libs\ImageBox.pas" />
+    <DCCReference Include="Libs\KavUtils.pas" />
+    <DCCReference Include="Libs\Sort6.pas">
+      <Form>SortForm</Form>
+    </DCCReference>
+    <DCCReference Include="Libs\StrUtil.pas" />
+    <DCCReference Include="Source\Account.pas">
+      <Form>AccountForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Accounts.pas">
+      <Form>AccountsForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Address.pas">
+      <Form>AddressForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Addresses.pas">
+      <Form>AddressesForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\AddressWorks.pas">
+      <Form>AddressWorksForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Allotment.pas">
+      <Form>AllotmentForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\AllotmentOwner.pas">
+      <Form>AllotmentOwnerForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\AllotmentPrintEdit.pas">
+      <Form>AddEditForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\AllotmentReportLibrary.pas" />
+    <DCCReference Include="Source\Allotments.pas">
+      <Form>AllotmentsForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\BFirmTypes.pas">
+      <Form>BFirmTypesForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\BObjectTypes.pas">
+      <Form>BObjectTypesForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Buildings.pas">
+      <Form>BuildingsForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Config.pas">
+      <Form>ConfigForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Contour.pas">
+      <Form>ContourForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\CoordProp.pas">
+      <Form>CoordPropForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\DecImprt.pas">
+      <Form>DecreeImportForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Decree.pas">
+      <Form>DecreeForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Decrees.pas">
+      <Form>DecreesForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\DecreeTypes.pas">
+      <Form>DecreeTypesForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\DecReplace.pas">
+      <Form>DecReplaceForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\DocTypes.pas">
+      <Form>DocTypesForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Draw.pas" />
+    <DCCReference Include="Source\ExportToText.pas" />
+    <DCCReference Include="Source\FindDlg.pas">
+      <Form>FindForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\FirmName.pas">
+      <Form>FirmNameForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\IBCHILD.pas">
+      <Form>IBChildForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Office.pas">
+      <Form>OfficeForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Offices.pas">
+      <Form>OfficesForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\People.pas">
+      <Form>PeopleForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Point.pas">
+      <Form>PointForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\PPDTypes.pas">
+      <Form>PPDTypesForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\PrintOtvod.pas">
+      <Form>OtvodPrintForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\PrintSel.pas">
+      <Form>PrintSelForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\PrintSelAdd.pas">
+      <Form>PrintSelAddForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\PropForms.pas">
+      <Form>PropFormsForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Regions.pas">
+      <Form>RegionsForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\ReNum.pas">
+      <Form>RenumForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Report.pas">
+      <Form>ReportForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Reports.pas">
+      <Form>ReportsForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\SelectAddress.pas">
+      <Form>frmSelectAddress</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Signatures.pas">
+      <Form>SignaturesForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Soglass.pas">
+      <Form>Soglass1Form</Form>
+    </DCCReference>
+    <DCCReference Include="Source\SoglassDoc.pas">
+      <Form>SoglassDocForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\SoglassDocAdd.pas">
+      <Form>SoglassDocAddForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Street.pas">
+      <Form>StreetForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\Streets.pas">
+      <Form>StreetsForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uDrawTransparent.pas" />
+    <DCCReference Include="Source\uImageHistogram.pas" />
+    <DCCReference Include="Source\uKisAbout.pas">
+      <Form>AboutForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisAccontForm.pas">
+      <Form>KisAccountForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisAccounts.pas">
+      <Form>KisAccountsMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisAddressEditor.pas">
+      <Form>KisAddressEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisAllotmentClasses.pas" />
+    <DCCReference Include="Source\uKisAppModule.pas">
+      <Form>KisAppModule</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisArchivalDocsEditor.pas">
+      <Form>KisArchivalDocsEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisArchivalDocsMngr.pas">
+      <Form>KisArchivalDocsMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisBankAccountsForm.pas">
+      <Form>KisBankAccountsForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisBanks.pas">
+      <Form>KisBankMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisClasses.pas">
+      <Form>KisMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisComparedImageForm.pas">
+      <Form>KisComparedImageForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisComparedImageListForm.pas">
+      <Form>KisComparedImageListForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisConsts.pas" />
+    <DCCReference Include="Source\uKisContragentAddresses.pas">
+      <Form>KisContragentAddressMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisContragentCertificates.pas">
+      <Form>KisContragentCertificateMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisContragentDocuments.pas">
+      <Form>KisContragentDocumentMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisContragentEditor.pas">
+      <Form>KisContragentEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisContragentOrgEditor.pas">
+      <Form>KisContragentOrgEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisContragentPersonEditor.pas">
+      <Form>KisContragentPersonEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisContragentPrivateEditor.pas">
+      <Form>KisContragentPrivateEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisContragents.pas">
+      <Form>KisContragentMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisContragentsComparison.pas">
+      <Form>FmContragentsComparison</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisContragentTypeDialog.pas">
+      <Form>KisContragentTypeDialog</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisDecreeHeaderForm.pas">
+      <Form>KisDecreeHeaderForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisDecreeProjectEditor.pas">
+      <Form>KisDecreeProjectEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisDecreeProjects.pas">
+      <Form>KisDecreeProjectMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisDecreeProjectsView.pas">
+      <Form>KisDecreeProjectsView</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisDecrees.pas">
+      <Form>KisDecreeMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisDocTypes.pas">
+      <Form>KisDocTypeMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisEntityEditor.pas">
+      <Form>KisEntityEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisExceptions.pas" />
+    <DCCReference Include="Source\uKisEzActions.pas" />
+    <DCCReference Include="Source\uKisFactory.pas" />
+    <DCCReference Include="Source\uKisFileReport.pas" />
+    <DCCReference Include="Source\uKisFileReportForm.pas">
+      <Form>KisFileReportForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisFilters.pas" />
+    <DCCReference Include="Source\uKisFirmEditor.pas">
+      <Form>KisFirmEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisFirms.pas">
+      <Form>KisFirmMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisGeoPunkts.pas">
+      <Form>KisGeoPunktsMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisGeoPunktsEditor.pas">
+      <Form>KisGeoPunktsEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisGivenDocListEditor.pas">
+      <Form>KisArchDocMoveEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisGivenMapListEditor.pas" />
+    <DCCReference Include="Source\uKisGivenScanEditor.pas" />
+    <DCCReference Include="Source\uKisGivenScanEditor2.pas">
+      <Form>KisGivenScanEditor2</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisImagesViewFactory.pas" />
+    <DCCReference Include="Source\uKisImageViewer.pas" />
+    <DCCReference Include="Source\uKisINNCheck.pas">
+      <Form>KisCheckForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisIntf.pas" />
+    <DCCReference Include="Source\uKisLetterEditor.pas">
+      <Form>KisLetterEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisLetterPassingEditor.pas">
+      <Form>KisLetterPassingEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisLetters.pas">
+      <Form>KisLetterMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisLettersView.pas">
+      <Form>KisLettersView</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisLetterVisaEditor.pas">
+      <Form>KisLetterVisaEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisLicensedOrgEditor.pas">
+      <Form>KisLicensedOrgEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisLicensedOrgs.pas">
+      <Form>KisLicensedOrgMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMainView.pas">
+      <Form>KisMainView</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMap500.pas">
+      <Form>KisMap500Mngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMap500Editor.pas">
+      <Form>KisMap500Editor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMap500Graphics.pas">
+      <Form>KisMap500Graphics</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMapClasses.pas" />
+    <DCCReference Include="Source\uKisMapHistoryClasses.pas" />
+    <DCCReference Include="Source\uKisMapHistoryEditor.pas">
+      <Form>KisMapHistoryEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMapPrint.pas" />
+    <DCCReference Include="Source\uKisMapPrintDialog1.pas">
+      <Form>KisMapPrintDialogForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMapScanEditor.pas">
+      <Form>KisMapScanEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMapScanGeometry.pas" />
+    <DCCReference Include="Source\uKisMapScanIntf.pas" />
+    <DCCReference Include="Source\uKisMapScanLoadForm2.pas">
+      <Form>KisMapScanLoadForm2</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMapScans.pas">
+      <Form>KisMapScansMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMapScansView.pas">
+      <Form>KisMapScansView</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMapScanViewGiveOuts.pas">
+      <Form>KisMapScanViewGiveOutMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMapsMngrView.pas">
+      <Form>KisMapsMngrView</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMapTracingEditor.pas">
+      <Form>KisMapTracingEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMapTracingGivingEditor.pas">
+      <Form>KisMapTracingGivingEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMapTracings.pas">
+      <Form>KisMapTracingMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMissingScansDlg.pas">
+      <Form>MissingScansForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisMngrView.pas">
+      <Form>KisMngrView</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisNomenclatureCalc.pas">
+      <Form>KisNomenclatureCalc</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisNomenclatureDlg.pas">
+      <Form>KisNomenclatureDlg</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisOfficeDocEditor.pas">
+      <Form>KisOfficeDocEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisOfficeDocs.pas">
+      <Form>KisOfficeDocMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisOfficeDocsView.pas">
+      <Form>KisOfficeDocsView</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisOffices.pas">
+      <Form>KisOfficeMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisOrderEditor.pas">
+      <Form>KisOrderEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisOrders.pas">
+      <Form>KisOrderMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisOrdersImport1CView.pas">
+      <Form>OrderImport1CForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisOrgs.pas">
+      <Form>KisOrgMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisOutcomingLetterEditor.pas">
+      <Form>KisOutcomingLetterEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisOutcomingLetters.pas">
+      <Form>kisOutcomingLetterMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisPasswordDlg.pas">
+      <Form>RegForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisPastePointsOptionsDialog.pas">
+      <Form>PastePointsOptionsDialog</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisPeople.pas">
+      <Form>KisPeopleMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisPrintModule.pas">
+      <Form>KisPrintModule</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisProgressForm.pas">
+      <Form>KisProgressForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisProjectsJournal.pas">
+      <Form>KisProjectsJournalMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisScanHistoryFiles.pas" />
+    <DCCReference Include="Source\uKisScanImagesViewForm.pas">
+      <Form>KisScanImagesViewForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisScanningListEditor.pas">
+      <Form>KisScanningListEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisScanOrderEditor.pas">
+      <Form>KisScanOrderEditor</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisScanOrders.pas">
+      <Form>KisScanOrdersMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisScanOrdersView.pas">
+      <Form>KisScanOrdersView</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisScanTakeBackImageViewForm.pas">
+      <Form>KisScanTakeBackImageViewForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisSearchClasses.pas" />
+    <DCCReference Include="Source\uKisSearchDialog.pas">
+      <Form>KisSearchDialog</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisSelectMainWork.pas">
+      <Form>KisConnectWorkForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisSortDialog.pas">
+      <Form>KisSortDialog</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisSQLClasses.pas">
+      <Form>KisSQLMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisStreets.pas">
+      <Form>KisStreetMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisStreetSelectorForm.pas">
+      <Form>KisStreetSelectorForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisTakeBackFileProcessor.pas" />
+    <DCCReference Include="Source\uKisTakeBackFiles.pas" />
+    <DCCReference Include="Source\uKisUtils.pas" />
+    <DCCReference Include="Source\uMapScanFiles.pas" />
+    <DCCReference Include="Source\uMfClasses.pas" />
+    <DCCReference Include="Source\Villages.pas">
+      <Form>VillagesForm</Form>
+    </DCCReference>
+    <DCCReference Include="Source\WorkTypes.pas">
+      <Form>WorkTypesForm</Form>
+    </DCCReference>
+    <None Include="ModelSupport_Kis\ADB6\default.txvpck" />
+    <None Include="ModelSupport_Kis\Allotments\default.txaPackage" />
+    <None Include="ModelSupport_Kis\Allotments\default.txvpck" />
+    <None Include="ModelSupport_Kis\Allotment\default.txaPackage" />
+    <None Include="ModelSupport_Kis\Allotment\default.txvpck" />
+    <None Include="ModelSupport_Kis\AString6\default.txvpck" />
+    <None Include="ModelSupport_Kis\Contour\default.txaPackage" />
+    <None Include="ModelSupport_Kis\DecImprt\default.txaPackage" />
+    <None Include="ModelSupport_Kis\default.txaPackage" />
+    <None Include="ModelSupport_Kis\default.txvpck" />
+    <None Include="ModelSupport_Kis\Draw\default.txaPackage" />
+    <None Include="ModelSupport_Kis\IBCHILD\default.txaPackage" />
+    <None Include="ModelSupport_Kis\IBCHILD\default.txvpck" />
+    <None Include="ModelSupport_Kis\Kis\default.txvpck" />
+    <None Include="ModelSupport_Kis\Reports\default.txaPackage" />
+    <None Include="ModelSupport_Kis\SoglassDoc\default.txaPackage" />
+    <None Include="ModelSupport_Kis\Soglass\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisAllotmentClasses\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisAppModule\default.txvpck" />
+    <None Include="ModelSupport_Kis\uKisConsts\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisEntityEditor\default.txvpck" />
+    <None Include="ModelSupport_Kis\uKisFactory\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisFilters\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisGivenScanEditor2\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisGivenScanEditor2\default.txvpck" />
+    <None Include="ModelSupport_Kis\uKisImageListForm\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisImagesViewFactory\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisImageViewer\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisIntf\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisMainView\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisMapClasses\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisMapScanEditor\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisMapScanEditor\default.txvpck" />
+    <None Include="ModelSupport_Kis\uKisMapScanGeometry\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisMapScanGeometry\default.txvpck" />
+    <None Include="ModelSupport_Kis\uKisMapScanIntf\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisMapScansView\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisMapScans\default.txvpck" />
+    <None Include="ModelSupport_Kis\uKisMap\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisMap\default.txvpck" />
+    <None Include="ModelSupport_Kis\uKisScanHistoryFiles\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisScanOrders\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisScanOrders\default.txvpck" />
+    <None Include="ModelSupport_Kis\uMapScanFiles\default.txaPackage" />
+  </ItemGroup>
+</Project>

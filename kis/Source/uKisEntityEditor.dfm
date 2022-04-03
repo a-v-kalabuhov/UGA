@@ -1,0 +1,74 @@
+object KisEntityEditor: TKisEntityEditor
+  Left = 235
+  Top = 230
+  BorderStyle = bsDialog
+  Caption = 'KisEntityEditor'
+  ClientHeight = 390
+  ClientWidth = 534
+  Color = clBtnFace
+  Font.Charset = RUSSIAN_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object HintWarnLabel: TLabel
+    Left = 55
+    Top = 362
+    Width = 227
+    Height = 13
+    Alignment = taCenter
+    Caption = #1046#1077#1083#1090#1099#1077' '#1087#1086#1083#1103' '#1086#1073#1103#1079#1072#1090#1077#1083#1100#1085#1099' '#1076#1083#1103' '#1079#1072#1087#1086#1083#1085#1077#1085#1080#1103'!'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsUnderline]
+    ParentFont = False
+    Layout = tlCenter
+  end
+  object btnOk: TButton
+    Left = 370
+    Top = 357
+    Width = 75
+    Height = 25
+    Caption = '&'#1054#1050
+    TabOrder = 0
+    OnClick = btnOkClick
+  end
+  object btnCancel: TButton
+    Left = 451
+    Top = 357
+    Width = 75
+    Height = 25
+    Caption = #1054'&'#1090#1084#1077#1085#1072
+    ModalResult = 2
+    TabOrder = 1
+    OnClick = btnCancelClick
+  end
+  object Alert: TJvDesktopAlert
+    Location.Position = dapCustom
+    Location.Top = 0
+    Location.Left = 0
+    Location.Width = 200
+    Location.Height = 120
+    StyleOptions.DisplayDuration = 10000
+    HeaderFont.Charset = DEFAULT_CHARSET
+    HeaderFont.Color = clWindowText
+    HeaderFont.Height = -11
+    HeaderFont.Name = 'Tahoma'
+    HeaderFont.Style = [fsBold]
+    ShowHint = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    Buttons = <>
+    Left = 8
+    Top = 8
+  end
+end

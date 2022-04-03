@@ -1,0 +1,2 @@
+inherited KisProjectsJournalMngr: TKisProjectsJournalMngr
+end

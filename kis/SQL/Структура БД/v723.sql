@@ -1,0 +1,652 @@
+DELETE FROM LETTERS_ORDERS WHERE (ORDERS_ID IS NULL) OR (LETTERS_ID IS NULL);
+
+ALTER TABLE LETTERS_ORDERS
+ADD LETTERS_ID2 ID
+NOT NULL; 
+
+UPDATE LETTERS_ORDERS
+SET LETTERS_ID2 = LETTERS_ID;
+
+ALTER TABLE LETTERS_ORDERS
+ADD ORDERS_ID2 ID
+NOT NULL;
+
+UPDATE LETTERS_ORDERS
+SET ORDERS_ID2 = orders_id;
+
+DROP INDEX LETTERS_ORDERS_IDX1;
+DROP INDEX LETTERS_ORDERS_IDX2;
+DROP INDEX LETTERS_ORDERS_IDX3;
+
+DROP TRIGGER ORDERS_AD0;
+DROP TRIGGER LETTERS_AD0;
+
+
+SET TERM ^ ;
+
+CREATE OR ALTER TRIGGER OFFICE_DOC_LETTERS_AD0 FOR OFFICE_DOC_LETTERS
+ACTIVE AFTER DELETE POSITION 0
+AS
+BEGIN
+  --DELETE FROM LETTERS_ORDERS WHERE LETTERS_ID=OLD.LETTERS_ID AND KIND = 0;
+END
+^
+
+CREATE OR ALTER PROCEDURE SAVE_ORDER2 (
+    ID INTEGER,
+    OFFICES_ID INTEGER,
+    DOC_NUMBER VARCHAR(10),
+    DOC_DATE DATE,
+    ORDER_NUMBER VARCHAR(10),
+    ORDER_DATE DATE,
+    CONTRAGENTS_ID INTEGER,
+    NDS NUMERIC(5,2),
+    SUMMA NUMERIC(9,2),
+    SUM_NDS NUMERIC(9,2),
+    CHECKED SMALLINT,
+    PAY_DATE DATE,
+    EXECUTOR VARCHAR(50),
+    ACT_DATE DATE,
+    CONTRACT_NUMBER VARCHAR(10),
+    OBJECT_ADDRESS VARCHAR(120),
+    CUSTOMER VARCHAR(500),
+    VAL_PERIOD SMALLINT,
+    TICKET VARCHAR(10),
+    INFORMATION VARCHAR(20),
+    MARK_EXECUTOR SMALLINT,
+    SUM_BASE NUMERIC(9,2),
+    CANCELLED SMALLINT,
+    PEOPLE_ID INTEGER,
+    PAYER_ID INTEGER,
+    PAYER_CUSTOMER VARCHAR(500),
+    CUSTOMER_BASE VARCHAR(255),
+    PRINT_WORKS_VALUE SMALLINT,
+    PAYER_ACCOUNT VARCHAR(20),
+    PAYER_BANK_ID INTEGER,
+    PAYER_ACCOUNT_TYPE SMALLINT,
+    OFFICE_DOCS_ID INTEGER,
+    CLOSED SMALLINT,
+    LETTERS_ID INTEGER)
+AS
+BEGIN
+  IF (EXISTS(SELECT ID FROM ORDERS WHERE (ID = :ID))) THEN
+    UPDATE ORDERS
+    SET OFFICES_ID = :OFFICES_ID,
+        DOC_NUMBER = :DOC_NUMBER,
+        DOC_DATE = :DOC_DATE,
+        ORDER_NUMBER = :ORDER_NUMBER,
+        ORDER_DATE = :ORDER_DATE,
+        CONTRAGENTS_ID = :CONTRAGENTS_ID,
+        NDS = :NDS,
+        SUMMA = :SUMMA,
+        SUM_NDS = :SUM_NDS,
+        CHECKED = :CHECKED,
+        PAY_DATE = :PAY_DATE,
+        EXECUTOR = :EXECUTOR,
+        ACT_DATE = :ACT_DATE,
+        CONTRACT_NUMBER = :CONTRACT_NUMBER,
+        OBJECT_ADDRESS = :OBJECT_ADDRESS,
+        CUSTOMER = :CUSTOMER,
+        CUSTOMER_BASE = :CUSTOMER_BASE,
+        VAL_PERIOD = :VAL_PERIOD,
+        TICKET = :TICKET,
+        INFORMATION = :INFORMATION,
+        MARK_EXECUTOR = :MARK_EXECUTOR,
+        SUM_BASE = :SUM_BASE,
+        CANCELLED = :CANCELLED,
+        PEOPLE_ID = :PEOPLE_ID,
+        PAYER_ID = :PAYER_ID,
+        PAYER_CUSTOMER = :PAYER_CUSTOMER,
+        PRINT_WORKS_VALUE = :PRINT_WORKS_VALUE,
+        PAYER_ACCOUNT = :PAYER_ACCOUNT,
+        PAYER_BANK_ID = :PAYER_BANK_ID,
+        PAYER_ACCOUNT_TYPE = :PAYER_ACCOUNT_TYPE,
+        OFFICE_DOCS_ID = :OFFICE_DOCS_ID,
+        CLOSED = :CLOSED
+    WHERE (ID = :ID);
+  ELSE
+    INSERT INTO ORDERS (
+        ID,
+        OFFICES_ID,
+        DOC_NUMBER,
+        DOC_DATE,
+        ORDER_NUMBER,
+        ORDER_DATE,
+        CONTRAGENTS_ID,
+        NDS,
+        SUMMA,
+        SUM_NDS,
+        CHECKED,
+        PAY_DATE,
+        EXECUTOR,
+        ACT_DATE,
+        CONTRACT_NUMBER,
+        OBJECT_ADDRESS,
+        CUSTOMER,
+        CUSTOMER_BASE,
+        VAL_PERIOD,
+        TICKET,
+        INFORMATION,
+        MARK_EXECUTOR,
+        SUM_BASE,
+        CANCELLED,
+        PEOPLE_ID,
+        PAYER_ID,
+        PAYER_CUSTOMER,
+        PRINT_WORKS_VALUE,
+        PAYER_ACCOUNT,
+        PAYER_BANK_ID,
+        PAYER_ACCOUNT_TYPE,
+        OFFICE_DOCS_ID,
+        CLOSED)
+    VALUES (
+        :ID,
+        :OFFICES_ID,
+        :DOC_NUMBER,
+        :DOC_DATE,
+        :ORDER_NUMBER,
+        :ORDER_DATE,
+        :CONTRAGENTS_ID,
+        :NDS,
+        :SUMMA,
+        :SUM_NDS,
+        :CHECKED,
+        :PAY_DATE,
+        :EXECUTOR,
+        :ACT_DATE,
+        :CONTRACT_NUMBER,
+        :OBJECT_ADDRESS,
+        :CUSTOMER,
+        :CUSTOMER_BASE,
+        :VAL_PERIOD,
+        :TICKET,
+        :INFORMATION,
+        :MARK_EXECUTOR,
+        :SUM_BASE,
+        :CANCELLED,
+        :PEOPLE_ID,
+        :PAYER_ID,
+        :PAYER_CUSTOMER,
+        :PRINT_WORKS_VALUE,
+        :PAYER_ACCOUNT,
+        :PAYER_BANK_ID,
+        :PAYER_ACCOUNT_TYPE,
+        :OFFICE_DOCS_ID,
+        :CLOSED);
+   /* Удаляем старую ссылку на входящее письмо, заданное пользователем */
+--  DELETE FROM LETTERS_ORDERS WHERE ORDERS_ID = :ID AND KIND = 1;
+  /* Вставляем новую ссылку на входящее письмо, заданное пользователем */
+--  IF (:LETTERS_ID IS NOT NULL) THEN
+--    IF (NOT EXISTS(SELECT LETTERS_ID FROM LETTERS_ORDERS WHERE (ORDERS_ID = :ID) AND (LETTERS_ID = :LETTERS_ID))) THEN
+--        INSERT INTO LETTERS_ORDERS (LETTERS_ID, ORDERS_ID, KIND)
+--        VALUES (:LETTERS_ID, :ID, 1);
+END^
+
+CREATE OR ALTER PROCEDURE UPDATE_LETTERS_ORDERS_BY_OFDOCS (
+    OFF_DOC_ID INTEGER,
+    LETTER_ID INTEGER)
+AS
+BEGIN
+  IF (LETTER_ID IS NOT NULL) THEN
+  BEGIN
+      -- удаляем ссылки на заказы для письма, если эти заказы не были привязаны к письма пользователем
+      --DELETE FROM LETTERS_ORDERS
+      --WHERE (LETTERS_ID=:LETTER_ID) AND (KIND <> 1);
+      -- вставляем ссылки на заказы
+      -- это будут все заказы, связанные с документом отдела
+      IF (EXISTS(SELECT ID from ORDERS WHERE OFFICE_DOCS_ID=:OFF_DOC_ID)) THEN
+      BEGIN
+      --INSERT INTO LETTERS_ORDERS (LETTERS_ID, ORDERS_ID, KIND)
+      --SELECT :LETTER_ID, ID, 0
+      --FROM ORDERS
+      --WHERE OFFICE_DOCS_ID=:OFF_DOC_ID;
+      END
+  END
+END^
+
+CREATE OR ALTER PROCEDURE UPDATE_LETTERS_ORDERS_BY_ORDERS (
+    ORDER_ID INTEGER,
+    OFF_DOC_ID INTEGER)
+AS
+BEGIN
+  IF (ORDER_ID IS NOT NULL) THEN
+  BEGIN
+      --DELETE FROM LETTERS_ORDERS WHERE ORDERS_ID=:ORDER_ID AND KIND <> 1;
+      --
+      IF (EXISTS(SELECT ID FROM OFFICE_DOCS WHERE (ID=:OFF_DOC_ID) AND (LAST_LETTERS_ID IS NOT NULL))) THEN
+      BEGIN
+          --INSERT INTO LETTERS_ORDERS (LETTERS_ID, ORDERS_ID, KIND)
+          --SELECT LAST_LETTERS_ID, :ORDER_ID, 0
+          --FROM OFFICE_DOCS
+          --WHERE ID=:OFF_DOC_ID;
+      END
+  END
+END^
+
+CREATE OR ALTER trigger letters_ad0 for letters
+active after delete position 0
+AS
+BEGIN
+  --DELETE FROM LETTERS_ORDERS WHERE LETTERS_ID=OLD.ID;
+END^
+
+SET TERM ; ^
+
+ALTER TABLE LETTERS_ORDERS DROP ORDERS_ID;
+
+ALTER TABLE LETTERS_ORDERS DROP LETTERS_ID;
+
+ALTER TABLE LETTERS_ORDERS ALTER LETTERS_ID2 TO LETTERS_ID;
+
+ALTER TABLE LETTERS_ORDERS ALTER ORDERS_ID2 TO ORDERS_ID;
+
+ALTER TABLE LETTERS_ORDERS
+ADD CONSTRAINT PK_LETTERS_ORDERS
+PRIMARY KEY (LETTERS_ID,ORDERS_ID);
+
+ALTER TABLE LETTERS_ORDERS
+ADD CONSTRAINT FK_LETTERS_ORDERS_1
+FOREIGN KEY (LETTERS_ID)
+REFERENCES LETTERS(ID)
+ON DELETE CASCADE;
+
+ALTER TABLE LETTERS_ORDERS
+ADD CONSTRAINT FK_LETTERS_ORDERS_2
+FOREIGN KEY (ORDERS_ID)
+REFERENCES ORDERS(ID)
+ON DELETE CASCADE;
+
+SET TERM ^ ;
+
+CREATE OR ALTER TRIGGER OFFICE_DOC_LETTERS_AD0 FOR OFFICE_DOC_LETTERS
+ACTIVE AFTER DELETE POSITION 0
+AS
+BEGIN
+  DELETE FROM LETTERS_ORDERS
+  WHERE (LETTERS_ID=OLD.LETTERS_ID) AND (KIND = 0) AND
+        (ORDERS_ID IN (SELECT ID FROM ORDERS WHERE OFFICE_DOCS_ID=OLD.OFFICE_DOCS_ID));
+END^
+
+CREATE OR ALTER PROCEDURE UPDATE_LETTERS_ORDERS_BY_ORDERS (
+    ORDER_ID INTEGER,
+    OFF_DOC_ID INTEGER)
+AS
+BEGIN
+  IF (ORDER_ID IS NOT NULL) THEN
+  BEGIN
+      DELETE FROM LETTERS_ORDERS WHERE ORDERS_ID=:ORDER_ID AND KIND <> 1;
+      --
+      IF (EXISTS(SELECT ID FROM OFFICE_DOCS WHERE (ID=:OFF_DOC_ID) AND (LAST_LETTERS_ID IS NOT NULL))) THEN
+      BEGIN
+          INSERT INTO LETTERS_ORDERS (LETTERS_ID, ORDERS_ID, KIND)
+          SELECT LAST_LETTERS_ID, :ORDER_ID, 0
+          FROM OFFICE_DOCS
+          WHERE ID=:OFF_DOC_ID;
+      END
+  END
+END^
+
+CREATE OR ALTER PROCEDURE UPDATE_LETTERS_ORDERS_BY_OFDOCS (
+    OFF_DOC_ID INTEGER,
+    LETTER_ID INTEGER)
+AS
+BEGIN
+  IF (LETTER_ID IS NOT NULL) THEN
+  BEGIN
+      -- удаляем ссылки на заказы для письма, если эти заказы не были привязаны к письма пользователем
+      DELETE FROM LETTERS_ORDERS
+      WHERE (LETTERS_ID=:LETTER_ID) AND (KIND <> 1);
+      -- вставляем ссылки на заказы
+      -- это будут все заказы, связанные с документом отдела
+      IF (EXISTS(SELECT ID FROM ORDERS WHERE OFFICE_DOCS_ID=:OFF_DOC_ID)) THEN
+      BEGIN
+          INSERT INTO LETTERS_ORDERS (LETTERS_ID, ORDERS_ID, KIND)
+          SELECT :LETTER_ID, ID, 0
+          FROM ORDERS
+          WHERE OFFICE_DOCS_ID=:OFF_DOC_ID;
+      END
+  END
+END^
+
+CREATE OR ALTER PROCEDURE SAVE_ORDER2 (
+    ID INTEGER,
+    OFFICES_ID INTEGER,
+    DOC_NUMBER VARCHAR(10),
+    DOC_DATE DATE,
+    ORDER_NUMBER VARCHAR(10),
+    ORDER_DATE DATE,
+    CONTRAGENTS_ID INTEGER,
+    NDS NUMERIC(5,2),
+    SUMMA NUMERIC(9,2),
+    SUM_NDS NUMERIC(9,2),
+    CHECKED SMALLINT,
+    PAY_DATE DATE,
+    EXECUTOR VARCHAR(50),
+    ACT_DATE DATE,
+    CONTRACT_NUMBER VARCHAR(10),
+    OBJECT_ADDRESS VARCHAR(120),
+    CUSTOMER VARCHAR(500),
+    VAL_PERIOD SMALLINT,
+    TICKET VARCHAR(10),
+    INFORMATION VARCHAR(20),
+    MARK_EXECUTOR SMALLINT,
+    SUM_BASE NUMERIC(9,2),
+    CANCELLED SMALLINT,
+    PEOPLE_ID INTEGER,
+    PAYER_ID INTEGER,
+    PAYER_CUSTOMER VARCHAR(500),
+    CUSTOMER_BASE VARCHAR(255),
+    PRINT_WORKS_VALUE SMALLINT,
+    PAYER_ACCOUNT VARCHAR(20),
+    PAYER_BANK_ID INTEGER,
+    PAYER_ACCOUNT_TYPE SMALLINT,
+    OFFICE_DOCS_ID INTEGER,
+    CLOSED SMALLINT,
+    LETTERS_ID INTEGER)
+AS
+BEGIN
+  IF (EXISTS(SELECT ID FROM ORDERS WHERE (ID = :ID))) THEN
+    UPDATE ORDERS
+    SET OFFICES_ID = :OFFICES_ID,
+        DOC_NUMBER = :DOC_NUMBER,
+        DOC_DATE = :DOC_DATE,
+        ORDER_NUMBER = :ORDER_NUMBER,
+        ORDER_DATE = :ORDER_DATE,
+        CONTRAGENTS_ID = :CONTRAGENTS_ID,
+        NDS = :NDS,
+        SUMMA = :SUMMA,
+        SUM_NDS = :SUM_NDS,
+        CHECKED = :CHECKED,
+        PAY_DATE = :PAY_DATE,
+        EXECUTOR = :EXECUTOR,
+        ACT_DATE = :ACT_DATE,
+        CONTRACT_NUMBER = :CONTRACT_NUMBER,
+        OBJECT_ADDRESS = :OBJECT_ADDRESS,
+        CUSTOMER = :CUSTOMER,
+        CUSTOMER_BASE = :CUSTOMER_BASE,
+        VAL_PERIOD = :VAL_PERIOD,
+        TICKET = :TICKET,
+        INFORMATION = :INFORMATION,
+        MARK_EXECUTOR = :MARK_EXECUTOR,
+        SUM_BASE = :SUM_BASE,
+        CANCELLED = :CANCELLED,
+        PEOPLE_ID = :PEOPLE_ID,
+        PAYER_ID = :PAYER_ID,
+        PAYER_CUSTOMER = :PAYER_CUSTOMER,
+        PRINT_WORKS_VALUE = :PRINT_WORKS_VALUE,
+        PAYER_ACCOUNT = :PAYER_ACCOUNT,
+        PAYER_BANK_ID = :PAYER_BANK_ID,
+        PAYER_ACCOUNT_TYPE = :PAYER_ACCOUNT_TYPE,
+        OFFICE_DOCS_ID = :OFFICE_DOCS_ID,
+        CLOSED = :CLOSED
+    WHERE (ID = :ID);
+  ELSE
+    INSERT INTO ORDERS (
+        ID,
+        OFFICES_ID,
+        DOC_NUMBER,
+        DOC_DATE,
+        ORDER_NUMBER,
+        ORDER_DATE,
+        CONTRAGENTS_ID,
+        NDS,
+        SUMMA,
+        SUM_NDS,
+        CHECKED,
+        PAY_DATE,
+        EXECUTOR,
+        ACT_DATE,
+        CONTRACT_NUMBER,
+        OBJECT_ADDRESS,
+        CUSTOMER,
+        CUSTOMER_BASE,
+        VAL_PERIOD,
+        TICKET,
+        INFORMATION,
+        MARK_EXECUTOR,
+        SUM_BASE,
+        CANCELLED,
+        PEOPLE_ID,
+        PAYER_ID,
+        PAYER_CUSTOMER,
+        PRINT_WORKS_VALUE,
+        PAYER_ACCOUNT,
+        PAYER_BANK_ID,
+        PAYER_ACCOUNT_TYPE,
+        OFFICE_DOCS_ID,
+        CLOSED)
+    VALUES (
+        :ID,
+        :OFFICES_ID,
+        :DOC_NUMBER,
+        :DOC_DATE,
+        :ORDER_NUMBER,
+        :ORDER_DATE,
+        :CONTRAGENTS_ID,
+        :NDS,
+        :SUMMA,
+        :SUM_NDS,
+        :CHECKED,
+        :PAY_DATE,
+        :EXECUTOR,
+        :ACT_DATE,
+        :CONTRACT_NUMBER,
+        :OBJECT_ADDRESS,
+        :CUSTOMER,
+        :CUSTOMER_BASE,
+        :VAL_PERIOD,
+        :TICKET,
+        :INFORMATION,
+        :MARK_EXECUTOR,
+        :SUM_BASE,
+        :CANCELLED,
+        :PEOPLE_ID,
+        :PAYER_ID,
+        :PAYER_CUSTOMER,
+        :PRINT_WORKS_VALUE,
+        :PAYER_ACCOUNT,
+        :PAYER_BANK_ID,
+        :PAYER_ACCOUNT_TYPE,
+        :OFFICE_DOCS_ID,
+        :CLOSED);
+   /* Удаляем старую ссылку на входящее письмо, заданное пользователем */
+  DELETE FROM LETTERS_ORDERS WHERE ORDERS_ID = :ID AND KIND = 1;
+  /* Вставляем новую ссылку на входящее письмо, заданное пользователем */
+  IF (:LETTERS_ID IS NOT NULL) THEN
+    IF (NOT EXISTS(SELECT LETTERS_ID FROM LETTERS_ORDERS WHERE (ORDERS_ID = :ID) AND (LETTERS_ID = :LETTERS_ID))) THEN
+        INSERT INTO LETTERS_ORDERS (LETTERS_ID, ORDERS_ID, KIND)
+        VALUES (:LETTERS_ID, :ID, 1);
+END^
+
+CREATE OR ALTER PROCEDURE GET_LETTER_STATUS (
+    LETTER_ID INTEGER)
+RETURNS (
+    LETTERS_ID INTEGER,
+    LETTER_STATUS SMALLINT,
+    LETTER_CONTROL_DATE DATE)
+AS
+DECLARE VARIABLE ORDER_COUNT INTEGER;
+DECLARE VARIABLE PAY_DATE DATE;
+DECLARE VARIABLE ACT_DATE DATE;
+DECLARE VARIABLE STATUS0 INTEGER;
+DECLARE VARIABLE STATUS1 INTEGER;
+DECLARE VARIABLE STATUS2 INTEGER;
+DECLARE VARIABLE STATUS3 INTEGER;
+DECLARE VARIABLE STATUS4 INTEGER;
+DECLARE VARIABLE VAL_PERIOD SMALLINT;
+DECLARE VARIABLE ORDER_STATUS SMALLINT;
+DECLARE VARIABLE ORDER_CONTROL_DATE DATE;
+BEGIN
+  /*
+    Надо найти контрольную дату по заказам.
+    Контрольная дата вычисляется как дата оплаты заказа + срок исполнения по договору.
+    Если заказов несколько, то берётся минимальная из всех контрольных дат для неисполненных заказов.
+
+    Также надо найти статус письма по заказам.
+    Статус может быть:
+    - (0) нет заказов
+    - (1) не оплачен
+    - (2) оплачен, но не выполнен
+    - (3) выполнен
+    - (4) просрочен
+  */
+  SELECT COUNT(ORDERS_ID)
+  FROM LETTERS_ORDERS LO, ORDERS O
+  WHERE (LO.ORDERS_ID IS NOT NULL) AND (LO.LETTERS_ID = :LETTER_ID) AND
+        (O.ID = LO.ORDERS_ID) AND (O.CANCELLED <> 1)
+  INTO :ORDER_COUNT;
+
+  IF (:ORDER_COUNT = 0) THEN
+  BEGIN
+    LETTER_STATUS = 0;
+    LETTER_CONTROL_DATE = NULL;
+  END
+  ELSE
+  BEGIN
+    LETTER_CONTROL_DATE = NULL;
+    STATUS0 = 0;
+    STATUS1 = 0;
+    STATUS2 = 0;
+    STATUS3 = 0;
+    STATUS4 = 0;
+    FOR
+        SELECT O.PAY_DATE, O.ACT_DATE, O.VAL_PERIOD
+        FROM LETTERS_ORDERS LO, ORDERS O
+        WHERE (LO.ORDERS_ID IS NOT NULL) AND (LO.LETTERS_ID = :LETTER_ID) AND
+              (LO.ORDERS_ID = O.ID) AND (O.CANCELLED <> 1)
+        INTO :PAY_DATE, :ACT_DATE, :VAL_PERIOD
+        DO
+        BEGIN
+          -- определяем статус заказа
+          ORDER_STATUS = NULL;
+          IF (ACT_DATE IS NOT NULL) THEN
+          -- есть дата акт - заказ выполнен
+          BEGIN
+            ORDER_STATUS = 3;
+            ORDER_CONTROL_DATE = NULL;
+          END
+          ELSE
+          BEGIN
+            IF (PAY_DATE IS NULL) THEN
+            -- нет даты оплаты - заказ не оплачен и следовательно нет контрольной даты
+            BEGIN
+              ORDER_STATUS = 1;
+              ORDER_CONTROL_DATE = NULL;
+            END
+            ELSE
+            -- есть дата оплаты
+            BEGIN
+              IF ((VAL_PERIOD IS NULL) OR (VAL_PERIOD = 0)) THEN
+              -- срок исполнения заказ не установлен - контрольной даты нет
+              BEGIN
+                ORDER_STATUS = 2;
+                ORDER_CONTROL_DATE = NULL;
+              END
+              ELSE
+              BEGIN
+                ORDER_CONTROL_DATE = PAY_DATE + VAL_PERIOD;
+                IF (ORDER_CONTROL_DATE < CURRENT_DATE) THEN
+                  ORDER_STATUS = 4;
+                ELSE
+                  ORDER_STATUS = 2;
+              END
+            END
+          END
+          -- определили статус заказа, теперь учитываем его в общей статистике
+          IF (ORDER_STATUS = 0) THEN
+            STATUS0 = STATUS0 + 1;
+          ELSE
+          IF (:ORDER_STATUS = 1) THEN
+            STATUS1 = STATUS1 + 1;
+          ELSE
+          IF (:ORDER_STATUS = 2) THEN
+            STATUS2 = STATUS2 + 1;
+          ELSE
+          IF (:ORDER_STATUS = 3) THEN
+            STATUS3 = STATUS3 + 1;
+          ELSE
+          IF (:ORDER_STATUS = 4) THEN
+            STATUS4 = STATUS4 + 1;
+          -- проверяем контрольную дату
+          IF (ORDER_CONTROL_DATE IS NOT NULL) THEN
+          BEGIN
+            IF ((LETTER_CONTROL_DATE IS NULL) OR (ORDER_CONTROL_DATE < LETTER_CONTROL_DATE)) then
+              LETTER_CONTROL_DATE = ORDER_CONTROL_DATE;
+          END
+        END
+      -- получили статистику заказов по статусам
+      -- теперь решаем какой статус у всего письма
+      IF (STATUS4 > 0) THEN
+        LETTER_STATUS = 4;
+      ELSE
+      if (STATUS3 = ORDER_COUNT) THEN
+        LETTER_STATUS = 3;
+      ELSE
+      IF (STATUS2 > 0) THEN
+        LETTER_STATUS = 2;
+      ELSE
+        LETTER_STATUS = 1;
+  END
+
+  LETTERS_ID = LETTER_ID;
+
+  SUSPEND;
+END^
+
+SET TERM ; ^
+
+DESCRIBE PROCEDURE GET_LETTER_STATUS
+'Процедура возврщает контрольную дату и код состояния входящего письма по связанным с ним заказам.
+Код состояния:
+0 - нет заказов или заказы отменены;
+1 - неоплачен;
+2 - оплачен, но не выполнен;
+3 - выполнен;
+4 - просрочен.';
+
+/* Following GRANT statetements are generated automatically */
+
+GRANT SELECT ON LETTERS_ORDERS TO PROCEDURE GET_LETTER_STATUS;
+GRANT SELECT ON ORDERS TO PROCEDURE GET_LETTER_STATUS;
+
+/* Existing privileges on this procedure */
+
+GRANT EXECUTE ON PROCEDURE GET_LETTER_STATUS TO "PUBLIC";
+GRANT EXECUTE ON PROCEDURE GET_LETTER_STATUS TO SYSDBA;
+
+
+CREATE TABLE LETTER_STATUS_NAMES (
+    ID    INTEGER NOT NULL,
+    NAME  STRING50 NOT NULL /* STRING50 = VARCHAR(50) */
+);
+
+DESCRIBE TABLE LETTER_STATUS_NAMES
+'Названия статусов входящих писем по заказам.';
+
+/* Privileges of users */
+GRANT ALL ON LETTER_STATUS_NAMES TO PUBLIC;
+
+INSERT INTO LETTER_STATUS_NAMES (ID, NAME)
+                         VALUES (0, 'нет заказов');
+INSERT INTO LETTER_STATUS_NAMES (ID, NAME)
+                         VALUES (1, 'заказ не оплачен');
+INSERT INTO LETTER_STATUS_NAMES (ID, NAME)
+                         VALUES (2, 'в работе, заказ оплачен');
+INSERT INTO LETTER_STATUS_NAMES (ID, NAME)
+                         VALUES (3, 'заказы закрыты');
+INSERT INTO LETTER_STATUS_NAMES (ID, NAME)
+                         VALUES (4, 'заказ просрочен');
+
+COMMIT WORK;
+
+DESCRIBE TABLE ALL_REPORTS
+'Отчёты для всех модулей программы, кроме геодезии.';
+DESCRIBE TABLE REPORTS
+'Содержит данные для подготовки отчётов в модуле "Геодезия".';
+
+DROP TABLE POPOV_ORDERS;
+DROP TABLE ORDERS_1C;
+DROP PROCEDURE RESTORE_ORDERS_FROM_OLD;
+DROP TABLE ORDERS_OLD;
+
+COMMIT WORK;

@@ -1,0 +1,2372 @@
+unit uMStClassesProjects;
+
+interface
+
+uses
+  SysUtils, Classes, Contnrs, Forms, DB, Math, Graphics, Dialogs,
+  EzLib, EzBaseGIS, EzEntities, EzBase,
+  uCommonUtils, uCK36, uGC,
+  uMStKernelClasses, uMStKernelIBX, uMStConsts,
+  uMStClassesBufferZone;
+
+const
+  NT_WATER = 1;
+  NT_SEWERAGE = 2;
+  NT_STORM_DRAIN = 3;
+  NT_HEAT_PIPELINE = 4;
+  NT_ELECTRIC_LINE = 5;
+  NT_COMMUNICTION_LINE = 6;
+
+  mstProjectNetTypes: set of Byte = [
+    NT_WATER,
+    NT_SEWERAGE,
+    NT_STORM_DRAIN,
+    NT_HEAT_PIPELINE,
+    NT_ELECTRIC_LINE,
+    NT_COMMUNICTION_LINE
+  ];
+
+  PRJ_LAYER_LINES = 0;
+  PRJ_LAYER_POINTS = 1;
+  PRJ_LAYER_OTHER = 2;
+
+type
+  TmstProject = class;
+
+  TmstProjectNetType = class(TmstObject)
+  private
+    FName: string;
+    FZoneWidth: Double;
+    FColor: string;
+    FVisible: Boolean;
+    procedure SetName(const Value: string);
+    procedure SetZoneWidth(const Value: Double);
+    procedure SetColor(const Value: string);
+    procedure SetVisible(const Value: Boolean);
+  protected
+    procedure AssignTo(Target: TPersistent); override;
+  public
+    constructor Create; override;
+
+    function GetColor(): TColor;
+    property Color: string read FColor write SetColor;
+    property Name: string read FName write SetName;
+    property ZoneWidth: Double read FZoneWidth write SetZoneWidth;
+    //
+    property Visible: Boolean read FVisible write SetVisible;
+  end;
+
+  TmstProjectLayer = class(TmstObject)
+  private
+    FName: string;
+    FRequired: Boolean;
+    FDestroyed: Boolean;
+    FLineType: Boolean;
+    FNetType: TmstProjectNetType;
+    FActive: Boolean;
+    procedure SetName(const Value: string);
+    procedure SetRequired(const Value: Boolean);
+    procedure SetDestroyed(const Value: Boolean);
+    procedure SetLineType(const Value: Boolean);
+    procedure SetNetType(const Value: TmstProjectNetType);
+    procedure SetActive(const Value: Boolean);
+  protected
+    procedure AssignTo(Target: TPersistent); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    //
+    property Active: Boolean read FActive write SetActive;
+    property Destroyed: Boolean read FDestroyed write SetDestroyed;
+    property IsLineLayer: Boolean read FLineType write SetLineType;
+    property Name: string read FName write SetName;
+    property NetType: TmstProjectNetType read FNetType write SetNetType;
+    property Required: Boolean read FRequired write SetRequired;
+  end;
+
+  TmstProjectPoint = class(TmstObject)
+  private
+    FX: Double;
+    FY: Double;
+    FName: string;
+    FZ: Double;
+    procedure SetX(const Value: Double);
+    procedure SetY(const Value: Double);
+    procedure SetName(const Value: string);
+    procedure SetZ(const Value: Double);
+  public
+    property Name: string read FName write SetName;
+    property X: Double read FX write SetX;
+    property Y: Double read FY write SetY;
+    property Z: Double read FZ write SetZ;
+  end;
+
+  TmstProjectLinePoints = class(TObjectList)
+  private
+    function GetItems(Index: Integer): TmstProjectPoint;
+    procedure SetItems(Index: Integer; const Value: TmstProjectPoint);
+  public
+    function Add(const X, Y: Double): TmstProjectPoint;
+    function First: TmstProjectPoint;
+    function GetZDelta(I: Integer): Double;
+    function Last: TmstProjectPoint;
+    procedure CopyFrom(Source: TmstProjectLinePoints);
+    property Items[Index: Integer]: TmstProjectPoint read GetItems write SetItems; default;
+  end;
+
+  TmstProjectLine = class(TmstObject)
+  private
+    FNetType: Integer;
+    FVoltage: string;
+    FDiameter: string;
+    FInfo: string;
+    FPoints: TmstProjectLinePoints;
+    FLayer: TmstProjectLayer;
+    FEntityId: Integer;
+    FOwner: TmstProject;
+    FZone: TEzEntity;
+    FZoneWidth: Double;
+    FZoneLine: TmstProjectLine;
+    procedure SetDiameter(const Value: string);
+    procedure SetInfo(const Value: string);
+    procedure SetNetType(const Value: Integer);
+    procedure SetVoltage(const Value: string);
+    procedure SetLayer(const Value: TmstProjectLayer);
+    procedure SetEntityId(const Value: Integer);
+    procedure SetOwner(const Value: TmstProject);
+    procedure SetZone(const Value: TEzEntity);
+    procedure SetZoneWidth(const Value: Double);
+    procedure SetZoneLine(const Value: TmstProjectLine);
+  protected
+    procedure AssignTo(Target: TPersistent); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    //
+    procedure BuildZone(aZoneWidth: Double);
+    function GetLength: Double;
+    function GetZDelta: Double;
+    //
+    property Layer: TmstProjectLayer read FLayer write SetLayer;
+    property Points: TmstProjectLinePoints read FPoints;
+    //
+    property Diameter: string read FDiameter write SetDiameter;
+    property Info: string read FInfo write SetInfo;
+    property NetType: Integer read FNetType write SetNetType;
+    property Voltage: string read FVoltage write SetVoltage;
+    //
+    property Owner: TmstProject read FOwner write SetOwner;
+    property EntityId: Integer read FEntityId write SetEntityId;
+    //
+    property Zone: TEzEntity read FZone write SetZone;
+    property ZoneLine: TmstProjectLine read FZoneLine write SetZoneLine;
+    property ZoneWidth: Double read FZoneWidth write SetZoneWidth;
+  end;
+
+  TmstProjectLines = class(TObjectList)
+  private
+    FOwner: TmstProject;
+    function GetItems(Index: Integer): TmstProjectLine;
+    procedure SetItems(Index: Integer; const Value: TmstProjectLine);
+  public
+    constructor Create(aOwner: TmstProject);
+    function Add(): TmstProjectLine;
+    function ByDbId(const DbId: Integer): TmstProjectLine;
+    procedure CopyFrom(Source: TmstProjectLines);
+    property Items[Index: Integer]: TmstProjectLine read GetItems write SetItems; default;
+  end;
+
+  TmstProjectLayers = class(TObjectList)
+  private
+    function GetItems(Index: Integer): TmstProjectLayer;
+    procedure SetItems(Index: Integer; const Value: TmstProjectLayer);
+  public
+    function Add(const aName: string; aDestroyed, aRequired, aLineType: Boolean): TmstProjectLayer; overload;
+    function Add(const Source: TmstProjectLayer): TmstProjectLayer; overload;
+    function ByDbId(DbId: Integer): TmstProjectLayer;
+    function ByName(aName: String): TmstProjectLayer;
+    procedure CopyFrom(Source: TmstProjectLayers);
+    property Items[Index: Integer]: TmstProjectLayer read GetItems write SetItems; default;
+  end;
+
+  TmstProjectBlock = class(TmstObject)
+  private
+    FName: string;
+    FEzData: TStream;
+    FSymbolId: Integer;
+    procedure SetName(const Value: string);
+    procedure SetSymbolId(const Value: Integer);
+  protected
+    procedure AssignTo(Target: TPersistent); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    //
+    property Name: string read FName write SetName;
+    property EzData: TStream read FEzData;
+    //
+    property SymbolId: Integer read FSymbolId write SetSymbolId;
+  end;
+
+  TmstProjectBlocks = class(TObjectList)
+  private
+    function GetItems(Index: Integer): TmstProjectBlock;
+    procedure SetItems(Index: Integer; const Value: TmstProjectBlock);
+  public
+    procedure CopyFrom(Source: TmstProjectBlocks);
+    function ByName(const BlockName: string): TmstProjectBlock;
+    property Items[Index: Integer]: TmstProjectBlock read GetItems write SetItems; default;
+  end;
+
+  TmstProjectPlace = class(TmstObject)
+  private
+    FData: TStream;
+    FLayer: TmstProjectLayer;
+    FEntityId: Integer;
+    FOwner: TmstProject;
+    FEzId: Integer;
+    procedure SetLayer(const Value: TmstProjectLayer);
+    procedure SetEntityId(const Value: Integer);
+    procedure SetOwner(const Value: TmstProject);
+    procedure SetEzId(const Value: Integer);
+  protected
+    procedure AssignTo(Target: TPersistent); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    //
+    property Layer: TmstProjectLayer read FLayer write SetLayer;
+    property EzData: TStream read FData;
+    property EzId: Integer read FEzId write SetEzId;
+    //
+    property Owner: TmstProject read FOwner write SetOwner;
+    property EntityId: Integer read FEntityId write SetEntityId;
+  end;
+
+  TmstProjectPlaces = class(TObjectList)
+  private
+    FOwner: TmstProject;
+    function GetItems(Index: Integer): TmstProjectPlace;
+    procedure SetItems(Index: Integer; const Value: TmstProjectPlace);
+  public
+    constructor Create(aOwner: TmstProject);
+    function Add(): TmstProjectPlace;
+    procedure CopyFrom(Source: TmstProjectPlaces);
+    property Items[Index: Integer]: TmstProjectPlace read GetItems write SetItems; default;
+  end;
+
+  TSaveLineState = record
+    Ds1, Ds2, DsMain1, DsMain2: TDataSet;
+    PtDs1, PtDs2, PtDsMain1, PtDsMain2: TDataSet;
+  end;
+
+  TmstProject = class(TmstObject)
+  private
+    FAddress: string;
+    FCustomerOrgId: Integer;
+    FExecutorOrgId: Integer;
+    FDocNumber: string;
+    FConfirmed: Boolean;
+    FDocDate: TDateTime;
+    FLayers: TmstProjectLayers;
+    FLines: TmstProjectLines;
+    FBlocks: TmstProjectBlocks;
+    FCK36: Boolean;
+    FPlaces: TmstProjectPlaces;
+    FConfirmDate: TDateTime;
+    FMaxX: Double;
+    FMaxY: Double;
+    FMinX: Double;
+    FMinY: Double;
+    procedure SetAddress(const Value: string);
+    procedure SetConfirmed(const Value: Boolean);
+    procedure SetCustomerOrgId(const Value: Integer);
+    procedure SetDocDate(const Value: TDateTime);
+    procedure SetDocNumber(const Value: string);
+    procedure SetExecutorOrgId(const Value: Integer);
+    procedure SetLayers(const Value: TmstProjectLayers);
+    procedure SetLines(const Value: TmstProjectLines);
+    procedure SetBlocks(const Value: TmstProjectBlocks);
+    procedure SetCK36(const Value: Boolean);
+    procedure SetPlaces(const Value: TmstProjectPlaces);
+    procedure SetConfirmDate(const Value: TDateTime);
+    procedure SetMaxX(const Value: Double);
+    procedure SetMaxY(const Value: Double);
+    procedure SetMinX(const Value: Double);
+    procedure SetMinY(const Value: Double);
+    procedure LoadMainData(DataSet: TDataSet);
+  protected
+    procedure AssignTo(Target: TPersistent); override;
+    function GetObjectId: Integer; override;
+    function GetText: String; override;
+    //
+    procedure CalcExtent();
+    procedure LoadLines(DataSet: TDataSet);
+    procedure SaveLine(Conn: IIBXConnection; aLine: TmstProjectLine; var aState: TSaveLineState);
+    procedure SaveLinePoint(Conn: IIBXConnection; aLine: TmstProjectLine; aPt: TmstProjectPoint; var aState: TSaveLineState);
+    procedure LoadPlaces(DataSet: TDataSet);
+    procedure SavePlace(Conn: IIBXConnection; aPlace: TmstProjectPlace; var aState: TSaveLineState);
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    //
+    function Edit(): Boolean;
+    function Load(aDb: IDb): Boolean;
+    function Save(aDb: IDb): Boolean;
+    //
+    property Blocks: TmstProjectBlocks read FBlocks write SetBlocks;
+    property Layers: TmstProjectLayers read FLayers write SetLayers;
+    property Lines: TmstProjectLines read FLines write SetLines;
+    property Places: TmstProjectPlaces read FPlaces write SetPlaces;
+    //
+    property Address: string read FAddress write SetAddress;
+    property DocNumber: string read FDocNumber write SetDocNumber;
+    property DocDate: TDateTime read FDocDate write SetDocDate;
+    property CustomerOrgId: Integer read FCustomerOrgId write SetCustomerOrgId;
+    property ExecutorOrgId: Integer read FExecutorOrgId write SetExecutorOrgId;
+    property Confirmed: Boolean read FConfirmed write SetConfirmed;
+    property ConfirmDate: TDateTime read FConfirmDate write SetConfirmDate;
+    property CK36: Boolean read FCK36 write SetCK36;
+    //
+    property MinX: Double read FMinX write SetMinX;
+    property MinY: Double read FMinY write SetMinY;
+    property MaxX: Double read FMaxX write SetMaxX;
+    property MaxY: Double read FMaxY write SetMaxY;
+  end;
+
+  TmstProjectLayerListLoader = class
+  private
+    FList: TmstProjectLayers;
+    FProjectId: Integer;
+    procedure LoadLayers(DataSet, DataSetNetTypes: TDataSet);
+  public
+    procedure Load(aDb: IDb; aList: TmstProjectLayers; const aProjectId: Integer = 0);
+  end;
+
+  TmstProjectNetTypes = class
+  private
+    FList: TObjectList;
+    function Get(Index: Integer): TmstProjectNetType;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    //
+    procedure Load(aDb: IDb);
+    //
+    function ById(const aId: Integer): TmstProjectNetType;
+    function Count: Integer;
+    property Items[Index: Integer]: TmstProjectNetType read Get;
+  end;
+
+  TmstProjectList = class(TmstObjectList)
+  private
+    function GetItems(Index: Integer): TmstProject;
+    procedure SetItems(Index: Integer; const Value: TmstProject);
+  public
+    property Items[Index: Integer]: TmstProject read GetItems write SetItems; default;
+  end;
+
+  TLayerRecNoPredicate = function (Layer: TEzBaseLayer; const Recno: Integer): Boolean;
+  TLayerRecNoPredicateEvent = function (Layer: TEzBaseLayer; const Recno: Integer): Boolean of object;
+
+  TProjectUtils = class
+  private
+    class procedure AddLineToLayer(aLayer: TEzBaseLayer; aLine: TmstProjectLine);
+    class procedure AddPlaceToLayer(aLayer: TEzBaseLayer; aPlace: TmstProjectPlace);
+    class function PointTo2D(aPrj: TmstProject; aPt: TmstProjectPoint): TEzPoint;
+    class procedure ClearLayer(const aLayerName: string; aPredicate: TLayerRecNoPredicate);
+  public
+    class procedure AddProjectToGIS(aPrj: TmstProject); overload;
+    class procedure FindProjectInGIS(Prj: TmstProject; LineId: Integer; out Layer: TEzBaseLayer; out RecNo: Integer);
+    class function ProjectLayerName(aPrj: TmstProject): string;
+    class function Window(aPrj: TmstProject): TEzRect;
+    //
+    class function LineToEntity(aPrj: TmstProject; aProjLine: TmstProjectLine; Poly: Boolean): TEzOpenedEntity;
+    class procedure ShowProjectLayer(aPrj: TmstProject);
+    //
+    class procedure ClearProjectLayers();
+    class procedure RemoveProjectFromLayer(const ProjectId: Integer);
+    //
+    class function AddLineZoneToGIS(aLine: TmstProjectLine; aZoneWidth: Double): Boolean;
+    class function RemoveLineZone(aLine: TmstProjectLine): Boolean;
+  public
+    class var GIS: TEzBaseGIS;
+    class var AllLayers: TmstProjectLayers;
+  end;
+
+  TProjectsSettings = class
+  public
+    class var FProjectId: Integer;
+    class var FLineId: Integer;
+  public
+    class var PenWidth: Double;
+    class function EntityIsCurrent(const Layer: TEzBaseLayer; const Recno: Integer): Boolean;
+    class procedure SetCurrentProjectLine(aProjectId, aLineId: Integer);
+  end;
+
+implementation
+
+uses
+  uMStDialogEditProject,
+  uMStModuleApp;
+
+const
+  SQL_GEN_PROJECT_ID = 'SELECT GEN_ID(PROJECTS_GEN, 1) FROM RDB$DATABASE';
+  SQL_CHECK_PROJECT_EXISTS = 'SELECT ID FROM PROJECTS WHERE ID=:ID';
+  SQL_INSERT_PROJECT =
+      'insert into PROJECTS ' +
+      '(ID, ADDRESS, DOC_NUMBER, DOC_DATE, CUSTOMER_ORGS_ID, CONFIRMED, EXECUTOR_ORGS_ID, CONFIRM_DATE, ' +
+      ' MINX, MINY, MAXX, MAXY, CK36) ' +
+      'values ' +
+      '(:ID, :ADDRESS, :DOC_NUMBER, :DOC_DATE, :CUSTOMER_ORGS_ID, :CONFIRMED, :EXECUTOR_ORGS_ID, :CONFIRM_DATE, ' +
+      ' :MINX, :MINY, :MAXX, :MAXY, :CK36)';
+  SQL_UPDATE_PROJECT =
+      'update PROJECTS ' +
+      'set ADDRESS = :ADDRESS, ' +
+      '    DOC_NUMBER = :DOC_NUMBER, ' +
+      '    DOC_DATE = :DOC_DATE, ' +
+      '    CUSTOMER_ORGS_ID = :CUSTOMER_ORGS_ID, ' +
+      '    CONFIRMED = :CONFIRMED, ' +
+      '    EXECUTOR_ORGS_ID = :EXECUTOR_ORGS_ID, ' +
+      '    CONFIRM_DATE = :CONFIRM_DATE, ' +
+      '    MINX = :MINX, ' +
+      '    MINY = :MINY, ' +
+      '    MAXX = :MAXX, ' +
+      '    MAXY = :MAXY, ' +
+      '    CK36 = :CK36 ' +
+      'where (ID = :ID)';
+  SQL_LINES_GEN_ID = 'SELECT GEN_ID(PROJECT_LINES_GEN, 1) FROM RDB$DATABASE';
+  SQL_CHECK_LINE_EXISTS = 'SELECT ID FROM PROJECT_LINES WHERE ID=:ID';
+  SQL_LINE_POINTS_GEN_ID = 'SELECT GEN_ID(PROJECT_LINE_POINTS_GEN, 1) FROM RDB$DATABASE';
+  SQL_CHECK_LINE_POINT_EXISTS = 'SELECT ID FROM PROJECT_LINE_POINTS WHERE ID=:ID';
+  SQL_INSERT_LINE =
+      'insert into PROJECT_LINES (ID, PROJECTS_ID, INFO, DIAMETER, VOLTAGE, PROJECT_LAYERS_ID) ' +
+      'values (:ID, :PROJECTS_ID, :INFO, :DIAMETER, :VOLTAGE, :PROJECT_LAYERS_ID)';
+  SQL_UPDATE_LINE =
+      'update PROJECT_LINES ' +
+      'set PROJECTS_ID = :PROJECTS_ID, ' +
+      '    INFO = :INFO, ' +
+      '    DIAMETER = :DIAMETER, ' +
+      '    VOLTAGE = :VOLTAGE, ' +
+      '    PROJECT_LAYERS_ID = :PROJECT_LAYERS_ID ' +
+      'where (ID = :ID)';
+  SQL_INSERT_LINE_POINT =
+      'insert into PROJECT_LINE_POINTS (ID, PROJECT_LINES_ID, X, Y, Z) ' +
+      'values (:ID, :PROJECT_LINES_ID, :X, :Y, :Z)';
+  SQL_UPDATE_LINE_POINT =
+      'update PROJECT_LINE_POINTS ' +
+      'set PROJECT_LINES_ID = :PROJECT_LINES_ID, ' +
+      '    X = :X, ' +
+      '    Y = :Y, ' +
+      '    Z = :Z ' +
+      'where (ID = :ID)';
+  SQL_PRJ_PLACES_GEN_ID = 'SELECT GEN_ID(PROJECT_PLACES_GEN, 1) FROM RDB$DATABASE';
+  SQL_CHECK_PRJ_PLACE_EXISTS = 'SELECT ID FROM PROJECT_PLACES WHERE ID=:ID';
+  SQL_INSERT_PRJ_PLACE =
+      'insert into PROJECT_PLACES (ID, PROJECTS_ID, PROJECT_LAYERS_ID, EZDATA, EZ_ID) ' +
+      'values (:ID, :PROJECTS_ID, :PROJECT_LAYERS_ID, :EZDATA, :EZ_ID)';
+  SQL_UPDATE_PRJ_PLACE =
+      'update PROJECT_PLACES ' +
+      'set PROJECTS_ID = :PROJECTS_ID, ' +
+      '    PROJECT_LAYERS_ID = :PROJECT_LAYERS_ID, ' +
+      '    EZDATA = :EZDATA, ' +
+      '    EZ_ID = :EZ_ID ' +
+      'where (ID = :ID)';
+  SQL_LOAD_PROJECT = 'SELECT * FROM PROJECTS WHERE ID=:ID';
+  SQL_LOAD_LAYERS_FOR_LINES =
+                    'SELECT DISTINCT(LAYERS.*) ' +
+                    'FROM PROJECT_LINES LINES LEFT JOIN PROJECT_LAYERS LAYERS ON (LINES.PROJECT_LAYERS_ID = LAYERS.ID) ' +
+                    'WHERE ' +
+                    '    LINES.PROJECTS_ID=:ID';
+  SQL_LOAD_LAYERS_FOR_PLACES =
+                    'SELECT DISTINCT(LAYERS.*) ' +
+                    'FROM PROJECT_PLACES PLACES LEFT JOIN PROJECT_LAYERS LAYERS ON (PLACES.PROJECT_LAYERS_ID = LAYERS.ID) ' +
+                    'WHERE ' +
+                    '    PLACES.PROJECTS_ID=:ID';
+  SQL_PROJECT_LAYERS_ALL =
+                    'SELECT * FROM PROJECT_LAYERS ORDER BY ID';
+
+  SQL_LOAD_LINES =
+                    'SELECT PP.*, PL.INFO, PL.DIAMETER, PL.VOLTAGE, PL.PROJECT_LAYERS_ID ' +
+                    'FROM PROJECT_LINE_POINTS PP LEFT JOIN PROJECT_LINES PL ON (PP.PROJECT_LINES_ID = PL.ID) ' +
+                    'WHERE PL.PROJECTS_ID=:ID ' +
+                    'ORDER BY PP.PROJECT_LINES_ID, PP.ID';
+  SQL_LOAD_PROJECT_NET_TYPES =
+                    'SELECT * FROM PROJECT_NET_TYPES ORDER BY ID';
+  SQL_LOAD_PLACES = 'SELECT * FROM PROJECT_PLACES WHERE PROJECTS_ID=:ID';
+
+{ TmstProject }
+
+procedure TmstProject.AssignTo(Target: TPersistent);
+var
+  Tgt: TmstProject;
+begin
+  if not (Target is TmstProject) then
+    inherited;
+  Tgt := TmstProject(Target);
+  Tgt.FBlocks.CopyFrom(Self.FBlocks);
+  //
+  Tgt.FLayers.CopyFrom(Self.Layers);
+  //
+  Tgt.FLines.CopyFrom(Self.Lines);
+  //
+  Tgt.FPlaces.CopyFrom(Self.Places);
+  //
+  Tgt.FAddress := Self.FAddress;
+  Tgt.FCustomerOrgId := Self.FCustomerOrgId;
+  Tgt.FExecutorOrgId := Self.FExecutorOrgId;
+  Tgt.FDocNumber := Self.FDocNumber;
+  Tgt.FDocDate := Self.FDocDate;
+  Tgt.FConfirmed := Self.FConfirmed;
+  Tgt.FConfirmDate := Self.FConfirmDate;
+  Tgt.FCK36 := Self.FCK36;
+  //
+  Tgt.FMaxX := FMaxX;
+  Tgt.FMaxY := FMaxY;
+  Tgt.FMinX := FMinX;
+  Tgt.FMinY := FMinY;
+end;
+
+procedure TmstProject.CalcExtent;
+var
+  I: Integer;
+  J: Integer;
+  Pt: TmstProjectPoint;
+begin
+  MinX := MaxInt;
+  MinY := MaxInt;
+  MaxX := 1 - MaxInt;
+  MaxY := 1 - MaxInt;
+  for I := 0 to Lines.Count - 1 do
+  begin
+    for J := 0 to Lines[I].Points.Count - 1 do
+    begin
+      Pt := Lines[I].Points[J];
+      if MaxX < Pt.X then
+       MaxX := Pt.X;
+      if MinX > Pt.X then
+       MinX := Pt.X;
+      if MaxY < Pt.Y then
+       MaxY := Pt.Y;
+      if MinY > Pt.Y then
+       MinY := Pt.Y;
+    end;
+  end;
+  if (MinX = MaxInt) or (MinY = MaxInt) or (MaxX = 1 - MaxInt) or (MaxY = 1 - MaxInt) then
+  begin
+    MinX := 0;
+    MaxX := 0;
+    MinY := 0;
+    MaxY := 0;
+  end;
+end;
+
+constructor TmstProject.Create;
+begin
+  inherited;
+  FBlocks := TmstProjectBlocks.Create;
+  FLayers := TmstProjectLayers.Create;
+  FLines := TmstProjectLines.Create(Self);
+  FPlaces := TmstProjectPlaces.Create(Self);
+end;
+
+destructor TmstProject.Destroy;
+begin
+  FPlaces.Free;
+  FLines.Free;
+  FLayers.Free;
+  FBlocks.Free;
+  inherited;
+end;
+
+function TmstProject.Edit: Boolean;
+var
+  Frm: TmstEditProjectDialog;
+begin
+  Frm := TmstEditProjectDialog.Create(Application);
+  try
+    Result := Frm.Execute(Self);
+  finally
+    Frm.Free;
+  end;
+end;
+
+function TmstProject.GetObjectId: Integer;
+begin
+  Result := ID_PROJECT;
+end;
+
+function TmstProject.GetText: String;
+begin
+  Result := 'ѕроект';
+  if DocNumber <> '' then
+    Result := Result + ' є' + DocNumber;
+  if DocDate > 0 then
+    Result := Result + ' от ' + DateToStr(DocDate);
+  Result := Result + ' ; ' + Address;
+end;
+
+function TmstProject.Load(aDb: IDb): Boolean;
+var
+  Conn: IIBXConnection;
+  DataSet: TDataSet;
+  Loader: TmstProjectLayerListLoader;
+begin
+  Result := False;
+  Conn := aDb.GetConnection(cmReadOnly, dmKis);
+  DataSet := Conn.GetDataSet(SQL_LOAD_PROJECT);
+  Conn.SetParam(DataSet, SF_ID, DatabaseId);
+  DataSet.Open;
+  if DataSet.IsEmpty then
+    Exit;
+  LoadMainData(DataSet);
+  DataSet.Close;
+  //
+  Loader := TmstProjectLayerListLoader.Create;
+  try
+    Loader.Load(aDb, Self.Layers, Self.DatabaseId);
+  finally
+    Loader.Free;
+  end;
+  //
+  DataSet := Conn.GetDataSet(SQL_LOAD_LINES);
+  Conn.SetParam(DataSet, SF_ID, DatabaseId);
+  DataSet.Open;
+  if DataSet.IsEmpty then
+    Exit;
+  LoadLines(DataSet);
+  DataSet.Close;
+  //
+  DataSet := Conn.GetDataSet(SQL_LOAD_PLACES);
+  Conn.SetParam(DataSet, SF_ID, DatabaseId);
+  DataSet.Open;
+  if DataSet.IsEmpty then
+    Exit;
+  LoadPlaces(DataSet);
+  DataSet.Close;
+  Result := True;
+end;
+
+procedure TmstProject.LoadLines(DataSet: TDataSet);
+var
+  L: TmstProjectLine;
+  LineId: Integer;
+  LayerId: Integer;
+begin
+  L := nil;
+  while not DataSet.Eof do
+  begin
+    LineId := DataSet.FieldByName(SF_PROJECT_LINES_ID).AsInteger;
+    if (L = nil) or (LineId <> L.DatabaseId) then
+    begin
+      L := Lines.Add;
+      L.DatabaseId := LineId;
+      L.FVoltage := DataSet.FieldByName(SF_VOLTAGE).AsString;
+      L.FDiameter := DataSet.FieldByName(SF_DIAMETER).AsString;
+      L.FInfo := DataSet.FieldByName(SF_INFO).AsString;
+      LayerId := DataSet.FieldByName(SF_PROJECT_LAYERS_ID).AsInteger;
+      L.Layer := Layers.ByDbId(LayerId);
+    end;
+    with L.Points.Add(DataSet.FieldByName(SF_X).AsFloat, DataSet.FieldByName(SF_Y).AsFloat) do
+    begin
+      Z := DataSet.FieldByName(SF_Z).AsFloat;
+      DatabaseId := DataSet.FieldByName(SF_ID).AsInteger;
+    end;
+    DataSet.Next;
+  end;
+end;
+
+procedure TmstProject.LoadMainData(DataSet: TDataSet);
+begin
+  FAddress := DataSet.FieldByName(SF_ADDRESS).AsString;
+  FCustomerOrgId := DataSet.FieldByName(SF_CUSTOMER_ORGS_ID).AsInteger;
+  FExecutorOrgId := DataSet.FieldByName(SF_EXECUTOR_ORGS_ID).AsInteger;
+  FDocNumber := DataSet.FieldByName(SF_DOC_NUMBER).AsString;
+  FDocDate := DataSet.FieldByName(SF_DOC_DATE).AsDateTime;
+  FConfirmed := DataSet.FieldByName(SF_CONFIRMED).AsInteger = 1;
+  FConfirmDate := DataSet.FieldByName(SF_CONFIRM_DATE).AsDateTime;
+  FCK36 := DataSet.FieldByName(SF_CK36).AsInteger = 1;
+  FMaxX := DataSet.FieldByName(SF_MAXX).AsFloat;
+  FMaxY := DataSet.FieldByName(SF_MAXY).AsFloat;
+  FMinX := DataSet.FieldByName(SF_MINX).AsFloat;
+  FMinY := DataSet.FieldByName(SF_MINY).AsFloat;
+end;
+
+procedure TmstProject.LoadPlaces(DataSet: TDataSet);
+var
+  Pl: TmstProjectPlace;
+  PlId: Integer;
+  LayerId: Integer;
+  Fld: TField;
+begin
+  while not DataSet.Eof do
+  begin
+    PlId := DataSet.FieldByName(SF_ID).AsInteger;
+    Pl := Places.Add;
+    Pl.DatabaseId := PlId;
+    Pl.EzId := DataSet.FieldByName(SF_EZ_ID).AsInteger;
+    Fld := DataSet.FieldByName(SF_EZDATA);
+    if Fld is TBlobField then
+      TBlobField(Fld).SaveToStream(Pl.EzData);
+    LayerId := DataSet.FieldByName(SF_PROJECT_LAYERS_ID).AsInteger;
+    Pl.Layer := Layers.ByDbId(LayerId);
+    DataSet.Next;
+  end;
+end;
+
+function TmstProject.Save(aDb: IDb): Boolean;
+var
+  Conn: IIBXConnection;
+  Ds1, Ds2, DsMain: TDataSet;
+  B1, B2: Boolean;
+  Sql: string;
+  I: Integer;
+  L: TmstProjectLine;
+  SaveLineState, SavePlaceState: TSaveLineState;
+  Pl: TmstProjectPlace;
+begin
+  // создаЄм соединение
+  Conn := aDb.GetConnection(cmReadWrite, dmKis);
+  try
+    B1 := DatabaseId < 1;
+    if B1 then
+    begin
+      Ds1 := Conn.GetDataSet(SQL_GEN_PROJECT_ID);
+      Ds1.Open;
+      DatabaseId := Ds1.Fields[0].AsInteger;
+      Ds1.Close;
+      B2 := True;
+    end
+    else
+    begin
+      Ds2 := Conn.GetDataSet(SQL_CHECK_PROJECT_EXISTS);
+      Conn.SetParam(Ds2, SF_ID, DatabaseId);
+      Ds2.Open;
+      B2 := Ds2.IsEmpty;
+      Ds2.Close;
+    end;
+    if B2 then
+      Sql := SQL_INSERT_PROJECT
+    else
+      Sql := SQL_UPDATE_PROJECT;
+    DsMain := Conn.GetDataSet(Sql);
+    Conn.SetParam(DsMain, SF_ID, DatabaseId);
+    Conn.SetParam(DsMain, SF_ADDRESS, Address);
+    Conn.SetParam(DsMain, SF_DOC_NUMBER, DocNumber);
+    if DocDate <> 0 then
+      Conn.SetParam(DsMain, SF_DOC_DATE, DocDate);
+    Conn.SetParam(DsMain, SF_CUSTOMER_ORGS_ID, CustomerOrgId);
+    Conn.SetParam(DsMain, SF_EXECUTOR_ORGS_ID, ExecutorOrgId);
+    Conn.SetParam(DsMain, SF_CONFIRMED, IfThen(Confirmed, 1, 0));
+    if ConfirmDate <> 0 then
+      Conn.SetParam(DsMain, SF_CONFIRM_DATE, ConfirmDate);
+    Conn.SetParam(DsMain, SF_CK36, IfThen(Ck36, 1, 0));
+    Self.CalcExtent();
+    Conn.SetParam(DsMain, SF_MINX, MinX);
+    Conn.SetParam(DsMain, SF_MINY, MinY);
+    Conn.SetParam(DsMain, SF_MAXX, MaxX);
+    Conn.SetParam(DsMain, SF_MAXY, MaxY);
+    Conn.ExecDataSet(DsMain);
+    //
+    SaveLineState.Ds1 := nil;
+    SaveLineState.Ds2 := nil;
+    SaveLineState.DsMain1 := nil;
+    SaveLineState.DsMain2 := nil;
+    SaveLineState.PtDs1 := nil;
+    SaveLineState.PtDs2 := nil;
+    SaveLineState.PtDsMain1 := nil;
+    SaveLineState.PtDsMain2 := nil;
+    for I := 0 to Lines.Count - 1 do
+    begin
+      L := Lines[I];
+      SaveLine(Conn, L, SaveLineState);
+    end;
+    //
+    ShowMessage('SavePlace: ' + sLineBreak +
+              '  Total=' + IntToStr(Places.Count));
+    SavePlaceState.Ds1 := nil;
+    SavePlaceState.Ds2 := nil;
+    SavePlaceState.DsMain1 := nil;
+    SavePlaceState.DsMain2 := nil;
+    for I := 0 to Places.Count - 1 do
+    begin
+      Pl := Places[I];
+      SavePlace(Conn, Pl, SavePlaceState);
+    end;
+  finally
+//    Conn.Commit;
+  end;
+  Result := True;
+end;
+
+procedure TmstProject.SaveLine;
+var
+  B2: Boolean;
+  Ds1, Ds2, DsMain: TDataSet;
+  I: Integer;
+  Pt: TmstProjectPoint;
+begin
+  if aLine.DatabaseId < 1 then
+  begin
+    if aState.Ds1 = nil then
+    begin
+      aState.Ds1 := Conn.GetDataSet(SQL_LINES_GEN_ID);
+    end;
+    Ds1 := aState.Ds1;
+    Ds1.Open;
+    aLine.DatabaseId := Ds1.Fields[0].AsInteger;
+    Ds1.Close;
+    B2 := True;
+  end
+  else
+  begin
+    if aState.Ds2 = nil then
+      aState.Ds2 := Conn.GetDataSet(SQL_CHECK_LINE_EXISTS);
+    Ds2 := aState.Ds2;
+    Conn.SetParam(Ds2, SF_ID, aLine.DatabaseId);
+    Ds2.Open;
+    B2 := Ds2.Fields[0].AsInteger = 0;
+    Ds2.Close;
+  end;
+  if B2 then
+  begin
+    if aState.DsMain1 = nil then
+      aState.DsMain1 := Conn.GetDataSet(SQL_INSERT_LINE);
+    DsMain := aState.DsMain1;
+  end
+  else
+  begin
+    if aState.DsMain2 = nil then
+      aState.DsMain2 := Conn.GetDataSet(SQL_UPDATE_LINE);
+    DsMain := aState.DsMain2;
+  end;
+  Conn.SetParam(DsMain, SF_ID, aLine.DatabaseId);
+  Conn.SetParam(DsMain, SF_PROJECTS_ID, DatabaseId);
+  Conn.SetParam(DsMain, SF_INFO, aLine.Info);
+  Conn.SetParam(DsMain, SF_DIAMETER, aLine.Diameter);
+  Conn.SetParam(DsMain, SF_VOLTAGE, aLine.Voltage);
+  Conn.SetParam(DsMain, SF_PROJECT_LAYERS_ID, aLine.Layer.DatabaseId);
+  Conn.ExecDataSet(DsMain);
+  //
+  for I := 0 to aLine.Points.Count - 1 do
+  begin
+    Pt := aLine.Points[I];
+    SaveLinePoint(Conn, aLine, Pt, aState);
+  end;
+end;
+
+procedure TmstProject.SaveLinePoint;
+var
+  B2: Boolean;
+  Ds1, Ds2, DsMain: TDataSet;
+begin
+ if aPt.DatabaseId < 1 then
+  begin
+    if aState.PtDs1 = nil then
+      aState.PtDs1 := Conn.GetDataSet(SQL_LINE_POINTS_GEN_ID);
+    Ds1 := aState.PtDs1;
+    Ds1.Open;
+    aPt.DatabaseId := Ds1.Fields[0].AsInteger;
+    Ds1.Close;
+    B2 := True;
+  end
+  else
+  begin
+    if aState.PtDs2 = nil then
+      aState.PtDs2 := Conn.GetDataSet(SQL_CHECK_LINE_POINT_EXISTS);
+    Ds2 := aState.PtDs2;
+    Conn.SetParam(Ds2, SF_ID, aPt.DatabaseId);
+    Ds2.Open;
+    B2 := Ds2.Fields[0].AsInteger = 0;
+    Ds2.Close;
+  end;
+  if B2 then
+  begin
+    if aState.PtDsMain1 = nil then
+      aState.PtDsMain1 := Conn.GetDataSet(SQL_INSERT_LINE_POINT);
+    DsMain := aState.PtDsMain1;
+  end
+  else
+  begin
+    if aState.PtDsMain2 = nil then
+      aState.PtDsMain2 := Conn.GetDataSet(SQL_UPDATE_LINE_POINT);
+    DsMain := aState.PtDsMain2;
+  end;
+  Conn.SetParam(DsMain, SF_ID, aPt.DatabaseId);
+//  Conn.SetParam(DsMain, SF_NAME, aPt.Name);
+  Conn.SetParam(DsMain, SF_X, aPt.X);
+  Conn.SetParam(DsMain, SF_Y, aPt.Y);
+  Conn.SetParam(DsMain, SF_Z, aPt.Z);
+  Conn.SetParam(DsMain, SF_PROJECT_LINES_ID, aLine.DatabaseId);
+  Conn.ExecDataSet(DsMain);
+end;
+
+procedure TmstProject.SavePlace(Conn: IIBXConnection; aPlace: TmstProjectPlace; var aState: TSaveLineState);
+var
+  B2: Boolean;
+  Ds1, Ds2, DsMain: TDataSet;
+  LayerId: Integer;
+  Id1, Id2: Integer;
+begin
+//  ShowMessage('SavePlace: ' + sLineBreak +
+//              'Start' + sLineBreak +
+//              '  ID=' + IntToStr(Id1) + sLineBreak +
+//              '  EzId=' + IntToStr(aPlace.EzId));
+  B2 := False;
+  Id1 := aPlace.DatabaseId;
+  if aPlace.DatabaseId < 1 then
+  begin
+    if aState.Ds1 = nil then
+    begin
+      aState.Ds1 := Conn.GetDataSet(SQL_PRJ_PLACES_GEN_ID);
+    end;
+    Ds1 := aState.Ds1;
+    Ds1.Open;
+    aPlace.DatabaseId := Ds1.Fields[0].AsInteger;
+    Ds1.Close;
+    B2 := True;
+  end
+  else
+  begin
+    if aState.Ds2 = nil then
+      aState.Ds2 := Conn.GetDataSet(SQL_CHECK_PRJ_PLACE_EXISTS);
+    Ds2 := aState.Ds2;
+    Conn.SetParam(Ds2, SF_ID, aPlace.DatabaseId);
+    Ds2.Open;
+    B2 := Ds2.Fields[0].AsInteger = 0;
+    Ds2.Close;
+  end;
+  Id2 := aPlace.DatabaseId;
+//  ShowMessage('Place: ' + sLineBreak +
+//              '  ID=' + IntToStr(Id1) + sLineBreak +
+//              '  NewId=' + IntToStr(Id2) + sLineBreak +
+//              '  EzId=' + IntToStr(aPlace.EzId));
+  if B2 then
+  begin
+    if aState.DsMain1 = nil then
+      aState.DsMain1 := Conn.GetDataSet(SQL_INSERT_PRJ_PLACE);
+    DsMain := aState.DsMain1;
+  end
+  else
+  begin
+    if aState.DsMain2 = nil then
+      aState.DsMain2 := Conn.GetDataSet(SQL_UPDATE_PRJ_PLACE);
+    DsMain := aState.DsMain2;
+  end;
+  Conn.SetParam(DsMain, SF_ID, aPlace.DatabaseId);
+  Conn.SetParam(DsMain, SF_PROJECTS_ID, DatabaseId);
+  Conn.SetParam(DsMain, SF_EZ_ID, aPlace.EzId);
+  Conn.SetBlobParam(DsMain, SF_EZDATA, aPlace.EzData);
+  if Assigned(aPlace.Layer) then
+    LayerId := aPlace.Layer.DatabaseId
+  else
+    LayerId := -1;
+  Conn.SetParam(DsMain, SF_PROJECT_LAYERS_ID, LayerId);
+  Conn.ExecDataSet(DsMain);
+end;
+
+procedure TmstProject.SetAddress(const Value: string);
+begin
+  FAddress := Value;
+end;
+
+procedure TmstProject.SetBlocks(const Value: TmstProjectBlocks);
+begin
+  FBlocks := Value;
+end;
+
+procedure TmstProject.SetCK36(const Value: Boolean);
+begin
+  FCK36 := Value;
+end;
+
+procedure TmstProject.SetConfirmDate(const Value: TDateTime);
+begin
+  FConfirmDate := Value;
+end;
+
+procedure TmstProject.SetConfirmed(const Value: Boolean);
+begin
+  FConfirmed := Value;
+end;
+
+procedure TmstProject.SetCustomerOrgId(const Value: Integer);
+begin
+  FCustomerOrgId := Value;
+end;
+
+procedure TmstProject.SetDocDate(const Value: TDateTime);
+begin
+  FDocDate := Value;
+end;
+
+procedure TmstProject.SetDocNumber(const Value: string);
+begin
+  FDocNumber := Value;
+end;
+
+procedure TmstProject.SetExecutorOrgId(const Value: Integer);
+begin
+  FExecutorOrgId := Value;
+end;
+
+procedure TmstProject.SetLayers(const Value: TmstProjectLayers);
+begin
+  FLayers := Value;
+end;
+
+procedure TmstProject.SetLines(const Value: TmstProjectLines);
+begin
+  FLines := Value;
+end;
+
+procedure TmstProject.SetMaxX(const Value: Double);
+begin
+  FMaxX := Value;
+end;
+
+procedure TmstProject.SetMaxY(const Value: Double);
+begin
+  FMaxY := Value;
+end;
+
+procedure TmstProject.SetMinX(const Value: Double);
+begin
+  FMinX := Value;
+end;
+
+procedure TmstProject.SetMinY(const Value: Double);
+begin
+  FMinY := Value;
+end;
+
+procedure TmstProject.SetPlaces(const Value: TmstProjectPlaces);
+begin
+  FPlaces := Value;
+end;
+
+{ TmstProjectLine }
+
+procedure TmstProjectLine.AssignTo(Target: TPersistent);
+var
+  Tgt: TmstProjectLine;
+begin
+  if not (Target is TmstProjectLine) then
+    inherited;
+  Tgt := TmstProjectLine(Target);
+  Tgt.FNetType := Self.FNetType;
+  Tgt.FVoltage := Self.FVoltage;
+  Tgt.FDiameter := Self.FDiameter;
+  Tgt.FInfo := Self.FInfo;
+  Tgt.FPoints.CopyFrom(Self.Points);
+  if Assigned(Self.Layer) then
+    Tgt.FLayer := Tgt.Owner.Layers.ByDbId(Self.Layer.DatabaseId)
+  else
+    Tgt.FLayer := nil;
+  Tgt.FEntityId := Self.FEntityId;
+  Tgt.DatabaseId := Self.DatabaseId;
+end;
+
+procedure TmstProjectLine.BuildZone(aZoneWidth: Double);
+var
+  Bldr: TmstBufferZoneBuilderPoly2;
+  Points: TEzVector;
+  I: Integer;
+begin
+  FreeAndNil(FZoneLine);
+  FZoneWidth := aZoneWidth;
+  //
+  Points := TEzVector.Create(1);
+  Points.CanGrow := True;
+  Points.Forget();
+  for I := 0 to Self.Points.Count - 1 do
+  begin
+    Points.AddPoint(Self.Points[I].X, Self.Points[I].Y);
+  end;
+  //
+  Bldr := TmstBufferZoneBuilderPoly2.Create;
+  Bldr.Forget();
+  Bldr.Width := aZoneWidth;
+  Bldr.Build(Points);
+  if Bldr.Buffer.Count > 1 then
+  begin
+    FZoneLine := TmstProjectLine.Create;
+    for I := 0 to Bldr.Buffer.Count - 1 do
+    begin
+      FZoneLine.Points.Add(Bldr.Buffer[I].X, Bldr.Buffer[I].Y);
+    end;
+  end;
+end;
+
+constructor TmstProjectLine.Create;
+begin
+  inherited;
+  FPoints := TmstProjectLinePoints.Create;
+end;
+
+destructor TmstProjectLine.Destroy;
+begin
+  FPoints.Free;
+  FreeAndNil(FZoneLine);
+  FreeAndNil(FZone);
+  inherited;
+end;
+
+function TmstProjectLine.GetLength: Double;
+var
+  L: Double;
+  dX, dY: Double;
+  Pt1, Pt2: TmstProjectPoint;
+  I, J: Integer;
+begin
+  Result := 0;
+  if Points.Count > 1 then
+  begin
+    J := 0;
+    for I := 1 to Points.Count - 1 do
+    begin
+      Pt1 := Points[J];
+      Pt2 := Points[I];
+      dX := Abs(Pt1.X - Pt2.X);
+      dY := Abs(Pt1.Y - Pt2.Y);
+      L := Sqrt(dX * dX + dY + dY);
+      Result := Result + L;
+    end;
+  end;
+end;
+
+function TmstProjectLine.GetZDelta: Double;
+var
+  L: Double;
+  Pt1, Pt2: TmstProjectPoint;
+begin
+  Result := 0;
+  if Points.Count > 1 then
+  begin
+    Pt1 := Points.First;
+    Pt2 := Points.Last;
+    L := GetLength();
+    if L >= 0.01 then
+      Result := Abs(Pt1.Z - Pt2.Z) / L;
+  end;
+end;
+
+procedure TmstProjectLine.SetDiameter(const Value: string);
+begin
+  FDiameter := Value;
+end;
+
+procedure TmstProjectLine.SetEntityId(const Value: Integer);
+begin
+  FEntityId := Value;
+end;
+
+procedure TmstProjectLine.SetInfo(const Value: string);
+begin
+  FInfo := Value;
+end;
+
+procedure TmstProjectLine.SetLayer(const Value: TmstProjectLayer);
+begin
+  FLayer := Value;
+end;
+
+procedure TmstProjectLine.SetNetType(const Value: Integer);
+begin
+  FNetType := Value;
+end;
+
+procedure TmstProjectLine.SetOwner(const Value: TmstProject);
+begin
+  FOwner := Value;
+end;
+
+procedure TmstProjectLine.SetVoltage(const Value: string);
+begin
+  FVoltage := Value;
+end;
+
+procedure TmstProjectLine.SetZone(const Value: TEzEntity);
+begin
+  if FZone <> Value then
+  begin
+    FreeAndNil(FZone);
+    FZone := Value;
+  end;
+end;
+
+procedure TmstProjectLine.SetZoneLine(const Value: TmstProjectLine);
+begin
+  if FZoneLine <> Value then
+  begin
+    FreeAndNil(FZoneLine);
+    FZoneLine := Value;
+  end;
+end;
+
+procedure TmstProjectLine.SetZoneWidth(const Value: Double);
+begin
+  FZoneWidth := Value;
+end;
+
+{ TmstProjectPoint }
+
+procedure TmstProjectPoint.SetName(const Value: string);
+begin
+  FName := Value;
+end;
+
+procedure TmstProjectPoint.SetX(const Value: Double);
+begin
+  FX := Value;
+end;
+
+procedure TmstProjectPoint.SetY(const Value: Double);
+begin
+  FY := Value;
+end;
+
+procedure TmstProjectPoint.SetZ(const Value: Double);
+begin
+  FZ := Value;
+end;
+
+{ TmstProjectLinePoints }
+
+function TmstProjectLinePoints.Add(const X, Y: Double): TmstProjectPoint;
+begin
+  Result := TmstProjectPoint.Create;
+  inherited Add(Result);
+  Result.X := X;
+  Result.Y := Y;
+end;
+
+procedure TmstProjectLinePoints.CopyFrom(Source: TmstProjectLinePoints);
+var
+  I: Integer;
+  Pt: TmstProjectPoint;
+begin
+  Clear();
+  for I := 0 to Source.Count - 1 do
+  begin
+    Pt := Source[I];
+    with Add(Pt.X, Pt.Y) do
+    begin
+      Z := Pt.Z;
+      Name := Pt.Name;
+      DatabaseId := Pt.DatabaseId;
+    end;
+  end;
+end;
+
+function TmstProjectLinePoints.First: TmstProjectPoint;
+begin
+  Result := TmstProjectPoint(inherited First);
+end;
+
+function TmstProjectLinePoints.GetItems(Index: Integer): TmstProjectPoint;
+begin
+  Result := TmstProjectPoint(inherited Items[Index]);
+end;
+
+function TmstProjectLinePoints.GetZDelta(I: Integer): Double;
+var
+  L: Double;
+  dX, dY: Double;
+begin
+  Result := 0;
+  if I > 0 then
+    if I < Count then
+    begin
+      dX := Abs(Items[I].X - Items[I - 1].X);
+      dY := Abs(Items[I].Y - Items[I - 1].Y);
+      L := Sqrt(dX * dX + dY + dY);
+      if L >= 0.01 then
+        Result := Abs(Items[I].Z - Items[I - 1].Z) / L;
+    end;
+end;
+
+function TmstProjectLinePoints.Last: TmstProjectPoint;
+begin
+  Result := TmstProjectPoint(inherited Last);
+end;
+
+procedure TmstProjectLinePoints.SetItems(Index: Integer; const Value: TmstProjectPoint);
+begin
+  inherited Items[Index] := Value;
+end;
+
+{ TmstProjectLayer }
+
+procedure TmstProjectLayer.AssignTo(Target: TPersistent);
+var
+  Tgt: TmstProjectLayer;
+begin
+  if not (Target is TmstProjectLayer) then
+    inherited;
+  Tgt := TmstProjectLayer(Target);
+  Tgt.FName := Self.FName;
+  Tgt.FActive := Self.Active;
+  Tgt.FRequired := Self.FRequired;
+  Tgt.FDestroyed := Self.FDestroyed;
+  Tgt.FLineType := Self.FLineType;
+  Tgt.DatabaseId := Self.DatabaseId;
+  Self.NetType.AssignTo(Tgt.NetType);
+end;
+
+constructor TmstProjectLayer.Create;
+begin
+  inherited;
+  FNetType := TmstProjectNetType.Create;
+end;
+
+destructor TmstProjectLayer.Destroy;
+begin
+  FreeAndNil(FNetType);
+  inherited;
+end;
+
+procedure TmstProjectLayer.SetActive(const Value: Boolean);
+begin
+  FActive := Value;
+end;
+
+procedure TmstProjectLayer.SetDestroyed(const Value: Boolean);
+begin
+  FDestroyed := Value;
+end;
+
+procedure TmstProjectLayer.SetLineType(const Value: Boolean);
+begin
+  FLineType := Value;
+end;
+
+procedure TmstProjectLayer.SetName(const Value: string);
+begin
+  FName := Value;
+end;
+
+procedure TmstProjectLayer.SetNetType(const Value: TmstProjectNetType);
+begin
+  FNetType := Value;
+end;
+
+procedure TmstProjectLayer.SetRequired(const Value: Boolean);
+begin
+  FRequired := Value;
+end;
+
+{ TmstProjectLayers }
+
+function TmstProjectLayers.Add(const aName: string; aDestroyed, aRequired, aLineType: Boolean): TmstProjectLayer;
+begin
+  Result := TmstProjectLayer.Create();
+  inherited Add(Result);
+  Result.FName := aName;
+  Result.FRequired := aRequired;
+  Result.FDestroyed := aDestroyed;
+  Result.FLineType := aLineType;  
+end;
+
+function TmstProjectLayers.Add(const Source: TmstProjectLayer): TmstProjectLayer;
+begin
+  Result := TmstProjectLayer.Create();
+  inherited Add(Result);
+  Result.Assign(Source);
+end;
+
+function TmstProjectLayers.ByDbId(DbId: Integer): TmstProjectLayer;
+var
+  I: Integer;
+begin
+  for I := 0 to Count - 1 do
+    if Items[I].DatabaseId = DbId then
+    begin
+      Result := Items[I];
+      Exit;
+    end;
+  Result := nil;
+end;
+
+function TmstProjectLayers.ByName(aName: String): TmstProjectLayer;
+var
+  I: Integer;
+begin
+  for I := 0 to Count - 1 do
+    if Items[I].Name = aName then
+    begin
+      Result := Items[I];
+      Exit;
+    end;
+  Result := nil;
+end;
+
+procedure TmstProjectLayers.CopyFrom(Source: TmstProjectLayers);
+var
+  I: Integer;
+  Src, Tgt: TmstProjectLayer;
+begin
+  Clear();
+  for I := 0 to Source.Count - 1 do
+  begin
+    Src := Source[I];
+    Tgt := TmstProjectLayer.Create;
+    inherited Add(Tgt);
+    Tgt.Assign(Src);
+  end;
+end;
+
+function TmstProjectLayers.GetItems(Index: Integer): TmstProjectLayer;
+begin
+  Result := TmstProjectLayer(inherited Items[Index]);
+end;
+
+procedure TmstProjectLayers.SetItems(Index: Integer; const Value: TmstProjectLayer);
+begin
+  inherited Items[Index] := Value;
+end;
+
+{ TmstProjectBlock }
+
+procedure TmstProjectBlock.AssignTo(Target: TPersistent);
+var
+  Tgt: TmstProjectBlock;
+begin
+  if not (Target is TmstProjectBlock) then
+    inherited;
+  Tgt := TmstProjectBlock(Target);
+  Tgt.FName := Self.FName;
+  Tgt.FSymbolId := Self.FSymbolId;
+  Tgt.FEzData.Size := 0;
+  Self.FEzData.Position := 0;
+  Tgt.FEzData.CopyFrom(Self.FEzData, Self.FEzData.Size);
+  Tgt.FEzData.Position := 0;
+  Self.FEzData.Position := 0;
+  Tgt.DatabaseId := Self.DatabaseId;
+end;
+
+constructor TmstProjectBlock.Create;
+begin
+  inherited;
+  FEzData := TMemoryStream.Create;
+end;
+
+destructor TmstProjectBlock.Destroy;
+begin
+  FEzData.Free;
+  inherited;
+end;
+
+procedure TmstProjectBlock.SetName(const Value: string);
+begin
+  FName := Value;
+end;
+
+procedure TmstProjectBlock.SetSymbolId(const Value: Integer);
+begin
+  FSymbolId := Value;
+end;
+
+{ TmstProjectBlocks }
+
+function TmstProjectBlocks.ByName(const BlockName: string): TmstProjectBlock;
+var
+  I: Integer;
+begin
+  for I := 0 to Count - 1 do
+    if Items[I].Name = BlockName then
+    begin
+      Result := Items[I];
+      Exit;
+    end;
+  Result := nil;
+end;
+
+procedure TmstProjectBlocks.CopyFrom(Source: TmstProjectBlocks);
+var
+  Src, Tgt: TmstProjectBlock;
+  I: Integer;
+begin
+  Clear();
+  for I := 0 to Source.Count - 1 do
+  begin
+    Src := Source[I];
+    Tgt := TmstProjectBlock.Create;
+    Self.Add(Tgt);
+    Tgt.Assign(Src);
+  end;
+end;
+
+function TmstProjectBlocks.GetItems(Index: Integer): TmstProjectBlock;
+begin
+  Result := TmstProjectBlock(inherited Items[Index]);
+end;
+
+procedure TmstProjectBlocks.SetItems(Index: Integer; const Value: TmstProjectBlock);
+begin
+  inherited Items[Index] := Value;
+end;
+
+{ TmstProjectPlace }
+
+procedure TmstProjectPlace.AssignTo(Target: TPersistent);
+var
+  Tgt: TmstProjectPlace;
+begin
+  if not (Target is TmstProjectPlace) then
+    inherited;
+  Tgt := TmstProjectPlace(Target);
+  //
+  Tgt.FEntityId := Self.FEntityId;
+  //
+  Tgt.FData.Size := 0;
+  Self.FData.Position := 0;
+  Tgt.FData.CopyFrom(Self.FData, Self.FData.Size);
+  Tgt.FData.Position := 0;
+  Self.FData.Position := 0;
+  Tgt.FEzId := Self.FEzId;
+  //
+  if Assigned(Self.FLayer) then
+    Tgt.FLayer := Tgt.Owner.Layers.ByDbId(Self.Layer.DatabaseId)
+  else
+    Tgt.FLayer := nil;
+  //
+  Tgt.DatabaseId := Self.DatabaseId;
+end;
+
+constructor TmstProjectPlace.Create;
+begin
+  inherited;
+  FData := TMemoryStream.Create;
+  FEzId := -1;
+end;
+
+destructor TmstProjectPlace.Destroy;
+begin
+  FData.Free;
+  inherited;
+end;
+
+procedure TmstProjectPlace.SetEntityId(const Value: Integer);
+begin
+  FEntityId := Value;
+end;
+
+procedure TmstProjectPlace.SetEzId(const Value: Integer);
+begin
+  FEzId := Value;
+end;
+
+procedure TmstProjectPlace.SetLayer(const Value: TmstProjectLayer);
+begin
+  FLayer := Value;
+end;
+
+procedure TmstProjectPlace.SetOwner(const Value: TmstProject);
+begin
+  FOwner := Value;
+end;
+
+{ TmstProjectPlaces }
+
+function TmstProjectPlaces.Add: TmstProjectPlace;
+begin
+  Result := TmstProjectPlace.Create;
+  inherited Add(Result);
+  Result.Owner := FOwner;
+end;
+
+procedure TmstProjectPlaces.CopyFrom(Source: TmstProjectPlaces);
+var
+  Src, Tgt: TmstProjectPlace;
+  I: Integer;
+begin
+  Clear();
+  for I := 0 to Source.Count - 1 do
+  begin
+    Src := Source[I];
+    Tgt := Self.Add();
+    Tgt.Assign(Src);
+  end;
+end;
+
+constructor TmstProjectPlaces.Create(aOwner: TmstProject);
+begin
+  inherited Create;
+  FOwner := aOwner;
+end;
+
+function TmstProjectPlaces.GetItems(Index: Integer): TmstProjectPlace;
+begin
+  Result := TmstProjectPlace(inherited Items[Index]);
+end;
+
+procedure TmstProjectPlaces.SetItems(Index: Integer; const Value: TmstProjectPlace);
+begin
+  inherited Items[Index] := Value;
+end;
+
+{ TmstProjectLines }
+
+function TmstProjectLines.Add: TmstProjectLine;
+begin
+  Result := TmstProjectLine.Create;
+  inherited Add(Result);
+  Result.Owner := FOwner;
+end;
+
+function TmstProjectLines.ByDbId(const DbId: Integer): TmstProjectLine;
+var
+  I: Integer;
+begin
+  for I := 0 to Count - 1 do
+    if Items[I].DatabaseId = DbId then
+    begin
+      Result := Items[I];
+      Exit;
+    end;
+  Result := nil;
+end;
+
+procedure TmstProjectLines.CopyFrom;
+var
+  Src, Tgt: TmstProjectLine;
+  I: Integer;
+begin
+  Clear();
+  for I := 0 to Source.Count - 1 do
+  begin
+    Src := Source[I];
+    Tgt := Self.Add;
+    Tgt.Assign(Src);
+  end;
+end;
+
+constructor TmstProjectLines.Create(aOwner: TmstProject);
+begin
+  inherited Create;
+  FOwner := aOwner;
+end;
+
+function TmstProjectLines.GetItems(Index: Integer): TmstProjectLine;
+begin
+  Result := TmstProjectLine(inherited Items[Index]);
+end;
+
+procedure TmstProjectLines.SetItems(Index: Integer; const Value: TmstProjectLine);
+begin
+  inherited Items[Index] := Value;
+end;
+
+{ TProjectUtils }
+
+class procedure TProjectUtils.AddLineToLayer(aLayer: TEzBaseLayer; aLine: TmstProjectLine);
+var
+  Poly: TEzPolyLine;
+  Pts: array of TEzPoint;
+  I: Integer;
+  PolyColor: TColor;
+  ZonePoly: TEzOpenedEntity;
+  NetId: Integer;
+begin
+  SetLength(Pts, aLine.Points.Count);
+  //
+  for I := 0 to aLine.Points.Count - 1 do
+  begin
+    Pts[I] := PointTo2D(aLine.Owner, aLine.Points[I]);
+  end;
+  //
+  Poly := TEzPolyLine.CreateEntity(Pts, False);
+  try
+    Poly.PenTool.Width := TProjectsSettings.PenWidth;//-2;
+    if aLine.Layer.Destroyed then
+      Poly.PenTool.Color := clRed
+    else
+    begin
+      if Assigned(aLine.Layer) and Assigned(aLine.Layer.NetType) then
+        Poly.PenTool.Color := aLine.Layer.NetType.GetColor()
+      else
+        Poly.PenTool.Color := clBlue;
+    end;
+    PolyColor := Poly.PenTool.Color;
+    I := aLayer.AddEntity(Poly);
+    aLine.EntityId := I;
+    aLayer.Recno := I;
+    aLayer.DBTable.Edit;
+    aLayer.DBTable.IntegerPut(SLF_PROJECT_ID, aLine.Owner.DatabaseId);
+    aLayer.DBTable.IntegerPut(SLF_LINE_ID, aLine.DatabaseId);
+    aLayer.DBTable.IntegerPut(SLF_LAYER_ID, aLine.Layer.DatabaseId);
+    NetId := -1;
+    if Assigned(aLine.Layer) then
+      if Assigned(aLine.Layer.NetType) then
+        NetId := aLine.Layer.NetType.DatabaseId;
+    aLayer.DBTable.IntegerPut(SLF_NET_ID, NetId);
+    aLayer.DBTable.Post;
+  finally
+    Poly.Free;
+  end;
+  //
+  if Assigned(aLine.ZoneLine) then
+  begin
+    if not Assigned(aLine.Zone) then
+    begin
+      ZonePoly := TProjectUtils.LineToEntity(aLine.Owner, aLine.ZoneLine, True);
+      aLine.Zone := ZonePoly;
+      ZonePoly.PenTool.Color := PolyColor;
+      ZonePoly.PenTool.Style := 4;
+      Poly.PenTool.Width := TProjectsSettings.PenWidth;//-2;
+    end;
+    I := aLayer.AddEntity(aLine.Zone);
+    aLine.ZoneLine.EntityId := I;
+    aLayer.DBTable.RecNo := aLine.ZoneLine.EntityId;
+    aLayer.DBTable.Edit;
+    aLayer.DBTable.IntegerPut(SF_PROJECT_ID, aLine.Owner.DatabaseId);
+    aLayer.DBTable.IntegerPut(SLF_LAYER_ID, aLine.Layer.DatabaseId);
+    aLayer.DBTable.IntegerPut(SLF_NET_ID, NetId);
+    aLayer.DBTable.Post;
+  end
+  else
+  begin
+    aLine.Zone := nil;
+  end;
+end;
+
+class function TProjectUtils.AddLineZoneToGIS(aLine: TmstProjectLine; aZoneWidth: Double): Boolean;
+var
+  EzLayer: TEzBaseLayer;
+  LineRecNo, ZoneRecNo: Integer;
+  LineEnt: TEzEntity;
+  ZoneEnt: TEzOpenedEntity;
+  Updated: Boolean;
+begin
+  Result := False;
+  TProjectUtils.FindProjectInGIS(aLine.Owner, aLine.DatabaseId, EzLayer, LineRecNo);
+  if EzLayer = nil then
+    Exit;
+  if Assigned(aLine.ZoneLine) and Assigned(aLine.Zone) and (aLine.ZoneLine.EntityId > 0) then
+    ZoneRecNo := aLine.ZoneLine.EntityId
+  else
+    ZoneRecNo := 0;
+  // строим зону
+  aLine.BuildZone(aZoneWidth);
+  // создаЄм объект дл€ карты
+  LineEnt := EzLayer.LoadEntityWithRecNo(LineRecNo);
+  if Assigned(aLine.ZoneLine) then
+  begin
+    ZoneEnt := TProjectUtils.LineToEntity(aLine.Owner, aLine.ZoneLine, True);
+    aLine.Zone := ZoneEnt;
+  end
+  else
+  begin
+    ZoneEnt := nil;
+    aLine.Zone := nil;
+    if ZoneRecNo > 0 then
+      EzLayer.DeleteEntity(ZoneRecNo);
+  end;
+  if Assigned(ZoneEnt) then
+  begin
+    if Assigned(LineEnt) and (LineEnt is TEzOpenedEntity) then
+      ZoneEnt.PenTool.Color := TEzOpenedEntity(LineEnt).PenTool.Color
+    else
+      ZoneEnt.PenTool.Color := clBlue;
+    ZoneEnt.PenTool.Style := 4;
+    // если уже есть зона, то обновл€ем еЄ
+    // если нет, то добавл€ем
+    Updated := False;
+    if ZoneRecNo > 0 then
+    begin
+      EzLayer.Recno := ZoneRecNo;
+      if not EzLayer.RecIsDeleted then
+      begin
+        EzLayer.UpdateEntity(ZoneRecNo, ZoneEnt);
+        Updated := True;
+        Result := True;
+      end;
+    end;
+    if not Updated then
+    begin
+      aLine.ZoneLine.EntityId := EzLayer.AddEntity(ZoneEnt);
+      EzLayer.DBTable.RecNo := aLine.ZoneLine.EntityId;
+      EzLayer.DBTable.Edit;
+      EzLayer.DBTable.IntegerPut(SF_PROJECT_ID, aLine.Owner.DatabaseId);
+      EzLayer.DBTable.Post;
+      Result := True;
+    end;
+  end;
+end;
+
+class procedure TProjectUtils.AddPlaceToLayer(aLayer: TEzBaseLayer; aPlace: TmstProjectPlace);
+var
+  I: Integer;
+  EntId: TEzEntityID;
+  EntClass: TEzEntityClass;
+  Ent: TEzEntity;
+begin
+  if aPlace.EzId >= 0 then
+  begin
+    EntID := TEzEntityID(aPlace.EzId);
+    EntClass := GetClassFromID(EntID);
+    Ent := EntClass.Create(1, True);
+    try
+      aPlace.EzData.Position := 0;
+      Ent.LoadFromStream(aPlace.EzData);
+      I := aLayer.AddEntity(Ent);
+      aPlace.EntityId := I;
+      aLayer.Recno := I;
+      aLayer.DBTable.Edit;
+      aLayer.DBTable.FieldPut(SLF_PROJECT_ID, IntToStr(aPlace.Owner.DatabaseId));
+      //aLayer.DBTable.FieldPut(SLF_LINE_ID, IntToStr(aPlace.DatabaseId));
+      aLayer.DBTable.FieldPut(SLF_LAYER_ID, IntToStr(aPlace.Layer.DatabaseId));
+      aLayer.DBTable.Post;
+    finally
+      FreeAndNil(Ent);
+    end;
+  end;
+end;
+
+class procedure TProjectUtils.AddProjectToGIS(aPrj: TmstProject);
+var
+  S1, S2: string;
+  OldLayer: TEzBaseLayer;
+  NewLayer: TEzBaseLayer;
+  I: Integer;
+  MyId, PrjId: string;
+  Found: Boolean;
+begin
+  // если проект открытый, то ищем его в закрытом слое
+  // иначе ищем в открытом слое
+  if aPrj.Confirmed then
+  begin
+    S1 := SL_PROJECT_OPEN;
+    S2 := SL_PROJECT_CLOSED;
+  end
+  else
+  begin
+    S1 := SL_PROJECT_CLOSED;
+    S2 := SL_PROJECT_OPEN;
+  end;
+  OldLayer := GIS.Layers.LayerByName(S1);
+  NewLayer := GIS.Layers.LayerByName(S2);
+  if Assigned(OldLayer) then
+  begin
+    MyId := IntToStr(aPrj.DatabaseId);
+    OldLayer.First;
+    while not OldLayer.Eof do
+    begin
+      if not OldLayer.RecIsDeleted then
+      begin
+        PrjId := OldLayer.DBTable.FieldGet(SLF_PROJECT_ID);
+        if PrjId = MyId then
+        begin
+          OldLayer.DeleteEntity(OldLayer.Recno);
+        end;
+      end;
+      OldLayer.Next;
+    end;
+  end;
+  //
+  if Assigned(NewLayer) then
+  begin
+    Found := False;
+    NewLayer.First;
+    while not NewLayer.Eof do
+    begin
+      if not NewLayer.RecIsDeleted then
+      begin
+        PrjId := NewLayer.DBTable.FieldGet(SLF_PROJECT_ID);
+        if PrjId = MyId then
+        begin
+          Found := True;
+          Break;
+        end;
+      end;
+      NewLayer.Next;
+    end;
+    if not Found then
+    begin
+      // проект не был загружен
+      // загружаем
+      for I := 0 to aPrj.Lines.Count - 1 do
+        AddLineToLayer(NewLayer, aPrj.Lines[I]);
+      for I := 0 to aPrj.Places.Count - 1 do
+        AddPlaceToLayer(NewLayer, aPrj.Places[I]);
+    end;
+    if not NewLayer.LayerInfo.Visible then
+      NewLayer.LayerInfo.Visible := True;
+  end;
+end;
+
+class procedure TProjectUtils.ClearLayer(const aLayerName: string; aPredicate: TLayerRecNoPredicate);
+var
+  L: TEzBaseLayer;
+//  V: Boolean;
+begin
+  if Assigned(GIS) then
+  begin
+    L := GIS.Layers.LayerByName(aLayerName);
+    if Assigned(L) then
+    begin
+      L.First;
+      while not L.Eof do
+      begin
+        if not L.RecIsDeleted then
+          if not Assigned(aPredicate) or aPredicate(L, L.Recno) then          
+            L.DeleteEntity(L.Recno);
+        L.Next;
+      end;
+//      V := L.LayerInfo.Visible;
+//      L.LayerInfo.Visible := True;
+//      try
+//        L.Pack(False);
+//      finally
+//        L.LayerInfo.Visible := V;
+//      end;
+    end;
+  end;
+end;
+
+class procedure TProjectUtils.ClearProjectLayers;
+begin
+  ClearLayer(SL_PROJECT_CLOSED, nil);
+  ClearLayer(SL_PROJECT_OPEN, nil);
+end;
+
+class procedure TProjectUtils.FindProjectInGIS(Prj: TmstProject; LineId: Integer; out Layer: TEzBaseLayer; out RecNo: Integer);
+var
+  S2: string;
+  NewLayer: TEzBaseLayer;
+  MyId: Integer;
+  PrjId, MyLineId: string;
+begin
+  Layer := nil;
+  RecNo := 0;
+  if not Assigned(Prj) then
+    Exit;
+  // если проект открытый, то ищем его в закрытом слое
+  // иначе ищем в открытом слое
+  if Prj.Confirmed then
+    S2 := SL_PROJECT_CLOSED
+  else
+    S2 := SL_PROJECT_OPEN;
+  NewLayer := GIS.Layers.LayerByName(S2);
+  if Assigned(NewLayer) then
+  begin
+    NewLayer.First;
+    while not NewLayer.Eof do
+    begin
+      if not NewLayer.RecIsDeleted then
+      begin
+        NewLayer.DBTable.RecNo := NewLayer.RecNo;
+        PrjId := NewLayer.DBTable.FieldGet(SLF_PROJECT_ID);
+        if TryStrToInt(PrjId, MyId) then
+        begin
+          if Prj.DatabaseId = MyId then
+          begin
+            MyLineId := NewLayer.DBTable.FieldGet(SLF_LINE_ID);
+            if TryStrToInt(MyLineId, MyId) then
+            begin
+              if MyId = LineId then
+              begin
+                Layer := NewLayer;
+                RecNo := NewLayer.Recno;
+                Exit;
+              end;
+            end;
+          end;
+        end;
+      end;
+      NewLayer.Next;
+    end;
+  end;
+end;
+
+class function TProjectUtils.LineToEntity(aPrj: TmstProject; aProjLine: TmstProjectLine; Poly: Boolean): TEzOpenedEntity;
+var
+  Polygon: TEzPolygon;
+  Polyline: TEzPolyLine;
+  I: Integer;
+begin
+  if Poly then
+  begin
+    Polygon := TEzPolygon.CreateEntity([Point2D(0, 0)], True);
+    Result := Polygon;
+    Polygon.Points.Clear;
+    for I := 0 to aProjLine.Points.Count - 1 do
+      Polygon.Points.Add(PointTo2D(aPrj, aProjLine.Points[I]));
+  end
+  else
+  begin
+    Polyline := TEzPolyLine.CreateEntity([Point2D(0, 0)], True);
+    Result := Polyline;
+    Polyline.Points.Clear;
+    for I := 0 to aProjLine.Points.Count - 1 do
+      Polyline.Points.Add(PointTo2D(aPrj, aProjLine.Points[I]));
+  end;
+end;
+
+class function TProjectUtils.PointTo2D(aPrj: TmstProject; aPt: TmstProjectPoint): TEzPoint;
+begin
+  if aPrj.CK36 then
+  begin
+    uCK36.ToVRN(aPt.X, aPt.Y, Result.y, Result.x);
+//    uCK36.ToVRN(aPt.Y, aPt.X, Result.Y, Result.X);
+  end
+  else
+  begin
+    Result.x := aPt.Y;
+    Result.y := aPt.X;
+  end;
+end;
+
+class function TProjectUtils.ProjectLayerName(aPrj: TmstProject): string;
+begin
+  if aPrj.Confirmed then
+    Result := SL_PROJECT_CLOSED
+  else
+    Result := SL_PROJECT_OPEN;
+end;
+
+var
+  RemoveProjectFromLayerProjectId: Integer;
+  ProjectIdFieldNo: Integer;
+
+function CheckProjectId(Layer: TEzBaseLayer; const Recno: Integer): Boolean;
+var
+  PrjId: Integer;
+begin
+  Result := False;
+  try
+    if RemoveProjectFromLayerProjectId > 0 then
+    begin
+      if ProjectIdFieldNo < 0 then
+        ProjectIdFieldNo := Layer.DBTable.FieldNo(SLF_PROJECT_ID);
+      if ProjectIdFieldNo > 0 then
+        if not Layer.RecIsDeleted then
+        begin
+          Layer.DBTable.RecNo := Recno;
+          PrjId := Layer.DBTable.IntegerGetN(ProjectIdFieldNo);
+          Result := PrjId = RemoveProjectFromLayerProjectId;
+        end;
+    end;
+  except
+    Result := False;
+  end;
+end;
+
+class function TProjectUtils.RemoveLineZone(aLine: TmstProjectLine): Boolean;
+var
+  LayerName: string;
+  EzLayer: TEzBaseLayer;
+begin
+  Result := False;
+  LayerName := ProjectLayerName(aLine.Owner);
+  EzLayer := GIS.Layers.LayerByName(LayerName);
+  if EzLayer = nil then
+    Exit;
+  try
+    if Assigned(aLine.ZoneLine) and Assigned(aLine.Zone) and (aLine.ZoneLine.EntityId > 0) then
+      EzLayer.DeleteEntity(aLine.ZoneLine.EntityId);
+  finally
+    aLine.ZoneLine := nil;
+    aLine.Zone := nil;
+  end;
+end;
+
+class procedure TProjectUtils.RemoveProjectFromLayer(const ProjectId: Integer);
+begin
+  RemoveProjectFromLayerProjectId := ProjectId;
+  try
+    ProjectIdFieldNo := -1;
+    try
+      ClearLayer(SL_PROJECT_CLOSED, CheckProjectId);
+    finally
+      ProjectIdFieldNo := -1;
+    end;
+    try
+      ClearLayer(SL_PROJECT_OPEN, CheckProjectId);
+    finally
+      ProjectIdFieldNo := -1;
+    end;
+  finally
+    RemoveProjectFromLayerProjectId := -1;
+  end;
+end;
+
+class procedure TProjectUtils.ShowProjectLayer(aPrj: TmstProject);
+var
+  LayerName: string;
+  EzLayer: TEzBaseLayer;
+begin
+  LayerName := TProjectUtils.ProjectLayerName(aPrj);
+  EzLayer := GIS.Layers.LayerByName(LayerName);
+  if Assigned(EzLayer) then
+    EzLayer.LayerInfo.Visible := True;
+end;
+
+class function TProjectUtils.Window(aPrj: TmstProject): TEzRect;
+begin
+  if aPrj.CK36 then
+  begin
+    uCK36.ToVRN(aPrj.MinX, aPrj.MinY, Result.Y1, Result.X1);
+    uCK36.ToVRN(aPrj.MaxX, aPrj.MaxY, Result.Y2, Result.X2);
+  end
+  else
+  begin
+    Result.X1 := aPrj.MinY;
+    Result.X2 := aPrj.MaxY;
+    Result.Y1 := aPrj.MinX;
+    Result.Y2 := aPrj.MaxX;
+  end;
+end;
+
+{ TmstProjectNetType }
+
+procedure TmstProjectNetType.AssignTo(Target: TPersistent);
+var
+  Tgt: TmstProjectNetType;
+begin
+  Tgt := TmstProjectNetType(Target);
+  Tgt.DatabaseId := DatabaseId;
+  Tgt.Name := Name;
+  Tgt.Color := Color;
+  Tgt.ZoneWidth := ZoneWidth;
+  Tgt.Visible := Visible;
+end;
+
+constructor TmstProjectNetType.Create;
+begin
+  inherited;
+  FVisible := True;
+end;
+
+function TmstProjectNetType.GetColor: TColor;
+begin
+  Result := clBlack;
+  if Color <> '' then
+  begin
+    try
+      Result := StrToInt(Color);
+    except
+      Result := clBlack;
+    end;
+  end;
+end;
+
+procedure TmstProjectNetType.SetColor(const Value: string);
+begin
+  FColor := Value;
+end;
+
+procedure TmstProjectNetType.SetName(const Value: string);
+begin
+  FName := Value;
+end;
+
+procedure TmstProjectNetType.SetVisible(const Value: Boolean);
+begin
+  FVisible := Value;
+end;
+
+procedure TmstProjectNetType.SetZoneWidth(const Value: Double);
+begin
+  FZoneWidth := Value;
+end;
+
+{ TmstProjectLayerListLoader }
+
+procedure TmstProjectLayerListLoader.Load(aDb: IDb; aList: TmstProjectLayers; const aProjectId: Integer);
+var
+  Conn: IIBXConnection;
+  DataSet: TDataSet;
+  DataSetNetTypes: TDataSet;
+begin
+  FList := aList;
+  FProjectId := aProjectId;
+  Conn := aDb.GetConnection(cmReadOnly, dmKis);
+  if aProjectId > 0 then
+  begin
+    DataSet := Conn.GetDataSet(SQL_LOAD_LAYERS_FOR_LINES);
+    Conn.SetParam(DataSet, SF_ID, aProjectId);
+    DataSet.Open;
+    DataSetNetTypes := Conn.GetDataSet(SQL_LOAD_PROJECT_NET_TYPES);
+    try
+      if not DataSet.IsEmpty then
+      begin
+        DataSetNetTypes.Open;
+        LoadLayers(DataSet, DataSetNetTypes);
+        DataSet.Close;
+      end;
+      //
+      DataSet := Conn.GetDataSet(SQL_LOAD_LAYERS_FOR_PLACES);
+      Conn.SetParam(DataSet, SF_ID, aProjectId);
+      DataSet.Open;
+      if DataSet.IsEmpty then
+        Exit;
+      DataSetNetTypes.Active := True;
+      LoadLayers(DataSet, DataSetNetTypes);
+      DataSet.Close;
+    finally
+      DataSetNetTypes.Active := False;
+    end;
+  end
+  else
+  begin
+    DataSet := Conn.GetDataSet(SQL_PROJECT_LAYERS_ALL);
+    DataSet.Open;
+    if DataSet.IsEmpty then
+      Exit;
+    DataSetNetTypes := Conn.GetDataSet(SQL_LOAD_PROJECT_NET_TYPES);
+    DataSetNetTypes.Open;
+    LoadLayers(DataSet, DataSetNetTypes);
+    DataSetNetTypes.Close;
+    DataSet.Close;
+  end;
+end;
+
+procedure TmstProjectLayerListLoader.LoadLayers(DataSet, DataSetNetTypes: TDataSet);
+var
+  L: TmstProjectLayer;
+  NetTypeId, DbId: Integer;
+begin
+  while not DataSet.Eof do
+  begin
+    DbId := DataSet.FieldByName(SF_ID).AsInteger;
+    if FList.ByDbId(DbId) = nil then
+    begin
+      L := FList.Add(DataSet.FieldByName(SF_NAME).AsString,
+                     DataSet.FieldByName(SF_DESTROYED).AsInteger = 1,
+                     DataSet.FieldByName(SF_REQUIRED).AsInteger = 1,
+                     DataSet.FieldByName(SF_OBJECT_TYPE).AsInteger = 0);
+      L.Active := DataSet.FieldByName(SF_ACTUAL).AsInteger = 1;
+      L.DatabaseId := DbId;
+      NetTypeId := DataSet.FieldByName(SF_NET_TYPES_ID).AsInteger;
+      if NetTypeId > 0 then
+      begin
+        DataSetNetTypes.First;
+        if DataSetNetTypes.Locate(SF_ID, NetTypeId, []) then
+        begin
+          L.NetType.DatabaseId := DataSetNetTypes.FieldByName(SF_ID).AsInteger;
+          L.NetType.Name := DataSetNetTypes.FieldByName(SF_NAME).AsString;
+          L.NetType.Color := DataSetNetTypes.FieldByName(SF_COLOR).AsString;
+          L.NetType.ZoneWidth := DataSetNetTypes.FieldByName(SF_ZONE_WIDTH).AsFloat;
+        end;
+      end;
+    end;
+    DataSet.Next;
+  end;
+end;
+
+{ TmstProjectList }
+
+function TmstProjectList.GetItems(Index: Integer): TmstProject;
+begin
+  Result := TmstProject(inherited Items[Index]);
+end;
+
+procedure TmstProjectList.SetItems(Index: Integer; const Value: TmstProject);
+begin
+  inherited Items[Index] := Value;
+end;
+
+{ TmstProjectNetTypes }
+
+function TmstProjectNetTypes.ById(const aId: Integer): TmstProjectNetType;
+var
+  I: Integer;
+begin
+  for I := 0 to FList.Count - 1 do
+    if Items[I].DatabaseId = aId then
+    begin
+      Result := Items[I];
+      Exit;
+    end;
+  Result := nil;
+end;
+
+function TmstProjectNetTypes.Count: Integer;
+begin
+  Result := FList.Count;
+end;
+
+constructor TmstProjectNetTypes.Create;
+begin
+  FList := TObjectList.Create;
+end;
+
+destructor TmstProjectNetTypes.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TmstProjectNetTypes.Get(Index: Integer): TmstProjectNetType;
+begin
+  Result := TmstProjectNetType(FList[Index]);
+end;
+
+procedure TmstProjectNetTypes.Load(aDb: IDb);
+var
+  Conn: IIBXConnection;
+  DataSet: TDataSet;
+  NetType: TmstProjectNetType;
+begin
+  FList.Clear;
+  Conn := aDb.GetConnection(cmReadOnly, dmKis);
+  DataSet := Conn.GetDataSet(SQL_LOAD_PROJECT_NET_TYPES);
+  DataSet.Open;
+  if DataSet.IsEmpty then
+    Exit;
+  while not DataSet.Eof do
+  begin
+    NetType := TmstProjectNetType.Create;
+    FList.Add(NetType);
+    NetType.DatabaseId := DataSet.FieldByName(SF_ID).AsInteger;
+    NetType.Name := DataSet.FieldByName(SF_NAME).AsString;
+    NetType.Color := DataSet.FieldByName(SF_COLOR).AsString;
+    NetType.ZoneWidth := DataSet.FieldByName(SF_ZONE_WIDTH).AsFloat;
+    DataSet.Next;
+  end;
+  DataSet.Close;
+end;
+
+{ TProjectsSettings }
+
+class function TProjectsSettings.EntityIsCurrent(const Layer: TEzBaseLayer; const Recno: Integer): Boolean;
+var
+  Idx1, Idx2: Integer;
+  PrjId, LineId: Integer;
+begin
+  Result := False;
+  if FProjectId < 0 then
+    Exit;
+  if FLineId < 0 then
+    Exit;
+  if Assigned(Layer.DBTable) then
+  begin
+    Idx1 := Layer.DBTable.FieldNo(SF_PROJECT_ID);
+    if Idx1 > 0 then
+    begin
+      PrjId := Layer.DBTable.IntegerGet(SF_PROJECT_ID);
+      if PrjId = FProjectId then
+      begin
+        Idx2 := Layer.DBTable.FieldNo(SF_LINE_ID);
+        if Idx2 > 0 then
+        begin
+          LineId := Layer.DBTable.IntegerGet(SF_LINE_ID);
+          Result := LineId = FLineId;
+        end;
+      end;
+    end;
+  end;
+end;
+
+class procedure TProjectsSettings.SetCurrentProjectLine(aProjectId, aLineId: Integer);
+begin
+  FProjectId := aProjectId;
+  FLineId := aLineId;
+end;
+
+initialization
+  TProjectsSettings.PenWidth := 2;
+
+end.

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{2d884f96-3446-4620-b38b-7bc66ccf9c4a}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>Exe\KisTestsProject.exe</DCC_DependencyCheckOutputName>
+    <MainSource>KisTestsProject.dpr</MainSource>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_Define>RELEASE</DCC_Define>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_Define>DEBUG</DCC_Define>
+    <DCC_ExeOutput>Exe</DCC_ExeOutput>
+    <DCC_DcuOutput>Dcu</DCC_DcuOutput>
+    <DCC_ObjOutput>Dcu</DCC_ObjOutput>
+    <DCC_HppOutput>Dcu</DCC_HppOutput>
+    <DCC_UnitSearchPath>..\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;Source;C:\Projects\kis\Ms3\Source;C:\Projects\kis\shared\Source;C:\Projects\kis\kis\Libs</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;Source;C:\Projects\kis\Ms3\Source;C:\Projects\kis\shared\Source;C:\Projects\kis\kis\Libs</DCC_ResourcePath>
+    <DCC_ObjPath>..\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;Source;C:\Projects\kis\Ms3\Source;C:\Projects\kis\shared\Source;C:\Projects\kis\kis\Libs</DCC_ObjPath>
+    <DCC_IncludePath>..\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;Source;C:\Projects\kis\Ms3\Source;C:\Projects\kis\shared\Source;C:\Projects\kis\kis\Libs</DCC_IncludePath>
+    <DCC_Optimize>False</DCC_Optimize>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType />
+    <BorlandProject>
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">False</VersionInfo><VersionInfo Name="AutoIncBuild">False</VersionInfo><VersionInfo Name="MajorVer">1</VersionInfo><VersionInfo Name="MinorVer">0</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">0</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1049</VersionInfo><VersionInfo Name="CodePage">1251</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName"></VersionInfoKeys><VersionInfoKeys Name="FileDescription"></VersionInfoKeys><VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys><VersionInfoKeys Name="InternalName"></VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys><VersionInfoKeys Name="ProductName"></VersionInfoKeys><VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">KisTestsProject.dpr</Source></Source></Delphi.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="KisTestsProject.dpr">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <DCCReference Include="..\Ms3\Source\uMstDialogFactory.pas" />
+    <DCCReference Include="..\Ms3\Source\uMstImportFactory.pas" />
+    <DCCReference Include="..\Ms3\Source\uMstImportMidMif.pas" />
+    <DCCReference Include="..\Ms3\Source\uMstImportMifBase.pas" />
+    <DCCReference Include="..\Ms3\Source\uMStImportMifEntityLoaders.pas" />
+    <DCCReference Include="KisTests\KistTestsMain.pas">
+      <Form>Form1</Form>
+    </DCCReference>
+    <DCCReference Include="Source\uKisScanImagesViewForm.pas">
+      <Form>KisScanImagesViewForm</Form>
+    </DCCReference>
+    <None Include="KisTestsProject.todo" />
+  </ItemGroup>
+</Project>
