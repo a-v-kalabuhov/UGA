@@ -8,935 +8,935 @@
   resources were bound to the produced executable.
 */
 
-#define uMStFormRichTextEditor_sColRowInfo 64144
-#define OleConst_SNotLicensed 64160
-#define XMLConst_SDuplicateRegistration 64161
-#define XMLConst_SDOMNotSupported 64162
-#define XMLConst_SNodeExpected 64163
-#define XMLConst_SMSDOMNotInstalled 64164
-#define ShellConsts_SShellDefaultNameStr 64165
-#define ShellConsts_SShellDefaultSizeStr 64166
-#define ShellConsts_SShellDefaultTypeStr 64167
-#define ShellConsts_SShellDefaultModifiedStr 64168
-#define ShellConsts_SShellNoDetails 64169
-#define ShellConsts_SCallLoadDetails 64170
-#define ShellConsts_SRenamedFailedError 64171
-#define uMStFormRichTextEditor_sSaveChanges 64172
-#define uMStFormRichTextEditor_sOverWrite 64173
-#define uMStFormRichTextEditor_sUntitled 64174
-#define uMStFormRichTextEditor_sModified 64175
-#define IdResourceStringsProtocols_RSFTPServerSentInvalidPort 64176
-#define IdResourceStringsProtocols_RSFTPNoDataPortProtectionAfterCCC 64177
-#define IdResourceStringsProtocols_RSFTPNoDataPortProtectionWOEncryption 64178
-#define IdResourceStringsProtocols_RSFTPNoCCCWOEncryption 64179
-#define IdResourceStringsProtocols_RSFTPNoAUTHWOSSL 64180
-#define IdResourceStringsProtocols_RSFTPNoAUTHCon 64181
-#define IdResourceStringsProtocols_RSFTPOTPMethod 64182
-#define IdResourceStringsProtocols_RSFTPIOHandlerWrong 64183
-#define IdResourceStringsProtocols_RSFTPFileNameCanNotBeEmpty 64184
-#define IdResourceStringsProtocols_RSTLSSSLIOHandlerRequired 64185
-#define IdResourceStringsProtocols_RSTLSSLCanNotSetWhileConnected 64186
-#define IdResourceStringsProtocols_RSTLSSLSSLNotAvailable 64187
-#define IdResourceStringsProtocols_RSTLSSLSSLCmdFailed 64188
-#define OleConst_SCannotActivate 64189
-#define OleConst_SNoWindowHandle 64190
-#define OleConst_SInvalidLicense 64191
-#define IdResourceStringsCore_RSTransparentProxyCannotBind 64192
-#define IdResourceStringsCore_RSTransparentProxyCanNotSupportUDP 64193
-#define IdResourceStringsCore_RSBufferMissingTerminator 64194
-#define IdResourceStringsCore_RSBufferInvalidStartPos 64195
-#define IdResourceStringsCore_RSIOHandlerCannotChange 64196
-#define IdResourceStringsCore_RSIOHandlerTypeNotInstalled 64197
-#define IdResourceStringsCore_RSReplyInvalidCode 64198
-#define IdResourceStringsProtocols_RSFTPUnknownHost 64199
-#define IdResourceStringsProtocols_RSFTPStatusReady 64200
-#define IdResourceStringsProtocols_RSFTPStatusStartTransfer 64201
-#define IdResourceStringsProtocols_RSFTPStatusDoneTransfer 64202
-#define IdResourceStringsProtocols_RSFTPStatusAbortTransfer 64203
-#define IdResourceStringsProtocols_RSFTPOnCustomFTPProxyReq 64204
-#define IdResourceStringsProtocols_RSFTPMustUseExtWithIPv6 64205
-#define IdResourceStringsProtocols_RSFTPMustUseExtWithNATFastTrack 64206
-#define IdResourceStringsProtocols_RSFTPFTPPassiveMustBeTrueWithNATFT 64207
-#define IdResourceStringsCore_RSSocksServerConnectionRefusedError 64208
-#define IdResourceStringsCore_RSSocksServerTTLExpiredError 64209
-#define IdResourceStringsCore_RSSocksServerCommandError 64210
-#define IdResourceStringsCore_RSSocksServerAddressError 64211
-#define IdResourceStringsCore_RSInterceptCircularLink 64212
-#define IdResourceStringsCore_RSNotEnoughDataInBuffer 64213
-#define IdResourceStringsCore_RSTooMuchDataInBuffer 64214
-#define IdResourceStringsCore_RSFileNotFound 64215
-#define IdResourceStringsCore_RSNotConnected 64216
-#define IdResourceStringsCore_RSObjectTypeNotSupported 64217
-#define IdResourceStringsCore_RSIdNoDataToRead 64218
-#define IdResourceStringsCore_RSReadTimeout 64219
-#define IdResourceStringsCore_RSReadLnMaxLineLengthExceeded 64220
-#define IdResourceStringsCore_RSConnectTimeout 64221
-#define IdResourceStringsCore_RSAlreadyConnected 64222
-#define IdResourceStringsCore_RSMaximumNumberOfCaptureLineExceeded 64223
-#define IdResourceStrings_RSIPVersionUnsupported 64224
-#define IdResourceStrings_RSNotAllBytesSent 64225
-#define IdResourceStrings_RSPackageSizeTooBig 64226
-#define IdResourceStrings_RSSetSizeExceeded 64227
-#define IdResourceStringsCore_RSSocksUDPNotSupported 64228
-#define IdResourceStringsCore_RSSocksRequestFailed 64229
-#define IdResourceStringsCore_RSSocksRequestServerFailed 64230
-#define IdResourceStringsCore_RSSocksRequestIdentFailed 64231
-#define IdResourceStringsCore_RSSocksUnknownError 64232
-#define IdResourceStringsCore_RSSocksServerRespondError 64233
-#define IdResourceStringsCore_RSSocksAuthMethodError 64234
-#define IdResourceStringsCore_RSSocksAuthError 64235
-#define IdResourceStringsCore_RSSocksServerGeneralError 64236
-#define IdResourceStringsCore_RSSocksServerPermissionError 64237
-#define IdResourceStringsCore_RSSocksServerNetUnreachableError 64238
-#define IdResourceStringsCore_RSSocksServerHostUnreachableError 64239
-#define IdResourceStrings_RSStackENAMETOOLONG 64240
-#define IdResourceStrings_RSStackEHOSTDOWN 64241
-#define IdResourceStrings_RSStackEHOSTUNREACH 64242
-#define IdResourceStrings_RSStackENOTEMPTY 64243
-#define IdResourceStrings_RSStackHOST_NOT_FOUND 64244
-#define IdResourceStrings_RSStackClassUndefined 64245
-#define IdResourceStrings_RSStackAlreadyCreated 64246
-#define IdResourceStrings_RSAntiFreezeOnlyOne 64247
-#define IdResourceStrings_RSCannotSetIPVersionWhenConnected 64248
-#define IdResourceStrings_RSCannotBindRange 64249
-#define IdResourceStrings_RSConnectionClosedGracefully 64250
-#define IdResourceStrings_RSCouldNotBindSocket 64251
-#define IdResourceStrings_RSInvalidPortRange 64252
-#define IdResourceStrings_RSInvalidServiceName 64253
-#define IdResourceStrings_RSIPv6Unavailable 64254
-#define IdResourceStrings_RSInvalidIPv6Address 64255
-#define IdResourceStrings_RSStackEAFNOSUPPORT 64256
-#define IdResourceStrings_RSStackEADDRINUSE 64257
-#define IdResourceStrings_RSStackEADDRNOTAVAIL 64258
-#define IdResourceStrings_RSStackENETDOWN 64259
-#define IdResourceStrings_RSStackENETUNREACH 64260
-#define IdResourceStrings_RSStackENETRESET 64261
-#define IdResourceStrings_RSStackECONNABORTED 64262
-#define IdResourceStrings_RSStackECONNRESET 64263
-#define IdResourceStrings_RSStackENOBUFS 64264
-#define IdResourceStrings_RSStackEISCONN 64265
-#define IdResourceStrings_RSStackENOTCONN 64266
-#define IdResourceStrings_RSStackESHUTDOWN 64267
-#define IdResourceStrings_RSStackETOOMANYREFS 64268
-#define IdResourceStrings_RSStackETIMEDOUT 64269
-#define IdResourceStrings_RSStackECONNREFUSED 64270
-#define IdResourceStrings_RSStackELOOP 64271
-#define IdResourceStrings_RSStackEACCES 64272
-#define IdResourceStrings_RSStackEFAULT 64273
-#define IdResourceStrings_RSStackEINVAL 64274
-#define IdResourceStrings_RSStackEMFILE 64275
-#define IdResourceStrings_RSStackEWOULDBLOCK 64276
-#define IdResourceStrings_RSStackEINPROGRESS 64277
-#define IdResourceStrings_RSStackEALREADY 64278
-#define IdResourceStrings_RSStackENOTSOCK 64279
-#define IdResourceStrings_RSStackEDESTADDRREQ 64280
-#define IdResourceStrings_RSStackEMSGSIZE 64281
-#define IdResourceStrings_RSStackEPROTOTYPE 64282
-#define IdResourceStrings_RSStackENOPROTOOPT 64283
-#define IdResourceStrings_RSStackEPROTONOSUPPORT 64284
-#define IdResourceStrings_RSStackESOCKTNOSUPPORT 64285
-#define IdResourceStrings_RSStackEOPNOTSUPP 64286
-#define IdResourceStrings_RSStackEPFNOSUPPORT 64287
-#define IBSQLMonitor_StrStartTransaction 64288
-#define IBSQLMonitor_StrApplication 64289
-#define uMStDialogLogin_SQ_USER_PARAMS 64290
-#define IdResourceStrings_RSFailedTimeZoneInfo 64291
-#define IdResourceStrings_RSWinsockCallError 64292
-#define IdResourceStrings_RSWinsockLoadError 64293
-#define IdResourceStrings_RSWinsockInitializationError 64294
-#define IdResourceStrings_RSStatusResolving 64295
-#define IdResourceStrings_RSStatusConnecting 64296
-#define IdResourceStrings_RSStatusConnected 64297
-#define IdResourceStrings_RSStatusDisconnecting 64298
-#define IdResourceStrings_RSStatusDisconnected 64299
-#define IdResourceStrings_RSStatusText 64300
-#define IdResourceStrings_RSStackError 64301
-#define IdResourceStrings_RSStackEINTR 64302
-#define IdResourceStrings_RSStackEBADF 64303
-#define IBSQLMonitor_StrError 64304
-#define IBSQLMonitor_StrAttach 64305
-#define IBSQLMonitor_StrDetach 64306
-#define IBSQLMonitor_StrQuery 64307
-#define IBSQLMonitor_StrStart 64308
-#define IBSQLMonitor_StrExecute 64309
-#define IBSQLMonitor_StrNULL 64310
-#define IBSQLMonitor_StrBLOB 64311
-#define IBSQLMonitor_StrFetch 64312
-#define IBSQLMonitor_StrPrepare 64313
-#define IBSQLMonitor_StrPlan 64314
-#define IBSQLMonitor_StrPlanCantRetrive 64315
-#define IBSQLMonitor_StrCommitHardComm 64316
-#define IBSQLMonitor_StrCommitRetaining 64317
-#define IBSQLMonitor_StrRollback 64318
-#define IBSQLMonitor_StrRollbackRetainin 64319
-#define IBXConst_SInvalidOnStatusResult 64320
-#define IBXConst_SDPBConstantUnknownEx 64321
-#define IBXConst_STPBConstantUnknownEx 64322
-#define IBXConst_SUnknownPlan 64323
-#define IBXConst_SFieldSizeMismatch 64324
-#define IBXConst_SEventAlreadyRegistered 64325
-#define IBXConst_SStringTooLarge 64326
-#define IBXConst_SNoTimers 64327
-#define IBXConst_SIB65feature 64328
-#define IBXConst_SLoginPromptFailure 64329
-#define IBXConst_SIB70feature 64330
-#define IBXConst_SIB71feature 64331
-#define IBXConst_SIB80feature 64332
-#define IBSQLMonitor_StrConnect 64333
-#define IBSQLMonitor_StrDisconnect 64334
-#define IBSQLMonitor_StrMisc 64335
-#define IBXConst_SSQLMonitorAlreadyPresent 64336
-#define IBXConst_SCantPrintValue 64337
-#define IBXConst_SEOFReached 64338
-#define IBXConst_SEOFInComment 64339
-#define IBXConst_SEOFInString 64340
-#define IBXConst_SParamNameExpected 64341
-#define IBXConst_SSuccess 64342
-#define IBXConst_SDelphiException 64343
-#define IBXConst_SNoOptionsSet 64344
-#define IBXConst_SNoDestinationDirectory 64345
-#define IBXConst_SNosourceDirectory 64346
-#define IBXConst_SNoUninstallFile 64347
-#define IBXConst_SOptionNeedsClient 64348
-#define IBXConst_SOptionNeedsServer 64349
-#define IBXConst_SInvalidOption 64350
-#define IBXConst_SInvalidOnErrorResult 64351
-#define IBXConst_SInvalidEvent 64352
-#define IBXConst_SMaximumEvents 64353
-#define IBXConst_SNoEventsRegistered 64354
-#define IBXConst_SInvalidQueueing 64355
-#define IBXConst_SInvalidRegistration 64356
-#define IBXConst_SInvalidBatchMove 64357
-#define IBXConst_SSQLDialectInvalid 64358
-#define IBXConst_SSPBConstantNotSupported 64359
-#define IBXConst_SSPBConstantUnknown 64360
-#define IBXConst_SServiceActive 64361
-#define IBXConst_SServiceInActive 64362
-#define IBXConst_SServerNameMissing 64363
-#define IBXConst_SQueryParamsError 64364
-#define IBXConst_SStartParamsError 64365
-#define IBXConst_SOutputParsingError 64366
-#define IBXConst_SUseSpecificProcedures 64367
-#define IBXConst_SEmptySQLStatement 64368
-#define IBXConst_SIsASelectStatement 64369
-#define IBXConst_SRequiredParamNotSet 64370
-#define IBXConst_SNoStoredProcName 64371
-#define IBXConst_SIsAExecuteProcedure 64372
-#define IBXConst_SUpdateFailed 64373
-#define IBXConst_SNotCachedUpdates 64374
-#define IBXConst_SNotLiveRequest 64375
-#define IBXConst_SNoProvider 64376
-#define IBXConst_SNoRecordsAffected 64377
-#define IBXConst_SNoTableName 64378
-#define IBXConst_SCannotCreatePrimaryIndex 64379
-#define IBXConst_SCannotDropSystemIndex 64380
-#define IBXConst_STableNameMismatch 64381
-#define IBXConst_SIndexFieldMissing 64382
-#define IBXConst_SInvalidCancellation 64383
-#define IBXConst_SCannotPost 64384
-#define IBXConst_SCannotUpdate 64385
-#define IBXConst_SCannotDelete 64386
-#define IBXConst_SCannotRefresh 64387
-#define IBXConst_SBufferNotSet 64388
-#define IBXConst_SCircularReference 64389
-#define IBXConst_SSQLParseError 64390
-#define IBXConst_SUserAbort 64391
-#define IBXConst_SDataSetUniDirectional 64392
-#define IBXConst_SCannotCreateSharedResource 64393
-#define IBXConst_SWindowsAPIError 64394
-#define IBXConst_SColumnListsDontMatch 64395
-#define IBXConst_SColumnTypesDontMatch 64396
-#define IBXConst_SCantEndSharedTransaction 64397
-#define IBXConst_SFieldUnsupportedType 64398
-#define IBXConst_SCircularDataLink 64399
-#define IBXConst_SDatasetOpen 64400
-#define IBXConst_SDatasetClosed 64401
-#define IBXConst_SUnknownSQLDataType 64402
-#define IBXConst_SInvalidColumnIndex 64403
-#define IBXConst_SInvalidParamColumnIndex 64404
-#define IBXConst_SInvalidDataConversion 64405
-#define IBXConst_SColumnIsNotNullable 64406
-#define IBXConst_SBlobCannotBeRead 64407
-#define IBXConst_SBlobCannotBeWritten 64408
-#define IBXConst_SEmptyQuery 64409
-#define IBXConst_SCannotOpenNonSQLSelect 64410
-#define IBXConst_SNoFieldAccess 64411
-#define IBXConst_SFieldReadOnly 64412
-#define IBXConst_SFieldNotFound 64413
-#define IBXConst_SNotEditing 64414
-#define IBXConst_SCannotInsert 64415
-#define IBXConst_SDatabaseNameMissing 64416
-#define IBXConst_SNotInTransaction 64417
-#define IBXConst_SInTransaction 64418
-#define IBXConst_STimeoutNegative 64419
-#define IBXConst_SNoDatabasesInTransaction 64420
-#define IBXConst_SUpdateWrongDB 64421
-#define IBXConst_SUpdateWrongTR 64422
-#define IBXConst_SDatabaseNotAssigned 64423
-#define IBXConst_STransactionNotAssigned 64424
-#define IBXConst_SXSQLDAIndexOutOfRange 64425
-#define IBXConst_SXSQLDANameDoesNotExist 64426
-#define IBXConst_SEOF 64427
-#define IBXConst_SBOF 64428
-#define IBXConst_SInvalidStatementHandle 64429
-#define IBXConst_SSQLOpen 64430
-#define IBXConst_SSQLClosed 64431
-#define IBXConst_SInterBaseMissing 64432
-#define IBXConst_SInterBaseInstallMissing 64433
-#define IBXConst_SIB60feature 64434
-#define IBXConst_SNotSupported 64435
-#define IBXConst_SNotPermitted 64436
-#define IBXConst_SFileAccessError 64437
-#define IBXConst_SConnectionTimeout 64438
-#define IBXConst_SCannotSetDatabase 64439
-#define IBXConst_SCannotSetTransaction 64440
-#define IBXConst_SOperationCancelled 64441
-#define IBXConst_SDPBConstantNotSupported 64442
-#define IBXConst_SDPBConstantUnknown 64443
-#define IBXConst_STPBConstantNotSupported 64444
-#define IBXConst_STPBConstantUnknown 64445
-#define IBXConst_SDatabaseClosed 64446
-#define IBXConst_SDatabaseOpen 64447
-#define JvResources_RsCl3DLight 64448
-#define JvResources_RsClInfoText 64449
-#define JvResources_RsClInfoBk 64450
-#define JvResources_RsGradientActiveCaption 64451
-#define JvResources_RsGradientInactiveCaption 64452
-#define JvResources_RsHotLight 64453
-#define JvResources_RsMenuBar 64454
-#define JvResources_RsMenuHighlight 64455
-#define JvResources_RsInvalidFilterNodeKind 64456
-#define JvResources_RsUnknownFilterOperation 64457
-#define JvResources_RsUnknownFilterFunction 64458
-#define JvResources_RsMissingFilterFunctionParameters 64459
-#define RxMemDS_SMemNoRecords 64460
-#define ZLibConst_sInvalidStreamOp 64461
-#define ZLibConst_sError 64462
-#define IBXConst_SUnknownError 64463
-#define JvResources_RsClWindowFrame 64464
-#define JvResources_RsClMenuText 64465
-#define JvResources_RsClWindowText 64466
-#define JvResources_RsClCaptionText 64467
-#define JvResources_RsClActiveBorder 64468
-#define JvResources_RsClInactiveBorder 64469
-#define JvResources_RsClAppWorkSpace 64470
-#define JvResources_RsClHighlight 64471
-#define JvResources_RsClHighlightText 64472
-#define JvResources_RsClBtnFace 64473
-#define JvResources_RsClBtnShadow 64474
-#define JvResources_RsClGrayText 64475
-#define JvResources_RsClBtnText 64476
-#define JvResources_RsClInactiveCaptionText 64477
-#define JvResources_RsClBtnHighlight 64478
-#define JvResources_RsCl3DDkShadow 64479
-#define JvResources_RsClTurquoise 64480
-#define JvResources_RsClPlum 64481
-#define JvResources_RsClGray25 64482
-#define JvResources_RsClRose 64483
-#define JvResources_RsClTan 64484
-#define JvResources_RsClLightYellow 64485
-#define JvResources_RsClLightGreen 64486
-#define JvResources_RsClLightTurquoise 64487
-#define JvResources_RsClPaleBlue 64488
-#define JvResources_RsClLavender 64489
-#define JvResources_RsClScrollBar 64490
-#define JvResources_RsClBackground 64491
-#define JvResources_RsClActiveCaption 64492
-#define JvResources_RsClInactiveCaption 64493
-#define JvResources_RsClMenu 64494
-#define JvResources_RsClWindow 64495
-#define JvResources_RsClDarkBlue 64496
-#define JvResources_RsClIndigo 64497
-#define JvResources_RsClGray80 64498
-#define JvResources_RsClDarkRed 64499
-#define JvResources_RsClOrange 64500
-#define JvResources_RsClDarkYellow 64501
-#define JvResources_RsClBlueGray 64502
-#define JvResources_RsClGray50 64503
-#define JvResources_RsClLightOrange 64504
-#define JvResources_RsClSeaGreen 64505
-#define JvResources_RsClLightBlue 64506
-#define JvResources_RsClViolet 64507
-#define JvResources_RsClGray40 64508
-#define JvResources_RsClPink 64509
-#define JvResources_RsClGold 64510
-#define JvResources_RsClBrightGreen 64511
-#define JvResources_RsClSilver 64512
-#define JvResources_RsClRed 64513
-#define JvResources_RsClLime 64514
-#define JvResources_RsClYellow 64515
-#define JvResources_RsClBlue 64516
-#define JvResources_RsClFuchsia 64517
-#define JvResources_RsClAqua 64518
-#define JvResources_RsClWhite 64519
-#define JvResources_RsClMoneyGreen 64520
-#define JvResources_RsClSkyBlue 64521
-#define JvResources_RsClCream 64522
-#define JvResources_RsClMedGray 64523
-#define JvResources_RsClBrown 64524
-#define JvResources_RsClOliveGreen 64525
-#define JvResources_RsClDarkGreen 64526
-#define JvResources_RsClDarkTeal 64527
-#define JvResources_RsEItemNotFoundInTheSelectedContext 64528
-#define JvResources_RsEViewListOutOfSync 64529
-#define JvResources_RsEExtensibleIntObjDuplicateClass 64530
-#define JvResources_RsEExtensibleIntObjCollectionExpected 64531
-#define JvResources_RsEExtensibleIntObjClassNameExpected 64532
-#define JvResources_RsEExtensibleIntObjInvalidClass 64533
-#define JvResources_RsEMemNoRecords 64534
-#define JvResources_RsUnknown 64535
-#define JvResources_RsClBlack 64536
-#define JvResources_RsClMaroon 64537
-#define JvResources_RsClGreen 64538
-#define JvResources_RsClOlive 64539
-#define JvResources_RsClNavy 64540
-#define JvResources_RsClPurple 64541
-#define JvResources_RsClTeal 64542
-#define JvResources_RsClGray 64543
-#define fPictureDef_SPictNotDefined 64544
-#define clipper_rsDoMaxima 64545
-#define clipper_rsUpdateEdgeIntoAEL 64546
-#define clipper_rsInvalidInt 64547
-#define clipper_rsOpenPath 64548
-#define clipper_rsOpenPath3 64549
-#define JvResources_RsDataItemRenderHasNoText 64550
-#define JvResources_RsEInternalError 64551
-#define JvResources_RsEItemCanNotBeDeleted 64552
-#define JvResources_RsEAContextWithThatNameAlreadyExists 64553
-#define JvResources_RsECannotCreateAContextWithoutAContext 64554
-#define JvResources_RsEYouMustSpecifyAProviderBeforeSettin 64555
-#define JvResources_RsEProviderHasNoContextNameds 64556
-#define JvResources_RsEProviderDoesNotSupportContexts 64557
-#define JvResources_RsETheSpecifiedContextIsNotPartOfTheSa 64558
-#define JvResources_RsEYouMustSpecifyAProviderBeforeSettin_ 64559
-#define EzConsts_SCmdArcFCS 64560
-#define EzConsts_SCmdNode 64561
-#define EzConsts_SCmdNodeLink 64562
-#define EzConsts_SCmdText500 64563
-#define EzExprLex_SDefaultDateFormat 64564
-#define EzProjImpl_serr18 64565
-#define EzProjImpl_serr19 64566
-#define EzProjImpl_serr23 64567
-#define EzProjImpl_serr24 64568
-#define EzProjImpl_serr25 64569
-#define EzProjImpl_serr32 64570
-#define EzProjImpl_serr33 64571
-#define EzProjImpl_serr34 64572
-#define EzProjImpl_serr35 64573
-#define EzProjections_serr0 64574
-#define fPictureDef_SDefinePicTitle 64575
-#define EzConsts_SCmdJustifText 64576
-#define EzConsts_SCmdFittedText 64577
-#define EzConsts_SCmdPoint 64578
-#define EzConsts_SCmdDimHoriz 64579
-#define EzConsts_SCmdDimVert 64580
-#define EzConsts_SCmdDimParall 64581
-#define EzConsts_SCmdCircle2P 64582
-#define EzConsts_SCmdCircle3P 64583
-#define EzConsts_SCmdCircleCR 64584
-#define EzConsts_SCmdRichText 64585
-#define EzConsts_SCmdInsert 64586
-#define EzConsts_SCmdMirror 64587
-#define EzConsts_SCmdCustomClick 64588
-#define EzConsts_SCmdDropSelection 64589
-#define EzConsts_SCmdDragDrop 64590
-#define EzConsts_SCmdArcSE 64591
-#define EzConsts_SCmdSetClipPolyArea 64592
-#define EzConsts_SCmdDeleteVertex 64593
-#define EzConsts_SCmdSetClipArea 64594
-#define EzConsts_SCmdBreak 64595
-#define EzConsts_SCmdTrim 64596
-#define EzConsts_SCmdExtend 64597
-#define EzConsts_SCmdFillet 64598
-#define EzConsts_SCmdAddMarker 64599
-#define EzConsts_SCmdPolygonBuffer 64600
-#define EzConsts_SCmdTable 64601
-#define EzConsts_SCmdCalloutText 64602
-#define EzConsts_SCmdBulletLeader 64603
-#define EzConsts_SCmdBannerText 64604
-#define EzConsts_SCmdZoomAll 64605
-#define EzConsts_SCmdScaleX 64606
-#define EzConsts_SCmdScaleY 64607
-#define EzConsts_SCmdPan 64608
-#define EzConsts_SCmdSelect 64609
-#define EzConsts_SCmdSelPLine 64610
-#define EzConsts_SCmdMeasures 64611
-#define EzConsts_SCmdOffset 64612
-#define EzConsts_SCmdInsertVertex 64613
-#define EzConsts_SCmdGridOrigin 64614
-#define EzConsts_SCmdPolygonSelect 64615
-#define EzConsts_SCmdCircleSelect 64616
-#define EzConsts_SCmdZoomIn 64617
-#define EzConsts_SCmdZoomOut 64618
-#define EzConsts_SCmdZoomWindow 64619
-#define EzConsts_SCmdRealTimeZoom 64620
-#define EzConsts_SCmdRealTimeZoomB 64621
-#define EzConsts_SCmdHandScroll 64622
-#define EzConsts_SCmdClipPoly 64623
-#define EzConsts_sCmdArc 64624
-#define EzConsts_SCmdEllipse 64625
-#define EzConsts_SCmdSpline 64626
-#define EzConsts_SCmdRectangle 64627
-#define EzConsts_SCmdSymbol 64628
-#define EzConsts_SCmdTextSymbol 64629
-#define EzConsts_SCmdText 64630
-#define EzConsts_SCmdHorzGLine 64631
-#define EzConsts_SCmdVertGLine 64632
-#define EzConsts_SCmdMoveGLine 64633
-#define EzConsts_SCmdHints 64634
-#define EzConsts_SCmdPictRef 64635
-#define EzConsts_SCmdCustomPicture 64636
-#define EzConsts_SCmdBandsBitmap 64637
-#define EzConsts_SCmdPersistBitmap 64638
-#define EzConsts_SCmdUndo 64639
-#define EzConsts_sBlockInfo 64640
-#define EzConsts_sSplineTextInfo 64641
-#define EzConsts_sDimHorizInfo 64642
-#define EzConsts_sDimVertInfo 64643
-#define EzConsts_sDimParallelInfo 64644
-#define EzConsts_sPreviewInfo 64645
-#define EzConsts_sERMapperInfo 64646
-#define EzConsts_SCmdMove 64647
-#define EzConsts_SCmdScale 64648
-#define EzConsts_SCmdRotate 64649
-#define EzConsts_SCmdReshape 64650
-#define EzConsts_SCmdRotateText 64651
-#define EzConsts_SCmdLine 64652
-#define EzConsts_SCmdPolyline 64653
-#define EzConsts_SCmdPolygon 64654
-#define EzConsts_SCmdSketch 64655
-#define EzConsts_sPicRefInfo 64656
-#define EzConsts_sBmpRefInfo 64657
-#define EzConsts_sBandsBmpInfo 64658
-#define EzConsts_sCustomPicInfo 64659
-#define EzConsts_sSplineInfo 64660
-#define EzConsts_sTTTextInfo 64661
-#define EzConsts_sATTTextInfo 64662
-#define EzConsts_sTableInfo 64663
-#define EzConsts_sColumnInfo 64664
-#define EzConsts_sTableColumnInfo 64665
-#define EzConsts_sColumnTitleInfo 64666
-#define EzConsts_sRowDataInfo 64667
-#define EzConsts_sTitleCaption 64668
-#define EzConsts_sGroupCaption 64669
-#define EzConsts_sJustifTextInfo 64670
-#define EzConsts_sFittedTextInfo 64671
-#define EzConsts_SChangeDirNotAllowed 64672
-#define EzConsts_sDataInfo 64673
-#define EzConsts_sFieldValue 64674
-#define EzConsts_sPenInfo 64675
-#define EzConsts_sBrushInfo 64676
-#define EzConsts_sSymbolInfo 64677
-#define EzConsts_sTTFontInfo 64678
-#define EzConsts_sVectorFontInfo 64679
-#define EzConsts_sNoneInfo 64680
-#define EzConsts_sPointInfo 64681
-#define EzConsts_SPlaceInfo 64682
-#define EzConsts_sPolylineInfo 64683
-#define EzConsts_sPolygonInfo 64684
-#define EzConsts_sRectangleInfo 64685
-#define EzConsts_sArcInfo 64686
-#define EzConsts_sEllipseInfo 64687
-#define EzConsts_SCircleInfo 64688
-#define EzConsts_SBufferRefInfo 64689
-#define EzConsts_SOneSelection 64690
-#define EzConsts_SMultiSelection 64691
-#define EzConsts_SNoNodeClicked 64692
-#define EzConsts_SNetSameNodes 64693
-#define EzConsts_SLayerIndexOutOfRange 64694
-#define EzConsts_sDrawBoxCollectionNotSame 64695
-#define EzConsts_SFilterEnabled 64696
-#define EzConsts_SBandedImagesFilter 64697
-#define EzConsts_SBitmapFilter 64698
-#define EzConsts_SJPGFilter 64699
-#define EzConsts_SMetafileFilter 64700
-#define EzConsts_SICOFilter 64701
-#define EzConsts_SGIFFilter 64702
-#define EzConsts_SEDBFilter 64703
-#define EzConsts_SZoomUnZoom 64704
-#define EzConsts_SScrolling 64705
-#define EzConsts_SInsertXGuideLine 64706
-#define EzConsts_SInsertYGuideLine 64707
-#define EzConsts_SSelectGline 64708
-#define EzConsts_SMoveGLinetoNew 64709
-#define EzConsts_SUnrecognizedCommand 64710
-#define EzConsts_SShpFileNotFound 64711
-#define EzConsts_SThereAreNoLayers 64712
-#define EzConsts_Sscrcanceled 64713
-#define EzConsts_SEmptyTable 64714
-#define EzConsts_SLoadingCAD 64715
-#define EzConsts_SSavingCAD 64716
-#define EzConsts_SWrongCADFile 64717
-#define EzConsts_STextInfo 64718
-#define EzConsts_SErrWrongField 64719
-#define EzConsts_SDXFThereIsNoEntities 64720
-#define EzConsts_SDXFThereIsNoMaxMin 64721
-#define EzConsts_SDXFErrorInLine 64722
-#define EzConsts_SDXFDupLayer 64723
-#define EzConsts_SDXFCannotSave 64724
-#define EzConsts_STextIsNotVisible 64725
-#define EzConsts_SEntityToReshape 64726
-#define EzConsts_SReshapeToPoint 64727
-#define EzConsts_SVertexToReshape 64728
-#define EzConsts_SVertexToDelete 64729
-#define EzConsts_SClickInterestPoint 64730
-#define EzConsts_SEntityToDrag 64731
-#define EzConsts_SDragFromCtrlPt 64732
-#define EzConsts_SDefineCircleCenter 64733
-#define EzConsts_SDefineCircle 64734
-#define EzConsts_SAreaAndPerimeter 64735
-#define EzConsts_SDXFLWPolylineBad 64736
-#define EzConsts_SDXFPOINTBad 64737
-#define EzConsts_SDXFINSERTBad 64738
-#define EzConsts_SDXFTEXTBad 64739
-#define EzConsts_SDXFLINEBad 64740
-#define EzConsts_SDXFPOLYLINEBad2 64741
-#define EzConsts_SDXFLWPOLYLINEBad2 64742
-#define EzConsts_SDXF3DFACEBad 64743
-#define EzConsts_SDXFSOLIDBad 64744
-#define EzConsts_SDXFCIRCLEBad 64745
-#define EzConsts_SDXFARCBad 64746
-#define EzConsts_SDXFATTDEFBad 64747
-#define EzConsts_SDXFATTRIBBad 64748
-#define EzConsts_SDXFThereIsNoHeader 64749
-#define EzConsts_SDXFThereIsNoLayers 64750
-#define EzConsts_SDXFThereIsNoBlocks 64751
-#define EzConsts_SLayerEmpty 64752
-#define EzConsts_SExpressionEmpty 64753
-#define EzConsts_SWrongFieldnameCol 64754
-#define EzConsts_SGetRecordInvalid 64755
-#define EzConsts_SInsertNotAllowed 64756
-#define EzConsts_SWrongReadOnly 64757
-#define EzConsts_SLatLonMismatch 64758
-#define EzConsts_SWrongProjector 64759
-#define EzConsts_SWrongEzGIS 64760
-#define EzConsts_SDXFReading 64761
-#define EzConsts_SDXFPolylineBad 64762
-#define EzConsts_SDXFInvalidFloat 64763
-#define EzConsts_SDXFInvalidInteger 64764
-#define EzConsts_SDXFFileReadingNow 64765
-#define EzConsts_SDXFUndefBlock 64766
-#define EzConsts_SDXFWrongBlockInfo 64767
-#define EzConsts_STrimSelectEnt 64768
-#define EzConsts_SExtendSelectEnt 64769
-#define EzConsts_STrimWrongEntity 64770
-#define EzConsts_SExtendWrongEntity 64771
-#define EzConsts_SExtendWrongSegment 64772
-#define EzConsts_STrimOnlyOneCuttingEdge 64773
-#define EzConsts_SExtendOnlyOneCuttingEdge 64774
-#define EzConsts_SFilletWrongEntity 64775
-#define EzConsts_SFilletNotContiguous 64776
-#define EzConsts_STrimCuttingEdge 64777
-#define EzConsts_SFirstExtensionLine 64778
-#define EzConsts_SSecondExtensionLine 64779
-#define EzConsts_SDefineTextLocation 64780
-#define EzConsts_SBlobErrNotEditing 64781
-#define EzConsts_SCannotOpenDesignMode 64782
-#define EzConsts_SLayerNotAssigned 64783
-#define EzConsts_SDefineSecondSelection 64784
-#define EzConsts_SWarnNoSelection 64785
-#define EzConsts_SVertexSingleEntityError 64786
-#define EzConsts_SInsertVertexPoint 64787
-#define EzConsts_SVertexEntityBadError 64788
-#define EzConsts_SChangeGridOrigin 64789
-#define EzConsts_SShowHintCaption 64790
-#define EzConsts_SVectorialFirstPt 64791
-#define EzConsts_SVectorialSecondPt 64792
-#define EzConsts_SBreakSelectFirstPoint 64793
-#define EzConsts_SBreakSelectSecndPoint 64794
-#define EzConsts_SBreakWrongSelection 64795
-#define EzConsts_SBreakWrongEntity 64796
-#define EzConsts_SBreakNotClicked 64797
-#define EzConsts_STrimNoCuttingEdge 64798
-#define EzConsts_SExtendNoExtendEdge 64799
-#define EzConsts_SClipPolygon 64800
-#define EzConsts_SCircleCenter 64801
-#define EzConsts_SCircleRadius 64802
-#define EzConsts_SArcSweepAngle 64803
-#define EzConsts_SCircleEndPoint 64804
-#define EzConsts_SRealTimeZoom 64805
-#define EzConsts_SDefineFirstZoomPoint 64806
-#define EzConsts_SDefineSecondZoomPoint 64807
-#define EzConsts_SNotEnoughData 64808
-#define EzConsts_SStartSingleSelect 64809
-#define EzConsts_SDefineBasePoint 64810
-#define EzConsts_SDefineEndPoint 64811
-#define EzConsts_SReferenceFirstPoint 64812
-#define EzConsts_SReferenceSecondPoint 64813
-#define EzConsts_STransformLastPoint 64814
-#define EzConsts_SRotTransformLastPoint 64815
-#define EzConsts_SLayerFilesNotFound 64816
-#define EzConsts_SGISUnassigned 64817
-#define EzConsts_SLayerNotFound 64818
-#define EzConsts_SFlatScrollBarNotAllowed 64819
-#define EzConsts_SEntityOutOfBound 64820
-#define EzConsts_SSymbolOutOfBound 64821
-#define EzConsts_SWrongImageFormat 64822
-#define EzConsts_SVectorOutOfBound 64823
-#define EzConsts_SDefineFromPoint 64824
-#define EzConsts_SDefineToPoint 64825
-#define EzConsts_SFirstPoint 64826
-#define EzConsts_SSecondPoint 64827
-#define EzConsts_SThirdPoint 64828
-#define EzConsts_SFourthPoint 64829
-#define EzConsts_SFifthPoint 64830
-#define EzConsts_SNextPoint 64831
-#define EzConsts_SWrongLayername 64832
-#define EzConsts_SWrongParameters 64833
-#define EzConsts_SExprParserError 64834
-#define EzConsts_SBadExtension 64835
-#define EzConsts_SRestNotExclusive 64836
-#define EzConsts_SDuplicateLayer 64837
-#define EzConsts_SRecnoInvalid 64838
-#define EzConsts_SRebuildTree 64839
-#define EzConsts_SDBFNotFound 64840
-#define EzConsts_SUpdateExtension 64841
-#define EzConsts_SThereAreNoDeleted 64842
-#define EzConsts_SPackingLayer 64843
-#define EzConsts_SWrongRecordsRecover 64844
-#define EzConsts_SExprFail 64845
-#define EzConsts_SCannotDeleteLayer 64846
-#define EzConsts_SInternalListError 64847
-#define EzConsts_SScaleFmt 64848
-#define EzConsts_STranslateFmt 64849
-#define EzConsts_SRotateFmt 64850
-#define EzConsts_SNewEntityInfo 64851
-#define EzConsts_SIsInvalidFloatValue 64852
-#define EzConsts_SIsInvalidIntegerValue 64853
-#define EzConsts_SIsInvalidBoolValue 64854
-#define EzConsts_STextRefPtFirst 64855
-#define EzConsts_SSymbolTextCaption 64856
-#define EzConsts_SSymbolText 64857
-#define EzConsts_SMsgConfirm 64858
-#define EzConsts_SMsgError 64859
-#define EzConsts_SMsgWarning 64860
-#define EzConsts_SWrongBuffer 64861
-#define EzConsts_SCannotCreateBuffer 64862
-#define EzConsts_SCannotContainParams 64863
-#define MZLib_SOversubscribedLLTree 64864
-#define MZLib_SIncompleteLLTree 64865
-#define MZLib_SEmptyDistanceTree 64866
-#define MZLib_SInvalidBlockType 64867
-#define MZLib_SInvalidStoredBlockLengths 64868
-#define MZLib_STooManyLDSymbols 64869
-#define MZLib_SInvalidBitLengthRepeat 64870
-#define MZLib_SIncorrectDataCheck 64871
-#define MZLib_SUnknownCompression 64872
-#define MZLib_SInvalidWindowSize 64873
-#define MZLib_SIncorrectHeaderCheck 64874
-#define MZLib_SNeedDictionary 64875
-#define JPG_sJPEGError 64876
-#define EzConsts_SCommand 64877
-#define EzConsts_SSymbolCaption 64878
-#define EzConsts_SLinetypeCaption 64879
-#define GraphicStrings_gesJPEGSamplingFactors 64880
-#define GraphicStrings_gesJPEGBogusTableField 64881
-#define GraphicStrings_gesJPEGFractionalLine 64882
-#define GraphicStrings_gesWarning 64883
-#define MZLib_SNeedDict 64884
-#define MZLib_SStreamEnd 64885
-#define MZLib_SFileError 64886
-#define MZLib_SStreamError 64887
-#define MZLib_SDataError 64888
-#define MZLib_SInsufficientMemory 64889
-#define MZLib_SBufferError 64890
-#define MZLib_SIncompatibleVersion 64891
-#define MZLib_SInvalidDistanceCode 64892
-#define MZLib_SInvalidLengthCode 64893
-#define MZLib_SOversubscribedDBLTree 64894
-#define MZLib_SIncompleteDBLTree 64895
-#define GraphicStrings_gesCompressionScheme 64896
-#define GraphicStrings_gesIndexedNotSupported 64897
-#define GraphicStrings_gesConversionUnsupported 64898
-#define GraphicStrings_gesInvalidSampleDepth 64899
-#define GraphicStrings_gesInvalidPixelDepth 64900
-#define GraphicStrings_gesInvalidSubSampling 64901
-#define GraphicStrings_gesVerticalSubSamplingError 64902
-#define GraphicStrings_gesPreparing 64903
-#define GraphicStrings_gesLoadingData 64904
-#define GraphicStrings_gesUpsampling 64905
-#define GraphicStrings_gesTransfering 64906
-#define GraphicStrings_gesLZ77Error 64907
-#define GraphicStrings_gesJPEGEOI 64908
-#define GraphicStrings_gesJPEGStripSize 64909
-#define GraphicStrings_gesJPEGComponentCount 64910
-#define GraphicStrings_gesJPEGDataPrecision 64911
-#define GraphicStrings_gesPortableGray 64912
-#define GraphicStrings_gesPortableMono 64913
-#define GraphicStrings_gesAutoDesk 64914
-#define GraphicStrings_gesKodakPhotoCD 64915
-#define GraphicStrings_gesHalo 64916
-#define GraphicStrings_gesPaintShopPro 64917
-#define GraphicStrings_gesPortableNetworkGraphic 64918
-#define GraphicStrings_gesInvalidImage 64919
-#define GraphicStrings_gesInvalidColorFormat 64920
-#define GraphicStrings_gesStreamReadError 64921
-#define GraphicStrings_gesUnsupportedFeature 64922
-#define GraphicStrings_gesInvalidCRC 64923
-#define GraphicStrings_gesCompression 64924
-#define GraphicStrings_gesExtraCompressedData 64925
-#define GraphicStrings_gesInvalidPalette 64926
-#define GraphicStrings_gesUnknownCriticalChunk 64927
-#define GraphicStrings_gesJFIFImages 64928
-#define GraphicStrings_gesTruevision 64929
-#define GraphicStrings_gesTIFF 64930
-#define GraphicStrings_gesMacTIFF 64931
-#define GraphicStrings_gesPCTIF 64932
-#define GraphicStrings_gesGFIFax 64933
-#define GraphicStrings_gesSGI 64934
-#define GraphicStrings_gesSGITrueColor 64935
-#define GraphicStrings_gesZSoft 64936
-#define GraphicStrings_gesZSoftWord 64937
-#define GraphicStrings_gesAliasWaveFront 64938
-#define GraphicStrings_gesSGITrueColorAlpha 64939
-#define GraphicStrings_gesSGIMono 64940
-#define GraphicStrings_gesPhotoshop 64941
-#define GraphicStrings_gesPortable 64942
-#define GraphicStrings_gesPortablePixel 64943
-#define GIFImage_sProgressCopying 64944
-#define GIFImage_sProgressOptimizing 64945
-#define JConsts_sChangeJPGSize 64946
-#define JConsts_sJPEGError 64947
-#define JConsts_sJPEGImageFile 64948
-#define GraphicStrings_gesRegistration 64949
-#define GraphicStrings_gesBitmaps 64950
-#define GraphicStrings_gesRLEBitmaps 64951
-#define GraphicStrings_gesDIBs 64952
-#define GraphicStrings_gesEPS 64953
-#define GraphicStrings_gesIcons 64954
-#define GraphicStrings_gesMetaFiles 64955
-#define GraphicStrings_gesEnhancedMetaFiles 64956
-#define GraphicStrings_gesJPGImages 64957
-#define GraphicStrings_gesJPEGImages 64958
-#define GraphicStrings_gesJPEImages 64959
-#define GIFImage_sScreenSizeExceeded 64960
-#define GIFImage_sNoColorTable 64961
-#define GIFImage_sBadPixelCoordinates 64962
-#define GIFImage_sInvalidPixelFormat 64963
-#define GIFImage_sBadDimension 64964
-#define GIFImage_sNoDIB 64965
-#define GIFImage_sInvalidStream 64966
-#define GIFImage_sInvalidColor 64967
-#define GIFImage_sEmptyColorMap 64968
-#define GIFImage_sEmptyImage 64969
-#define GIFImage_sInvalidReduction 64970
-#define GIFImage_sGIFImageFile 64971
-#define GIFImage_sProgressLoading 64972
-#define GIFImage_sProgressSaving 64973
-#define GIFImage_sProgressConverting 64974
-#define GIFImage_sProgressRendering 64975
-#define GIFImage_sScreenBadColorSize 64976
-#define GIFImage_sImageBadColorSize 64977
-#define GIFImage_sUnknownExtension 64978
-#define GIFImage_sBadExtensionLabel 64979
-#define GIFImage_sOutOfMemDIB 64980
-#define GIFImage_sDecodeTooFewBits 64981
-#define GIFImage_sDecodeCircular 64982
-#define GIFImage_sBadTrailer 64983
-#define GIFImage_sBadExtensionInstance 64984
-#define GIFImage_sBadBlockSize 64985
-#define GIFImage_sBadBlock 64986
-#define GIFImage_sUnsupportedClass 64987
-#define GIFImage_sInvalidData 64988
-#define GIFImage_sBadHeight 64989
-#define GIFImage_sBadWidth 64990
-#define GIFImage_sFailedPaste 64991
-#define EzBaseExpr_SEXPR_OPERATORINCOMPAT 64992
-#define EzBaseExpr_SEXPR_CANNOTCASTTOSTRING 64993
-#define EzBaseExpr_SEXPR_CANNOTCASTTOFLOAT 64994
-#define EzBaseExpr_SEXPR_CANNOTCASTTOINTEGER 64995
-#define EzBaseExpr_SEXPR_CANNOTCASTTOBOOLEAN 64996
-#define EzBaseExpr_SEXPR_WRONGUNARYOP 64997
-#define EzBaseExpr_SEXPR_WRONGBINARYOP 64998
-#define EzBaseExpr_SEXPR_WRONGBOOLEANOP 64999
-#define EzBaseExpr_SEXPR_WRONGRELATIONALOP 65000
-#define EzBaseExpr_SEXPR_WRONGPARAMETER 65001
-#define EzBaseExpr_SEXPR_INVALIDPARAMETERTO 65002
-#define GIFImage_sOutOfData 65003
-#define GIFImage_sTooManyColors 65004
-#define GIFImage_sBadColorIndex 65005
-#define GIFImage_sBadVersion 65006
-#define GIFImage_sBadSignature 65007
-#define VDBConsts_SNextRecord 65008
-#define VDBConsts_SLastRecord 65009
-#define VDBConsts_SInsertRecord 65010
-#define VDBConsts_SDeleteRecord 65011
-#define VDBConsts_SEditRecord 65012
-#define VDBConsts_SPostEdit 65013
-#define VDBConsts_SCancelEdit 65014
-#define VDBConsts_SRefreshRecord 65015
-#define VDBConsts_SDeleteRecordQuestion 65016
-#define VDBConsts_SDeleteMultipleRecordsQuestion 65017
-#define VDBConsts_SDataSourceFixed 65018
-#define VDBConsts_SPropDefByLookup 65019
-#define VDBConsts_STooManyColumns 65020
-#define VDBConsts_SRemoteLogin 65021
-#define EzBaseExpr_SEXPR_WRONGWHENEXPR 65022
-#define EzBaseExpr_SEXPR_WRONGTHENEXPR 65023
-#define DBConsts_SParameterNotFound 65024
-#define DBConsts_SInvalidVersion 65025
-#define DBConsts_SBadFieldType 65026
-#define DBConsts_SProviderSQLNotSupported 65027
-#define DBConsts_SProviderExecuteNotSupported 65028
-#define DBConsts_SExprNoAggOnCalcs 65029
-#define DBConsts_SDataSetUnidirectional 65030
-#define DBConsts_SUnassignedVar 65031
-#define DBConsts_SRecordNotFound 65032
-#define DBConsts_SBcdOverflow 65033
-#define DBConsts_SInvalidBcdValue 65034
-#define DBConsts_SInvalidFormatType 65035
-#define DBConsts_SCouldNotParseTimeStamp 65036
-#define DBConsts_SInvalidSqlTimeStamp 65037
-#define VDBConsts_SFirstRecord 65038
-#define VDBConsts_SPriorRecord 65039
-#define DBConsts_SExprExpected 65040
-#define DBConsts_SExprBadField 65041
-#define DBConsts_SExprBadNullTest 65042
-#define DBConsts_SExprRangeError 65043
-#define DBConsts_SExprIncorrect 65044
-#define DBConsts_SExprNothing 65045
-#define DBConsts_SExprTypeMis 65046
-#define DBConsts_SExprBadScope 65047
-#define DBConsts_SExprNoArith 65048
-#define DBConsts_SExprNotAgg 65049
-#define DBConsts_SExprBadConst 65050
-#define DBConsts_SExprNoAggFilter 65051
-#define DBConsts_SExprEmptyInList 65052
-#define DBConsts_SInvalidKeywordUse 65053
-#define DBConsts_STextFalse 65054
-#define DBConsts_STextTrue 65055
-#define DBConsts_SCircularDataLink 65056
-#define DBConsts_SLookupInfoError 65057
-#define DBConsts_SDataSourceChange 65058
-#define DBConsts_SDataSetOpen 65059
-#define DBConsts_SNotEditing 65060
-#define DBConsts_SDataSetClosed 65061
-#define DBConsts_SDataSetEmpty 65062
-#define DBConsts_SDataSetReadOnly 65063
-#define DBConsts_SNestedDataSetClass 65064
-#define DBConsts_SExprTermination 65065
-#define DBConsts_SExprNameError 65066
-#define DBConsts_SExprStringError 65067
-#define DBConsts_SExprInvalidChar 65068
-#define DBConsts_SExprNoLParen 65069
-#define DBConsts_SExprNoRParen 65070
-#define DBConsts_SExprNoRParenOrComma 65071
-#define DBConsts_SFieldNotFound 65072
-#define DBConsts_SFieldAccessError 65073
-#define DBConsts_SFieldValueError 65074
-#define DBConsts_SFieldRangeError 65075
-#define DBConsts_SBcdFieldRangeError 65076
-#define DBConsts_SInvalidIntegerValue 65077
-#define DBConsts_SInvalidBoolValue 65078
-#define DBConsts_SInvalidFloatValue 65079
-#define DBConsts_SFieldTypeMismatch 65080
-#define DBConsts_SFieldSizeMismatch 65081
-#define DBConsts_SInvalidVarByteArray 65082
-#define DBConsts_SFieldOutOfRange 65083
-#define DBConsts_SFieldRequired 65084
-#define DBConsts_SDataSetMissing 65085
-#define DBConsts_SInvalidCalcType 65086
-#define DBConsts_SFieldReadOnly 65087
+#define RxMemDS_SMemNoRecords 64144
+#define XMLConst_SDuplicateRegistration 64160
+#define XMLConst_SDOMNotSupported 64161
+#define XMLConst_SNodeExpected 64162
+#define XMLConst_SMSDOMNotInstalled 64163
+#define ShellConsts_SShellDefaultNameStr 64164
+#define ShellConsts_SShellDefaultSizeStr 64165
+#define ShellConsts_SShellDefaultTypeStr 64166
+#define ShellConsts_SShellDefaultModifiedStr 64167
+#define ShellConsts_SShellNoDetails 64168
+#define ShellConsts_SCallLoadDetails 64169
+#define ShellConsts_SRenamedFailedError 64170
+#define uMStFormRichTextEditor_sSaveChanges 64171
+#define uMStFormRichTextEditor_sOverWrite 64172
+#define uMStFormRichTextEditor_sUntitled 64173
+#define uMStFormRichTextEditor_sModified 64174
+#define uMStFormRichTextEditor_sColRowInfo 64175
+#define JvResources_RsClBtnText 64176
+#define JvResources_RsClInactiveCaptionText 64177
+#define JvResources_RsClBtnHighlight 64178
+#define JvResources_RsCl3DDkShadow 64179
+#define JvResources_RsCl3DLight 64180
+#define JvResources_RsClInfoText 64181
+#define JvResources_RsClInfoBk 64182
+#define JvResources_RsGradientActiveCaption 64183
+#define JvResources_RsGradientInactiveCaption 64184
+#define JvResources_RsHotLight 64185
+#define JvResources_RsMenuBar 64186
+#define JvResources_RsMenuHighlight 64187
+#define JvResources_RsInvalidFilterNodeKind 64188
+#define JvResources_RsUnknownFilterOperation 64189
+#define JvResources_RsUnknownFilterFunction 64190
+#define JvResources_RsMissingFilterFunctionParameters 64191
+#define JvResources_RsClActiveCaption 64192
+#define JvResources_RsClInactiveCaption 64193
+#define JvResources_RsClMenu 64194
+#define JvResources_RsClWindow 64195
+#define JvResources_RsClWindowFrame 64196
+#define JvResources_RsClMenuText 64197
+#define JvResources_RsClWindowText 64198
+#define JvResources_RsClCaptionText 64199
+#define JvResources_RsClActiveBorder 64200
+#define JvResources_RsClInactiveBorder 64201
+#define JvResources_RsClAppWorkSpace 64202
+#define JvResources_RsClHighlight 64203
+#define JvResources_RsClHighlightText 64204
+#define JvResources_RsClBtnFace 64205
+#define JvResources_RsClBtnShadow 64206
+#define JvResources_RsClGrayText 64207
+#define JvResources_RsClGray40 64208
+#define JvResources_RsClPink 64209
+#define JvResources_RsClGold 64210
+#define JvResources_RsClBrightGreen 64211
+#define JvResources_RsClTurquoise 64212
+#define JvResources_RsClPlum 64213
+#define JvResources_RsClGray25 64214
+#define JvResources_RsClRose 64215
+#define JvResources_RsClTan 64216
+#define JvResources_RsClLightYellow 64217
+#define JvResources_RsClLightGreen 64218
+#define JvResources_RsClLightTurquoise 64219
+#define JvResources_RsClPaleBlue 64220
+#define JvResources_RsClLavender 64221
+#define JvResources_RsClScrollBar 64222
+#define JvResources_RsClBackground 64223
+#define JvResources_RsClBrown 64224
+#define JvResources_RsClOliveGreen 64225
+#define JvResources_RsClDarkGreen 64226
+#define JvResources_RsClDarkTeal 64227
+#define JvResources_RsClDarkBlue 64228
+#define JvResources_RsClIndigo 64229
+#define JvResources_RsClGray80 64230
+#define JvResources_RsClDarkRed 64231
+#define JvResources_RsClOrange 64232
+#define JvResources_RsClDarkYellow 64233
+#define JvResources_RsClBlueGray 64234
+#define JvResources_RsClGray50 64235
+#define JvResources_RsClLightOrange 64236
+#define JvResources_RsClSeaGreen 64237
+#define JvResources_RsClLightBlue 64238
+#define JvResources_RsClViolet 64239
+#define JvResources_RsClNavy 64240
+#define JvResources_RsClPurple 64241
+#define JvResources_RsClTeal 64242
+#define JvResources_RsClGray 64243
+#define JvResources_RsClSilver 64244
+#define JvResources_RsClRed 64245
+#define JvResources_RsClLime 64246
+#define JvResources_RsClYellow 64247
+#define JvResources_RsClBlue 64248
+#define JvResources_RsClFuchsia 64249
+#define JvResources_RsClAqua 64250
+#define JvResources_RsClWhite 64251
+#define JvResources_RsClMoneyGreen 64252
+#define JvResources_RsClSkyBlue 64253
+#define JvResources_RsClCream 64254
+#define JvResources_RsClMedGray 64255
+#define JvResources_RsEProviderHasNoContextNameds 64256
+#define JvResources_RsEProviderDoesNotSupportContexts 64257
+#define JvResources_RsETheSpecifiedContextIsNotPartOfTheSa 64258
+#define JvResources_RsEYouMustSpecifyAProviderBeforeSettin_ 64259
+#define JvResources_RsEItemNotFoundInTheSelectedContext 64260
+#define JvResources_RsEViewListOutOfSync 64261
+#define JvResources_RsEExtensibleIntObjDuplicateClass 64262
+#define JvResources_RsEExtensibleIntObjCollectionExpected 64263
+#define JvResources_RsEExtensibleIntObjClassNameExpected 64264
+#define JvResources_RsEExtensibleIntObjInvalidClass 64265
+#define JvResources_RsEMemNoRecords 64266
+#define JvResources_RsUnknown 64267
+#define JvResources_RsClBlack 64268
+#define JvResources_RsClMaroon 64269
+#define JvResources_RsClGreen 64270
+#define JvResources_RsClOlive 64271
+#define IdResourceStringsProtocols_RSFTPFileNameCanNotBeEmpty 64272
+#define IdResourceStringsProtocols_RSTLSSSLIOHandlerRequired 64273
+#define IdResourceStringsProtocols_RSTLSSLCanNotSetWhileConnected 64274
+#define IdResourceStringsProtocols_RSTLSSLSSLNotAvailable 64275
+#define IdResourceStringsProtocols_RSTLSSLSSLCmdFailed 64276
+#define uMStDialogLogin_SQ_USER_PARAMS 64277
+#define OleConst_SCannotActivate 64278
+#define OleConst_SNoWindowHandle 64279
+#define OleConst_SInvalidLicense 64280
+#define OleConst_SNotLicensed 64281
+#define JvResources_RsDataItemRenderHasNoText 64282
+#define JvResources_RsEInternalError 64283
+#define JvResources_RsEItemCanNotBeDeleted 64284
+#define JvResources_RsEAContextWithThatNameAlreadyExists 64285
+#define JvResources_RsECannotCreateAContextWithoutAContext 64286
+#define JvResources_RsEYouMustSpecifyAProviderBeforeSettin 64287
+#define IdResourceStringsProtocols_RSFTPStatusReady 64288
+#define IdResourceStringsProtocols_RSFTPStatusStartTransfer 64289
+#define IdResourceStringsProtocols_RSFTPStatusDoneTransfer 64290
+#define IdResourceStringsProtocols_RSFTPStatusAbortTransfer 64291
+#define IdResourceStringsProtocols_RSFTPOnCustomFTPProxyReq 64292
+#define IdResourceStringsProtocols_RSFTPMustUseExtWithIPv6 64293
+#define IdResourceStringsProtocols_RSFTPMustUseExtWithNATFastTrack 64294
+#define IdResourceStringsProtocols_RSFTPFTPPassiveMustBeTrueWithNATFT 64295
+#define IdResourceStringsProtocols_RSFTPServerSentInvalidPort 64296
+#define IdResourceStringsProtocols_RSFTPNoDataPortProtectionAfterCCC 64297
+#define IdResourceStringsProtocols_RSFTPNoDataPortProtectionWOEncryption 64298
+#define IdResourceStringsProtocols_RSFTPNoCCCWOEncryption 64299
+#define IdResourceStringsProtocols_RSFTPNoAUTHWOSSL 64300
+#define IdResourceStringsProtocols_RSFTPNoAUTHCon 64301
+#define IdResourceStringsProtocols_RSFTPOTPMethod 64302
+#define IdResourceStringsProtocols_RSFTPIOHandlerWrong 64303
+#define IdResourceStringsCore_RSNotConnected 64304
+#define IdResourceStringsCore_RSObjectTypeNotSupported 64305
+#define IdResourceStringsCore_RSIdNoDataToRead 64306
+#define IdResourceStringsCore_RSReadTimeout 64307
+#define IdResourceStringsCore_RSReadLnMaxLineLengthExceeded 64308
+#define IdResourceStringsCore_RSConnectTimeout 64309
+#define IdResourceStringsCore_RSAlreadyConnected 64310
+#define IdResourceStringsCore_RSMaximumNumberOfCaptureLineExceeded 64311
+#define IdResourceStringsCore_RSTransparentProxyCannotBind 64312
+#define IdResourceStringsCore_RSTransparentProxyCanNotSupportUDP 64313
+#define IdResourceStringsCore_RSBufferMissingTerminator 64314
+#define IdResourceStringsCore_RSBufferInvalidStartPos 64315
+#define IdResourceStringsCore_RSIOHandlerCannotChange 64316
+#define IdResourceStringsCore_RSIOHandlerTypeNotInstalled 64317
+#define IdResourceStringsCore_RSReplyInvalidCode 64318
+#define IdResourceStringsProtocols_RSFTPUnknownHost 64319
+#define IdResourceStringsCore_RSSocksUnknownError 64320
+#define IdResourceStringsCore_RSSocksServerRespondError 64321
+#define IdResourceStringsCore_RSSocksAuthMethodError 64322
+#define IdResourceStringsCore_RSSocksAuthError 64323
+#define IdResourceStringsCore_RSSocksServerGeneralError 64324
+#define IdResourceStringsCore_RSSocksServerPermissionError 64325
+#define IdResourceStringsCore_RSSocksServerNetUnreachableError 64326
+#define IdResourceStringsCore_RSSocksServerHostUnreachableError 64327
+#define IdResourceStringsCore_RSSocksServerConnectionRefusedError 64328
+#define IdResourceStringsCore_RSSocksServerTTLExpiredError 64329
+#define IdResourceStringsCore_RSSocksServerCommandError 64330
+#define IdResourceStringsCore_RSSocksServerAddressError 64331
+#define IdResourceStringsCore_RSInterceptCircularLink 64332
+#define IdResourceStringsCore_RSNotEnoughDataInBuffer 64333
+#define IdResourceStringsCore_RSTooMuchDataInBuffer 64334
+#define IdResourceStringsCore_RSFileNotFound 64335
+#define IdResourceStrings_RSCannotSetIPVersionWhenConnected 64336
+#define IdResourceStrings_RSCannotBindRange 64337
+#define IdResourceStrings_RSConnectionClosedGracefully 64338
+#define IdResourceStrings_RSCouldNotBindSocket 64339
+#define IdResourceStrings_RSInvalidPortRange 64340
+#define IdResourceStrings_RSInvalidServiceName 64341
+#define IdResourceStrings_RSIPv6Unavailable 64342
+#define IdResourceStrings_RSInvalidIPv6Address 64343
+#define IdResourceStrings_RSIPVersionUnsupported 64344
+#define IdResourceStrings_RSNotAllBytesSent 64345
+#define IdResourceStrings_RSPackageSizeTooBig 64346
+#define IdResourceStrings_RSSetSizeExceeded 64347
+#define IdResourceStringsCore_RSSocksUDPNotSupported 64348
+#define IdResourceStringsCore_RSSocksRequestFailed 64349
+#define IdResourceStringsCore_RSSocksRequestServerFailed 64350
+#define IdResourceStringsCore_RSSocksRequestIdentFailed 64351
+#define IdResourceStrings_RSStackENOBUFS 64352
+#define IdResourceStrings_RSStackEISCONN 64353
+#define IdResourceStrings_RSStackENOTCONN 64354
+#define IdResourceStrings_RSStackESHUTDOWN 64355
+#define IdResourceStrings_RSStackETOOMANYREFS 64356
+#define IdResourceStrings_RSStackETIMEDOUT 64357
+#define IdResourceStrings_RSStackECONNREFUSED 64358
+#define IdResourceStrings_RSStackELOOP 64359
+#define IdResourceStrings_RSStackENAMETOOLONG 64360
+#define IdResourceStrings_RSStackEHOSTDOWN 64361
+#define IdResourceStrings_RSStackEHOSTUNREACH 64362
+#define IdResourceStrings_RSStackENOTEMPTY 64363
+#define IdResourceStrings_RSStackHOST_NOT_FOUND 64364
+#define IdResourceStrings_RSStackClassUndefined 64365
+#define IdResourceStrings_RSStackAlreadyCreated 64366
+#define IdResourceStrings_RSAntiFreezeOnlyOne 64367
+#define IdResourceStrings_RSStackEDESTADDRREQ 64368
+#define IdResourceStrings_RSStackEMSGSIZE 64369
+#define IdResourceStrings_RSStackEPROTOTYPE 64370
+#define IdResourceStrings_RSStackENOPROTOOPT 64371
+#define IdResourceStrings_RSStackEPROTONOSUPPORT 64372
+#define IdResourceStrings_RSStackESOCKTNOSUPPORT 64373
+#define IdResourceStrings_RSStackEOPNOTSUPP 64374
+#define IdResourceStrings_RSStackEPFNOSUPPORT 64375
+#define IdResourceStrings_RSStackEAFNOSUPPORT 64376
+#define IdResourceStrings_RSStackEADDRINUSE 64377
+#define IdResourceStrings_RSStackEADDRNOTAVAIL 64378
+#define IdResourceStrings_RSStackENETDOWN 64379
+#define IdResourceStrings_RSStackENETUNREACH 64380
+#define IdResourceStrings_RSStackENETRESET 64381
+#define IdResourceStrings_RSStackECONNABORTED 64382
+#define IdResourceStrings_RSStackECONNRESET 64383
+#define IdResourceStrings_RSStatusConnecting 64384
+#define IdResourceStrings_RSStatusConnected 64385
+#define IdResourceStrings_RSStatusDisconnecting 64386
+#define IdResourceStrings_RSStatusDisconnected 64387
+#define IdResourceStrings_RSStatusText 64388
+#define IdResourceStrings_RSStackError 64389
+#define IdResourceStrings_RSStackEINTR 64390
+#define IdResourceStrings_RSStackEBADF 64391
+#define IdResourceStrings_RSStackEACCES 64392
+#define IdResourceStrings_RSStackEFAULT 64393
+#define IdResourceStrings_RSStackEINVAL 64394
+#define IdResourceStrings_RSStackEMFILE 64395
+#define IdResourceStrings_RSStackEWOULDBLOCK 64396
+#define IdResourceStrings_RSStackEINPROGRESS 64397
+#define IdResourceStrings_RSStackEALREADY 64398
+#define IdResourceStrings_RSStackENOTSOCK 64399
+#define IBSQLMonitor_StrBLOB 64400
+#define IBSQLMonitor_StrFetch 64401
+#define IBSQLMonitor_StrPrepare 64402
+#define IBSQLMonitor_StrPlan 64403
+#define IBSQLMonitor_StrPlanCantRetrive 64404
+#define IBSQLMonitor_StrCommitHardComm 64405
+#define IBSQLMonitor_StrCommitRetaining 64406
+#define IBSQLMonitor_StrRollback 64407
+#define IBSQLMonitor_StrRollbackRetainin 64408
+#define IBSQLMonitor_StrStartTransaction 64409
+#define IBSQLMonitor_StrApplication 64410
+#define IdResourceStrings_RSFailedTimeZoneInfo 64411
+#define IdResourceStrings_RSWinsockCallError 64412
+#define IdResourceStrings_RSWinsockLoadError 64413
+#define IdResourceStrings_RSWinsockInitializationError 64414
+#define IdResourceStrings_RSStatusResolving 64415
+#define IBXConst_SNoTimers 64416
+#define IBXConst_SIB65feature 64417
+#define IBXConst_SLoginPromptFailure 64418
+#define IBXConst_SIB70feature 64419
+#define IBXConst_SIB71feature 64420
+#define IBXConst_SIB80feature 64421
+#define IBSQLMonitor_StrConnect 64422
+#define IBSQLMonitor_StrDisconnect 64423
+#define IBSQLMonitor_StrMisc 64424
+#define IBSQLMonitor_StrError 64425
+#define IBSQLMonitor_StrAttach 64426
+#define IBSQLMonitor_StrDetach 64427
+#define IBSQLMonitor_StrQuery 64428
+#define IBSQLMonitor_StrStart 64429
+#define IBSQLMonitor_StrExecute 64430
+#define IBSQLMonitor_StrNULL 64431
+#define IBXConst_SDelphiException 64432
+#define IBXConst_SNoOptionsSet 64433
+#define IBXConst_SNoDestinationDirectory 64434
+#define IBXConst_SNosourceDirectory 64435
+#define IBXConst_SNoUninstallFile 64436
+#define IBXConst_SOptionNeedsClient 64437
+#define IBXConst_SOptionNeedsServer 64438
+#define IBXConst_SInvalidOption 64439
+#define IBXConst_SInvalidOnErrorResult 64440
+#define IBXConst_SInvalidOnStatusResult 64441
+#define IBXConst_SDPBConstantUnknownEx 64442
+#define IBXConst_STPBConstantUnknownEx 64443
+#define IBXConst_SUnknownPlan 64444
+#define IBXConst_SFieldSizeMismatch 64445
+#define IBXConst_SEventAlreadyRegistered 64446
+#define IBXConst_SStringTooLarge 64447
+#define IBXConst_SSPBConstantNotSupported 64448
+#define IBXConst_SSPBConstantUnknown 64449
+#define IBXConst_SServiceActive 64450
+#define IBXConst_SServiceInActive 64451
+#define IBXConst_SServerNameMissing 64452
+#define IBXConst_SQueryParamsError 64453
+#define IBXConst_SStartParamsError 64454
+#define IBXConst_SOutputParsingError 64455
+#define IBXConst_SUseSpecificProcedures 64456
+#define IBXConst_SSQLMonitorAlreadyPresent 64457
+#define IBXConst_SCantPrintValue 64458
+#define IBXConst_SEOFReached 64459
+#define IBXConst_SEOFInComment 64460
+#define IBXConst_SEOFInString 64461
+#define IBXConst_SParamNameExpected 64462
+#define IBXConst_SSuccess 64463
+#define IBXConst_SNotLiveRequest 64464
+#define IBXConst_SNoProvider 64465
+#define IBXConst_SNoRecordsAffected 64466
+#define IBXConst_SNoTableName 64467
+#define IBXConst_SCannotCreatePrimaryIndex 64468
+#define IBXConst_SCannotDropSystemIndex 64469
+#define IBXConst_STableNameMismatch 64470
+#define IBXConst_SIndexFieldMissing 64471
+#define IBXConst_SInvalidCancellation 64472
+#define IBXConst_SInvalidEvent 64473
+#define IBXConst_SMaximumEvents 64474
+#define IBXConst_SNoEventsRegistered 64475
+#define IBXConst_SInvalidQueueing 64476
+#define IBXConst_SInvalidRegistration 64477
+#define IBXConst_SInvalidBatchMove 64478
+#define IBXConst_SSQLDialectInvalid 64479
+#define IBXConst_SUserAbort 64480
+#define IBXConst_SDataSetUniDirectional 64481
+#define IBXConst_SCannotCreateSharedResource 64482
+#define IBXConst_SWindowsAPIError 64483
+#define IBXConst_SColumnListsDontMatch 64484
+#define IBXConst_SColumnTypesDontMatch 64485
+#define IBXConst_SCantEndSharedTransaction 64486
+#define IBXConst_SFieldUnsupportedType 64487
+#define IBXConst_SCircularDataLink 64488
+#define IBXConst_SEmptySQLStatement 64489
+#define IBXConst_SIsASelectStatement 64490
+#define IBXConst_SRequiredParamNotSet 64491
+#define IBXConst_SNoStoredProcName 64492
+#define IBXConst_SIsAExecuteProcedure 64493
+#define IBXConst_SUpdateFailed 64494
+#define IBXConst_SNotCachedUpdates 64495
+#define IBXConst_SBlobCannotBeRead 64496
+#define IBXConst_SBlobCannotBeWritten 64497
+#define IBXConst_SEmptyQuery 64498
+#define IBXConst_SCannotOpenNonSQLSelect 64499
+#define IBXConst_SNoFieldAccess 64500
+#define IBXConst_SFieldReadOnly 64501
+#define IBXConst_SFieldNotFound 64502
+#define IBXConst_SNotEditing 64503
+#define IBXConst_SCannotInsert 64504
+#define IBXConst_SCannotPost 64505
+#define IBXConst_SCannotUpdate 64506
+#define IBXConst_SCannotDelete 64507
+#define IBXConst_SCannotRefresh 64508
+#define IBXConst_SBufferNotSet 64509
+#define IBXConst_SCircularReference 64510
+#define IBXConst_SSQLParseError 64511
+#define IBXConst_SDatabaseNotAssigned 64512
+#define IBXConst_STransactionNotAssigned 64513
+#define IBXConst_SXSQLDAIndexOutOfRange 64514
+#define IBXConst_SXSQLDANameDoesNotExist 64515
+#define IBXConst_SEOF 64516
+#define IBXConst_SBOF 64517
+#define IBXConst_SInvalidStatementHandle 64518
+#define IBXConst_SSQLOpen 64519
+#define IBXConst_SSQLClosed 64520
+#define IBXConst_SDatasetOpen 64521
+#define IBXConst_SDatasetClosed 64522
+#define IBXConst_SUnknownSQLDataType 64523
+#define IBXConst_SInvalidColumnIndex 64524
+#define IBXConst_SInvalidParamColumnIndex 64525
+#define IBXConst_SInvalidDataConversion 64526
+#define IBXConst_SColumnIsNotNullable 64527
+#define IBXConst_SCannotSetDatabase 64528
+#define IBXConst_SCannotSetTransaction 64529
+#define IBXConst_SOperationCancelled 64530
+#define IBXConst_SDPBConstantNotSupported 64531
+#define IBXConst_SDPBConstantUnknown 64532
+#define IBXConst_STPBConstantNotSupported 64533
+#define IBXConst_STPBConstantUnknown 64534
+#define IBXConst_SDatabaseClosed 64535
+#define IBXConst_SDatabaseOpen 64536
+#define IBXConst_SDatabaseNameMissing 64537
+#define IBXConst_SNotInTransaction 64538
+#define IBXConst_SInTransaction 64539
+#define IBXConst_STimeoutNegative 64540
+#define IBXConst_SNoDatabasesInTransaction 64541
+#define IBXConst_SUpdateWrongDB 64542
+#define IBXConst_SUpdateWrongTR 64543
+#define VDBConsts_SDeleteRecordQuestion 64544
+#define VDBConsts_SDeleteMultipleRecordsQuestion 64545
+#define VDBConsts_SDataSourceFixed 64546
+#define VDBConsts_SPropDefByLookup 64547
+#define VDBConsts_STooManyColumns 64548
+#define VDBConsts_SRemoteLogin 64549
+#define ZLibConst_sInvalidStreamOp 64550
+#define ZLibConst_sError 64551
+#define IBXConst_SUnknownError 64552
+#define IBXConst_SInterBaseMissing 64553
+#define IBXConst_SInterBaseInstallMissing 64554
+#define IBXConst_SIB60feature 64555
+#define IBXConst_SNotSupported 64556
+#define IBXConst_SNotPermitted 64557
+#define IBXConst_SFileAccessError 64558
+#define IBXConst_SConnectionTimeout 64559
+#define EzBaseExpr_SEXPR_WRONGUNARYOP 64560
+#define EzBaseExpr_SEXPR_WRONGBINARYOP 64561
+#define EzBaseExpr_SEXPR_WRONGBOOLEANOP 64562
+#define EzBaseExpr_SEXPR_WRONGRELATIONALOP 64563
+#define EzBaseExpr_SEXPR_WRONGPARAMETER 64564
+#define EzBaseExpr_SEXPR_INVALIDPARAMETERTO 64565
+#define VDBConsts_SFirstRecord 64566
+#define VDBConsts_SPriorRecord 64567
+#define VDBConsts_SNextRecord 64568
+#define VDBConsts_SLastRecord 64569
+#define VDBConsts_SInsertRecord 64570
+#define VDBConsts_SDeleteRecord 64571
+#define VDBConsts_SEditRecord 64572
+#define VDBConsts_SPostEdit 64573
+#define VDBConsts_SCancelEdit 64574
+#define VDBConsts_SRefreshRecord 64575
+#define EzProjImpl_serr24 64576
+#define EzProjImpl_serr25 64577
+#define EzProjImpl_serr32 64578
+#define EzProjImpl_serr33 64579
+#define EzProjImpl_serr34 64580
+#define EzProjImpl_serr35 64581
+#define EzProjections_serr0 64582
+#define fPictureDef_SDefinePicTitle 64583
+#define fPictureDef_SPictNotDefined 64584
+#define EzBaseExpr_SEXPR_WRONGWHENEXPR 64585
+#define EzBaseExpr_SEXPR_WRONGTHENEXPR 64586
+#define EzBaseExpr_SEXPR_OPERATORINCOMPAT 64587
+#define EzBaseExpr_SEXPR_CANNOTCASTTOSTRING 64588
+#define EzBaseExpr_SEXPR_CANNOTCASTTOFLOAT 64589
+#define EzBaseExpr_SEXPR_CANNOTCASTTOINTEGER 64590
+#define EzBaseExpr_SEXPR_CANNOTCASTTOBOOLEAN 64591
+#define EzConsts_SCmdCircleCR 64592
+#define EzConsts_SCmdRichText 64593
+#define EzConsts_SCmdInsert 64594
+#define EzConsts_SCmdMirror 64595
+#define EzConsts_SCmdCustomClick 64596
+#define EzConsts_SCmdDropSelection 64597
+#define EzConsts_SCmdDragDrop 64598
+#define EzConsts_SCmdArcSE 64599
+#define EzConsts_SCmdArcFCS 64600
+#define EzConsts_SCmdNode 64601
+#define EzConsts_SCmdNodeLink 64602
+#define EzConsts_SCmdText500 64603
+#define EzExprLex_SDefaultDateFormat 64604
+#define EzProjImpl_serr18 64605
+#define EzProjImpl_serr19 64606
+#define EzProjImpl_serr23 64607
+#define EzConsts_SCmdPolygonBuffer 64608
+#define EzConsts_SCmdTable 64609
+#define EzConsts_SCmdCalloutText 64610
+#define EzConsts_SCmdBulletLeader 64611
+#define EzConsts_SCmdBannerText 64612
+#define EzConsts_SCmdZoomAll 64613
+#define EzConsts_SCmdScaleX 64614
+#define EzConsts_SCmdScaleY 64615
+#define EzConsts_SCmdJustifText 64616
+#define EzConsts_SCmdFittedText 64617
+#define EzConsts_SCmdPoint 64618
+#define EzConsts_SCmdDimHoriz 64619
+#define EzConsts_SCmdDimVert 64620
+#define EzConsts_SCmdDimParall 64621
+#define EzConsts_SCmdCircle2P 64622
+#define EzConsts_SCmdCircle3P 64623
+#define EzConsts_SCmdCircleSelect 64624
+#define EzConsts_SCmdZoomIn 64625
+#define EzConsts_SCmdZoomOut 64626
+#define EzConsts_SCmdZoomWindow 64627
+#define EzConsts_SCmdRealTimeZoom 64628
+#define EzConsts_SCmdRealTimeZoomB 64629
+#define EzConsts_SCmdHandScroll 64630
+#define EzConsts_SCmdClipPoly 64631
+#define EzConsts_SCmdSetClipPolyArea 64632
+#define EzConsts_SCmdDeleteVertex 64633
+#define EzConsts_SCmdSetClipArea 64634
+#define EzConsts_SCmdBreak 64635
+#define EzConsts_SCmdTrim 64636
+#define EzConsts_SCmdExtend 64637
+#define EzConsts_SCmdFillet 64638
+#define EzConsts_SCmdAddMarker 64639
+#define EzConsts_SCmdVertGLine 64640
+#define EzConsts_SCmdMoveGLine 64641
+#define EzConsts_SCmdHints 64642
+#define EzConsts_SCmdPictRef 64643
+#define EzConsts_SCmdCustomPicture 64644
+#define EzConsts_SCmdBandsBitmap 64645
+#define EzConsts_SCmdPersistBitmap 64646
+#define EzConsts_SCmdUndo 64647
+#define EzConsts_SCmdPan 64648
+#define EzConsts_SCmdSelect 64649
+#define EzConsts_SCmdSelPLine 64650
+#define EzConsts_SCmdMeasures 64651
+#define EzConsts_SCmdOffset 64652
+#define EzConsts_SCmdInsertVertex 64653
+#define EzConsts_SCmdGridOrigin 64654
+#define EzConsts_SCmdPolygonSelect 64655
+#define EzConsts_SCmdScale 64656
+#define EzConsts_SCmdRotate 64657
+#define EzConsts_SCmdReshape 64658
+#define EzConsts_SCmdRotateText 64659
+#define EzConsts_SCmdLine 64660
+#define EzConsts_SCmdPolyline 64661
+#define EzConsts_SCmdPolygon 64662
+#define EzConsts_SCmdSketch 64663
+#define EzConsts_sCmdArc 64664
+#define EzConsts_SCmdEllipse 64665
+#define EzConsts_SCmdSpline 64666
+#define EzConsts_SCmdRectangle 64667
+#define EzConsts_SCmdSymbol 64668
+#define EzConsts_SCmdTextSymbol 64669
+#define EzConsts_SCmdText 64670
+#define EzConsts_SCmdHorzGLine 64671
+#define EzConsts_sColumnInfo 64672
+#define EzConsts_sTableColumnInfo 64673
+#define EzConsts_sColumnTitleInfo 64674
+#define EzConsts_sRowDataInfo 64675
+#define EzConsts_sTitleCaption 64676
+#define EzConsts_sGroupCaption 64677
+#define EzConsts_sJustifTextInfo 64678
+#define EzConsts_sFittedTextInfo 64679
+#define EzConsts_sBlockInfo 64680
+#define EzConsts_sSplineTextInfo 64681
+#define EzConsts_sDimHorizInfo 64682
+#define EzConsts_sDimVertInfo 64683
+#define EzConsts_sDimParallelInfo 64684
+#define EzConsts_sPreviewInfo 64685
+#define EzConsts_sERMapperInfo 64686
+#define EzConsts_SCmdMove 64687
+#define EzConsts_sNoneInfo 64688
+#define EzConsts_sPointInfo 64689
+#define EzConsts_SPlaceInfo 64690
+#define EzConsts_sPolylineInfo 64691
+#define EzConsts_sPolygonInfo 64692
+#define EzConsts_sRectangleInfo 64693
+#define EzConsts_sArcInfo 64694
+#define EzConsts_sEllipseInfo 64695
+#define EzConsts_sPicRefInfo 64696
+#define EzConsts_sBmpRefInfo 64697
+#define EzConsts_sBandsBmpInfo 64698
+#define EzConsts_sCustomPicInfo 64699
+#define EzConsts_sSplineInfo 64700
+#define EzConsts_sTTTextInfo 64701
+#define EzConsts_sATTTextInfo 64702
+#define EzConsts_sTableInfo 64703
+#define EzConsts_SFilterEnabled 64704
+#define EzConsts_SBandedImagesFilter 64705
+#define EzConsts_SBitmapFilter 64706
+#define EzConsts_SJPGFilter 64707
+#define EzConsts_SMetafileFilter 64708
+#define EzConsts_SICOFilter 64709
+#define EzConsts_SGIFFilter 64710
+#define EzConsts_SEDBFilter 64711
+#define EzConsts_SChangeDirNotAllowed 64712
+#define EzConsts_sDataInfo 64713
+#define EzConsts_sFieldValue 64714
+#define EzConsts_sPenInfo 64715
+#define EzConsts_sBrushInfo 64716
+#define EzConsts_sSymbolInfo 64717
+#define EzConsts_sTTFontInfo 64718
+#define EzConsts_sVectorFontInfo 64719
+#define EzConsts_SThereAreNoLayers 64720
+#define EzConsts_Sscrcanceled 64721
+#define EzConsts_SEmptyTable 64722
+#define EzConsts_SLoadingCAD 64723
+#define EzConsts_SSavingCAD 64724
+#define EzConsts_SWrongCADFile 64725
+#define EzConsts_STextInfo 64726
+#define EzConsts_SErrWrongField 64727
+#define EzConsts_SCircleInfo 64728
+#define EzConsts_SBufferRefInfo 64729
+#define EzConsts_SOneSelection 64730
+#define EzConsts_SMultiSelection 64731
+#define EzConsts_SNoNodeClicked 64732
+#define EzConsts_SNetSameNodes 64733
+#define EzConsts_SLayerIndexOutOfRange 64734
+#define EzConsts_sDrawBoxCollectionNotSame 64735
+#define EzConsts_SVertexToReshape 64736
+#define EzConsts_SVertexToDelete 64737
+#define EzConsts_SClickInterestPoint 64738
+#define EzConsts_SEntityToDrag 64739
+#define EzConsts_SDragFromCtrlPt 64740
+#define EzConsts_SDefineCircleCenter 64741
+#define EzConsts_SDefineCircle 64742
+#define EzConsts_SAreaAndPerimeter 64743
+#define EzConsts_SZoomUnZoom 64744
+#define EzConsts_SScrolling 64745
+#define EzConsts_SInsertXGuideLine 64746
+#define EzConsts_SInsertYGuideLine 64747
+#define EzConsts_SSelectGline 64748
+#define EzConsts_SMoveGLinetoNew 64749
+#define EzConsts_SUnrecognizedCommand 64750
+#define EzConsts_SShpFileNotFound 64751
+#define EzConsts_SDXFSOLIDBad 64752
+#define EzConsts_SDXFCIRCLEBad 64753
+#define EzConsts_SDXFARCBad 64754
+#define EzConsts_SDXFATTDEFBad 64755
+#define EzConsts_SDXFATTRIBBad 64756
+#define EzConsts_SDXFThereIsNoHeader 64757
+#define EzConsts_SDXFThereIsNoLayers 64758
+#define EzConsts_SDXFThereIsNoBlocks 64759
+#define EzConsts_SDXFThereIsNoEntities 64760
+#define EzConsts_SDXFThereIsNoMaxMin 64761
+#define EzConsts_SDXFErrorInLine 64762
+#define EzConsts_SDXFDupLayer 64763
+#define EzConsts_SDXFCannotSave 64764
+#define EzConsts_STextIsNotVisible 64765
+#define EzConsts_SEntityToReshape 64766
+#define EzConsts_SReshapeToPoint 64767
+#define EzConsts_SWrongEzGIS 64768
+#define EzConsts_SDXFReading 64769
+#define EzConsts_SDXFPolylineBad 64770
+#define EzConsts_SDXFInvalidFloat 64771
+#define EzConsts_SDXFInvalidInteger 64772
+#define EzConsts_SDXFFileReadingNow 64773
+#define EzConsts_SDXFUndefBlock 64774
+#define EzConsts_SDXFWrongBlockInfo 64775
+#define EzConsts_SDXFLWPolylineBad 64776
+#define EzConsts_SDXFPOINTBad 64777
+#define EzConsts_SDXFINSERTBad 64778
+#define EzConsts_SDXFTEXTBad 64779
+#define EzConsts_SDXFLINEBad 64780
+#define EzConsts_SDXFPOLYLINEBad2 64781
+#define EzConsts_SDXFLWPOLYLINEBad2 64782
+#define EzConsts_SDXF3DFACEBad 64783
+#define EzConsts_SFilletNotContiguous 64784
+#define EzConsts_STrimCuttingEdge 64785
+#define EzConsts_SFirstExtensionLine 64786
+#define EzConsts_SSecondExtensionLine 64787
+#define EzConsts_SDefineTextLocation 64788
+#define EzConsts_SBlobErrNotEditing 64789
+#define EzConsts_SCannotOpenDesignMode 64790
+#define EzConsts_SLayerNotAssigned 64791
+#define EzConsts_SLayerEmpty 64792
+#define EzConsts_SExpressionEmpty 64793
+#define EzConsts_SWrongFieldnameCol 64794
+#define EzConsts_SGetRecordInvalid 64795
+#define EzConsts_SInsertNotAllowed 64796
+#define EzConsts_SWrongReadOnly 64797
+#define EzConsts_SLatLonMismatch 64798
+#define EzConsts_SWrongProjector 64799
+#define EzConsts_SVectorialSecondPt 64800
+#define EzConsts_SBreakSelectFirstPoint 64801
+#define EzConsts_SBreakSelectSecndPoint 64802
+#define EzConsts_SBreakWrongSelection 64803
+#define EzConsts_SBreakWrongEntity 64804
+#define EzConsts_SBreakNotClicked 64805
+#define EzConsts_STrimNoCuttingEdge 64806
+#define EzConsts_SExtendNoExtendEdge 64807
+#define EzConsts_STrimSelectEnt 64808
+#define EzConsts_SExtendSelectEnt 64809
+#define EzConsts_STrimWrongEntity 64810
+#define EzConsts_SExtendWrongEntity 64811
+#define EzConsts_SExtendWrongSegment 64812
+#define EzConsts_STrimOnlyOneCuttingEdge 64813
+#define EzConsts_SExtendOnlyOneCuttingEdge 64814
+#define EzConsts_SFilletWrongEntity 64815
+#define EzConsts_SNotEnoughData 64816
+#define EzConsts_SStartSingleSelect 64817
+#define EzConsts_SDefineBasePoint 64818
+#define EzConsts_SDefineEndPoint 64819
+#define EzConsts_SReferenceFirstPoint 64820
+#define EzConsts_SReferenceSecondPoint 64821
+#define EzConsts_STransformLastPoint 64822
+#define EzConsts_SRotTransformLastPoint 64823
+#define EzConsts_SDefineSecondSelection 64824
+#define EzConsts_SWarnNoSelection 64825
+#define EzConsts_SVertexSingleEntityError 64826
+#define EzConsts_SInsertVertexPoint 64827
+#define EzConsts_SVertexEntityBadError 64828
+#define EzConsts_SChangeGridOrigin 64829
+#define EzConsts_SShowHintCaption 64830
+#define EzConsts_SVectorialFirstPt 64831
+#define EzConsts_SDefineFromPoint 64832
+#define EzConsts_SDefineToPoint 64833
+#define EzConsts_SFirstPoint 64834
+#define EzConsts_SSecondPoint 64835
+#define EzConsts_SThirdPoint 64836
+#define EzConsts_SFourthPoint 64837
+#define EzConsts_SFifthPoint 64838
+#define EzConsts_SNextPoint 64839
+#define EzConsts_SClipPolygon 64840
+#define EzConsts_SCircleCenter 64841
+#define EzConsts_SCircleRadius 64842
+#define EzConsts_SArcSweepAngle 64843
+#define EzConsts_SCircleEndPoint 64844
+#define EzConsts_SRealTimeZoom 64845
+#define EzConsts_SDefineFirstZoomPoint 64846
+#define EzConsts_SDefineSecondZoomPoint 64847
+#define EzConsts_SDBFNotFound 64848
+#define EzConsts_SUpdateExtension 64849
+#define EzConsts_SThereAreNoDeleted 64850
+#define EzConsts_SPackingLayer 64851
+#define EzConsts_SWrongRecordsRecover 64852
+#define EzConsts_SExprFail 64853
+#define EzConsts_SCannotDeleteLayer 64854
+#define EzConsts_SInternalListError 64855
+#define EzConsts_SLayerFilesNotFound 64856
+#define EzConsts_SGISUnassigned 64857
+#define EzConsts_SLayerNotFound 64858
+#define EzConsts_SFlatScrollBarNotAllowed 64859
+#define EzConsts_SEntityOutOfBound 64860
+#define EzConsts_SSymbolOutOfBound 64861
+#define EzConsts_SWrongImageFormat 64862
+#define EzConsts_SVectorOutOfBound 64863
+#define EzConsts_SSymbolTextCaption 64864
+#define EzConsts_SSymbolText 64865
+#define EzConsts_SMsgConfirm 64866
+#define EzConsts_SMsgError 64867
+#define EzConsts_SMsgWarning 64868
+#define EzConsts_SWrongBuffer 64869
+#define EzConsts_SCannotCreateBuffer 64870
+#define EzConsts_SCannotContainParams 64871
+#define EzConsts_SWrongLayername 64872
+#define EzConsts_SWrongParameters 64873
+#define EzConsts_SExprParserError 64874
+#define EzConsts_SBadExtension 64875
+#define EzConsts_SRestNotExclusive 64876
+#define EzConsts_SDuplicateLayer 64877
+#define EzConsts_SRecnoInvalid 64878
+#define EzConsts_SRebuildTree 64879
+#define MZLib_SUnknownCompression 64880
+#define MZLib_SInvalidWindowSize 64881
+#define MZLib_SIncorrectHeaderCheck 64882
+#define MZLib_SNeedDictionary 64883
+#define JPG_sJPEGError 64884
+#define EzConsts_SCommand 64885
+#define EzConsts_SSymbolCaption 64886
+#define EzConsts_SLinetypeCaption 64887
+#define EzConsts_SScaleFmt 64888
+#define EzConsts_STranslateFmt 64889
+#define EzConsts_SRotateFmt 64890
+#define EzConsts_SNewEntityInfo 64891
+#define EzConsts_SIsInvalidFloatValue 64892
+#define EzConsts_SIsInvalidIntegerValue 64893
+#define EzConsts_SIsInvalidBoolValue 64894
+#define EzConsts_STextRefPtFirst 64895
+#define MZLib_SDataError 64896
+#define MZLib_SInsufficientMemory 64897
+#define MZLib_SBufferError 64898
+#define MZLib_SIncompatibleVersion 64899
+#define MZLib_SInvalidDistanceCode 64900
+#define MZLib_SInvalidLengthCode 64901
+#define MZLib_SOversubscribedDBLTree 64902
+#define MZLib_SIncompleteDBLTree 64903
+#define MZLib_SOversubscribedLLTree 64904
+#define MZLib_SIncompleteLLTree 64905
+#define MZLib_SEmptyDistanceTree 64906
+#define MZLib_SInvalidBlockType 64907
+#define MZLib_SInvalidStoredBlockLengths 64908
+#define MZLib_STooManyLDSymbols 64909
+#define MZLib_SInvalidBitLengthRepeat 64910
+#define MZLib_SIncorrectDataCheck 64911
+#define GraphicStrings_gesLoadingData 64912
+#define GraphicStrings_gesUpsampling 64913
+#define GraphicStrings_gesTransfering 64914
+#define GraphicStrings_gesLZ77Error 64915
+#define GraphicStrings_gesJPEGEOI 64916
+#define GraphicStrings_gesJPEGStripSize 64917
+#define GraphicStrings_gesJPEGComponentCount 64918
+#define GraphicStrings_gesJPEGDataPrecision 64919
+#define GraphicStrings_gesJPEGSamplingFactors 64920
+#define GraphicStrings_gesJPEGBogusTableField 64921
+#define GraphicStrings_gesJPEGFractionalLine 64922
+#define GraphicStrings_gesWarning 64923
+#define MZLib_SNeedDict 64924
+#define MZLib_SStreamEnd 64925
+#define MZLib_SFileError 64926
+#define MZLib_SStreamError 64927
+#define GraphicStrings_gesInvalidColorFormat 64928
+#define GraphicStrings_gesStreamReadError 64929
+#define GraphicStrings_gesUnsupportedFeature 64930
+#define GraphicStrings_gesInvalidCRC 64931
+#define GraphicStrings_gesCompression 64932
+#define GraphicStrings_gesExtraCompressedData 64933
+#define GraphicStrings_gesInvalidPalette 64934
+#define GraphicStrings_gesUnknownCriticalChunk 64935
+#define GraphicStrings_gesCompressionScheme 64936
+#define GraphicStrings_gesIndexedNotSupported 64937
+#define GraphicStrings_gesConversionUnsupported 64938
+#define GraphicStrings_gesInvalidSampleDepth 64939
+#define GraphicStrings_gesInvalidPixelDepth 64940
+#define GraphicStrings_gesInvalidSubSampling 64941
+#define GraphicStrings_gesVerticalSubSamplingError 64942
+#define GraphicStrings_gesPreparing 64943
+#define GraphicStrings_gesZSoft 64944
+#define GraphicStrings_gesZSoftWord 64945
+#define GraphicStrings_gesAliasWaveFront 64946
+#define GraphicStrings_gesSGITrueColorAlpha 64947
+#define GraphicStrings_gesSGIMono 64948
+#define GraphicStrings_gesPhotoshop 64949
+#define GraphicStrings_gesPortable 64950
+#define GraphicStrings_gesPortablePixel 64951
+#define GraphicStrings_gesPortableGray 64952
+#define GraphicStrings_gesPortableMono 64953
+#define GraphicStrings_gesAutoDesk 64954
+#define GraphicStrings_gesKodakPhotoCD 64955
+#define GraphicStrings_gesHalo 64956
+#define GraphicStrings_gesPaintShopPro 64957
+#define GraphicStrings_gesPortableNetworkGraphic 64958
+#define GraphicStrings_gesInvalidImage 64959
+#define GraphicStrings_gesDIBs 64960
+#define GraphicStrings_gesEPS 64961
+#define GraphicStrings_gesIcons 64962
+#define GraphicStrings_gesMetaFiles 64963
+#define GraphicStrings_gesEnhancedMetaFiles 64964
+#define GraphicStrings_gesJPGImages 64965
+#define GraphicStrings_gesJPEGImages 64966
+#define GraphicStrings_gesJPEImages 64967
+#define GraphicStrings_gesJFIFImages 64968
+#define GraphicStrings_gesTruevision 64969
+#define GraphicStrings_gesTIFF 64970
+#define GraphicStrings_gesMacTIFF 64971
+#define GraphicStrings_gesPCTIF 64972
+#define GraphicStrings_gesGFIFax 64973
+#define GraphicStrings_gesSGI 64974
+#define GraphicStrings_gesSGITrueColor 64975
+#define GIFImage_sEmptyColorMap 64976
+#define GIFImage_sEmptyImage 64977
+#define GIFImage_sInvalidReduction 64978
+#define GIFImage_sGIFImageFile 64979
+#define GIFImage_sProgressLoading 64980
+#define GIFImage_sProgressSaving 64981
+#define GIFImage_sProgressConverting 64982
+#define GIFImage_sProgressRendering 64983
+#define GIFImage_sProgressCopying 64984
+#define GIFImage_sProgressOptimizing 64985
+#define JConsts_sChangeJPGSize 64986
+#define JConsts_sJPEGError 64987
+#define JConsts_sJPEGImageFile 64988
+#define GraphicStrings_gesRegistration 64989
+#define GraphicStrings_gesBitmaps 64990
+#define GraphicStrings_gesRLEBitmaps 64991
+#define GIFImage_sBadExtensionInstance 64992
+#define GIFImage_sBadBlockSize 64993
+#define GIFImage_sBadBlock 64994
+#define GIFImage_sUnsupportedClass 64995
+#define GIFImage_sInvalidData 64996
+#define GIFImage_sBadHeight 64997
+#define GIFImage_sBadWidth 64998
+#define GIFImage_sFailedPaste 64999
+#define GIFImage_sScreenSizeExceeded 65000
+#define GIFImage_sNoColorTable 65001
+#define GIFImage_sBadPixelCoordinates 65002
+#define GIFImage_sInvalidPixelFormat 65003
+#define GIFImage_sBadDimension 65004
+#define GIFImage_sNoDIB 65005
+#define GIFImage_sInvalidStream 65006
+#define GIFImage_sInvalidColor 65007
+#define DBConsts_SInvalidFormatType 65008
+#define DBConsts_SCouldNotParseTimeStamp 65009
+#define DBConsts_SInvalidSqlTimeStamp 65010
+#define GIFImage_sOutOfData 65011
+#define GIFImage_sTooManyColors 65012
+#define GIFImage_sBadColorIndex 65013
+#define GIFImage_sBadVersion 65014
+#define GIFImage_sBadSignature 65015
+#define GIFImage_sScreenBadColorSize 65016
+#define GIFImage_sImageBadColorSize 65017
+#define GIFImage_sUnknownExtension 65018
+#define GIFImage_sBadExtensionLabel 65019
+#define GIFImage_sOutOfMemDIB 65020
+#define GIFImage_sDecodeTooFewBits 65021
+#define GIFImage_sDecodeCircular 65022
+#define GIFImage_sBadTrailer 65023
+#define DBConsts_SExprNoAggFilter 65024
+#define DBConsts_SExprEmptyInList 65025
+#define DBConsts_SInvalidKeywordUse 65026
+#define DBConsts_STextFalse 65027
+#define DBConsts_STextTrue 65028
+#define DBConsts_SParameterNotFound 65029
+#define DBConsts_SInvalidVersion 65030
+#define DBConsts_SBadFieldType 65031
+#define DBConsts_SProviderSQLNotSupported 65032
+#define DBConsts_SProviderExecuteNotSupported 65033
+#define DBConsts_SExprNoAggOnCalcs 65034
+#define DBConsts_SDataSetUnidirectional 65035
+#define DBConsts_SUnassignedVar 65036
+#define DBConsts_SRecordNotFound 65037
+#define DBConsts_SBcdOverflow 65038
+#define DBConsts_SInvalidBcdValue 65039
+#define DBConsts_SExprStringError 65040
+#define DBConsts_SExprInvalidChar 65041
+#define DBConsts_SExprNoLParen 65042
+#define DBConsts_SExprNoRParen 65043
+#define DBConsts_SExprNoRParenOrComma 65044
+#define DBConsts_SExprExpected 65045
+#define DBConsts_SExprBadField 65046
+#define DBConsts_SExprBadNullTest 65047
+#define DBConsts_SExprRangeError 65048
+#define DBConsts_SExprIncorrect 65049
+#define DBConsts_SExprNothing 65050
+#define DBConsts_SExprTypeMis 65051
+#define DBConsts_SExprBadScope 65052
+#define DBConsts_SExprNoArith 65053
+#define DBConsts_SExprNotAgg 65054
+#define DBConsts_SExprBadConst 65055
+#define DBConsts_SFieldOutOfRange 65056
+#define DBConsts_SFieldRequired 65057
+#define DBConsts_SDataSetMissing 65058
+#define DBConsts_SInvalidCalcType 65059
+#define DBConsts_SFieldReadOnly 65060
+#define DBConsts_SCircularDataLink 65061
+#define DBConsts_SLookupInfoError 65062
+#define DBConsts_SDataSourceChange 65063
+#define DBConsts_SDataSetOpen 65064
+#define DBConsts_SNotEditing 65065
+#define DBConsts_SDataSetClosed 65066
+#define DBConsts_SDataSetEmpty 65067
+#define DBConsts_SDataSetReadOnly 65068
+#define DBConsts_SNestedDataSetClass 65069
+#define DBConsts_SExprTermination 65070
+#define DBConsts_SExprNameError 65071
+#define DBConsts_SInvalidFieldSize 65072
+#define DBConsts_SInvalidFieldKind 65073
+#define DBConsts_SUnknownFieldType 65074
+#define DBConsts_SFieldNameMissing 65075
+#define DBConsts_SDuplicateFieldName 65076
+#define DBConsts_SFieldNotFound 65077
+#define DBConsts_SFieldAccessError 65078
+#define DBConsts_SFieldValueError 65079
+#define DBConsts_SFieldRangeError 65080
+#define DBConsts_SBcdFieldRangeError 65081
+#define DBConsts_SInvalidIntegerValue 65082
+#define DBConsts_SInvalidBoolValue 65083
+#define DBConsts_SInvalidFloatValue 65084
+#define DBConsts_SFieldTypeMismatch 65085
+#define DBConsts_SFieldSizeMismatch 65086
+#define DBConsts_SInvalidVarByteArray 65087
 #define ComStrs_sRichEditSaveFail 65088
 #define ComStrs_sUDAssociated 65089
 #define ComStrs_sPageIndexError 65090
@@ -948,11 +948,11 @@
 #define ComStrs_sFailSetCalMaxSelRange 65096
 #define ComStrs_sFailSetCalMinMaxRange 65097
 #define ComStrs_sFailsetCalSelRange 65098
-#define DBConsts_SInvalidFieldSize 65099
-#define DBConsts_SInvalidFieldKind 65100
-#define DBConsts_SUnknownFieldType 65101
-#define DBConsts_SFieldNameMissing 65102
-#define DBConsts_SDuplicateFieldName 65103
+#define clipper_rsDoMaxima 65099
+#define clipper_rsUpdateEdgeIntoAEL 65100
+#define clipper_rsInvalidInt 65101
+#define clipper_rsOpenPath 65102
+#define clipper_rsOpenPath3 65103
 #define ComConst_SOleError 65104
 #define ComConst_SNoMethod 65105
 #define ComConst_SVarNotObject 65106
@@ -1387,8 +1387,7 @@
 #define SysConst_SEndOfFile 65535
 STRINGTABLE
 BEGIN
-	uMStFormRichTextEditor_sColRowInfo,	"Строка: %3d   Столбец: %3d"
-	OleConst_SNotLicensed,	"License information for %s not found. You cannot use this control in design mode"
+	RxMemDS_SMemNoRecords,	"No data found"
 	XMLConst_SDuplicateRegistration,	"\"%s\" DOMImplementation already registered"
 	XMLConst_SDOMNotSupported,	"Property or Method \"%s\" is not supported by DOM Vendor \"%s\""
 	XMLConst_SNodeExpected,	"Node cannot be null"
@@ -1404,278 +1403,11 @@ BEGIN
 	uMStFormRichTextEditor_sOverWrite,	"Заменить %s"
 	uMStFormRichTextEditor_sUntitled,	"Безимянный"
 	uMStFormRichTextEditor_sModified,	"Изменен"
-	IdResourceStringsProtocols_RSFTPServerSentInvalidPort,	"Server sent invalid port number (%s)"
-	IdResourceStringsProtocols_RSFTPNoDataPortProtectionAfterCCC,	"Can not set DataPortProtection after CCC issued."
-	IdResourceStringsProtocols_RSFTPNoDataPortProtectionWOEncryption,	"Can not set DataPortProtection with unencrypted connections."
-	IdResourceStringsProtocols_RSFTPNoCCCWOEncryption,	"Can not set CCC without encyption."
-	IdResourceStringsProtocols_RSFTPNoAUTHWOSSL,	"Can not set AUTH without SSL."
-	IdResourceStringsProtocols_RSFTPNoAUTHCon,	"Can not set AUTH while connected."
-	IdResourceStringsProtocols_RSFTPOTPMethod,	"Unknown OTP method"
-	IdResourceStringsProtocols_RSFTPIOHandlerWrong,	"IOHandler is of wrong type."
-	IdResourceStringsProtocols_RSFTPFileNameCanNotBeEmpty,	"The destination filename can not be empty"
-	IdResourceStringsProtocols_RSTLSSSLIOHandlerRequired,	"SSL IOHandler is required for this setting"
-	IdResourceStringsProtocols_RSTLSSLCanNotSetWhileConnected,	"This value can not be set while the client is connected."
-	IdResourceStringsProtocols_RSTLSSLSSLNotAvailable,	"SSL is not available on this server."
-	IdResourceStringsProtocols_RSTLSSLSSLCmdFailed,	"Start SSL negotiation command failed."
-	OleConst_SCannotActivate,	"OLE control activation failed"
-	OleConst_SNoWindowHandle,	"Could not obtain OLE control window handle"
-	OleConst_SInvalidLicense,	"License information for %s is invalid"
-	IdResourceStringsCore_RSTransparentProxyCannotBind,	"Transparent proxy cannot bind."
-	IdResourceStringsCore_RSTransparentProxyCanNotSupportUDP,	"UDP Not supported by this proxy."
-	IdResourceStringsCore_RSBufferMissingTerminator,	"Buffer terminator must be specified."
-	IdResourceStringsCore_RSBufferInvalidStartPos,	"Buffer start position is invalid."
-	IdResourceStringsCore_RSIOHandlerCannotChange,	"Cannot change a connected IOHandler."
-	IdResourceStringsCore_RSIOHandlerTypeNotInstalled,	"No IOHandler of type %s is installed."
-	IdResourceStringsCore_RSReplyInvalidCode,	"Reply Code is not valid: %s"
-	IdResourceStringsProtocols_RSFTPUnknownHost,	"Unknown"
-	IdResourceStringsProtocols_RSFTPStatusReady,	"Connection established"
-	IdResourceStringsProtocols_RSFTPStatusStartTransfer,	"Starting FTP transfer"
-	IdResourceStringsProtocols_RSFTPStatusDoneTransfer,	"Transfer complete"
-	IdResourceStringsProtocols_RSFTPStatusAbortTransfer,	"Transfer aborted"
-	IdResourceStringsProtocols_RSFTPOnCustomFTPProxyReq,	"OnCustomFTPProxy required but not assigned"
-	IdResourceStringsProtocols_RSFTPMustUseExtWithIPv6,	"UseExtensionDataPort must be true for IPv6 connections."
-	IdResourceStringsProtocols_RSFTPMustUseExtWithNATFastTrack,	"UseExtensionDataPort must be true for NAT fasttracking."
-	IdResourceStringsProtocols_RSFTPFTPPassiveMustBeTrueWithNATFT,	"Can not use active transfers with NAT fastracking."
-	IdResourceStringsCore_RSSocksServerConnectionRefusedError,	"Connection refused."
-	IdResourceStringsCore_RSSocksServerTTLExpiredError,	"TTL expired."
-	IdResourceStringsCore_RSSocksServerCommandError,	"Command not supported."
-	IdResourceStringsCore_RSSocksServerAddressError,	"Address type not supported."
-	IdResourceStringsCore_RSInterceptCircularLink,	"%d: Circular links are not allowed"
-	IdResourceStringsCore_RSNotEnoughDataInBuffer,	"Not enough data in buffer."
-	IdResourceStringsCore_RSTooMuchDataInBuffer,	"Too much data in buffer."
-	IdResourceStringsCore_RSFileNotFound,	"File \"%s\" not found"
-	IdResourceStringsCore_RSNotConnected,	"Not Connected"
-	IdResourceStringsCore_RSObjectTypeNotSupported,	"Object type not supported."
-	IdResourceStringsCore_RSIdNoDataToRead,	"No data to read."
-	IdResourceStringsCore_RSReadTimeout,	"Read Timeout"
-	IdResourceStringsCore_RSReadLnMaxLineLengthExceeded,	"Max line length exceeded."
-	IdResourceStringsCore_RSConnectTimeout,	"Connect timed out."
-	IdResourceStringsCore_RSAlreadyConnected,	"Already connected."
-	IdResourceStringsCore_RSMaximumNumberOfCaptureLineExceeded,	"Maximum number of line allowed exceeded"
-	IdResourceStrings_RSIPVersionUnsupported,	"The requested IPVersion / Address family is not supported."
-	IdResourceStrings_RSNotAllBytesSent,	"Not all bytes sent."
-	IdResourceStrings_RSPackageSizeTooBig,	"Package Size Too Big."
-	IdResourceStrings_RSSetSizeExceeded,	"Set Size Exceeded."
-	IdResourceStringsCore_RSSocksUDPNotSupported,	"UDP is not support in this SOCKS version."
-	IdResourceStringsCore_RSSocksRequestFailed,	"Request rejected or failed."
-	IdResourceStringsCore_RSSocksRequestServerFailed,	"Request rejected because SOCKS server cannot connect."
-	IdResourceStringsCore_RSSocksRequestIdentFailed,	"Request rejected because the client program and identd report different user-ids."
-	IdResourceStringsCore_RSSocksUnknownError,	"Unknown socks error."
-	IdResourceStringsCore_RSSocksServerRespondError,	"Socks server did not respond."
-	IdResourceStringsCore_RSSocksAuthMethodError,	"Invalid socks authentication method."
-	IdResourceStringsCore_RSSocksAuthError,	"Authentication error to socks server."
-	IdResourceStringsCore_RSSocksServerGeneralError,	"General SOCKS server failure."
-	IdResourceStringsCore_RSSocksServerPermissionError,	"Connection not allowed by ruleset."
-	IdResourceStringsCore_RSSocksServerNetUnreachableError,	"Network unreachable."
-	IdResourceStringsCore_RSSocksServerHostUnreachableError,	"Host unreachable."
-	IdResourceStrings_RSStackENAMETOOLONG,	"File name too long."
-	IdResourceStrings_RSStackEHOSTDOWN,	"Host is down."
-	IdResourceStrings_RSStackEHOSTUNREACH,	"No route to host."
-	IdResourceStrings_RSStackENOTEMPTY,	"Directory not empty"
-	IdResourceStrings_RSStackHOST_NOT_FOUND,	"Host not found."
-	IdResourceStrings_RSStackClassUndefined,	"Stack Class is undefined."
-	IdResourceStrings_RSStackAlreadyCreated,	"Stack already created."
-	IdResourceStrings_RSAntiFreezeOnlyOne,	"Only one TIdAntiFreeze can exist per application."
-	IdResourceStrings_RSCannotSetIPVersionWhenConnected,	"Cannot change IPVersion when connected"
-	IdResourceStrings_RSCannotBindRange,	"Can not bind in port range (%d - %d)"
-	IdResourceStrings_RSConnectionClosedGracefully,	"Connection Closed Gracefully."
-	IdResourceStrings_RSCouldNotBindSocket,	"Could not bind socket. Address and port are already in use."
-	IdResourceStrings_RSInvalidPortRange,	"Invalid Port Range (%d - %d)"
-	IdResourceStrings_RSInvalidServiceName,	"%s is not a valid service."
-	IdResourceStrings_RSIPv6Unavailable,	"IPv6 unavailable"
-	IdResourceStrings_RSInvalidIPv6Address,	"%s is not a valid IPv6 address"
-	IdResourceStrings_RSStackEAFNOSUPPORT,	"Address family not supported by protocol family."
-	IdResourceStrings_RSStackEADDRINUSE,	"Address already in use."
-	IdResourceStrings_RSStackEADDRNOTAVAIL,	"Cannot assign requested address."
-	IdResourceStrings_RSStackENETDOWN,	"Network is down."
-	IdResourceStrings_RSStackENETUNREACH,	"Network is unreachable."
-	IdResourceStrings_RSStackENETRESET,	"Net dropped connection or reset."
-	IdResourceStrings_RSStackECONNABORTED,	"Software caused connection abort."
-	IdResourceStrings_RSStackECONNRESET,	"Connection reset by peer."
-	IdResourceStrings_RSStackENOBUFS,	"No buffer space available."
-	IdResourceStrings_RSStackEISCONN,	"Socket is already connected."
-	IdResourceStrings_RSStackENOTCONN,	"Socket is not connected."
-	IdResourceStrings_RSStackESHUTDOWN,	"Cannot send or receive after socket is closed."
-	IdResourceStrings_RSStackETOOMANYREFS,	"Too many references, cannot splice."
-	IdResourceStrings_RSStackETIMEDOUT,	"Connection timed out."
-	IdResourceStrings_RSStackECONNREFUSED,	"Connection refused."
-	IdResourceStrings_RSStackELOOP,	"Too many levels of symbolic links."
-	IdResourceStrings_RSStackEACCES,	"Access denied."
-	IdResourceStrings_RSStackEFAULT,	"Buffer fault."
-	IdResourceStrings_RSStackEINVAL,	"Invalid argument."
-	IdResourceStrings_RSStackEMFILE,	"Too many open files."
-	IdResourceStrings_RSStackEWOULDBLOCK,	"Operation would block."
-	IdResourceStrings_RSStackEINPROGRESS,	"Operation now in progress."
-	IdResourceStrings_RSStackEALREADY,	"Operation already in progress."
-	IdResourceStrings_RSStackENOTSOCK,	"Socket operation on non-socket."
-	IdResourceStrings_RSStackEDESTADDRREQ,	"Destination address required."
-	IdResourceStrings_RSStackEMSGSIZE,	"Message too long."
-	IdResourceStrings_RSStackEPROTOTYPE,	"Protocol wrong type for socket."
-	IdResourceStrings_RSStackENOPROTOOPT,	"Bad protocol option."
-	IdResourceStrings_RSStackEPROTONOSUPPORT,	"Protocol not supported."
-	IdResourceStrings_RSStackESOCKTNOSUPPORT,	"Socket type not supported."
-	IdResourceStrings_RSStackEOPNOTSUPP,	"Operation not supported on socket."
-	IdResourceStrings_RSStackEPFNOSUPPORT,	"Protocol family not supported."
-	IBSQLMonitor_StrStartTransaction,	": [Start transaction]"
-	IBSQLMonitor_StrApplication,	"[Application: "
-	uMStDialogLogin_SQ_USER_PARAMS,	"SELECT ID, FULL_NAME, USER_NAME, ROLE_NAME, OFFICES_ID, INITIAL_NAME FROM PEOPLE WHERE (ENABLED='T') AND (OFFICES_ID=%d) ORDER BY FULL_NAME"
-	IdResourceStrings_RSFailedTimeZoneInfo,	"Failed attempting to retrieve time zone information."
-	IdResourceStrings_RSWinsockCallError,	"Error on call Winsock2 library function %s"
-	IdResourceStrings_RSWinsockLoadError,	"Error on loading Winsock2 library (%s)"
-	IdResourceStrings_RSWinsockInitializationError,	"Winsock Initialization Error."
-	IdResourceStrings_RSStatusResolving,	"Resolving hostname %s."
-	IdResourceStrings_RSStatusConnecting,	"Connecting to %s."
-	IdResourceStrings_RSStatusConnected,	"Connected."
-	IdResourceStrings_RSStatusDisconnecting,	"Disconnecting."
-	IdResourceStrings_RSStatusDisconnected,	"Disconnected."
-	IdResourceStrings_RSStatusText,	"%s"
-	IdResourceStrings_RSStackError,	"Socket Error # %d\r\n%s"
-	IdResourceStrings_RSStackEINTR,	"Interrupted system call."
-	IdResourceStrings_RSStackEBADF,	"Bad file number."
-	IBSQLMonitor_StrError,	"[Error] "
-	IBSQLMonitor_StrAttach,	": [Attach]"
-	IBSQLMonitor_StrDetach,	": [Detach]"
-	IBSQLMonitor_StrQuery,	": [Query]"
-	IBSQLMonitor_StrStart,	": [Start]"
-	IBSQLMonitor_StrExecute,	": [Execute] "
-	IBSQLMonitor_StrNULL,	"<NULL>"
-	IBSQLMonitor_StrBLOB,	"<BLOB>"
-	IBSQLMonitor_StrFetch,	": [Fetch] "
-	IBSQLMonitor_StrPrepare,	": [Prepare] "
-	IBSQLMonitor_StrPlan,	"  Plan: "
-	IBSQLMonitor_StrPlanCantRetrive,	"  Plan: Can't retrieve plan - too large"
-	IBSQLMonitor_StrCommitHardComm,	": [Commit (Hard commit)]"
-	IBSQLMonitor_StrCommitRetaining,	": [Commit retaining (Soft commit)]"
-	IBSQLMonitor_StrRollback,	": [Rollback]"
-	IBSQLMonitor_StrRollbackRetainin,	": [Rollback retaining (Soft rollback)]"
-	IBXConst_SInvalidOnStatusResult,	"Unexpected onStatus return value"
-	IBXConst_SDPBConstantUnknownEx,	"DPB Constant (%s) is unknown"
-	IBXConst_STPBConstantUnknownEx,	"TPB Constant (%s) is unknown"
-	IBXConst_SUnknownPlan,	"Unknown Error - Can't retrieve plan"
-	IBXConst_SFieldSizeMismatch,	"Size Mismatch - Field %s size is too small for data"
-	IBXConst_SEventAlreadyRegistered,	"Events already registered"
-	IBXConst_SStringTooLarge,	"Trying to store a string of length %d into a field that can only contain %d"
-	IBXConst_SNoTimers,	"Not enough timers available"
-	IBXConst_SIB65feature,	"%s is an InterBase 6.5 function. Please upgrade to InterBase 6.5 to use this functonality"
-	IBXConst_SLoginPromptFailure,	"Can not find default login prompt dialog.  Please add DBLogDlg to the uses section of your main file."
-	IBXConst_SIB70feature,	"%s is an InterBase 7.0 function. Please upgrade to InterBase 7.0 to use this functonality"
-	IBXConst_SIB71feature,	"%s is an InterBase 7.1 function. Please upgrade to InterBase 7.1 to use this functonality"
-	IBXConst_SIB80feature,	"%s is an InterBase 2007 function. Please upgrade to InterBase 2007 to use this functonality"
-	IBSQLMonitor_StrConnect,	": [Connect]"
-	IBSQLMonitor_StrDisconnect,	": [Disconnect]"
-	IBSQLMonitor_StrMisc,	"[Misc] "
-	IBXConst_SSQLMonitorAlreadyPresent,	"SQL Monitor Instance is already present"
-	IBXConst_SCantPrintValue,	"Cannot print value"
-	IBXConst_SEOFReached,	"SEOFReached"
-	IBXConst_SEOFInComment,	"EOF in comment detected"
-	IBXConst_SEOFInString,	"EOF in string detected"
-	IBXConst_SParamNameExpected,	"Parameter name expected"
-	IBXConst_SSuccess,	"Successful execution"
-	IBXConst_SDelphiException,	"DelphiException %s"
-	IBXConst_SNoOptionsSet,	"No Install Options selected"
-	IBXConst_SNoDestinationDirectory,	"DestinationDirectory is not set"
-	IBXConst_SNosourceDirectory,	"SourceDirectory is not set"
-	IBXConst_SNoUninstallFile,	"Uninstall File Name is not set"
-	IBXConst_SOptionNeedsClient,	"%s component requires Client to function properly"
-	IBXConst_SOptionNeedsServer,	"%s component requires Server to function properly"
-	IBXConst_SInvalidOption,	"Invalid option specified"
-	IBXConst_SInvalidOnErrorResult,	"Unexpected onError return value"
-	IBXConst_SInvalidEvent,	"Invalid Event"
-	IBXConst_SMaximumEvents,	"Exceded Maximum Event limits"
-	IBXConst_SNoEventsRegistered,	"No Events Registered"
-	IBXConst_SInvalidQueueing,	"Invalid Queueing"
-	IBXConst_SInvalidRegistration,	"Invalid Registration"
-	IBXConst_SInvalidBatchMove,	"Invalid Batch Move"
-	IBXConst_SSQLDialectInvalid,	"SQL Dialect Invalid"
-	IBXConst_SSPBConstantNotSupported,	"SPB Constant Not supported"
-	IBXConst_SSPBConstantUnknown,	"SPB Constant Unknown"
-	IBXConst_SServiceActive,	"Cannot perform operation -- service is not attached"
-	IBXConst_SServiceInActive,	"Cannot perform operation -- service is attached"
-	IBXConst_SServerNameMissing,	"Server Name Missing"
-	IBXConst_SQueryParamsError,	"Query Parameters missing or incorrect"
-	IBXConst_SStartParamsError,	"start Parameters missing or incorrect"
-	IBXConst_SOutputParsingError,	"Unexpected Output buffer value"
-	IBXConst_SUseSpecificProcedures,	"Generic ServiceStart not applicable: Use Specific Procedures to set configuration params"
-	IBXConst_SEmptySQLStatement,	"Empty SQL Statement"
-	IBXConst_SIsASelectStatement,	"use Open for a Select Statement"
-	IBXConst_SRequiredParamNotSet,	"Required Param value not set"
-	IBXConst_SNoStoredProcName,	"No Stored Procedure Name assigned"
-	IBXConst_SIsAExecuteProcedure,	"use ExecProc for Procedure; use TQuery for Select procedures"
-	IBXConst_SUpdateFailed,	"Update Failed"
-	IBXConst_SNotCachedUpdates,	"CachedUpdates not enabled"
-	IBXConst_SNotLiveRequest,	"Request is not live - cannot modify"
-	IBXConst_SNoProvider,	"No Provider"
-	IBXConst_SNoRecordsAffected,	"No Records Affected"
-	IBXConst_SNoTableName,	"No Table Name assigned"
-	IBXConst_SCannotCreatePrimaryIndex,	"Cannot Create Primary Index; are created automatically"
-	IBXConst_SCannotDropSystemIndex,	"Cannot Drop System Index"
-	IBXConst_STableNameMismatch,	"Table Name Mismatch"
-	IBXConst_SIndexFieldMissing,	"Index Field Missing"
-	IBXConst_SInvalidCancellation,	"Cannot Cancel events while processing"
-	IBXConst_SCannotPost,	"Cannot post. (No update/insert query)"
-	IBXConst_SCannotUpdate,	"Cannot update. (No update query)"
-	IBXConst_SCannotDelete,	"Cannot delete from dataset. (No delete query)"
-	IBXConst_SCannotRefresh,	"Cannot refresh row. (No refresh query)"
-	IBXConst_SBufferNotSet,	"Buffer not set"
-	IBXConst_SCircularReference,	"Circular references not permitted"
-	IBXConst_SSQLParseError,	"SQL Parse Error:\r\n\r\n%s"
-	IBXConst_SUserAbort,	"User abort"
-	IBXConst_SDataSetUniDirectional,	"Data set is uni-directional"
-	IBXConst_SCannotCreateSharedResource,	"Cannot create shared resource. (Windows error %d)"
-	IBXConst_SWindowsAPIError,	"Windows API error. (Windows error %d [$%.8x])"
-	IBXConst_SColumnListsDontMatch,	"Column lists do not match"
-	IBXConst_SColumnTypesDontMatch,	"Column types don't match. (From index: %d; To index: %d)"
-	IBXConst_SCantEndSharedTransaction,	"Can't end a shared transaction unless it is forced and equal to the transaction's TimeoutAction"
-	IBXConst_SFieldUnsupportedType,	"Unsupported Field Type"
-	IBXConst_SCircularDataLink,	"Circular DataLink Reference"
-	IBXConst_SDatasetOpen,	"Dataset open"
-	IBXConst_SDatasetClosed,	"Dataset closed"
-	IBXConst_SUnknownSQLDataType,	"Unknown SQL Data type (%d)"
-	IBXConst_SInvalidColumnIndex,	"Invalid column index (index exceeds permitted range)"
-	IBXConst_SInvalidParamColumnIndex,	"Invalid parameter index (index exceeds permitted range)"
-	IBXConst_SInvalidDataConversion,	"Invalid data conversion"
-	IBXConst_SColumnIsNotNullable,	"Column cannot be set to null (%s)"
-	IBXConst_SBlobCannotBeRead,	"Blob stream cannot be read"
-	IBXConst_SBlobCannotBeWritten,	"Blob stream cannot be written"
-	IBXConst_SEmptyQuery,	"Empty query"
-	IBXConst_SCannotOpenNonSQLSelect,	"Cannot \"open\" a non-select statement. Use ExecQuery"
-	IBXConst_SNoFieldAccess,	"No access to field \"%s\""
-	IBXConst_SFieldReadOnly,	"Field \"%s\" is read-only"
-	IBXConst_SFieldNotFound,	"Field \"%s\" not found"
-	IBXConst_SNotEditing,	"Not in edit mode"
-	IBXConst_SCannotInsert,	"Cannot insert into dataset. (No insert query)"
-	IBXConst_SDatabaseNameMissing,	"Database name is missing"
-	IBXConst_SNotInTransaction,	"Transaction is not active"
-	IBXConst_SInTransaction,	"Transaction is active"
-	IBXConst_STimeoutNegative,	"Timeout values cannot be negative"
-	IBXConst_SNoDatabasesInTransaction,	"No databases are listed in transaction component"
-	IBXConst_SUpdateWrongDB,	"Updating wrong database"
-	IBXConst_SUpdateWrongTR,	"Updating wrong transaction. Unique transaction expected in set"
-	IBXConst_SDatabaseNotAssigned,	"Database not assigned"
-	IBXConst_STransactionNotAssigned,	"Transaction not assigned"
-	IBXConst_SXSQLDAIndexOutOfRange,	"XSQLDA index out of range"
-	IBXConst_SXSQLDANameDoesNotExist,	"XSQLDA name does not exist (%s)"
-	IBXConst_SEOF,	"End of file"
-	IBXConst_SBOF,	"Beginning of file"
-	IBXConst_SInvalidStatementHandle,	"Invalid statement handle"
-	IBXConst_SSQLOpen,	"IBSQL Open"
-	IBXConst_SSQLClosed,	"IBSQL Closed"
-	IBXConst_SInterBaseMissing,	"InterBase library gds32.dll not found in the path. Please install InterBase to use this functionality"
-	IBXConst_SInterBaseInstallMissing,	"InterBase Install DLL ibinstall.dll not found in the path. Please install InterBase 6 to use this functionality"
-	IBXConst_SIB60feature,	"%s is an InterBase 6 function. Please upgrade to InterBase 6 to use this functonality"
-	IBXConst_SNotSupported,	"Unsupported feature"
-	IBXConst_SNotPermitted,	"Not permitted"
-	IBXConst_SFileAccessError,	"Temporary file access error"
-	IBXConst_SConnectionTimeout,	"Database connection timed out"
-	IBXConst_SCannotSetDatabase,	"Cannot set database"
-	IBXConst_SCannotSetTransaction,	"Cannot set transaction"
-	IBXConst_SOperationCancelled,	"Operation cancelled at user's request"
-	IBXConst_SDPBConstantNotSupported,	"DPB Constant (isc_dpb_%s) is unsupported"
-	IBXConst_SDPBConstantUnknown,	"DPB Constant (%d) is unknown"
-	IBXConst_STPBConstantNotSupported,	"TPB Constant (isc_tpb_%s) is unsupported"
-	IBXConst_STPBConstantUnknown,	"TPB Constant (%d) is unknown"
-	IBXConst_SDatabaseClosed,	"Cannot perform operation -- DB is not open"
-	IBXConst_SDatabaseOpen,	"Cannot perform operation -- DB is currently open"
+	uMStFormRichTextEditor_sColRowInfo,	"Строка: %3d   Столбец: %3d"
+	JvResources_RsClBtnText,	"Button text"
+	JvResources_RsClInactiveCaptionText,	"Inactive window title bar text"
+	JvResources_RsClBtnHighlight,	"Button highlight"
+	JvResources_RsCl3DDkShadow,	"Dark shadow 3D elements"
 	JvResources_RsCl3DLight,	"Highlight 3D elements"
 	JvResources_RsClInfoText,	"Tooltip text"
 	JvResources_RsClInfoBk,	"Tooltip background"
@@ -1688,10 +1420,10 @@ BEGIN
 	JvResources_RsUnknownFilterOperation,	"Unknown filter operator"
 	JvResources_RsUnknownFilterFunction,	"Unknown filter function \"%s\""
 	JvResources_RsMissingFilterFunctionParameters,	"Missing filter function parameters for \"%s\""
-	RxMemDS_SMemNoRecords,	"No data found"
-	ZLibConst_sInvalidStreamOp,	"Invalid stream operation"
-	ZLibConst_sError,	"Error"
-	IBXConst_SUnknownError,	"Unknown error"
+	JvResources_RsClActiveCaption,	"Active window title bar"
+	JvResources_RsClInactiveCaption,	"Inactive window title bar"
+	JvResources_RsClMenu,	"Menu background"
+	JvResources_RsClWindow,	"Window background"
 	JvResources_RsClWindowFrame,	"Window frame"
 	JvResources_RsClMenuText,	"Menu text"
 	JvResources_RsClWindowText,	"Window text"
@@ -1704,10 +1436,10 @@ BEGIN
 	JvResources_RsClBtnFace,	"Button face"
 	JvResources_RsClBtnShadow,	"Button shadow"
 	JvResources_RsClGrayText,	"Dimmed text"
-	JvResources_RsClBtnText,	"Button text"
-	JvResources_RsClInactiveCaptionText,	"Inactive window title bar text"
-	JvResources_RsClBtnHighlight,	"Button highlight"
-	JvResources_RsCl3DDkShadow,	"Dark shadow 3D elements"
+	JvResources_RsClGray40,	"Gray 40%"
+	JvResources_RsClPink,	"Pink"
+	JvResources_RsClGold,	"Gold"
+	JvResources_RsClBrightGreen,	"Bright Green"
 	JvResources_RsClTurquoise,	"Turquoise"
 	JvResources_RsClPlum,	"Plum"
 	JvResources_RsClGray25,	"Gray 25%"
@@ -1720,10 +1452,10 @@ BEGIN
 	JvResources_RsClLavender,	"Lavender"
 	JvResources_RsClScrollBar,	"Scrollbar"
 	JvResources_RsClBackground,	"Desktop background"
-	JvResources_RsClActiveCaption,	"Active window title bar"
-	JvResources_RsClInactiveCaption,	"Inactive window title bar"
-	JvResources_RsClMenu,	"Menu background"
-	JvResources_RsClWindow,	"Window background"
+	JvResources_RsClBrown,	"Brown"
+	JvResources_RsClOliveGreen,	"Olive Green"
+	JvResources_RsClDarkGreen,	"Dark Green"
+	JvResources_RsClDarkTeal,	"Dark Teal"
 	JvResources_RsClDarkBlue,	"Dark Blue"
 	JvResources_RsClIndigo,	"Indigo"
 	JvResources_RsClGray80,	"Gray 80%"
@@ -1736,10 +1468,10 @@ BEGIN
 	JvResources_RsClSeaGreen,	"Sea Green"
 	JvResources_RsClLightBlue,	"Light Blue"
 	JvResources_RsClViolet,	"Violet"
-	JvResources_RsClGray40,	"Gray 40%"
-	JvResources_RsClPink,	"Pink"
-	JvResources_RsClGold,	"Gold"
-	JvResources_RsClBrightGreen,	"Bright Green"
+	JvResources_RsClNavy,	"Navy blue"
+	JvResources_RsClPurple,	"Purple"
+	JvResources_RsClTeal,	"Teal"
+	JvResources_RsClGray,	"Gray"
 	JvResources_RsClSilver,	"Silver"
 	JvResources_RsClRed,	"Red"
 	JvResources_RsClLime,	"Lime"
@@ -1752,10 +1484,10 @@ BEGIN
 	JvResources_RsClSkyBlue,	"Sky blue"
 	JvResources_RsClCream,	"Cream"
 	JvResources_RsClMedGray,	"Medium gray"
-	JvResources_RsClBrown,	"Brown"
-	JvResources_RsClOliveGreen,	"Olive Green"
-	JvResources_RsClDarkGreen,	"Dark Green"
-	JvResources_RsClDarkTeal,	"Dark Teal"
+	JvResources_RsEProviderHasNoContextNameds,	"Provider has no context named \"%s\""
+	JvResources_RsEProviderDoesNotSupportContexts,	"Provider does not support contexts"
+	JvResources_RsETheSpecifiedContextIsNotPartOfTheSa,	"The specified context is not part of the same provider"
+	JvResources_RsEYouMustSpecifyAProviderBeforeSettin_,	"You must specify a provider before setting the item"
 	JvResources_RsEItemNotFoundInTheSelectedContext,	"Item not found in the selected context"
 	JvResources_RsEViewListOutOfSync,	"ViewList out of sync"
 	JvResources_RsEExtensibleIntObjDuplicateClass,	"Implementation of that class already exists"
@@ -1768,474 +1500,302 @@ BEGIN
 	JvResources_RsClMaroon,	"Maroon"
 	JvResources_RsClGreen,	"Green"
 	JvResources_RsClOlive,	"Olive green"
-	JvResources_RsClNavy,	"Navy blue"
-	JvResources_RsClPurple,	"Purple"
-	JvResources_RsClTeal,	"Teal"
-	JvResources_RsClGray,	"Gray"
-	fPictureDef_SPictNotDefined,	"Image not already defined !"
-	clipper_rsDoMaxima,	"DoMaxima error"
-	clipper_rsUpdateEdgeIntoAEL,	"UpdateEdgeIntoAEL error"
-	clipper_rsInvalidInt,	"Coordinate exceeds range bounds"
-	clipper_rsOpenPath,	"AddPath: Open paths must be subject."
-	clipper_rsOpenPath3,	"Error: TPolyTree struct is needed for open path clipping."
+	IdResourceStringsProtocols_RSFTPFileNameCanNotBeEmpty,	"The destination filename can not be empty"
+	IdResourceStringsProtocols_RSTLSSSLIOHandlerRequired,	"SSL IOHandler is required for this setting"
+	IdResourceStringsProtocols_RSTLSSLCanNotSetWhileConnected,	"This value can not be set while the client is connected."
+	IdResourceStringsProtocols_RSTLSSLSSLNotAvailable,	"SSL is not available on this server."
+	IdResourceStringsProtocols_RSTLSSLSSLCmdFailed,	"Start SSL negotiation command failed."
+	uMStDialogLogin_SQ_USER_PARAMS,	"SELECT ID, FULL_NAME, USER_NAME, ROLE_NAME, OFFICES_ID, INITIAL_NAME FROM PEOPLE WHERE (ENABLED='T') AND (OFFICES_ID=%d) ORDER BY FULL_NAME"
+	OleConst_SCannotActivate,	"OLE control activation failed"
+	OleConst_SNoWindowHandle,	"Could not obtain OLE control window handle"
+	OleConst_SInvalidLicense,	"License information for %s is invalid"
+	OleConst_SNotLicensed,	"License information for %s not found. You cannot use this control in design mode"
 	JvResources_RsDataItemRenderHasNoText,	"(item does not support the IJvDataItemText interface)"
 	JvResources_RsEInternalError,	"internal error"
 	JvResources_RsEItemCanNotBeDeleted,	"Item cannot be deleted"
 	JvResources_RsEAContextWithThatNameAlreadyExists,	"A context with that name already exists"
 	JvResources_RsECannotCreateAContextWithoutAContext,	"Cannot create a context without a context list owner"
 	JvResources_RsEYouMustSpecifyAProviderBeforeSettin,	"You must specify a provider before setting the context"
-	JvResources_RsEProviderHasNoContextNameds,	"Provider has no context named \"%s\""
-	JvResources_RsEProviderDoesNotSupportContexts,	"Provider does not support contexts"
-	JvResources_RsETheSpecifiedContextIsNotPartOfTheSa,	"The specified context is not part of the same provider"
-	JvResources_RsEYouMustSpecifyAProviderBeforeSettin_,	"You must specify a provider before setting the item"
-	EzConsts_SCmdArcFCS,	"ARCFCS"
-	EzConsts_SCmdNode,	"NODE"
-	EzConsts_SCmdNodeLink,	"NODELINK"
-	EzConsts_SCmdText500,	"TEXT500"
-	EzExprLex_SDefaultDateFormat,	"m/d/yyyy"
-	EzProjImpl_serr18,	"non-convergent inverse phi2"
-	EzProjImpl_serr19,	"acos/asin: |arg| >1.+1e-14"
-	EzProjImpl_serr23,	"lat_1 = 0"
-	EzProjImpl_serr24,	"lat_ts >= 90"
-	EzProjImpl_serr25,	"no distance between control points"
-	EzProjImpl_serr32,	"lat_0 = 0 or 90 or alpha = 90"
-	EzProjImpl_serr33,	"lat_1=lat_2 or lat_1=0 or lat_2=90"
-	EzProjImpl_serr34,	"elliptical usage required"
-	EzProjImpl_serr35,	"invalid UTM zone number"
-	EzProjections_serr0,	"Inverse conversion not implemented"
-	fPictureDef_SDefinePicTitle,	"Define image"
-	EzConsts_SCmdJustifText,	"JUSTIFTEXT"
-	EzConsts_SCmdFittedText,	"FITTEDTEXT"
-	EzConsts_SCmdPoint,	"POINT"
-	EzConsts_SCmdDimHoriz,	"DIMHORZ"
-	EzConsts_SCmdDimVert,	"DIMVERT"
-	EzConsts_SCmdDimParall,	"DIMPARALL"
-	EzConsts_SCmdCircle2P,	"CIRCLE2P"
-	EzConsts_SCmdCircle3P,	"CIRCLE3P"
-	EzConsts_SCmdCircleCR,	"CIRCLECR"
-	EzConsts_SCmdRichText,	"RICHTEXT"
-	EzConsts_SCmdInsert,	"INSERT"
-	EzConsts_SCmdMirror,	"MIRROR"
-	EzConsts_SCmdCustomClick,	"CUSTOMCLICK"
-	EzConsts_SCmdDropSelection,	"DROP"
-	EzConsts_SCmdDragDrop,	"DRAG&DROP"
-	EzConsts_SCmdArcSE,	"ARCSE"
-	EzConsts_SCmdSetClipPolyArea,	"CLIPPOLYAREA"
-	EzConsts_SCmdDeleteVertex,	"DELVERTEX"
-	EzConsts_SCmdSetClipArea,	"SETCLIPAREA"
-	EzConsts_SCmdBreak,	"BREAK"
-	EzConsts_SCmdTrim,	"TRIM"
-	EzConsts_SCmdExtend,	"EXTEND"
-	EzConsts_SCmdFillet,	"FILLET"
-	EzConsts_SCmdAddMarker,	"MARKER"
-	EzConsts_SCmdPolygonBuffer,	"POLYGONBUFFER"
-	EzConsts_SCmdTable,	"TABLE"
-	EzConsts_SCmdCalloutText,	"CALLOUTTEXT"
-	EzConsts_SCmdBulletLeader,	"BULLETLEADER"
-	EzConsts_SCmdBannerText,	"BANNER"
-	EzConsts_SCmdZoomAll,	"ZOOMALL"
-	EzConsts_SCmdScaleX,	"SCALEX"
-	EzConsts_SCmdScaleY,	"SCALEY"
-	EzConsts_SCmdPan,	"PAN"
-	EzConsts_SCmdSelect,	"SELECT"
-	EzConsts_SCmdSelPLine,	"SELPLINE"
-	EzConsts_SCmdMeasures,	"MEASURES"
-	EzConsts_SCmdOffset,	"OFFSET"
-	EzConsts_SCmdInsertVertex,	"INSERTVERTEX"
-	EzConsts_SCmdGridOrigin,	"GRIDORIGIN"
-	EzConsts_SCmdPolygonSelect,	"POLYGONSEL"
-	EzConsts_SCmdCircleSelect,	"CIRCLESEL"
-	EzConsts_SCmdZoomIn,	"ZOOMIN"
-	EzConsts_SCmdZoomOut,	"ZOOMOUT"
-	EzConsts_SCmdZoomWindow,	"ZOOMWIN"
-	EzConsts_SCmdRealTimeZoom,	"REALTIMEZOOM"
-	EzConsts_SCmdRealTimeZoomB,	"REALTIMEZOOMB"
-	EzConsts_SCmdHandScroll,	"SCROLL"
-	EzConsts_SCmdClipPoly,	"CLIP"
-	EzConsts_sCmdArc,	"ARC"
-	EzConsts_SCmdEllipse,	"ELLIPSE"
-	EzConsts_SCmdSpline,	"SPLINE"
-	EzConsts_SCmdRectangle,	"RECTANGLE"
-	EzConsts_SCmdSymbol,	"SYMBOL"
-	EzConsts_SCmdTextSymbol,	"TEXTSYMBOL"
-	EzConsts_SCmdText,	"TEXT"
-	EzConsts_SCmdHorzGLine,	"HGLINE"
-	EzConsts_SCmdVertGLine,	"VGLINE"
-	EzConsts_SCmdMoveGLine,	"MOVEGLINE"
-	EzConsts_SCmdHints,	"HINTS"
-	EzConsts_SCmdPictRef,	"PICTUREREF"
-	EzConsts_SCmdCustomPicture,	"CUSTOMPICTURE"
-	EzConsts_SCmdBandsBitmap,	"BANDSBITMAP"
-	EzConsts_SCmdPersistBitmap,	"PERSISTBITMAP"
-	EzConsts_SCmdUndo,	"UNDO"
-	EzConsts_sBlockInfo,	"Insert %s,\"%s\",%f,%f,%f,\"%s\""
-	EzConsts_sSplineTextInfo,	"SplineText %s,\"%s\",%s"
-	EzConsts_sDimHorizInfo,	"DimHorizontal (%f,%f),(%f,%f),%f"
-	EzConsts_sDimVertInfo,	"DimVertical (%f,%f),(%f,%f),%f"
-	EzConsts_sDimParallelInfo,	"DimParallel (%f,%f),(%f,%f),%f"
-	EzConsts_sPreviewInfo,	"Preview %s,%d,%f,%f,%s,%f,%f,%f,%f"
-	EzConsts_sERMapperInfo,	"ERMapper %s,\"%s\",%d"
-	EzConsts_SCmdMove,	"MOVE"
-	EzConsts_SCmdScale,	"SCALE"
-	EzConsts_SCmdRotate,	"ROTATE"
-	EzConsts_SCmdReshape,	"RESHAPE"
-	EzConsts_SCmdRotateText,	"ROTATETEXT"
-	EzConsts_SCmdLine,	"LINE"
-	EzConsts_SCmdPolyline,	"PLINE"
-	EzConsts_SCmdPolygon,	"POLYGON"
-	EzConsts_SCmdSketch,	"SKETCH"
-	EzConsts_sPicRefInfo,	"PictureRef %s,\"%s\",%d,%f"
-	EzConsts_sBmpRefInfo,	"BitmapRef %s,%d,%f"
-	EzConsts_sBandsBmpInfo,	"BandsBitmap %s,\"%s\",%d"
-	EzConsts_sCustomPicInfo,	"CustPict %s"
-	EzConsts_sSplineInfo,	"Spline %s"
-	EzConsts_sTTTextInfo,	"TrueTypeText (%f,%f),\"%s\",%d,%f,%f"
-	EzConsts_sATTTextInfo,	"TrueTypeText (%f,%f),\"%s\",%d,%f,%f"
-	EzConsts_sTableInfo,	"Table %s,%d,%d,%s,%s,%s,%d,$%.8x,%f,%f,$%.8x"
-	EzConsts_sColumnInfo,	"Column {"
-	EzConsts_sTableColumnInfo,	"%f,%s,$%.8x,%d,%d,%f"
-	EzConsts_sColumnTitleInfo,	"\"%s\",%d,$%.8x,%s,%f"
-	EzConsts_sRowDataInfo,	"\"%s\""
-	EzConsts_sTitleCaption,	"Title "
-	EzConsts_sGroupCaption,	"Group {"
-	EzConsts_sJustifTextInfo,	"JustifText (%f,%f),(%f,%f),\"%s\",%f,%f,$%.8x,%d,%d"
-	EzConsts_sFittedTextInfo,	"FittedText (%f,%f),\"%s\",%f,%f,%f,$%.8x"
-	EzConsts_SChangeDirNotAllowed,	"You must select the file on the common subdir only !"
-	EzConsts_sDataInfo,	"Data Info"
-	EzConsts_sFieldValue,	"%s : %s "
-	EzConsts_sPenInfo,	"Pen %d,$%.8x,%f"
-	EzConsts_sBrushInfo,	"Brush %d,$%.8x,$%.8x"
-	EzConsts_sSymbolInfo,	"Symbol %d,%f,%f"
-	EzConsts_sTTFontInfo,	"Font \"%s\",%s,%s,%s,%s,$%.8x,%d"
-	EzConsts_sVectorFontInfo,	"VectorFont \"%s\""
-	EzConsts_sNoneInfo,	"None"
-	EzConsts_sPointInfo,	"Point %s"
-	EzConsts_SPlaceInfo,	"Place %s,\"%s\""
-	EzConsts_sPolylineInfo,	"PLine %s"
-	EzConsts_sPolygonInfo,	"Polygon %s"
-	EzConsts_sRectangleInfo,	"Rectangle %s,%f"
-	EzConsts_sArcInfo,	"Arc %s"
-	EzConsts_sEllipseInfo,	"Ellipse %s,%f"
-	EzConsts_SCircleInfo,	"Radius = %.*n; Area = %.*n; Perimeter = %.*n"
-	EzConsts_SBufferRefInfo,	"Radius = %.*n"
-	EzConsts_SOneSelection,	"Selected on Layer %s, Recno %d"
-	EzConsts_SMultiSelection,	"%d selected entities"
-	EzConsts_SNoNodeClicked,	"Node was not clicked"
-	EzConsts_SNetSameNodes,	"Cannot link to same node"
-	EzConsts_SLayerIndexOutOfRange,	"Layer index out of range"
-	EzConsts_sDrawBoxCollectionNotSame,	"All member of collection must have same TEzBaseGIS"
-	EzConsts_SFilterEnabled,	"A filter is active"
-	EzConsts_SBandedImagesFilter,	"Windows Bitmaps (*.BMP)|*.BMP|ESRI Band Interleaved by Line (*.BIL)|*.BIL|TIFF files (*.TIF)|*.TIF"
-	EzConsts_SBitmapFilter,	"Windows Bitmap (*.BMP)|*.BMP"
-	EzConsts_SJPGFilter,	"Jpeg (*.JPG) |*.JPG"
-	EzConsts_SMetafileFilter,	"Windows Metafile (*.WMF)|*.WMF|Windows Enhanced Metafile (*.EMF)|*.EMF"
-	EzConsts_SICOFilter,	"Windows ICON files (*.ICO)|*.ICO"
-	EzConsts_SGIFFilter,	"Compuserve Gif (*.GIF)|*.GIF"
-	EzConsts_SEDBFilter,	"EzGIS blocks (*.EDB)|*.EDB"
-	EzConsts_SZoomUnZoom,	"Click a point to zoomin/zoomout"
-	EzConsts_SScrolling,	"Press Pick button and move the mouse to pan"
-	EzConsts_SInsertXGuideLine,	"X Coord for guideline :"
-	EzConsts_SInsertYGuideLine,	"Y Coord for guideline :"
-	EzConsts_SSelectGline,	"Select the guideline to move"
-	EzConsts_SMoveGLinetoNew,	"Move the guideline to its new position"
-	EzConsts_SUnrecognizedCommand,	"Unknown Command !"
-	EzConsts_SShpFileNotFound,	"File %s was not found !\r\nCannot import the file"
-	EzConsts_SThereAreNoLayers,	"You need at least one layer !"
-	EzConsts_Sscrcanceled,	"Script canceled"
-	EzConsts_SEmptyTable,	"<Empty Table>"
-	EzConsts_SLoadingCAD,	"Loading Layer %s"
-	EzConsts_SSavingCAD,	"Saving Layer %s"
-	EzConsts_SWrongCADFile,	"This file is not a EzCAD file !"
-	EzConsts_STextInfo,	"Height: %.2n Points; %.2n units"
-	EzConsts_SErrWrongField,	"Wrong field definition"
-	EzConsts_SDXFThereIsNoEntities,	"There are no Entities or Entities section is invalid in DXF file"
-	EzConsts_SDXFThereIsNoMaxMin,	"File does not contain Max/Min extents. Calculating..."
-	EzConsts_SDXFErrorInLine,	"An error ocurred in line or near to "
-	EzConsts_SDXFDupLayer,	"Tried to create a layer with duplicated name"
-	EzConsts_SDXFCannotSave,	"Maybe destination path is on CDrom or\r\nnot enough disk space,Can't save. Warning!"
-	EzConsts_STextIsNotVisible,	"Text is invisible !\r\nThe inserted text will be invisible"
-	EzConsts_SEntityToReshape,	"Select an entity to modify"
-	EzConsts_SReshapeToPoint,	"Move to point (Hold down CTRL key to change rotate origin):"
-	EzConsts_SVertexToReshape,	"Select vertex to modify"
-	EzConsts_SVertexToDelete,	"Select node to delete"
-	EzConsts_SClickInterestPoint,	"Please click the point"
-	EzConsts_SEntityToDrag,	"Select an entity to drag & drop"
-	EzConsts_SDragFromCtrlPt,	"Drag from control point"
-	EzConsts_SDefineCircleCenter,	"Click the center of the circle selection"
-	EzConsts_SDefineCircle,	"Move mouse to define the circle selection"
-	EzConsts_SAreaAndPerimeter,	"Area = %.*n %s\r\nLength = %.*n %s\r\nAngle = %.2n\r\nPoints = %.2n"
-	EzConsts_SDXFLWPolylineBad,	"LwPolyline contained more than %d  vertices %d"
-	EzConsts_SDXFPOINTBad,	"Error reading POINT entity "
-	EzConsts_SDXFINSERTBad,	"Error reading INSERT entity"
-	EzConsts_SDXFTEXTBad,	"Error reading TEXT entity"
-	EzConsts_SDXFLINEBad,	"Error reading LINE entity"
-	EzConsts_SDXFPOLYLINEBad2,	"Error reading POLYLINE entity"
-	EzConsts_SDXFLWPOLYLINEBad2,	"Error reading LWPOLYLINE entity"
-	EzConsts_SDXF3DFACEBad,	"Error reading 3DFACE entity"
-	EzConsts_SDXFSOLIDBad,	"Error reading SOLID entity"
-	EzConsts_SDXFCIRCLEBad,	"Error reading CIRCLE entity"
-	EzConsts_SDXFARCBad,	"Error reading ARC entity"
-	EzConsts_SDXFATTDEFBad,	"Error reading ATTDEF entity"
-	EzConsts_SDXFATTRIBBad,	"Error reading ATTRIB entity"
-	EzConsts_SDXFThereIsNoHeader,	"No Header or invalid Header section in DXF file"
-	EzConsts_SDXFThereIsNoLayers,	"No Layers or Tables section invalid in DXF file"
-	EzConsts_SDXFThereIsNoBlocks,	"No Blocks or Blocks section invalid DXF file"
-	EzConsts_SLayerEmpty,	"Layer name is not defined"
-	EzConsts_SExpressionEmpty,	"Expression or field name cannot be empty"
-	EzConsts_SWrongFieldnameCol,	"Wrong field name column %d"
-	EzConsts_SGetRecordInvalid,	"Error reading record"
-	EzConsts_SInsertNotAllowed,	"Insertion is not allowed"
-	EzConsts_SWrongReadOnly,	"Cannot change readonly property when dataset is active"
-	EzConsts_SLatLonMismatch,	"Destination file is in different coordinate system\r\nAction canceled"
-	EzConsts_SWrongProjector,	"Projector property not defined"
-	EzConsts_SWrongEzGIS,	"GIS property unassigned"
-	EzConsts_SDXFReading,	"Reading AutoCAD file..."
-	EzConsts_SDXFPolylineBad,	"Polyline contained more than %d vertices %d"
-	EzConsts_SDXFInvalidFloat,	"Invalid Floating point conversion"
-	EzConsts_SDXFInvalidInteger,	"Invalid Integer conversion"
-	EzConsts_SDXFFileReadingNow,	" DXF File reading now.."
-	EzConsts_SDXFUndefBlock,	"Undefined Block reference error"
-	EzConsts_SDXFWrongBlockInfo,	"This drawing have wrong block information,\r\nbut continue reading with ignoreing ..."
-	EzConsts_STrimSelectEnt,	"Select entity to trim"
-	EzConsts_SExtendSelectEnt,	"Select entity to extend"
-	EzConsts_STrimWrongEntity,	"Cannot trim this entity"
-	EzConsts_SExtendWrongEntity,	"Cannot extend this entity"
-	EzConsts_SExtendWrongSegment,	"Cannot extend this segment"
-	EzConsts_STrimOnlyOneCuttingEdge,	"Supported only one cutting edge"
-	EzConsts_SExtendOnlyOneCuttingEdge,	"Supported only one extending edge"
-	EzConsts_SFilletWrongEntity,	"Cannot fillet this entity"
-	EzConsts_SFilletNotContiguous,	"No contiguous segments picked"
-	EzConsts_STrimCuttingEdge,	"Cannot trim the cutting edge"
-	EzConsts_SFirstExtensionLine,	"First extension line origin"
-	EzConsts_SSecondExtensionLine,	"Second extension line origin"
-	EzConsts_SDefineTextLocation,	"Text Location"
-	EzConsts_SBlobErrNotEditing,	"Dataset not in edit or insert mode"
-	EzConsts_SCannotOpenDesignMode,	"Cannot open on design mode"
-	EzConsts_SLayerNotAssigned,	"Layer property is not assigned or is not visible"
-	EzConsts_SDefineSecondSelection,	"Other corner of selection"
-	EzConsts_SWarnNoSelection,	"No entities selected !"
-	EzConsts_SVertexSingleEntityError,	"Only one entity must be selected for the operation !"
-	EzConsts_SInsertVertexPoint,	"Click in the new point for the selected vertex"
-	EzConsts_SVertexEntityBadError,	"You can add vertexes to Polylines and Polygons only !"
-	EzConsts_SChangeGridOrigin,	"Please click the new Grid Origin :"
-	EzConsts_SShowHintCaption,	"Move mouse over an entity, then click for show hint. Click again for stacked entities. <Esc> finish"
-	EzConsts_SVectorialFirstPt,	"Define area. First corner:"
-	EzConsts_SVectorialSecondPt,	"Define area. Other corner:"
-	EzConsts_SBreakSelectFirstPoint,	"Select first point of entity"
-	EzConsts_SBreakSelectSecndPoint,	"Select second point"
-	EzConsts_SBreakWrongSelection,	"You must pick on same entity"
-	EzConsts_SBreakWrongEntity,	"Cannot break this entity"
-	EzConsts_SBreakNotClicked,	"No entities found"
-	EzConsts_STrimNoCuttingEdge,	"No cutting edge selected yet"
-	EzConsts_SExtendNoExtendEdge,	"No extend edge selected yet"
-	EzConsts_SClipPolygon,	"Clipping entity, "
-	EzConsts_SCircleCenter,	"Center :"
-	EzConsts_SCircleRadius,	"Radius :"
-	EzConsts_SArcSweepAngle,	"Define sweep angle:"
-	EzConsts_SCircleEndPoint,	"Identify First Arc End Point"
-	EzConsts_SRealTimeZoom,	"Press Pick button and drag vertically to zoom"
-	EzConsts_SDefineFirstZoomPoint,	"First corner"
-	EzConsts_SDefineSecondZoomPoint,	"other corner"
-	EzConsts_SNotEnoughData,	"Need more points to build entity !"
-	EzConsts_SStartSingleSelect,	"Click an entity to select. SHIFT for single select"
-	EzConsts_SDefineBasePoint,	"Base point :"
-	EzConsts_SDefineEndPoint,	"Last point :"
-	EzConsts_SReferenceFirstPoint,	"Reference length, first point :"
-	EzConsts_SReferenceSecondPoint,	"Referenge length, second point :"
-	EzConsts_STransformLastPoint,	"Last point :"
-	EzConsts_SRotTransformLastPoint,	"Last point or angle :"
-	EzConsts_SLayerFilesNotFound,	"Cannot found the formerly files of this layer %s !\r\nThe layer is deleted from the map"
-	EzConsts_SGISUnassigned,	"Unassigned"
-	EzConsts_SLayerNotFound,	"Layer name not found"
-	EzConsts_SFlatScrollBarNotAllowed,	"Flat ScrollBar cannot be used \r\nthe version of COMCTL32.dll in this system is lower than 4.71"
-	EzConsts_SEntityOutOfBound,	"Entity number out of range !"
-	EzConsts_SSymbolOutOfBound,	"Symbol number out of range !"
-	EzConsts_SWrongImageFormat,	"This file format is not supported"
-	EzConsts_SVectorOutOfBound,	"Vector out of bound"
-	EzConsts_SDefineFromPoint,	"From point :"
-	EzConsts_SDefineToPoint,	"To point :"
-	EzConsts_SFirstPoint,	"First point :"
-	EzConsts_SSecondPoint,	"Second point :"
-	EzConsts_SThirdPoint,	"Third point :"
-	EzConsts_SFourthPoint,	"Fourth point :"
-	EzConsts_SFifthPoint,	"Fifth point :"
-	EzConsts_SNextPoint,	"Next point :"
-	EzConsts_SWrongLayername,	"Wrong layer name %s, or layer is not visible or editable"
-	EzConsts_SWrongParameters,	"Parameter(s) invalid for function %s"
-	EzConsts_SExprParserError,	" %s at line : %d, Column: %d, token: %s"
-	EzConsts_SBadExtension,	"Corner coords are wrong !\r\nFirst corner must be at lower left"
-	EzConsts_SRestNotExclusive,	"Cannot open file in exclusive mode !"
-	EzConsts_SDuplicateLayer,	"Layer name already exists or\r\nthere is a file with same name on disk."
-	EzConsts_SRecnoInvalid,	"Recno out of range"
-	EzConsts_SRebuildTree,	"Rebuilding r-tree %s..."
-	EzConsts_SDBFNotFound,	"Base datafile of this layer cannot be found.\r\nThe layer is kept without an attached DBF file"
-	EzConsts_SUpdateExtension,	"Updating layer %s"
-	EzConsts_SThereAreNoDeleted,	"There are no deleted entities. Do you wish to\r\ncontinue to do an evaluation of this file ?"
-	EzConsts_SPackingLayer,	"Packing layer..."
-	EzConsts_SWrongRecordsRecover,	"Cannot recover %d damaged records"
-	EzConsts_SExprFail,	"Expression is not of boolean type !"
-	EzConsts_SCannotDeleteLayer,	"Layer cannot be deleted.\r\nProbably is being used in a network"
-	EzConsts_SInternalListError,	"Internal list error"
-	EzConsts_SScaleFmt,	"Scale = %.3f %%"
-	EzConsts_STranslateFmt,	"DX = %.3f, DY = %.3f, < %.3f"
-	EzConsts_SRotateFmt,	"< %.3f"
-	EzConsts_SNewEntityInfo,	"< %.*n, DX = %.*n, DY = %.*n, Area = %.*n, Dist = %.*n"
-	EzConsts_SIsInvalidFloatValue,	"Invalid floating point value %s"
-	EzConsts_SIsInvalidIntegerValue,	"Invalid integer value %s"
-	EzConsts_SIsInvalidBoolValue,	"Invalid boolean value %s"
-	EzConsts_STextRefPtFirst,	"Please define location of text"
-	EzConsts_SSymbolTextCaption,	"Symbol text"
-	EzConsts_SSymbolText,	"Text :"
-	EzConsts_SMsgConfirm,	"Confirm"
-	EzConsts_SMsgError,	"Error"
-	EzConsts_SMsgWarning,	"Warning"
-	EzConsts_SWrongBuffer,	"Cannot create a buffer from this polyline"
-	EzConsts_SCannotCreateBuffer,	"Cannot create buffer for this kind of entity"
-	EzConsts_SCannotContainParams,	"Field %s of datatabase cannot have parameters !"
-	MZLib_SOversubscribedLLTree,	"oversubscribed literal/length tree"
-	MZLib_SIncompleteLLTree,	"incomplete literal/length tree"
-	MZLib_SEmptyDistanceTree,	"empty distance tree with lengths"
-	MZLib_SInvalidBlockType,	"invalid block type"
-	MZLib_SInvalidStoredBlockLengths,	"invalid stored block lengths"
-	MZLib_STooManyLDSymbols,	"too many length or distance symbols"
-	MZLib_SInvalidBitLengthRepeat,	"invalid bit length repeat"
-	MZLib_SIncorrectDataCheck,	"incorrect data check"
-	MZLib_SUnknownCompression,	"unknown compression method"
-	MZLib_SInvalidWindowSize,	"invalid window size"
-	MZLib_SIncorrectHeaderCheck,	"incorrect header check"
-	MZLib_SNeedDictionary,	"need dictionary"
-	JPG_sJPEGError,	"JPEG error #%d"
-	EzConsts_SCommand,	"Command: "
-	EzConsts_SSymbolCaption,	"SYMBOL %d"
-	EzConsts_SLinetypeCaption,	"LINETYPE %d"
-	GraphicStrings_gesJPEGSamplingFactors,	"Improper JPEG sampling factors."
-	GraphicStrings_gesJPEGBogusTableField,	"Bogus JPEG tables field."
-	GraphicStrings_gesJPEGFractionalLine,	"Fractional JPEG scanline unsupported."
-	GraphicStrings_gesWarning,	"Warning"
-	MZLib_SNeedDict,	"need dictionary"
-	MZLib_SStreamEnd,	"stream end"
-	MZLib_SFileError,	"file error"
-	MZLib_SStreamError,	"stream error"
-	MZLib_SDataError,	"data error"
-	MZLib_SInsufficientMemory,	"insufficient memory"
-	MZLib_SBufferError,	"buffer error"
-	MZLib_SIncompatibleVersion,	"incompatible version"
-	MZLib_SInvalidDistanceCode,	"invalid distance code"
-	MZLib_SInvalidLengthCode,	"invalid literal/length code"
-	MZLib_SOversubscribedDBLTree,	"oversubscribed dynamic bit lengths tree"
-	MZLib_SIncompleteDBLTree,	"incomplete dynamic bit lengths tree"
-	GraphicStrings_gesCompressionScheme,	"The compression scheme is"
-	GraphicStrings_gesIndexedNotSupported,	"Conversion between indexed and non-indexed pixel formats is not supported."
-	GraphicStrings_gesConversionUnsupported,	"Color conversion failed. Could not find a proper method."
-	GraphicStrings_gesInvalidSampleDepth,	"Color depth is invalid. Bits per sample must be 1, 2, 4, 8 or 16."
-	GraphicStrings_gesInvalidPixelDepth,	"Sample count per pixel does not correspond to the given color scheme."
-	GraphicStrings_gesInvalidSubSampling,	"Subsampling value is invalid. Allowed are 1, 2 and 4."
-	GraphicStrings_gesVerticalSubSamplingError,	"Vertical subsampling value must be <= horizontal subsampling value."
-	GraphicStrings_gesPreparing,	"Preparing..."
-	GraphicStrings_gesLoadingData,	"Loading data..."
-	GraphicStrings_gesUpsampling,	"Upsampling..."
-	GraphicStrings_gesTransfering,	"Transfering..."
-	GraphicStrings_gesLZ77Error,	"LZ77 decompression error."
-	GraphicStrings_gesJPEGEOI,	"JPEG decompression error. Unexpected end of input."
-	GraphicStrings_gesJPEGStripSize,	"Improper JPEG strip/tile size."
-	GraphicStrings_gesJPEGComponentCount,	"Improper JPEG component count."
-	GraphicStrings_gesJPEGDataPrecision,	"Improper JPEG data precision."
-	GraphicStrings_gesPortableGray,	"Portable gray map images"
-	GraphicStrings_gesPortableMono,	"Portable bitmap images"
-	GraphicStrings_gesAutoDesk,	"Autodesk images"
-	GraphicStrings_gesKodakPhotoCD,	"Kodak Photo-CD images"
-	GraphicStrings_gesHalo,	"Dr. Halo images"
-	GraphicStrings_gesPaintShopPro,	"Paintshop Pro images"
-	GraphicStrings_gesPortableNetworkGraphic,	"Portable network graphic images"
-	GraphicStrings_gesInvalidImage,	"Cannot load image. Invalid or unexpected %s image format."
-	GraphicStrings_gesInvalidColorFormat,	"Invalid color format in %s file."
-	GraphicStrings_gesStreamReadError,	"Stream read error in %s file."
-	GraphicStrings_gesUnsupportedFeature,	"Cannot load image. %s not supported for %s files."
-	GraphicStrings_gesInvalidCRC,	"Cannot load image. CRC error found in %s file."
-	GraphicStrings_gesCompression,	"Cannot load image. Compression error found in %s file."
-	GraphicStrings_gesExtraCompressedData,	"Cannot load image. Extra compressed data found in %s file."
-	GraphicStrings_gesInvalidPalette,	"Cannot load image. Palette in %s file is invalid."
-	GraphicStrings_gesUnknownCriticalChunk,	"Cannot load PNG image. Unexpected but critical chunk detected."
-	GraphicStrings_gesJFIFImages,	"JFIF images"
-	GraphicStrings_gesTruevision,	"Truevision images"
-	GraphicStrings_gesTIFF,	"Tagged image file format images"
-	GraphicStrings_gesMacTIFF,	"Macintosh TIFF images"
-	GraphicStrings_gesPCTIF,	"PC TIF images"
-	GraphicStrings_gesGFIFax,	"GFI fax images"
-	GraphicStrings_gesSGI,	"SGI images"
-	GraphicStrings_gesSGITrueColor,	"SGI true color images"
-	GraphicStrings_gesZSoft,	"ZSoft Paintbrush images"
-	GraphicStrings_gesZSoftWord,	"Word 5.x screen capture images"
-	GraphicStrings_gesAliasWaveFront,	"Alias/Wavefront images"
-	GraphicStrings_gesSGITrueColorAlpha,	"SGI true color images with alpha"
-	GraphicStrings_gesSGIMono,	"SGI black/white images"
-	GraphicStrings_gesPhotoshop,	"Photoshop images"
-	GraphicStrings_gesPortable,	"Portable map images"
-	GraphicStrings_gesPortablePixel,	"Portable pixel map images"
-	GIFImage_sProgressCopying,	"Copying..."
-	GIFImage_sProgressOptimizing,	"Optimizing..."
-	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
-	JConsts_sJPEGError,	"JPEG error #%d"
-	JConsts_sJPEGImageFile,	"JPEG Image File"
-	GraphicStrings_gesRegistration,	"Attempt to register %s twice."
-	GraphicStrings_gesBitmaps,	"Windows bitmaps"
-	GraphicStrings_gesRLEBitmaps,	"Run length encoded Windows bitmaps"
-	GraphicStrings_gesDIBs,	"Device independant Windows bitmaps"
-	GraphicStrings_gesEPS,	"Encapsulated Postscript images"
-	GraphicStrings_gesIcons,	"Windows icons"
-	GraphicStrings_gesMetaFiles,	"Windows metafiles"
-	GraphicStrings_gesEnhancedMetaFiles,	"Windows enhanced meta files"
-	GraphicStrings_gesJPGImages,	"JPG images"
-	GraphicStrings_gesJPEGImages,	"JPEG images"
-	GraphicStrings_gesJPEImages,	"JPE images"
-	GIFImage_sScreenSizeExceeded,	"Image exceeds Logical Screen size"
-	GIFImage_sNoColorTable,	"No global or local color table defined"
-	GIFImage_sBadPixelCoordinates,	"Invalid pixel coordinates"
-	GIFImage_sInvalidPixelFormat,	"Unsupported PixelFormat"
-	GIFImage_sBadDimension,	"Invalid image dimensions"
-	GIFImage_sNoDIB,	"Image has no DIB"
-	GIFImage_sInvalidStream,	"Invalid stream operation"
-	GIFImage_sInvalidColor,	"Color not in color table"
-	GIFImage_sEmptyColorMap,	"Color table is empty"
-	GIFImage_sEmptyImage,	"Image is empty"
-	GIFImage_sInvalidReduction,	"Invalid reduction method"
-	GIFImage_sGIFImageFile,	"GIF Image"
-	GIFImage_sProgressLoading,	"Loading..."
-	GIFImage_sProgressSaving,	"Saving..."
-	GIFImage_sProgressConverting,	"Converting..."
-	GIFImage_sProgressRendering,	"Rendering..."
-	GIFImage_sScreenBadColorSize,	"Invalid number of colors specified in Screen Descriptor"
-	GIFImage_sImageBadColorSize,	"Invalid number of colors specified in Image Descriptor"
-	GIFImage_sUnknownExtension,	"Unknown extension type"
-	GIFImage_sBadExtensionLabel,	"Invalid extension introducer"
-	GIFImage_sOutOfMemDIB,	"Failed to allocate memory for GIF DIB"
-	GIFImage_sDecodeTooFewBits,	"Decoder bit buffer under-run"
-	GIFImage_sDecodeCircular,	"Circular decoder table entry"
-	GIFImage_sBadTrailer,	"Invalid Image trailer"
-	GIFImage_sBadExtensionInstance,	"Internal error: Extension Instance does not match Extension Label"
-	GIFImage_sBadBlockSize,	"Unsupported Application Extension block size"
-	GIFImage_sBadBlock,	"Unknown GIF block type"
-	GIFImage_sUnsupportedClass,	"Object type not supported for operation"
-	GIFImage_sInvalidData,	"Invalid GIF data"
-	GIFImage_sBadHeight,	"Image height too small for contained frames"
-	GIFImage_sBadWidth,	"Image width too small for contained frames"
-	GIFImage_sFailedPaste,	"Failed to store GIF on clipboard"
-	EzBaseExpr_SEXPR_OPERATORINCOMPAT,	"Operator %s incompatible with %s"
-	EzBaseExpr_SEXPR_CANNOTCASTTOSTRING,	"Cannot read %s as String"
-	EzBaseExpr_SEXPR_CANNOTCASTTOFLOAT,	"Cannot read %s as Float"
-	EzBaseExpr_SEXPR_CANNOTCASTTOINTEGER,	"Cannot read %s as Integer"
-	EzBaseExpr_SEXPR_CANNOTCASTTOBOOLEAN,	"Cannot read %s as boolean"
+	IdResourceStringsProtocols_RSFTPStatusReady,	"Connection established"
+	IdResourceStringsProtocols_RSFTPStatusStartTransfer,	"Starting FTP transfer"
+	IdResourceStringsProtocols_RSFTPStatusDoneTransfer,	"Transfer complete"
+	IdResourceStringsProtocols_RSFTPStatusAbortTransfer,	"Transfer aborted"
+	IdResourceStringsProtocols_RSFTPOnCustomFTPProxyReq,	"OnCustomFTPProxy required but not assigned"
+	IdResourceStringsProtocols_RSFTPMustUseExtWithIPv6,	"UseExtensionDataPort must be true for IPv6 connections."
+	IdResourceStringsProtocols_RSFTPMustUseExtWithNATFastTrack,	"UseExtensionDataPort must be true for NAT fasttracking."
+	IdResourceStringsProtocols_RSFTPFTPPassiveMustBeTrueWithNATFT,	"Can not use active transfers with NAT fastracking."
+	IdResourceStringsProtocols_RSFTPServerSentInvalidPort,	"Server sent invalid port number (%s)"
+	IdResourceStringsProtocols_RSFTPNoDataPortProtectionAfterCCC,	"Can not set DataPortProtection after CCC issued."
+	IdResourceStringsProtocols_RSFTPNoDataPortProtectionWOEncryption,	"Can not set DataPortProtection with unencrypted connections."
+	IdResourceStringsProtocols_RSFTPNoCCCWOEncryption,	"Can not set CCC without encyption."
+	IdResourceStringsProtocols_RSFTPNoAUTHWOSSL,	"Can not set AUTH without SSL."
+	IdResourceStringsProtocols_RSFTPNoAUTHCon,	"Can not set AUTH while connected."
+	IdResourceStringsProtocols_RSFTPOTPMethod,	"Unknown OTP method"
+	IdResourceStringsProtocols_RSFTPIOHandlerWrong,	"IOHandler is of wrong type."
+	IdResourceStringsCore_RSNotConnected,	"Not Connected"
+	IdResourceStringsCore_RSObjectTypeNotSupported,	"Object type not supported."
+	IdResourceStringsCore_RSIdNoDataToRead,	"No data to read."
+	IdResourceStringsCore_RSReadTimeout,	"Read Timeout"
+	IdResourceStringsCore_RSReadLnMaxLineLengthExceeded,	"Max line length exceeded."
+	IdResourceStringsCore_RSConnectTimeout,	"Connect timed out."
+	IdResourceStringsCore_RSAlreadyConnected,	"Already connected."
+	IdResourceStringsCore_RSMaximumNumberOfCaptureLineExceeded,	"Maximum number of line allowed exceeded"
+	IdResourceStringsCore_RSTransparentProxyCannotBind,	"Transparent proxy cannot bind."
+	IdResourceStringsCore_RSTransparentProxyCanNotSupportUDP,	"UDP Not supported by this proxy."
+	IdResourceStringsCore_RSBufferMissingTerminator,	"Buffer terminator must be specified."
+	IdResourceStringsCore_RSBufferInvalidStartPos,	"Buffer start position is invalid."
+	IdResourceStringsCore_RSIOHandlerCannotChange,	"Cannot change a connected IOHandler."
+	IdResourceStringsCore_RSIOHandlerTypeNotInstalled,	"No IOHandler of type %s is installed."
+	IdResourceStringsCore_RSReplyInvalidCode,	"Reply Code is not valid: %s"
+	IdResourceStringsProtocols_RSFTPUnknownHost,	"Unknown"
+	IdResourceStringsCore_RSSocksUnknownError,	"Unknown socks error."
+	IdResourceStringsCore_RSSocksServerRespondError,	"Socks server did not respond."
+	IdResourceStringsCore_RSSocksAuthMethodError,	"Invalid socks authentication method."
+	IdResourceStringsCore_RSSocksAuthError,	"Authentication error to socks server."
+	IdResourceStringsCore_RSSocksServerGeneralError,	"General SOCKS server failure."
+	IdResourceStringsCore_RSSocksServerPermissionError,	"Connection not allowed by ruleset."
+	IdResourceStringsCore_RSSocksServerNetUnreachableError,	"Network unreachable."
+	IdResourceStringsCore_RSSocksServerHostUnreachableError,	"Host unreachable."
+	IdResourceStringsCore_RSSocksServerConnectionRefusedError,	"Connection refused."
+	IdResourceStringsCore_RSSocksServerTTLExpiredError,	"TTL expired."
+	IdResourceStringsCore_RSSocksServerCommandError,	"Command not supported."
+	IdResourceStringsCore_RSSocksServerAddressError,	"Address type not supported."
+	IdResourceStringsCore_RSInterceptCircularLink,	"%d: Circular links are not allowed"
+	IdResourceStringsCore_RSNotEnoughDataInBuffer,	"Not enough data in buffer."
+	IdResourceStringsCore_RSTooMuchDataInBuffer,	"Too much data in buffer."
+	IdResourceStringsCore_RSFileNotFound,	"File \"%s\" not found"
+	IdResourceStrings_RSCannotSetIPVersionWhenConnected,	"Cannot change IPVersion when connected"
+	IdResourceStrings_RSCannotBindRange,	"Can not bind in port range (%d - %d)"
+	IdResourceStrings_RSConnectionClosedGracefully,	"Connection Closed Gracefully."
+	IdResourceStrings_RSCouldNotBindSocket,	"Could not bind socket. Address and port are already in use."
+	IdResourceStrings_RSInvalidPortRange,	"Invalid Port Range (%d - %d)"
+	IdResourceStrings_RSInvalidServiceName,	"%s is not a valid service."
+	IdResourceStrings_RSIPv6Unavailable,	"IPv6 unavailable"
+	IdResourceStrings_RSInvalidIPv6Address,	"%s is not a valid IPv6 address"
+	IdResourceStrings_RSIPVersionUnsupported,	"The requested IPVersion / Address family is not supported."
+	IdResourceStrings_RSNotAllBytesSent,	"Not all bytes sent."
+	IdResourceStrings_RSPackageSizeTooBig,	"Package Size Too Big."
+	IdResourceStrings_RSSetSizeExceeded,	"Set Size Exceeded."
+	IdResourceStringsCore_RSSocksUDPNotSupported,	"UDP is not support in this SOCKS version."
+	IdResourceStringsCore_RSSocksRequestFailed,	"Request rejected or failed."
+	IdResourceStringsCore_RSSocksRequestServerFailed,	"Request rejected because SOCKS server cannot connect."
+	IdResourceStringsCore_RSSocksRequestIdentFailed,	"Request rejected because the client program and identd report different user-ids."
+	IdResourceStrings_RSStackENOBUFS,	"No buffer space available."
+	IdResourceStrings_RSStackEISCONN,	"Socket is already connected."
+	IdResourceStrings_RSStackENOTCONN,	"Socket is not connected."
+	IdResourceStrings_RSStackESHUTDOWN,	"Cannot send or receive after socket is closed."
+	IdResourceStrings_RSStackETOOMANYREFS,	"Too many references, cannot splice."
+	IdResourceStrings_RSStackETIMEDOUT,	"Connection timed out."
+	IdResourceStrings_RSStackECONNREFUSED,	"Connection refused."
+	IdResourceStrings_RSStackELOOP,	"Too many levels of symbolic links."
+	IdResourceStrings_RSStackENAMETOOLONG,	"File name too long."
+	IdResourceStrings_RSStackEHOSTDOWN,	"Host is down."
+	IdResourceStrings_RSStackEHOSTUNREACH,	"No route to host."
+	IdResourceStrings_RSStackENOTEMPTY,	"Directory not empty"
+	IdResourceStrings_RSStackHOST_NOT_FOUND,	"Host not found."
+	IdResourceStrings_RSStackClassUndefined,	"Stack Class is undefined."
+	IdResourceStrings_RSStackAlreadyCreated,	"Stack already created."
+	IdResourceStrings_RSAntiFreezeOnlyOne,	"Only one TIdAntiFreeze can exist per application."
+	IdResourceStrings_RSStackEDESTADDRREQ,	"Destination address required."
+	IdResourceStrings_RSStackEMSGSIZE,	"Message too long."
+	IdResourceStrings_RSStackEPROTOTYPE,	"Protocol wrong type for socket."
+	IdResourceStrings_RSStackENOPROTOOPT,	"Bad protocol option."
+	IdResourceStrings_RSStackEPROTONOSUPPORT,	"Protocol not supported."
+	IdResourceStrings_RSStackESOCKTNOSUPPORT,	"Socket type not supported."
+	IdResourceStrings_RSStackEOPNOTSUPP,	"Operation not supported on socket."
+	IdResourceStrings_RSStackEPFNOSUPPORT,	"Protocol family not supported."
+	IdResourceStrings_RSStackEAFNOSUPPORT,	"Address family not supported by protocol family."
+	IdResourceStrings_RSStackEADDRINUSE,	"Address already in use."
+	IdResourceStrings_RSStackEADDRNOTAVAIL,	"Cannot assign requested address."
+	IdResourceStrings_RSStackENETDOWN,	"Network is down."
+	IdResourceStrings_RSStackENETUNREACH,	"Network is unreachable."
+	IdResourceStrings_RSStackENETRESET,	"Net dropped connection or reset."
+	IdResourceStrings_RSStackECONNABORTED,	"Software caused connection abort."
+	IdResourceStrings_RSStackECONNRESET,	"Connection reset by peer."
+	IdResourceStrings_RSStatusConnecting,	"Connecting to %s."
+	IdResourceStrings_RSStatusConnected,	"Connected."
+	IdResourceStrings_RSStatusDisconnecting,	"Disconnecting."
+	IdResourceStrings_RSStatusDisconnected,	"Disconnected."
+	IdResourceStrings_RSStatusText,	"%s"
+	IdResourceStrings_RSStackError,	"Socket Error # %d\r\n%s"
+	IdResourceStrings_RSStackEINTR,	"Interrupted system call."
+	IdResourceStrings_RSStackEBADF,	"Bad file number."
+	IdResourceStrings_RSStackEACCES,	"Access denied."
+	IdResourceStrings_RSStackEFAULT,	"Buffer fault."
+	IdResourceStrings_RSStackEINVAL,	"Invalid argument."
+	IdResourceStrings_RSStackEMFILE,	"Too many open files."
+	IdResourceStrings_RSStackEWOULDBLOCK,	"Operation would block."
+	IdResourceStrings_RSStackEINPROGRESS,	"Operation now in progress."
+	IdResourceStrings_RSStackEALREADY,	"Operation already in progress."
+	IdResourceStrings_RSStackENOTSOCK,	"Socket operation on non-socket."
+	IBSQLMonitor_StrBLOB,	"<BLOB>"
+	IBSQLMonitor_StrFetch,	": [Fetch] "
+	IBSQLMonitor_StrPrepare,	": [Prepare] "
+	IBSQLMonitor_StrPlan,	"  Plan: "
+	IBSQLMonitor_StrPlanCantRetrive,	"  Plan: Can't retrieve plan - too large"
+	IBSQLMonitor_StrCommitHardComm,	": [Commit (Hard commit)]"
+	IBSQLMonitor_StrCommitRetaining,	": [Commit retaining (Soft commit)]"
+	IBSQLMonitor_StrRollback,	": [Rollback]"
+	IBSQLMonitor_StrRollbackRetainin,	": [Rollback retaining (Soft rollback)]"
+	IBSQLMonitor_StrStartTransaction,	": [Start transaction]"
+	IBSQLMonitor_StrApplication,	"[Application: "
+	IdResourceStrings_RSFailedTimeZoneInfo,	"Failed attempting to retrieve time zone information."
+	IdResourceStrings_RSWinsockCallError,	"Error on call Winsock2 library function %s"
+	IdResourceStrings_RSWinsockLoadError,	"Error on loading Winsock2 library (%s)"
+	IdResourceStrings_RSWinsockInitializationError,	"Winsock Initialization Error."
+	IdResourceStrings_RSStatusResolving,	"Resolving hostname %s."
+	IBXConst_SNoTimers,	"Not enough timers available"
+	IBXConst_SIB65feature,	"%s is an InterBase 6.5 function. Please upgrade to InterBase 6.5 to use this functonality"
+	IBXConst_SLoginPromptFailure,	"Can not find default login prompt dialog.  Please add DBLogDlg to the uses section of your main file."
+	IBXConst_SIB70feature,	"%s is an InterBase 7.0 function. Please upgrade to InterBase 7.0 to use this functonality"
+	IBXConst_SIB71feature,	"%s is an InterBase 7.1 function. Please upgrade to InterBase 7.1 to use this functonality"
+	IBXConst_SIB80feature,	"%s is an InterBase 2007 function. Please upgrade to InterBase 2007 to use this functonality"
+	IBSQLMonitor_StrConnect,	": [Connect]"
+	IBSQLMonitor_StrDisconnect,	": [Disconnect]"
+	IBSQLMonitor_StrMisc,	"[Misc] "
+	IBSQLMonitor_StrError,	"[Error] "
+	IBSQLMonitor_StrAttach,	": [Attach]"
+	IBSQLMonitor_StrDetach,	": [Detach]"
+	IBSQLMonitor_StrQuery,	": [Query]"
+	IBSQLMonitor_StrStart,	": [Start]"
+	IBSQLMonitor_StrExecute,	": [Execute] "
+	IBSQLMonitor_StrNULL,	"<NULL>"
+	IBXConst_SDelphiException,	"DelphiException %s"
+	IBXConst_SNoOptionsSet,	"No Install Options selected"
+	IBXConst_SNoDestinationDirectory,	"DestinationDirectory is not set"
+	IBXConst_SNosourceDirectory,	"SourceDirectory is not set"
+	IBXConst_SNoUninstallFile,	"Uninstall File Name is not set"
+	IBXConst_SOptionNeedsClient,	"%s component requires Client to function properly"
+	IBXConst_SOptionNeedsServer,	"%s component requires Server to function properly"
+	IBXConst_SInvalidOption,	"Invalid option specified"
+	IBXConst_SInvalidOnErrorResult,	"Unexpected onError return value"
+	IBXConst_SInvalidOnStatusResult,	"Unexpected onStatus return value"
+	IBXConst_SDPBConstantUnknownEx,	"DPB Constant (%s) is unknown"
+	IBXConst_STPBConstantUnknownEx,	"TPB Constant (%s) is unknown"
+	IBXConst_SUnknownPlan,	"Unknown Error - Can't retrieve plan"
+	IBXConst_SFieldSizeMismatch,	"Size Mismatch - Field %s size is too small for data"
+	IBXConst_SEventAlreadyRegistered,	"Events already registered"
+	IBXConst_SStringTooLarge,	"Trying to store a string of length %d into a field that can only contain %d"
+	IBXConst_SSPBConstantNotSupported,	"SPB Constant Not supported"
+	IBXConst_SSPBConstantUnknown,	"SPB Constant Unknown"
+	IBXConst_SServiceActive,	"Cannot perform operation -- service is not attached"
+	IBXConst_SServiceInActive,	"Cannot perform operation -- service is attached"
+	IBXConst_SServerNameMissing,	"Server Name Missing"
+	IBXConst_SQueryParamsError,	"Query Parameters missing or incorrect"
+	IBXConst_SStartParamsError,	"start Parameters missing or incorrect"
+	IBXConst_SOutputParsingError,	"Unexpected Output buffer value"
+	IBXConst_SUseSpecificProcedures,	"Generic ServiceStart not applicable: Use Specific Procedures to set configuration params"
+	IBXConst_SSQLMonitorAlreadyPresent,	"SQL Monitor Instance is already present"
+	IBXConst_SCantPrintValue,	"Cannot print value"
+	IBXConst_SEOFReached,	"SEOFReached"
+	IBXConst_SEOFInComment,	"EOF in comment detected"
+	IBXConst_SEOFInString,	"EOF in string detected"
+	IBXConst_SParamNameExpected,	"Parameter name expected"
+	IBXConst_SSuccess,	"Successful execution"
+	IBXConst_SNotLiveRequest,	"Request is not live - cannot modify"
+	IBXConst_SNoProvider,	"No Provider"
+	IBXConst_SNoRecordsAffected,	"No Records Affected"
+	IBXConst_SNoTableName,	"No Table Name assigned"
+	IBXConst_SCannotCreatePrimaryIndex,	"Cannot Create Primary Index; are created automatically"
+	IBXConst_SCannotDropSystemIndex,	"Cannot Drop System Index"
+	IBXConst_STableNameMismatch,	"Table Name Mismatch"
+	IBXConst_SIndexFieldMissing,	"Index Field Missing"
+	IBXConst_SInvalidCancellation,	"Cannot Cancel events while processing"
+	IBXConst_SInvalidEvent,	"Invalid Event"
+	IBXConst_SMaximumEvents,	"Exceded Maximum Event limits"
+	IBXConst_SNoEventsRegistered,	"No Events Registered"
+	IBXConst_SInvalidQueueing,	"Invalid Queueing"
+	IBXConst_SInvalidRegistration,	"Invalid Registration"
+	IBXConst_SInvalidBatchMove,	"Invalid Batch Move"
+	IBXConst_SSQLDialectInvalid,	"SQL Dialect Invalid"
+	IBXConst_SUserAbort,	"User abort"
+	IBXConst_SDataSetUniDirectional,	"Data set is uni-directional"
+	IBXConst_SCannotCreateSharedResource,	"Cannot create shared resource. (Windows error %d)"
+	IBXConst_SWindowsAPIError,	"Windows API error. (Windows error %d [$%.8x])"
+	IBXConst_SColumnListsDontMatch,	"Column lists do not match"
+	IBXConst_SColumnTypesDontMatch,	"Column types don't match. (From index: %d; To index: %d)"
+	IBXConst_SCantEndSharedTransaction,	"Can't end a shared transaction unless it is forced and equal to the transaction's TimeoutAction"
+	IBXConst_SFieldUnsupportedType,	"Unsupported Field Type"
+	IBXConst_SCircularDataLink,	"Circular DataLink Reference"
+	IBXConst_SEmptySQLStatement,	"Empty SQL Statement"
+	IBXConst_SIsASelectStatement,	"use Open for a Select Statement"
+	IBXConst_SRequiredParamNotSet,	"Required Param value not set"
+	IBXConst_SNoStoredProcName,	"No Stored Procedure Name assigned"
+	IBXConst_SIsAExecuteProcedure,	"use ExecProc for Procedure; use TQuery for Select procedures"
+	IBXConst_SUpdateFailed,	"Update Failed"
+	IBXConst_SNotCachedUpdates,	"CachedUpdates not enabled"
+	IBXConst_SBlobCannotBeRead,	"Blob stream cannot be read"
+	IBXConst_SBlobCannotBeWritten,	"Blob stream cannot be written"
+	IBXConst_SEmptyQuery,	"Empty query"
+	IBXConst_SCannotOpenNonSQLSelect,	"Cannot \"open\" a non-select statement. Use ExecQuery"
+	IBXConst_SNoFieldAccess,	"No access to field \"%s\""
+	IBXConst_SFieldReadOnly,	"Field \"%s\" is read-only"
+	IBXConst_SFieldNotFound,	"Field \"%s\" not found"
+	IBXConst_SNotEditing,	"Not in edit mode"
+	IBXConst_SCannotInsert,	"Cannot insert into dataset. (No insert query)"
+	IBXConst_SCannotPost,	"Cannot post. (No update/insert query)"
+	IBXConst_SCannotUpdate,	"Cannot update. (No update query)"
+	IBXConst_SCannotDelete,	"Cannot delete from dataset. (No delete query)"
+	IBXConst_SCannotRefresh,	"Cannot refresh row. (No refresh query)"
+	IBXConst_SBufferNotSet,	"Buffer not set"
+	IBXConst_SCircularReference,	"Circular references not permitted"
+	IBXConst_SSQLParseError,	"SQL Parse Error:\r\n\r\n%s"
+	IBXConst_SDatabaseNotAssigned,	"Database not assigned"
+	IBXConst_STransactionNotAssigned,	"Transaction not assigned"
+	IBXConst_SXSQLDAIndexOutOfRange,	"XSQLDA index out of range"
+	IBXConst_SXSQLDANameDoesNotExist,	"XSQLDA name does not exist (%s)"
+	IBXConst_SEOF,	"End of file"
+	IBXConst_SBOF,	"Beginning of file"
+	IBXConst_SInvalidStatementHandle,	"Invalid statement handle"
+	IBXConst_SSQLOpen,	"IBSQL Open"
+	IBXConst_SSQLClosed,	"IBSQL Closed"
+	IBXConst_SDatasetOpen,	"Dataset open"
+	IBXConst_SDatasetClosed,	"Dataset closed"
+	IBXConst_SUnknownSQLDataType,	"Unknown SQL Data type (%d)"
+	IBXConst_SInvalidColumnIndex,	"Invalid column index (index exceeds permitted range)"
+	IBXConst_SInvalidParamColumnIndex,	"Invalid parameter index (index exceeds permitted range)"
+	IBXConst_SInvalidDataConversion,	"Invalid data conversion"
+	IBXConst_SColumnIsNotNullable,	"Column cannot be set to null (%s)"
+	IBXConst_SCannotSetDatabase,	"Cannot set database"
+	IBXConst_SCannotSetTransaction,	"Cannot set transaction"
+	IBXConst_SOperationCancelled,	"Operation cancelled at user's request"
+	IBXConst_SDPBConstantNotSupported,	"DPB Constant (isc_dpb_%s) is unsupported"
+	IBXConst_SDPBConstantUnknown,	"DPB Constant (%d) is unknown"
+	IBXConst_STPBConstantNotSupported,	"TPB Constant (isc_tpb_%s) is unsupported"
+	IBXConst_STPBConstantUnknown,	"TPB Constant (%d) is unknown"
+	IBXConst_SDatabaseClosed,	"Cannot perform operation -- DB is not open"
+	IBXConst_SDatabaseOpen,	"Cannot perform operation -- DB is currently open"
+	IBXConst_SDatabaseNameMissing,	"Database name is missing"
+	IBXConst_SNotInTransaction,	"Transaction is not active"
+	IBXConst_SInTransaction,	"Transaction is active"
+	IBXConst_STimeoutNegative,	"Timeout values cannot be negative"
+	IBXConst_SNoDatabasesInTransaction,	"No databases are listed in transaction component"
+	IBXConst_SUpdateWrongDB,	"Updating wrong database"
+	IBXConst_SUpdateWrongTR,	"Updating wrong transaction. Unique transaction expected in set"
+	VDBConsts_SDeleteRecordQuestion,	"Delete record?"
+	VDBConsts_SDeleteMultipleRecordsQuestion,	"Delete all selected records?"
+	VDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
+	VDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
+	VDBConsts_STooManyColumns,	"Grid requested to display more than 256 columns"
+	VDBConsts_SRemoteLogin,	"Remote Login"
+	ZLibConst_sInvalidStreamOp,	"Invalid stream operation"
+	ZLibConst_sError,	"Error"
+	IBXConst_SUnknownError,	"Unknown error"
+	IBXConst_SInterBaseMissing,	"InterBase library gds32.dll not found in the path. Please install InterBase to use this functionality"
+	IBXConst_SInterBaseInstallMissing,	"InterBase Install DLL ibinstall.dll not found in the path. Please install InterBase 6 to use this functionality"
+	IBXConst_SIB60feature,	"%s is an InterBase 6 function. Please upgrade to InterBase 6 to use this functonality"
+	IBXConst_SNotSupported,	"Unsupported feature"
+	IBXConst_SNotPermitted,	"Not permitted"
+	IBXConst_SFileAccessError,	"Temporary file access error"
+	IBXConst_SConnectionTimeout,	"Database connection timed out"
 	EzBaseExpr_SEXPR_WRONGUNARYOP,	"%s is not simple unary operator"
 	EzBaseExpr_SEXPR_WRONGBINARYOP,	"%s is not a simple binary operator"
 	EzBaseExpr_SEXPR_WRONGBOOLEANOP,	"cannot apply %s to boolean operands"
 	EzBaseExpr_SEXPR_WRONGRELATIONALOP,	"%s is not relational operator"
 	EzBaseExpr_SEXPR_WRONGPARAMETER,	"Invalid parameter to %s"
 	EzBaseExpr_SEXPR_INVALIDPARAMETERTO,	"Invalid parameter to %s"
-	GIFImage_sOutOfData,	"Premature end of data"
-	GIFImage_sTooManyColors,	"Color table overflow"
-	GIFImage_sBadColorIndex,	"Invalid color index"
-	GIFImage_sBadVersion,	"Unsupported GIF version"
-	GIFImage_sBadSignature,	"Invalid GIF signature"
+	VDBConsts_SFirstRecord,	"First record"
+	VDBConsts_SPriorRecord,	"Prior record"
 	VDBConsts_SNextRecord,	"Next record"
 	VDBConsts_SLastRecord,	"Last record"
 	VDBConsts_SInsertRecord,	"Insert record"
@@ -2244,14 +1804,459 @@ BEGIN
 	VDBConsts_SPostEdit,	"Post edit"
 	VDBConsts_SCancelEdit,	"Cancel edit"
 	VDBConsts_SRefreshRecord,	"Refresh data"
-	VDBConsts_SDeleteRecordQuestion,	"Delete record?"
-	VDBConsts_SDeleteMultipleRecordsQuestion,	"Delete all selected records?"
-	VDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
-	VDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
-	VDBConsts_STooManyColumns,	"Grid requested to display more than 256 columns"
-	VDBConsts_SRemoteLogin,	"Remote Login"
+	EzProjImpl_serr24,	"lat_ts >= 90"
+	EzProjImpl_serr25,	"no distance between control points"
+	EzProjImpl_serr32,	"lat_0 = 0 or 90 or alpha = 90"
+	EzProjImpl_serr33,	"lat_1=lat_2 or lat_1=0 or lat_2=90"
+	EzProjImpl_serr34,	"elliptical usage required"
+	EzProjImpl_serr35,	"invalid UTM zone number"
+	EzProjections_serr0,	"Inverse conversion not implemented"
+	fPictureDef_SDefinePicTitle,	"Define image"
+	fPictureDef_SPictNotDefined,	"Image not already defined !"
 	EzBaseExpr_SEXPR_WRONGWHENEXPR,	"Expression in Case must be boolean"
 	EzBaseExpr_SEXPR_WRONGTHENEXPR,	"Expressions in THEN section must be all of same type"
+	EzBaseExpr_SEXPR_OPERATORINCOMPAT,	"Operator %s incompatible with %s"
+	EzBaseExpr_SEXPR_CANNOTCASTTOSTRING,	"Cannot read %s as String"
+	EzBaseExpr_SEXPR_CANNOTCASTTOFLOAT,	"Cannot read %s as Float"
+	EzBaseExpr_SEXPR_CANNOTCASTTOINTEGER,	"Cannot read %s as Integer"
+	EzBaseExpr_SEXPR_CANNOTCASTTOBOOLEAN,	"Cannot read %s as boolean"
+	EzConsts_SCmdCircleCR,	"CIRCLECR"
+	EzConsts_SCmdRichText,	"RICHTEXT"
+	EzConsts_SCmdInsert,	"INSERT"
+	EzConsts_SCmdMirror,	"MIRROR"
+	EzConsts_SCmdCustomClick,	"CUSTOMCLICK"
+	EzConsts_SCmdDropSelection,	"DROP"
+	EzConsts_SCmdDragDrop,	"DRAG&DROP"
+	EzConsts_SCmdArcSE,	"ARCSE"
+	EzConsts_SCmdArcFCS,	"ARCFCS"
+	EzConsts_SCmdNode,	"NODE"
+	EzConsts_SCmdNodeLink,	"NODELINK"
+	EzConsts_SCmdText500,	"TEXT500"
+	EzExprLex_SDefaultDateFormat,	"m/d/yyyy"
+	EzProjImpl_serr18,	"non-convergent inverse phi2"
+	EzProjImpl_serr19,	"acos/asin: |arg| >1.+1e-14"
+	EzProjImpl_serr23,	"lat_1 = 0"
+	EzConsts_SCmdPolygonBuffer,	"POLYGONBUFFER"
+	EzConsts_SCmdTable,	"TABLE"
+	EzConsts_SCmdCalloutText,	"CALLOUTTEXT"
+	EzConsts_SCmdBulletLeader,	"BULLETLEADER"
+	EzConsts_SCmdBannerText,	"BANNER"
+	EzConsts_SCmdZoomAll,	"ZOOMALL"
+	EzConsts_SCmdScaleX,	"SCALEX"
+	EzConsts_SCmdScaleY,	"SCALEY"
+	EzConsts_SCmdJustifText,	"JUSTIFTEXT"
+	EzConsts_SCmdFittedText,	"FITTEDTEXT"
+	EzConsts_SCmdPoint,	"POINT"
+	EzConsts_SCmdDimHoriz,	"DIMHORZ"
+	EzConsts_SCmdDimVert,	"DIMVERT"
+	EzConsts_SCmdDimParall,	"DIMPARALL"
+	EzConsts_SCmdCircle2P,	"CIRCLE2P"
+	EzConsts_SCmdCircle3P,	"CIRCLE3P"
+	EzConsts_SCmdCircleSelect,	"CIRCLESEL"
+	EzConsts_SCmdZoomIn,	"ZOOMIN"
+	EzConsts_SCmdZoomOut,	"ZOOMOUT"
+	EzConsts_SCmdZoomWindow,	"ZOOMWIN"
+	EzConsts_SCmdRealTimeZoom,	"REALTIMEZOOM"
+	EzConsts_SCmdRealTimeZoomB,	"REALTIMEZOOMB"
+	EzConsts_SCmdHandScroll,	"SCROLL"
+	EzConsts_SCmdClipPoly,	"CLIP"
+	EzConsts_SCmdSetClipPolyArea,	"CLIPPOLYAREA"
+	EzConsts_SCmdDeleteVertex,	"DELVERTEX"
+	EzConsts_SCmdSetClipArea,	"SETCLIPAREA"
+	EzConsts_SCmdBreak,	"BREAK"
+	EzConsts_SCmdTrim,	"TRIM"
+	EzConsts_SCmdExtend,	"EXTEND"
+	EzConsts_SCmdFillet,	"FILLET"
+	EzConsts_SCmdAddMarker,	"MARKER"
+	EzConsts_SCmdVertGLine,	"VGLINE"
+	EzConsts_SCmdMoveGLine,	"MOVEGLINE"
+	EzConsts_SCmdHints,	"HINTS"
+	EzConsts_SCmdPictRef,	"PICTUREREF"
+	EzConsts_SCmdCustomPicture,	"CUSTOMPICTURE"
+	EzConsts_SCmdBandsBitmap,	"BANDSBITMAP"
+	EzConsts_SCmdPersistBitmap,	"PERSISTBITMAP"
+	EzConsts_SCmdUndo,	"UNDO"
+	EzConsts_SCmdPan,	"PAN"
+	EzConsts_SCmdSelect,	"SELECT"
+	EzConsts_SCmdSelPLine,	"SELPLINE"
+	EzConsts_SCmdMeasures,	"MEASURES"
+	EzConsts_SCmdOffset,	"OFFSET"
+	EzConsts_SCmdInsertVertex,	"INSERTVERTEX"
+	EzConsts_SCmdGridOrigin,	"GRIDORIGIN"
+	EzConsts_SCmdPolygonSelect,	"POLYGONSEL"
+	EzConsts_SCmdScale,	"SCALE"
+	EzConsts_SCmdRotate,	"ROTATE"
+	EzConsts_SCmdReshape,	"RESHAPE"
+	EzConsts_SCmdRotateText,	"ROTATETEXT"
+	EzConsts_SCmdLine,	"LINE"
+	EzConsts_SCmdPolyline,	"PLINE"
+	EzConsts_SCmdPolygon,	"POLYGON"
+	EzConsts_SCmdSketch,	"SKETCH"
+	EzConsts_sCmdArc,	"ARC"
+	EzConsts_SCmdEllipse,	"ELLIPSE"
+	EzConsts_SCmdSpline,	"SPLINE"
+	EzConsts_SCmdRectangle,	"RECTANGLE"
+	EzConsts_SCmdSymbol,	"SYMBOL"
+	EzConsts_SCmdTextSymbol,	"TEXTSYMBOL"
+	EzConsts_SCmdText,	"TEXT"
+	EzConsts_SCmdHorzGLine,	"HGLINE"
+	EzConsts_sColumnInfo,	"Column {"
+	EzConsts_sTableColumnInfo,	"%f,%s,$%.8x,%d,%d,%f"
+	EzConsts_sColumnTitleInfo,	"\"%s\",%d,$%.8x,%s,%f"
+	EzConsts_sRowDataInfo,	"\"%s\""
+	EzConsts_sTitleCaption,	"Title "
+	EzConsts_sGroupCaption,	"Group {"
+	EzConsts_sJustifTextInfo,	"JustifText (%f,%f),(%f,%f),\"%s\",%f,%f,$%.8x,%d,%d"
+	EzConsts_sFittedTextInfo,	"FittedText (%f,%f),\"%s\",%f,%f,%f,$%.8x"
+	EzConsts_sBlockInfo,	"Insert %s,\"%s\",%f,%f,%f,\"%s\""
+	EzConsts_sSplineTextInfo,	"SplineText %s,\"%s\",%s"
+	EzConsts_sDimHorizInfo,	"DimHorizontal (%f,%f),(%f,%f),%f"
+	EzConsts_sDimVertInfo,	"DimVertical (%f,%f),(%f,%f),%f"
+	EzConsts_sDimParallelInfo,	"DimParallel (%f,%f),(%f,%f),%f"
+	EzConsts_sPreviewInfo,	"Preview %s,%d,%f,%f,%s,%f,%f,%f,%f"
+	EzConsts_sERMapperInfo,	"ERMapper %s,\"%s\",%d"
+	EzConsts_SCmdMove,	"MOVE"
+	EzConsts_sNoneInfo,	"None"
+	EzConsts_sPointInfo,	"Point %s"
+	EzConsts_SPlaceInfo,	"Place %s,\"%s\""
+	EzConsts_sPolylineInfo,	"PLine %s"
+	EzConsts_sPolygonInfo,	"Polygon %s"
+	EzConsts_sRectangleInfo,	"Rectangle %s,%f"
+	EzConsts_sArcInfo,	"Arc %s"
+	EzConsts_sEllipseInfo,	"Ellipse %s,%f"
+	EzConsts_sPicRefInfo,	"PictureRef %s,\"%s\",%d,%f"
+	EzConsts_sBmpRefInfo,	"BitmapRef %s,%d,%f"
+	EzConsts_sBandsBmpInfo,	"BandsBitmap %s,\"%s\",%d"
+	EzConsts_sCustomPicInfo,	"CustPict %s"
+	EzConsts_sSplineInfo,	"Spline %s"
+	EzConsts_sTTTextInfo,	"TrueTypeText (%f,%f),\"%s\",%d,%f,%f"
+	EzConsts_sATTTextInfo,	"TrueTypeText (%f,%f),\"%s\",%d,%f,%f"
+	EzConsts_sTableInfo,	"Table %s,%d,%d,%s,%s,%s,%d,$%.8x,%f,%f,$%.8x"
+	EzConsts_SFilterEnabled,	"A filter is active"
+	EzConsts_SBandedImagesFilter,	"Windows Bitmaps (*.BMP)|*.BMP|ESRI Band Interleaved by Line (*.BIL)|*.BIL|TIFF files (*.TIF)|*.TIF"
+	EzConsts_SBitmapFilter,	"Windows Bitmap (*.BMP)|*.BMP"
+	EzConsts_SJPGFilter,	"Jpeg (*.JPG) |*.JPG"
+	EzConsts_SMetafileFilter,	"Windows Metafile (*.WMF)|*.WMF|Windows Enhanced Metafile (*.EMF)|*.EMF"
+	EzConsts_SICOFilter,	"Windows ICON files (*.ICO)|*.ICO"
+	EzConsts_SGIFFilter,	"Compuserve Gif (*.GIF)|*.GIF"
+	EzConsts_SEDBFilter,	"EzGIS blocks (*.EDB)|*.EDB"
+	EzConsts_SChangeDirNotAllowed,	"You must select the file on the common subdir only !"
+	EzConsts_sDataInfo,	"Data Info"
+	EzConsts_sFieldValue,	"%s : %s "
+	EzConsts_sPenInfo,	"Pen %d,$%.8x,%f"
+	EzConsts_sBrushInfo,	"Brush %d,$%.8x,$%.8x"
+	EzConsts_sSymbolInfo,	"Symbol %d,%f,%f"
+	EzConsts_sTTFontInfo,	"Font \"%s\",%s,%s,%s,%s,$%.8x,%d"
+	EzConsts_sVectorFontInfo,	"VectorFont \"%s\""
+	EzConsts_SThereAreNoLayers,	"You need at least one layer !"
+	EzConsts_Sscrcanceled,	"Script canceled"
+	EzConsts_SEmptyTable,	"<Empty Table>"
+	EzConsts_SLoadingCAD,	"Loading Layer %s"
+	EzConsts_SSavingCAD,	"Saving Layer %s"
+	EzConsts_SWrongCADFile,	"This file is not a EzCAD file !"
+	EzConsts_STextInfo,	"Height: %.2n Points; %.2n units"
+	EzConsts_SErrWrongField,	"Wrong field definition"
+	EzConsts_SCircleInfo,	"Radius = %.*n; Area = %.*n; Perimeter = %.*n"
+	EzConsts_SBufferRefInfo,	"Radius = %.*n"
+	EzConsts_SOneSelection,	"Selected on Layer %s, Recno %d"
+	EzConsts_SMultiSelection,	"%d selected entities"
+	EzConsts_SNoNodeClicked,	"Node was not clicked"
+	EzConsts_SNetSameNodes,	"Cannot link to same node"
+	EzConsts_SLayerIndexOutOfRange,	"Layer index out of range"
+	EzConsts_sDrawBoxCollectionNotSame,	"All member of collection must have same TEzBaseGIS"
+	EzConsts_SVertexToReshape,	"Select vertex to modify"
+	EzConsts_SVertexToDelete,	"Select node to delete"
+	EzConsts_SClickInterestPoint,	"Please click the point"
+	EzConsts_SEntityToDrag,	"Select an entity to drag & drop"
+	EzConsts_SDragFromCtrlPt,	"Drag from control point"
+	EzConsts_SDefineCircleCenter,	"Click the center of the circle selection"
+	EzConsts_SDefineCircle,	"Move mouse to define the circle selection"
+	EzConsts_SAreaAndPerimeter,	"Area = %.*n %s\r\nLength = %.*n %s\r\nAngle = %.2n\r\nPoints = %.2n"
+	EzConsts_SZoomUnZoom,	"Click a point to zoomin/zoomout"
+	EzConsts_SScrolling,	"Press Pick button and move the mouse to pan"
+	EzConsts_SInsertXGuideLine,	"X Coord for guideline :"
+	EzConsts_SInsertYGuideLine,	"Y Coord for guideline :"
+	EzConsts_SSelectGline,	"Select the guideline to move"
+	EzConsts_SMoveGLinetoNew,	"Move the guideline to its new position"
+	EzConsts_SUnrecognizedCommand,	"Unknown Command !"
+	EzConsts_SShpFileNotFound,	"File %s was not found !\r\nCannot import the file"
+	EzConsts_SDXFSOLIDBad,	"Error reading SOLID entity"
+	EzConsts_SDXFCIRCLEBad,	"Error reading CIRCLE entity"
+	EzConsts_SDXFARCBad,	"Error reading ARC entity"
+	EzConsts_SDXFATTDEFBad,	"Error reading ATTDEF entity"
+	EzConsts_SDXFATTRIBBad,	"Error reading ATTRIB entity"
+	EzConsts_SDXFThereIsNoHeader,	"No Header or invalid Header section in DXF file"
+	EzConsts_SDXFThereIsNoLayers,	"No Layers or Tables section invalid in DXF file"
+	EzConsts_SDXFThereIsNoBlocks,	"No Blocks or Blocks section invalid DXF file"
+	EzConsts_SDXFThereIsNoEntities,	"There are no Entities or Entities section is invalid in DXF file"
+	EzConsts_SDXFThereIsNoMaxMin,	"File does not contain Max/Min extents. Calculating..."
+	EzConsts_SDXFErrorInLine,	"An error ocurred in line or near to "
+	EzConsts_SDXFDupLayer,	"Tried to create a layer with duplicated name"
+	EzConsts_SDXFCannotSave,	"Maybe destination path is on CDrom or\r\nnot enough disk space,Can't save. Warning!"
+	EzConsts_STextIsNotVisible,	"Text is invisible !\r\nThe inserted text will be invisible"
+	EzConsts_SEntityToReshape,	"Select an entity to modify"
+	EzConsts_SReshapeToPoint,	"Move to point (Hold down CTRL key to change rotate origin):"
+	EzConsts_SWrongEzGIS,	"GIS property unassigned"
+	EzConsts_SDXFReading,	"Reading AutoCAD file..."
+	EzConsts_SDXFPolylineBad,	"Polyline contained more than %d vertices %d"
+	EzConsts_SDXFInvalidFloat,	"Invalid Floating point conversion"
+	EzConsts_SDXFInvalidInteger,	"Invalid Integer conversion"
+	EzConsts_SDXFFileReadingNow,	" DXF File reading now.."
+	EzConsts_SDXFUndefBlock,	"Undefined Block reference error"
+	EzConsts_SDXFWrongBlockInfo,	"This drawing have wrong block information,\r\nbut continue reading with ignoreing ..."
+	EzConsts_SDXFLWPolylineBad,	"LwPolyline contained more than %d  vertices %d"
+	EzConsts_SDXFPOINTBad,	"Error reading POINT entity "
+	EzConsts_SDXFINSERTBad,	"Error reading INSERT entity"
+	EzConsts_SDXFTEXTBad,	"Error reading TEXT entity"
+	EzConsts_SDXFLINEBad,	"Error reading LINE entity"
+	EzConsts_SDXFPOLYLINEBad2,	"Error reading POLYLINE entity"
+	EzConsts_SDXFLWPOLYLINEBad2,	"Error reading LWPOLYLINE entity"
+	EzConsts_SDXF3DFACEBad,	"Error reading 3DFACE entity"
+	EzConsts_SFilletNotContiguous,	"No contiguous segments picked"
+	EzConsts_STrimCuttingEdge,	"Cannot trim the cutting edge"
+	EzConsts_SFirstExtensionLine,	"First extension line origin"
+	EzConsts_SSecondExtensionLine,	"Second extension line origin"
+	EzConsts_SDefineTextLocation,	"Text Location"
+	EzConsts_SBlobErrNotEditing,	"Dataset not in edit or insert mode"
+	EzConsts_SCannotOpenDesignMode,	"Cannot open on design mode"
+	EzConsts_SLayerNotAssigned,	"Layer property is not assigned or is not visible"
+	EzConsts_SLayerEmpty,	"Layer name is not defined"
+	EzConsts_SExpressionEmpty,	"Expression or field name cannot be empty"
+	EzConsts_SWrongFieldnameCol,	"Wrong field name column %d"
+	EzConsts_SGetRecordInvalid,	"Error reading record"
+	EzConsts_SInsertNotAllowed,	"Insertion is not allowed"
+	EzConsts_SWrongReadOnly,	"Cannot change readonly property when dataset is active"
+	EzConsts_SLatLonMismatch,	"Destination file is in different coordinate system\r\nAction canceled"
+	EzConsts_SWrongProjector,	"Projector property not defined"
+	EzConsts_SVectorialSecondPt,	"Define area. Other corner:"
+	EzConsts_SBreakSelectFirstPoint,	"Select first point of entity"
+	EzConsts_SBreakSelectSecndPoint,	"Select second point"
+	EzConsts_SBreakWrongSelection,	"You must pick on same entity"
+	EzConsts_SBreakWrongEntity,	"Cannot break this entity"
+	EzConsts_SBreakNotClicked,	"No entities found"
+	EzConsts_STrimNoCuttingEdge,	"No cutting edge selected yet"
+	EzConsts_SExtendNoExtendEdge,	"No extend edge selected yet"
+	EzConsts_STrimSelectEnt,	"Select entity to trim"
+	EzConsts_SExtendSelectEnt,	"Select entity to extend"
+	EzConsts_STrimWrongEntity,	"Cannot trim this entity"
+	EzConsts_SExtendWrongEntity,	"Cannot extend this entity"
+	EzConsts_SExtendWrongSegment,	"Cannot extend this segment"
+	EzConsts_STrimOnlyOneCuttingEdge,	"Supported only one cutting edge"
+	EzConsts_SExtendOnlyOneCuttingEdge,	"Supported only one extending edge"
+	EzConsts_SFilletWrongEntity,	"Cannot fillet this entity"
+	EzConsts_SNotEnoughData,	"Need more points to build entity !"
+	EzConsts_SStartSingleSelect,	"Click an entity to select. SHIFT for single select"
+	EzConsts_SDefineBasePoint,	"Base point :"
+	EzConsts_SDefineEndPoint,	"Last point :"
+	EzConsts_SReferenceFirstPoint,	"Reference length, first point :"
+	EzConsts_SReferenceSecondPoint,	"Referenge length, second point :"
+	EzConsts_STransformLastPoint,	"Last point :"
+	EzConsts_SRotTransformLastPoint,	"Last point or angle :"
+	EzConsts_SDefineSecondSelection,	"Other corner of selection"
+	EzConsts_SWarnNoSelection,	"No entities selected !"
+	EzConsts_SVertexSingleEntityError,	"Only one entity must be selected for the operation !"
+	EzConsts_SInsertVertexPoint,	"Click in the new point for the selected vertex"
+	EzConsts_SVertexEntityBadError,	"You can add vertexes to Polylines and Polygons only !"
+	EzConsts_SChangeGridOrigin,	"Please click the new Grid Origin :"
+	EzConsts_SShowHintCaption,	"Move mouse over an entity, then click for show hint. Click again for stacked entities. <Esc> finish"
+	EzConsts_SVectorialFirstPt,	"Define area. First corner:"
+	EzConsts_SDefineFromPoint,	"From point :"
+	EzConsts_SDefineToPoint,	"To point :"
+	EzConsts_SFirstPoint,	"First point :"
+	EzConsts_SSecondPoint,	"Second point :"
+	EzConsts_SThirdPoint,	"Third point :"
+	EzConsts_SFourthPoint,	"Fourth point :"
+	EzConsts_SFifthPoint,	"Fifth point :"
+	EzConsts_SNextPoint,	"Next point :"
+	EzConsts_SClipPolygon,	"Clipping entity, "
+	EzConsts_SCircleCenter,	"Center :"
+	EzConsts_SCircleRadius,	"Radius :"
+	EzConsts_SArcSweepAngle,	"Define sweep angle:"
+	EzConsts_SCircleEndPoint,	"Identify First Arc End Point"
+	EzConsts_SRealTimeZoom,	"Press Pick button and drag vertically to zoom"
+	EzConsts_SDefineFirstZoomPoint,	"First corner"
+	EzConsts_SDefineSecondZoomPoint,	"other corner"
+	EzConsts_SDBFNotFound,	"Base datafile of this layer cannot be found.\r\nThe layer is kept without an attached DBF file"
+	EzConsts_SUpdateExtension,	"Updating layer %s"
+	EzConsts_SThereAreNoDeleted,	"There are no deleted entities. Do you wish to\r\ncontinue to do an evaluation of this file ?"
+	EzConsts_SPackingLayer,	"Packing layer..."
+	EzConsts_SWrongRecordsRecover,	"Cannot recover %d damaged records"
+	EzConsts_SExprFail,	"Expression is not of boolean type !"
+	EzConsts_SCannotDeleteLayer,	"Layer cannot be deleted.\r\nProbably is being used in a network"
+	EzConsts_SInternalListError,	"Internal list error"
+	EzConsts_SLayerFilesNotFound,	"Cannot found the formerly files of this layer %s !\r\nThe layer is deleted from the map"
+	EzConsts_SGISUnassigned,	"Unassigned"
+	EzConsts_SLayerNotFound,	"Layer name not found"
+	EzConsts_SFlatScrollBarNotAllowed,	"Flat ScrollBar cannot be used \r\nthe version of COMCTL32.dll in this system is lower than 4.71"
+	EzConsts_SEntityOutOfBound,	"Entity number out of range !"
+	EzConsts_SSymbolOutOfBound,	"Symbol number out of range !"
+	EzConsts_SWrongImageFormat,	"This file format is not supported"
+	EzConsts_SVectorOutOfBound,	"Vector out of bound"
+	EzConsts_SSymbolTextCaption,	"Symbol text"
+	EzConsts_SSymbolText,	"Text :"
+	EzConsts_SMsgConfirm,	"Confirm"
+	EzConsts_SMsgError,	"Error"
+	EzConsts_SMsgWarning,	"Warning"
+	EzConsts_SWrongBuffer,	"Cannot create a buffer from this polyline"
+	EzConsts_SCannotCreateBuffer,	"Cannot create buffer for this kind of entity"
+	EzConsts_SCannotContainParams,	"Field %s of datatabase cannot have parameters !"
+	EzConsts_SWrongLayername,	"Wrong layer name %s, or layer is not visible or editable"
+	EzConsts_SWrongParameters,	"Parameter(s) invalid for function %s"
+	EzConsts_SExprParserError,	" %s at line : %d, Column: %d, token: %s"
+	EzConsts_SBadExtension,	"Corner coords are wrong !\r\nFirst corner must be at lower left"
+	EzConsts_SRestNotExclusive,	"Cannot open file in exclusive mode !"
+	EzConsts_SDuplicateLayer,	"Layer name already exists or\r\nthere is a file with same name on disk."
+	EzConsts_SRecnoInvalid,	"Recno out of range"
+	EzConsts_SRebuildTree,	"Rebuilding r-tree %s..."
+	MZLib_SUnknownCompression,	"unknown compression method"
+	MZLib_SInvalidWindowSize,	"invalid window size"
+	MZLib_SIncorrectHeaderCheck,	"incorrect header check"
+	MZLib_SNeedDictionary,	"need dictionary"
+	JPG_sJPEGError,	"JPEG error #%d"
+	EzConsts_SCommand,	"Command: "
+	EzConsts_SSymbolCaption,	"SYMBOL %d"
+	EzConsts_SLinetypeCaption,	"LINETYPE %d"
+	EzConsts_SScaleFmt,	"Scale = %.3f %%"
+	EzConsts_STranslateFmt,	"DX = %.3f, DY = %.3f, < %.3f"
+	EzConsts_SRotateFmt,	"< %.3f"
+	EzConsts_SNewEntityInfo,	"< %.*n, DX = %.*n, DY = %.*n, Area = %.*n, Dist = %.*n"
+	EzConsts_SIsInvalidFloatValue,	"Invalid floating point value %s"
+	EzConsts_SIsInvalidIntegerValue,	"Invalid integer value %s"
+	EzConsts_SIsInvalidBoolValue,	"Invalid boolean value %s"
+	EzConsts_STextRefPtFirst,	"Please define location of text"
+	MZLib_SDataError,	"data error"
+	MZLib_SInsufficientMemory,	"insufficient memory"
+	MZLib_SBufferError,	"buffer error"
+	MZLib_SIncompatibleVersion,	"incompatible version"
+	MZLib_SInvalidDistanceCode,	"invalid distance code"
+	MZLib_SInvalidLengthCode,	"invalid literal/length code"
+	MZLib_SOversubscribedDBLTree,	"oversubscribed dynamic bit lengths tree"
+	MZLib_SIncompleteDBLTree,	"incomplete dynamic bit lengths tree"
+	MZLib_SOversubscribedLLTree,	"oversubscribed literal/length tree"
+	MZLib_SIncompleteLLTree,	"incomplete literal/length tree"
+	MZLib_SEmptyDistanceTree,	"empty distance tree with lengths"
+	MZLib_SInvalidBlockType,	"invalid block type"
+	MZLib_SInvalidStoredBlockLengths,	"invalid stored block lengths"
+	MZLib_STooManyLDSymbols,	"too many length or distance symbols"
+	MZLib_SInvalidBitLengthRepeat,	"invalid bit length repeat"
+	MZLib_SIncorrectDataCheck,	"incorrect data check"
+	GraphicStrings_gesLoadingData,	"Loading data..."
+	GraphicStrings_gesUpsampling,	"Upsampling..."
+	GraphicStrings_gesTransfering,	"Transfering..."
+	GraphicStrings_gesLZ77Error,	"LZ77 decompression error."
+	GraphicStrings_gesJPEGEOI,	"JPEG decompression error. Unexpected end of input."
+	GraphicStrings_gesJPEGStripSize,	"Improper JPEG strip/tile size."
+	GraphicStrings_gesJPEGComponentCount,	"Improper JPEG component count."
+	GraphicStrings_gesJPEGDataPrecision,	"Improper JPEG data precision."
+	GraphicStrings_gesJPEGSamplingFactors,	"Improper JPEG sampling factors."
+	GraphicStrings_gesJPEGBogusTableField,	"Bogus JPEG tables field."
+	GraphicStrings_gesJPEGFractionalLine,	"Fractional JPEG scanline unsupported."
+	GraphicStrings_gesWarning,	"Warning"
+	MZLib_SNeedDict,	"need dictionary"
+	MZLib_SStreamEnd,	"stream end"
+	MZLib_SFileError,	"file error"
+	MZLib_SStreamError,	"stream error"
+	GraphicStrings_gesInvalidColorFormat,	"Invalid color format in %s file."
+	GraphicStrings_gesStreamReadError,	"Stream read error in %s file."
+	GraphicStrings_gesUnsupportedFeature,	"Cannot load image. %s not supported for %s files."
+	GraphicStrings_gesInvalidCRC,	"Cannot load image. CRC error found in %s file."
+	GraphicStrings_gesCompression,	"Cannot load image. Compression error found in %s file."
+	GraphicStrings_gesExtraCompressedData,	"Cannot load image. Extra compressed data found in %s file."
+	GraphicStrings_gesInvalidPalette,	"Cannot load image. Palette in %s file is invalid."
+	GraphicStrings_gesUnknownCriticalChunk,	"Cannot load PNG image. Unexpected but critical chunk detected."
+	GraphicStrings_gesCompressionScheme,	"The compression scheme is"
+	GraphicStrings_gesIndexedNotSupported,	"Conversion between indexed and non-indexed pixel formats is not supported."
+	GraphicStrings_gesConversionUnsupported,	"Color conversion failed. Could not find a proper method."
+	GraphicStrings_gesInvalidSampleDepth,	"Color depth is invalid. Bits per sample must be 1, 2, 4, 8 or 16."
+	GraphicStrings_gesInvalidPixelDepth,	"Sample count per pixel does not correspond to the given color scheme."
+	GraphicStrings_gesInvalidSubSampling,	"Subsampling value is invalid. Allowed are 1, 2 and 4."
+	GraphicStrings_gesVerticalSubSamplingError,	"Vertical subsampling value must be <= horizontal subsampling value."
+	GraphicStrings_gesPreparing,	"Preparing..."
+	GraphicStrings_gesZSoft,	"ZSoft Paintbrush images"
+	GraphicStrings_gesZSoftWord,	"Word 5.x screen capture images"
+	GraphicStrings_gesAliasWaveFront,	"Alias/Wavefront images"
+	GraphicStrings_gesSGITrueColorAlpha,	"SGI true color images with alpha"
+	GraphicStrings_gesSGIMono,	"SGI black/white images"
+	GraphicStrings_gesPhotoshop,	"Photoshop images"
+	GraphicStrings_gesPortable,	"Portable map images"
+	GraphicStrings_gesPortablePixel,	"Portable pixel map images"
+	GraphicStrings_gesPortableGray,	"Portable gray map images"
+	GraphicStrings_gesPortableMono,	"Portable bitmap images"
+	GraphicStrings_gesAutoDesk,	"Autodesk images"
+	GraphicStrings_gesKodakPhotoCD,	"Kodak Photo-CD images"
+	GraphicStrings_gesHalo,	"Dr. Halo images"
+	GraphicStrings_gesPaintShopPro,	"Paintshop Pro images"
+	GraphicStrings_gesPortableNetworkGraphic,	"Portable network graphic images"
+	GraphicStrings_gesInvalidImage,	"Cannot load image. Invalid or unexpected %s image format."
+	GraphicStrings_gesDIBs,	"Device independant Windows bitmaps"
+	GraphicStrings_gesEPS,	"Encapsulated Postscript images"
+	GraphicStrings_gesIcons,	"Windows icons"
+	GraphicStrings_gesMetaFiles,	"Windows metafiles"
+	GraphicStrings_gesEnhancedMetaFiles,	"Windows enhanced meta files"
+	GraphicStrings_gesJPGImages,	"JPG images"
+	GraphicStrings_gesJPEGImages,	"JPEG images"
+	GraphicStrings_gesJPEImages,	"JPE images"
+	GraphicStrings_gesJFIFImages,	"JFIF images"
+	GraphicStrings_gesTruevision,	"Truevision images"
+	GraphicStrings_gesTIFF,	"Tagged image file format images"
+	GraphicStrings_gesMacTIFF,	"Macintosh TIFF images"
+	GraphicStrings_gesPCTIF,	"PC TIF images"
+	GraphicStrings_gesGFIFax,	"GFI fax images"
+	GraphicStrings_gesSGI,	"SGI images"
+	GraphicStrings_gesSGITrueColor,	"SGI true color images"
+	GIFImage_sEmptyColorMap,	"Color table is empty"
+	GIFImage_sEmptyImage,	"Image is empty"
+	GIFImage_sInvalidReduction,	"Invalid reduction method"
+	GIFImage_sGIFImageFile,	"GIF Image"
+	GIFImage_sProgressLoading,	"Loading..."
+	GIFImage_sProgressSaving,	"Saving..."
+	GIFImage_sProgressConverting,	"Converting..."
+	GIFImage_sProgressRendering,	"Rendering..."
+	GIFImage_sProgressCopying,	"Copying..."
+	GIFImage_sProgressOptimizing,	"Optimizing..."
+	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
+	JConsts_sJPEGError,	"JPEG error #%d"
+	JConsts_sJPEGImageFile,	"JPEG Image File"
+	GraphicStrings_gesRegistration,	"Attempt to register %s twice."
+	GraphicStrings_gesBitmaps,	"Windows bitmaps"
+	GraphicStrings_gesRLEBitmaps,	"Run length encoded Windows bitmaps"
+	GIFImage_sBadExtensionInstance,	"Internal error: Extension Instance does not match Extension Label"
+	GIFImage_sBadBlockSize,	"Unsupported Application Extension block size"
+	GIFImage_sBadBlock,	"Unknown GIF block type"
+	GIFImage_sUnsupportedClass,	"Object type not supported for operation"
+	GIFImage_sInvalidData,	"Invalid GIF data"
+	GIFImage_sBadHeight,	"Image height too small for contained frames"
+	GIFImage_sBadWidth,	"Image width too small for contained frames"
+	GIFImage_sFailedPaste,	"Failed to store GIF on clipboard"
+	GIFImage_sScreenSizeExceeded,	"Image exceeds Logical Screen size"
+	GIFImage_sNoColorTable,	"No global or local color table defined"
+	GIFImage_sBadPixelCoordinates,	"Invalid pixel coordinates"
+	GIFImage_sInvalidPixelFormat,	"Unsupported PixelFormat"
+	GIFImage_sBadDimension,	"Invalid image dimensions"
+	GIFImage_sNoDIB,	"Image has no DIB"
+	GIFImage_sInvalidStream,	"Invalid stream operation"
+	GIFImage_sInvalidColor,	"Color not in color table"
+	DBConsts_SInvalidFormatType,	"Invalid format type for BCD"
+	DBConsts_SCouldNotParseTimeStamp,	"Could not parse SQL TimeStamp string"
+	DBConsts_SInvalidSqlTimeStamp,	"Invalid SQL date/time values"
+	GIFImage_sOutOfData,	"Premature end of data"
+	GIFImage_sTooManyColors,	"Color table overflow"
+	GIFImage_sBadColorIndex,	"Invalid color index"
+	GIFImage_sBadVersion,	"Unsupported GIF version"
+	GIFImage_sBadSignature,	"Invalid GIF signature"
+	GIFImage_sScreenBadColorSize,	"Invalid number of colors specified in Screen Descriptor"
+	GIFImage_sImageBadColorSize,	"Invalid number of colors specified in Image Descriptor"
+	GIFImage_sUnknownExtension,	"Unknown extension type"
+	GIFImage_sBadExtensionLabel,	"Invalid extension introducer"
+	GIFImage_sOutOfMemDIB,	"Failed to allocate memory for GIF DIB"
+	GIFImage_sDecodeTooFewBits,	"Decoder bit buffer under-run"
+	GIFImage_sDecodeCircular,	"Circular decoder table entry"
+	GIFImage_sBadTrailer,	"Invalid Image trailer"
+	DBConsts_SExprNoAggFilter,	"Aggregate expressions not allowed in filters"
+	DBConsts_SExprEmptyInList,	"IN predicate list may not be empty"
+	DBConsts_SInvalidKeywordUse,	"Invalid use of keyword"
+	DBConsts_STextFalse,	"False"
+	DBConsts_STextTrue,	"True"
 	DBConsts_SParameterNotFound,	"Parameter '%s' not found"
 	DBConsts_SInvalidVersion,	"Unable to load bind parameters"
 	DBConsts_SBadFieldType,	"Field '%s' is of an unsupported type"
@@ -2263,11 +2268,11 @@ BEGIN
 	DBConsts_SRecordNotFound,	"Record not found"
 	DBConsts_SBcdOverflow,	"BCD overflow"
 	DBConsts_SInvalidBcdValue,	"%s is not a valid BCD value"
-	DBConsts_SInvalidFormatType,	"Invalid format type for BCD"
-	DBConsts_SCouldNotParseTimeStamp,	"Could not parse SQL TimeStamp string"
-	DBConsts_SInvalidSqlTimeStamp,	"Invalid SQL date/time values"
-	VDBConsts_SFirstRecord,	"First record"
-	VDBConsts_SPriorRecord,	"Prior record"
+	DBConsts_SExprStringError,	"Unterminated string constant"
+	DBConsts_SExprInvalidChar,	"Invalid filter expression character: '%s'"
+	DBConsts_SExprNoLParen,	"'(' expected but %s found"
+	DBConsts_SExprNoRParen,	"')' expected but %s found"
+	DBConsts_SExprNoRParenOrComma,	"')' or ',' expected but %s found"
 	DBConsts_SExprExpected,	"Expression expected but %s found"
 	DBConsts_SExprBadField,	"Field '%s' cannot be used in a filter expression"
 	DBConsts_SExprBadNullTest,	"NULL only allowed with '=' and '<>'"
@@ -2279,11 +2284,11 @@ BEGIN
 	DBConsts_SExprNoArith,	"Arithmetic in filter expressions not supported"
 	DBConsts_SExprNotAgg,	"Expression is not an aggregate expression"
 	DBConsts_SExprBadConst,	"Constant is not correct type %s"
-	DBConsts_SExprNoAggFilter,	"Aggregate expressions not allowed in filters"
-	DBConsts_SExprEmptyInList,	"IN predicate list may not be empty"
-	DBConsts_SInvalidKeywordUse,	"Invalid use of keyword"
-	DBConsts_STextFalse,	"False"
-	DBConsts_STextTrue,	"True"
+	DBConsts_SFieldOutOfRange,	"Value of field '%s' is out of range"
+	DBConsts_SFieldRequired,	"Field '%s' must have a value"
+	DBConsts_SDataSetMissing,	"Field '%s' has no dataset"
+	DBConsts_SInvalidCalcType,	"Field '%s' cannot be a calculated or lookup field"
+	DBConsts_SFieldReadOnly,	"Field '%s' cannot be modified"
 	DBConsts_SCircularDataLink,	"Circular datalinks are not allowed"
 	DBConsts_SLookupInfoError,	"Lookup information for field '%s' is incomplete"
 	DBConsts_SDataSourceChange,	"DataSource cannot be changed"
@@ -2295,11 +2300,11 @@ BEGIN
 	DBConsts_SNestedDataSetClass,	"Nested dataset must inherit from %s"
 	DBConsts_SExprTermination,	"Filter expression incorrectly terminated"
 	DBConsts_SExprNameError,	"Unterminated field name"
-	DBConsts_SExprStringError,	"Unterminated string constant"
-	DBConsts_SExprInvalidChar,	"Invalid filter expression character: '%s'"
-	DBConsts_SExprNoLParen,	"'(' expected but %s found"
-	DBConsts_SExprNoRParen,	"')' expected but %s found"
-	DBConsts_SExprNoRParenOrComma,	"')' or ',' expected but %s found"
+	DBConsts_SInvalidFieldSize,	"Invalid field size"
+	DBConsts_SInvalidFieldKind,	"Invalid FieldKind"
+	DBConsts_SUnknownFieldType,	"Field '%s' is of an unknown type"
+	DBConsts_SFieldNameMissing,	"Field name missing"
+	DBConsts_SDuplicateFieldName,	"Duplicate field name '%s'"
 	DBConsts_SFieldNotFound,	"Field '%s' not found"
 	DBConsts_SFieldAccessError,	"Cannot access field '%s' as type %s"
 	DBConsts_SFieldValueError,	"Invalid value for field '%s'"
@@ -2311,11 +2316,6 @@ BEGIN
 	DBConsts_SFieldTypeMismatch,	"Type mismatch for field '%s', expecting: %s actual: %s"
 	DBConsts_SFieldSizeMismatch,	"Size mismatch for field '%s', expecting: %d actual: %d"
 	DBConsts_SInvalidVarByteArray,	"Invalid variant type or size for field '%s'"
-	DBConsts_SFieldOutOfRange,	"Value of field '%s' is out of range"
-	DBConsts_SFieldRequired,	"Field '%s' must have a value"
-	DBConsts_SDataSetMissing,	"Field '%s' has no dataset"
-	DBConsts_SInvalidCalcType,	"Field '%s' cannot be a calculated or lookup field"
-	DBConsts_SFieldReadOnly,	"Field '%s' cannot be modified"
 	ComStrs_sRichEditSaveFail,	"Failed to Save Stream"
 	ComStrs_sUDAssociated,	"%s is already associated with %s"
 	ComStrs_sPageIndexError,	"%d is an invalid PageIndex value.  PageIndex must be between 0 and %d"
@@ -2327,11 +2327,11 @@ BEGIN
 	ComStrs_sFailSetCalMaxSelRange,	"Failed to set maximum selection range"
 	ComStrs_sFailSetCalMinMaxRange,	"Failed to set calendar min/max range"
 	ComStrs_sFailsetCalSelRange,	"Failed to set calendar selected range"
-	DBConsts_SInvalidFieldSize,	"Invalid field size"
-	DBConsts_SInvalidFieldKind,	"Invalid FieldKind"
-	DBConsts_SUnknownFieldType,	"Field '%s' is of an unknown type"
-	DBConsts_SFieldNameMissing,	"Field name missing"
-	DBConsts_SDuplicateFieldName,	"Duplicate field name '%s'"
+	clipper_rsDoMaxima,	"DoMaxima error"
+	clipper_rsUpdateEdgeIntoAEL,	"UpdateEdgeIntoAEL error"
+	clipper_rsInvalidInt,	"Coordinate exceeds range bounds"
+	clipper_rsOpenPath,	"AddPath: Open paths must be subject."
+	clipper_rsOpenPath3,	"Error: TPolyTree struct is needed for open path clipping."
 	ComConst_SOleError,	"OLE error %.8x"
 	ComConst_SNoMethod,	"Method '%s' not supported by automation object"
 	ComConst_SVarNotObject,	"Variant does not reference an automation object"
@@ -2770,10 +2770,6 @@ END
 /* c:\Projects\Components\jcl\lib\d11\JclUnicode.res */
 /* c:\program files\codegear\rad studio\5.0\lib\Buttons.res */
 /* c:\program files\codegear\rad studio\5.0\lib\ExtDlgs.res */
-/* c:\program files\codegear\rad studio\5.0\lib\DBPWDlg.dfm */
-/* c:\program files\codegear\rad studio\5.0\lib\DBLogDlg.dfm */
-/* c:\program files\codegear\rad studio\5.0\lib\DBCtrls.res */
-/* c:\program files\codegear\rad studio\5.0\lib\DBGrids.res */
 /* C:\Projects\kis\Components\EzGIS\Res\ezexpryacc.res */
 /* C:\Projects\kis\Components\EzGIS\Res\fProj.DFM */
 /* C:\Projects\kis\Components\EzGIS\Res\fTextEditor.dfm */
@@ -2782,55 +2778,59 @@ END
 /* C:\Projects\kis\Components\EzGIS\Res\fPictureDef.DFM */
 /* C:\Projects\kis\Components\EzGIS\Res\Ezscryacc.res */
 /* C:\Projects\kis\Components\EzGIS\Res\..\RES\EzGISRES.dcr */
+/* c:\program files\codegear\rad studio\5.0\lib\DBPWDlg.dfm */
+/* c:\program files\codegear\rad studio\5.0\lib\DBLogDlg.dfm */
+/* c:\program files\codegear\rad studio\5.0\lib\DBCtrls.res */
+/* c:\program files\codegear\rad studio\5.0\lib\DBGrids.res */
+/* Source\uMStModuleLotData.dfm */
+/* Source\uMStModuleOrders.dfm */
+/* Source\uMStModuleFTPConnection.dfm */
+/* Source\uMStModuleGlobalParameters.dfm */
+/* Source\uMStModuleStats.dfm */
+/* Source\uMStDialogLogin.DFM */
+/* Source\uMStFormLayerBrowser.dfm */
+/* Source\uMStDialogImportLayer.dfm */
+/* Source\uMStDialogMissingLayers.dfm */
+/* Source\uMStDialogDxfImport.dfm */
 /* c:\Projects\Components\jvcl\Resources\JvConsts.res */
+/* Source\uMStDialogDxfImportOptions.dfm */
+/* Source\uMStModuleProjectImport.dfm */
+/* Source\uMStDialogAddress.dfm */
+/* Source\uMStDialogNomenclature.dfm */
+/* Source\uMStDialogPoint.DFM */
+/* Source\uMStDialogScale.dfm */
+/* Source\uMStDialogPrint.dfm */
+/* Source\uMStDialogLines.dfm */
+/* Source\uMStFormReportTable.dfm */
 /* c:\program files\codegear\rad studio\5.0\lib\FileCtrl.res */
 /* c:\Projects\Components\jvcl\Resources\JvToolEdit.res */
-/* C:\Projects\Components\Rx\Units\RXDConst.R32 */
-/* C:\Projects\Components\Rx\Units\RXConst.R32 */
-/* C:\Projects\Components\Rx\Units\RXCConst.R32 */
-/* C:\Projects\kis\shared\Source\MyVCLAdd.res */
-/* C:\Projects\kis\Ms3\Source\uMStDialogLogin.DFM */
-/* C:\Projects\kis\Ms3\Source\uMStModuleStats.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStModuleGlobalParameters.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStModuleFTPConnection.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStModuleOrders.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStModuleLotData.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogImportLayer.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogMissingLayers.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogDxfImport.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogDxfImportOptions.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStModuleProjectImport.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStFormLayerBrowser.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogAddress.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogNomenclature.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogPoint.DFM */
-/* C:\Projects\kis\Ms3\Source\uMStDialogScale.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogLines.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogPrint.dfm */
 /* c:\Projects\Components\jvcl\Resources\JvColorCombo.res */
-/* C:\Projects\kis\Ms3\Source\uMStFormCoordTableSettingsEditor.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStFormReportTable.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStModulePrint.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogPointSize.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStFormMapImages.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStFormMeasureResult.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStFormRichTextEditor.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStFormPrintStats.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStFormLoadLotProgress.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStFormOrderList.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogProjectsBrowserFilter.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogBufferZoneWidth.dfm */
+/* Source\uMStFormCoordTableSettingsEditor.dfm */
+/* Source\uMStModulePrint.dfm */
+/* Source\uMStDialogPointSize.dfm */
+/* Source\uMStFormMapImages.dfm */
+/* Source\uMStFormMeasureResult.dfm */
+/* Source\uMStFormRichTextEditor.dfm */
+/* Source\uMStFormPrintStats.dfm */
+/* Source\uMStFormLoadLotProgress.dfm */
+/* Source\uMStFormOrderList.dfm */
+/* Source\uMStDialogProjectsBrowserFilter.dfm */
+/* C:\Projects\kis\shared\Source\MyVCLAdd.res */
+/* Source\uMStDialogBufferZoneWidth.dfm */
 /* C:\Projects\kis\Ms3\Source\uMStFormProjectBrowser.dfm */
 /* C:\Projects\kis\Ms3\Source\MS3CUR.RES */
 /* C:\Projects\kis\Ms3\Source\uMStFormMain.DFM */
-/* C:\Projects\kis\Ms3\Source\uMStFormImportProgress.dfm */
+/* Source\uMStFormImportProgress.dfm */
 /* C:\Projects\kis\Ms3\Source\uMStFormLayers.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStFormSplash.dfm */
+/* Source\uMStFormSplash.dfm */
 /* C:\Projects\kis\Ms3\Source\uMStModuleApp.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStDialogSelectOrg.dfm */
+/* Source\uMStDialogSelectOrg.dfm */
 /* C:\Projects\kis\Ms3\Source\uMStModuleMapMngrIBX.dfm */
-/* C:\Projects\kis\Ms3\Source\uMStFormLotProperties.DFM */
+/* Source\uMStFormLotProperties.DFM */
+/* C:\Projects\Components\Rx\Units\RXCConst.R32 */
+/* C:\Projects\Components\Rx\Units\RXConst.R32 */
+/* C:\Projects\Components\Rx\Units\RXDConst.R32 */
 /* C:\Projects\kis\Ms3\Source\uMStDialogEditProject.dfm */
-/* C:\Projects\kis\Ms3\Source\FindDlg.DFM */
+/* Source\FindDlg.DFM */
 /* C:\Projects\kis\Ms3\Ms3.RES */
 /* C:\Projects\kis\Ms3\Ms3.drf */

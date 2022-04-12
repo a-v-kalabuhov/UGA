@@ -430,10 +430,18 @@ type
     procedure LogTakeBackReport(anOrder: TKisScanOrder; var Scans: TMapScanArray);
     procedure ScanOrdersGridDblClick(Sender: TObject);
     procedure OrderTakeBackGridDblClick(Sender: TObject);
+    /// <summary>
+    /// Показываем визуальный редактор геометрии выдачи сканов.
+    /// В редакторе заполняется нужная геометрия.
+    /// </summary>
     function DefineGiveOutGeometry(aOrder: TKisScanOrder; out aGeometry: TKisMapScanGeometry): Boolean;
     procedure ProcessOrderWithMissedScans(var Order: TKisScanOrder; MissedScans: TStringList);
     function GetNewGiveOutTemplate(Order: TKisScanOrder; Term: Integer): TKisMapScanGiveOut;
     function GiveOutOrderFiles(Order: TKisScanOrder; Template: TKisMapScanGiveOut; Scans: TList; CopyAllFiles: Boolean): Boolean;
+    /// <summary>
+    /// Показываем редактор геометрии, по выбранной пользователем геометрии создаём картинки,
+    /// далее показываем диалог выбора папки и копируем картинки в эту папку.
+    /// </summary>
     function DownloadOrderFiles(Order: TKisScanOrder; Maps: TStrings; AfterDownload: TAfterDownloadFile): Boolean;
     procedure AfterDownloadGiveOutFile(Order: TObject; Nomenclature: string);
     procedure AfterDownloadFileForView(Order: TObject; Nomenclature: string);

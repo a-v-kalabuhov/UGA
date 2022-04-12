@@ -14,16 +14,21 @@ type
     class function FileIsBottomUp(const BitmapFile: String): Boolean;
     class function FileGetInfo(const BitmapFile: String): TBitmapInfo;
 
+    function Clone(): TBitmap;
     procedure CopyFrom(Source: TBitmap; DoDraw: Boolean);
     function GetInfoHeader: TBitmapInfoHeader;
     function IsBottomUp: Boolean;
     procedure ReplaceColor(OldColor, NewColor: TColor);
     procedure SaveToFileEx(const FileName: string; XRes, YRes: Longint);
     procedure SaveToJpeg(const FileName: string);
+    //
+    function Bounds(): TRect;
+    procedure DrawMix(Bitmap: TBitmap; const AlphaPercent: Byte; const X: Integer = 0; const Y: Integer = 0);
   end;
 
   TCanvasExt = class helper for TCanvas
   public
+    procedure AlphaBlend(Source: TCanvas; const SourceRect, TargetRect: TRect; const AlphaPercent: Byte); 
     procedure DrawCrosses(const Height, Width: Integer);
     procedure BeginClipping(const aRect: TRect);
     procedure EndClipping();
@@ -76,6 +81,17 @@ begin
       bError := True;
   if bError then
     raise Exception.Create('Invalid bitmap');
+end;
+
+function TBitmapExt.Bounds: TRect;
+begin
+  Result := Rect(0, 0, Width - 1, Height - 1);
+end;
+
+function TBitmapExt.Clone: TBitmap;
+begin
+  Result := TBitmap.Create;
+  Result.CopyFrom(Self, False);
 end;
 
 procedure TBitmapExt.CopyFrom;
@@ -212,6 +228,16 @@ begin
     Result := nil;
 end;
 
+procedure TBitmapExt.DrawMix(Bitmap: TBitmap; const AlphaPercent: Byte; const X, Y: Integer);
+var
+  R1, R2: TRect;
+begin
+  R1 := Bitmap.Bounds();
+  R2 := R1;
+  OffsetRect(R2, X, Y);
+  Self.Canvas.AlphaBlend(Bitmap.Canvas, R1, R2, AlphaPercent);
+end;
+
 class function TBitmapExt.CreateFromStream(Stream: TStream): TBitmap;
 begin
   Result := TBitmap.Create;
@@ -291,6 +317,38 @@ begin
 end;
 
 { TCanvasExt }
+
+procedure TCanvasExt.AlphaBlend;
+var
+  Bmp: TBitmap;
+  Blend: TBlendFunction;
+  Alpha: Byte;
+  Tw, Th: Integer;
+  Sw, Sh: Integer;
+begin
+  if Assigned(Bmp) then
+  begin
+    FillChar(Blend, SizeOf(Blend), 0);
+    Blend.BlendOp := AC_SRC_OVER;
+    Blend.BlendFlags := 0;
+    Blend.AlphaFormat := 0;
+    // для каждого пикселя свой альфа - картинка в формате 32 бита
+//    Blend.AlphaFormat := AC_SRC_ALPHA;
+    Alpha := Round(255 / 100 * AlphaPercent);
+    Blend.SourceConstantAlpha := Alpha;
+    Tw := TargetRect.Right - TargetRect.Left;
+    Th := TargetRect.Bottom - TargetRect.Top;
+    Sw := SourceRect.Right - SourceRect.Left;
+    Sh := SourceRect.Bottom - SourceRect.Top;
+    if Windows.AlphaBlend(
+        Self.Handle, TargetRect.Left, TargetRect.Top, Tw, Th,
+        Source.Handle, SourceRect.Left, SourceRect.Top, Sw, Sh,
+        Blend)
+    then
+    else
+      RaiseLastOSError;
+  end;
+end;
 
 procedure TCanvasExt.BeginClipping(const aRect: TRect);
 begin

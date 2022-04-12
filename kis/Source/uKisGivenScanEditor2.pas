@@ -51,6 +51,8 @@ type
     Map3: TCheckBox;
     Map2: TCheckBox;
     Map1: TCheckBox;
+    Label1: TLabel;
+    cbAlpha: TComboBox;
     procedure vstMapsCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
       out EditLink: IVTEditLink);
     procedure FormCreate(Sender: TObject);
@@ -458,6 +460,7 @@ var
   J: Integer;
   GMap: TKisMapGeometry;
 begin
+  aGeometry.BackgroundAlpha := cbAlpha.ItemIndex * 10;
   for I := 0 to FMaps.Count - 1 do
   begin
     Map := TMapInfo(FMaps[I]);

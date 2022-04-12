@@ -73,7 +73,9 @@ type
     class function IsGraphicFile(const FileName: String): Boolean;
     class function IsPacked(const FileName: String): Boolean;
     class function FindFile(Folders: IKisFolders; const Nomenclature: string; const MD5: String): string;
-    //
+    /// <summary>
+    /// Создаём картинки и копируем их в указанную папку.
+    /// </summary>
     procedure DownloadFile(Folders: IKisFolders; aGeometry: TKisMapScanGeometry;
       const Nomenclature, TargetDir: string; const Kind: TScanFileName);
     /// <summary>

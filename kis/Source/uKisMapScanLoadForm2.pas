@@ -156,16 +156,16 @@ begin
   begin
     Data := vstMaps.GetNodeData(N);
     if FNewJoinCheck then
-    if FNewChangesCheck then
-    begin
-      Editor := TKisImageViewerFactory.CreateTakeBackFileCompareEditor();
-      B := Editor.Execute(AppModule, Data.FileInfo);
-    end
-    else
-    begin
-      View := TKisImageViewerFactory.CreateImageCompareViewer();
-      B := View.CompareTakeBackFile(Data.FileInfo);
-    end;
+      if FNewChangesCheck then
+      begin
+        Editor := TKisImageViewerFactory.CreateTakeBackFileCompareEditor();
+        B := Editor.Execute(AppModule, Data.FileInfo);
+      end
+      else
+      begin
+        View := TKisImageViewerFactory.CreateImageCompareViewer();
+        B := View.CompareTakeBackFile(Data.FileInfo);
+      end;
     if B then
     begin
       vstMaps.InvalidateNode(N);

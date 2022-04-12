@@ -3,19 +3,20 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
   Top = 174
   BorderStyle = bsSizeable
   Caption = 'KisGivenScanEditor2'
-  ClientHeight = 638
+  ClientHeight = 685
   ClientWidth = 1145
   Position = poMainFormCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
+  ExplicitTop = -63
   ExplicitWidth = 1161
-  ExplicitHeight = 676
+  ExplicitHeight = 723
   PixelsPerInch = 96
   TextHeight = 13
   inherited HintWarnLabel: TLabel
     Left = 16
-    Top = 610
+    Top = 657
     Anchors = [akLeft, akBottom]
     Visible = False
     ExplicitLeft = 16
@@ -23,7 +24,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
   end
   inherited btnOk: TButton
     Left = 981
-    Top = 605
+    Top = 652
     Anchors = [akRight, akBottom]
     Default = True
     TabOrder = 2
@@ -32,7 +33,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
   end
   inherited btnCancel: TButton
     Left = 1062
-    Top = 605
+    Top = 652
     Anchors = [akRight, akBottom]
     Cancel = True
     TabOrder = 3
@@ -43,18 +44,26 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
     Left = 0
     Top = 0
     Width = 243
-    Height = 599
+    Height = 646
     Anchors = [akLeft, akTop, akBottom]
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitHeight = 599
     DesignSize = (
       243
-      599)
+      646)
+    object Label1: TLabel
+      Left = 24
+      Top = 536
+      Width = 104
+      Height = 13
+      Caption = #1055#1088#1086#1079#1088#1072#1095#1085#1086#1089#1090#1100' '#1092#1086#1085#1072':'
+    end
     object vstMaps: TVirtualStringTree
       Left = 0
       Top = 0
       Width = 243
-      Height = 321
+      Height = 368
       Anchors = [akLeft, akTop, akBottom]
       CheckImageKind = ckXP
       Colors.UnfocusedSelectionColor = clGradientInactiveCaption
@@ -73,6 +82,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       OnAddToSelection = vstMapsAddToSelection
       OnCreateEditor = vstMapsCreateEditor
       OnGetText = vstMapsGetText
+      ExplicitHeight = 321
       Columns = <
         item
           Color = clWindow
@@ -90,11 +100,12 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
     object pnlSquares: TPanel
       AlignWithMargins = True
       Left = 0
-      Top = 327
+      Top = 374
       Width = 243
       Height = 146
       Anchors = [akLeft, akRight, akBottom]
       TabOrder = 1
+      ExplicitTop = 327
       object Map25: TCheckBox
         AlignWithMargins = True
         Left = 192
@@ -347,12 +358,35 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
         OnClick = Map1Click
       end
     end
+    object cbAlpha: TComboBox
+      Left = 24
+      Top = 552
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      DropDownCount = 10
+      ItemHeight = 13
+      ItemIndex = 0
+      TabOrder = 2
+      Text = '0%'
+      Items.Strings = (
+        '0%'
+        '10%'
+        '20%'
+        '30%'
+        '40%'
+        '50%'
+        '60%'
+        '70%'
+        '80%'
+        '90%')
+    end
   end
   object EzDrawBox1: TEzDrawBox [4]
     Left = 249
     Top = 32
     Width = 888
-    Height = 567
+    Height = 614
     UseThread = False
     Color = 8323199
     TabOrder = 1
@@ -374,9 +408,10 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
     FlatScrollBar = True
     OnMouseDown2D = EzDrawBox1MouseDown2D
     OnBeforeSelect = EzDrawBox1BeforeSelect
+    ExplicitHeight = 567
     object EzCmdLine1: TEzCmdLine
       Left = 0
-      Top = 524
+      Top = 571
       Width = 869
       Height = 24
       DrawBoxList = <
@@ -395,7 +430,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       TabOrder = 0
       TabStop = False
       Visible = False
-      ExplicitTop = 490
+      ExplicitTop = 524
     end
   end
   object Panel2: TPanel [5]

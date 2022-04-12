@@ -31,7 +31,6 @@ uses
   uMStDialogLogin in 'Source\uMStDialogLogin.pas' {RegForm},
   uMStConsts in 'Source\uMStConsts.pas',
   uMStFormMeasureResult in 'Source\uMStFormMeasureResult.pas' {frmMeasureResult},
-  uMStGISEzActionsMeasure in 'Source\uMStGISEzActionsMeasure.pas',
   uMStFormRichTextEditor in 'Source\uMStFormRichTextEditor.pas' {frmEzRichTextEditor},
   uMStFormCoordTableSettingsEditor in 'Source\uMStFormCoordTableSettingsEditor.pas' {mstCoordTableSettingsEditor},
   uMStFormReportTable in 'Source\uMStFormReportTable.pas' {mstFormReportTable},
@@ -85,7 +84,10 @@ uses
   uMStDialogProjectsBrowserFilter in 'Source\uMStDialogProjectsBrowserFilter.pas' {mstProjectBrowserFilterDialog},
   uMStClassesBufferZone in 'Source\uMStClassesBufferZone.pas',
   uMStDialogBufferZoneWidth in 'Source\uMStDialogBufferZoneWidth.pas' {mstZoneWidthDialog},
-  uMStClassesProjectsMIFExport in 'Source\uMStClassesProjectsMIFExport.pas';
+  uMStClassesProjectsMIFExport in 'Source\uMStClassesProjectsMIFExport.pas',
+  uMStGISEzActions in 'Source\uMStGISEzActions.pas',
+  uMStGISEzActionsAutoScroll in 'Source\uMStGISEzActionsAutoScroll.pas',
+  uMStGISEzActionsMeasure in 'Source\uMStGISEzActionsMeasure.pas';
 
 {$R *.RES}
 

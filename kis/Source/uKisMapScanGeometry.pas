@@ -3,7 +3,8 @@ unit uKisMapScanGeometry;
 interface
 
 uses
-  SysUtils, Classes, Types, Contnrs, Graphics;
+  SysUtils, Classes, Types, Contnrs, Graphics,
+  uGraphics;
 
 type
   TMapSquare = 1..25;
@@ -13,10 +14,12 @@ type
     FNomenclature: string;
     FFull: Boolean;
     FBmpSize: TSize;
+    FBackgroundAlpha: Byte;
     procedure SetNomenclature(const Value: string);
     procedure SetFull(const Value: Boolean);
     function GetSquares(Idx: TMapSquare): Boolean;
     procedure SetSquares(Idx: TMapSquare; const Value: Boolean);
+    procedure SetBackgroundAlpha(const Value: Byte);
   private
     function GetSquareRect(const SquareIdx: TMapSquare): TRect;
   public
@@ -25,6 +28,7 @@ type
     //
     procedure ApplyGeometry(aBitmap: TBitmap; const EmptyColor: TColor);
     //
+    property BackgroundAlpha: Byte read FBackgroundAlpha write SetBackgroundAlpha;
     property Full: Boolean read FFull write SetFull;
     property Nomenclature: string read FNomenclature write SetNomenclature;
     property Squares[Idx: TMapSquare]: Boolean read GetSquares write SetSquares;
@@ -33,12 +37,16 @@ type
   TKisMapScanGeometry = class
   private
     fList: TObjectList;
+    FBackgroundAlpha: Byte;
+    procedure SetBackgroundAlpha(const Value: Byte);
   public
     constructor Create;
     destructor Destroy; override;
     //
     function AddMap(const aNomenclature: string; Full: Boolean): TKisMapGeometry;
     function GetMapGeometry(const aNomenclature: string): TKisMapGeometry;
+    //
+    property BackgroundAlpha: Byte read FBackgroundAlpha write SetBackgroundAlpha;
   end;
 
   TRectList = class
@@ -65,6 +73,7 @@ var
   Rects: TRectList;
   R: TRect;
   NewBmp: TBitmap;
+  Tmp: TBitmap;
 begin
   if Full then
     Exit;
@@ -80,24 +89,57 @@ begin
         Rects.Add(R);
       end;
     end;
-    NewBmp := TBitmap.Create;
-    try
-      NewBmp.PixelFormat := aBitmap.PixelFormat;
-      NewBmp.SetSize(aBitmap.Width, aBitmap.Height);
-      NewBmp.Canvas.Brush.Color := EmptyColor;
-      NewBmp.Canvas.Brush.Style := bsSolid;
-      NewBmp.Canvas.FillRect(Rect(0, 0, aBitmap.Width, aBitmap.Height));
-      //
-      NewBmp.Canvas.CopyMode := cmSrcCopy;
-      for I := 0 to Rects.Count - 1 do
-      begin
-        R := Rects.Items[I];
-        NewBmp.Canvas.CopyRect(R, aBitmap.Canvas, R);
+    //
+    if FBackgroundAlpha = 0 then
+    begin
+      NewBmp := TBitmap.Create;
+      try
+        NewBmp.PixelFormat := aBitmap.PixelFormat;
+        NewBmp.SetSize(aBitmap.Width, aBitmap.Height);
+        NewBmp.Canvas.Brush.Color := EmptyColor;
+        NewBmp.Canvas.Brush.Style := bsSolid;
+        NewBmp.Canvas.FillRect(Rect(0, 0, aBitmap.Width, aBitmap.Height));
+        //
+        NewBmp.Canvas.CopyMode := cmSrcCopy;
+        for I := 0 to Rects.Count - 1 do
+        begin
+          R := Rects.Items[I];
+          NewBmp.Canvas.CopyRect(R, aBitmap.Canvas, R);
+        end;
+        //
+        aBitmap.Assign(NewBmp);
+      finally
+        FreeAndNil(NewBmp);
       end;
-      //
-      aBitmap.Assign(NewBmp);
-    finally
-      FreeAndNil(NewBmp);
+    end
+    else
+    begin
+      Tmp := aBitmap.Clone();
+      try
+        NewBmp := TBitmap.Create;
+        try
+          NewBmp.PixelFormat := aBitmap.PixelFormat;
+          NewBmp.SetSize(aBitmap.Width, aBitmap.Height);
+          // заливаем всю картинку чветом фона
+          NewBmp.Canvas.Brush.Color := EmptyColor;
+          NewBmp.Canvas.Brush.Style := bsSolid;
+          NewBmp.Canvas.FillRect(Rect(0, 0, aBitmap.Width, aBitmap.Height));
+          // мешаем исходную картинку с фоном
+          Tmp.DrawMix(NewBmp, FBackgroundAlpha);
+        finally
+          FreeAndNil(NewBmp);
+        end;
+        // переносим на картинку не зафоненые куски
+        Tmp.Canvas.CopyMode := cmSrcCopy;
+        for I := 0 to Rects.Count - 1 do
+        begin
+          R := Rects.Items[I];
+          Tmp.Canvas.CopyRect(R, aBitmap.Canvas, R);
+        end;
+        aBitmap.Assign(Tmp);
+      finally
+        FreeAndNil(Tmp);
+      end;
     end;
   finally
     Rects.Free;
@@ -144,6 +186,11 @@ end;
 function TKisMapGeometry.GetSquares(Idx: TMapSquare): Boolean;
 begin
   Result := fSquares[Idx - 1];
+end;
+
+procedure TKisMapGeometry.SetBackgroundAlpha(const Value: Byte);
+begin
+  FBackgroundAlpha := Value;
 end;
 
 procedure TKisMapGeometry.SetFull(const Value: Boolean);
@@ -193,9 +240,15 @@ begin
     if TKisMapGeometry(fList[I]).Nomenclature = aNomenclature then
     begin
       Result := TKisMapGeometry(fList[I]);
+      Result.BackgroundAlpha := Self.BackgroundAlpha;
       Exit;
     end;
   Result := nil;
+end;
+
+procedure TKisMapScanGeometry.SetBackgroundAlpha(const Value: Byte);
+begin
+  FBackgroundAlpha := Value;
 end;
 
 { TRectList }

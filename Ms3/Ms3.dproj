@@ -171,6 +171,8 @@
     <DCCReference Include="Source\uMStFormSplash.pas">
       <Form>mstSplashForm</Form>
     </DCCReference>
+    <DCCReference Include="Source\uMStGISEzActions.pas" />
+    <DCCReference Include="Source\uMStGISEzActionsAutoScroll.pas" />
     <DCCReference Include="Source\uMStGISEzActionsMeasure.pas" />
     <DCCReference Include="Source\uMStImport.pas" />
     <DCCReference Include="Source\uMStImportDbImporter.pas" />
