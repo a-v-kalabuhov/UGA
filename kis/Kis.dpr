@@ -190,7 +190,8 @@ uses
   uKisEzActions in 'Source\uKisEzActions.pas',
   uKisGivenScanEditor in 'Source\uKisGivenScanEditor.pas',
   uKisMapScanGeometry in 'Source\uKisMapScanGeometry.pas',
-  uMStGISEzActionsAutoScroll in '..\Ms3\Source\uMStGISEzActionsAutoScroll.pas';
+  uMStGISEzActionsAutoScroll in '..\Ms3\Source\uMStGISEzActionsAutoScroll.pas',
+  uKisAutoCADImport in 'Source\uKisAutoCADImport.pas' {KisAutoCADImport: TDataModule};
 
 {$R *.RES}
 {$SetPEFlags IMAGE_FILE_LARGE_ADDRESS_AWARE}

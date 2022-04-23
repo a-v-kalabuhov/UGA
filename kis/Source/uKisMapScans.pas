@@ -3625,9 +3625,9 @@ begin
   begin
     for I := 0 to Maps.Count - 1 do
     begin
-      theMapScansStorage.DownloadFile(AppModule, Geometry, Maps[I], TargetDir, sfnDB);
-      if Assigned(AfterDownload) then
-        AfterDownload(Order, Maps[I]);
+      if theMapScansStorage.DownloadFile(AppModule, Geometry, Maps[I], TargetDir, sfnDB) then
+        if Assigned(AfterDownload) then
+          AfterDownload(Order, Maps[I]);
     end;
   end;
   Result := True;

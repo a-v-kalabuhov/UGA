@@ -60,6 +60,10 @@ type
     function Nomenclature(): string;
     function AsStrings(const Delimiter: Char): TStrings;
     function GetValidParts(): string;
+    /// <summary>
+    /// Возвращает коорлинаты прямоугольника планшета в городской системе координат.  
+    /// </summary>
+    function Bounds: TRect;
     //
     property Parts[const Index: Integer]: string read GetParts;
     property Neighbour[const Position: TNeighbour4]: TNomenclature read GetNeighbour;
@@ -762,6 +766,14 @@ begin
   Result.StrictDelimiter := True;
   for I := 0 to Pred(PartCount) do
     Result.Add(Parts[I]);
+end;
+
+function TNomenclature.Bounds: TRect;
+begin
+  Result.Left := Left500;
+  Result.Right := Result.Left + 250;
+  Result.Top := Top500;
+  Result.Bottom := Result.Top - 250;
 end;
 
 procedure TNomenclature.CalcTopLeft1;

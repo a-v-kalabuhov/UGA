@@ -61,9 +61,6 @@ type
   );
 
   TMapScanStorage = class
-  private
-    FLocalMaxCount: Integer;
-    FLocalStore: string;
   strict private
     procedure PrepareMini(var Scan: TMapScanFile; const Scale: Integer; aMiniFileName: String);
   public
@@ -76,8 +73,8 @@ type
     /// <summary>
     /// Создаём картинки и копируем их в указанную папку.
     /// </summary>
-    procedure DownloadFile(Folders: IKisFolders; aGeometry: TKisMapScanGeometry;
-      const Nomenclature, TargetDir: string; const Kind: TScanFileName);
+    function DownloadFile(Folders: IKisFolders; aGeometry: TKisMapScanGeometry;
+      const Nomenclature, TargetDir: string; const Kind: TScanFileName): Boolean;
     /// <summary>
     ///   Используется для загрузки новых версий планшета с изменениями
     /// </summary>
@@ -371,13 +368,17 @@ end;
 
 { TMapScanStorage }
 
-procedure TMapScanStorage.DownloadFile;
+function TMapScanStorage.DownloadFile(Folders: IKisFolders; aGeometry: TKisMapScanGeometry;
+      const Nomenclature, TargetDir: string; const Kind: TScanFileName): Boolean;
 var
   Source, Target: string;
   MapGeometry: TKisMapGeometry;
   Bmp: TBitmap;
 begin
+  Result := False;
   MapGeometry := aGeometry.GetMapGeometry(Nomenclature);
+  if MapGeometry.Skip then
+    Exit;
   if MapGeometry.Full then
   begin
     Source := GetFileName(Folders, Nomenclature, Kind);
@@ -390,13 +391,14 @@ begin
     //
     Bmp := TBitmap.CreateFromFile(Source);
     try
-      MapGeometry.ApplyGeometry(Bmp, $7F007F);
+      MapGeometry.ApplyGeometryToBmp(Bmp, $7F007F);
       Target := TPath.Finish(TargetDir, Nomenclature, ExtractFileExt(Source));
       Bmp.SaveToFile(Target);
     finally
       Bmp.Free;
     end;
   end;
+  Result := True;
 end;
 
 class function TMapScanStorage.FindFile(Folders: IKisFolders; const Nomenclature, MD5: String): string;

@@ -6,7 +6,7 @@ uses
   SysUtils, Classes, EzBaseGIS, EzCtrls, Dialogs, Forms, Controls, ComObj, DB,
   JvComponentBase, JvCreateProcess,
   EzDxfImport, EzLib, EzEntities, EzSystem,
-  uFileUtils, uCommonUtils, uGC, uCK36,
+  uFileUtils, uCommonUtils, uGC, uCK36, uAutoCAD,
   uMStConsts, uMStKernelTypes, uMStKernelIBX, uMStKernelGISUtils,
   uMStClassesProjects,
   uMStModuleApp,
@@ -247,26 +247,8 @@ begin
 end;
 
 function TmstProjectImportModule.ConvertDWGtoDXF(const aFileName: string): string;
-var
-  ConverterFile: string;
-  CmdLine: string;
-  TempFile: string;
-  Code: Cardinal;
 begin
-  ConverterFile := 'MStDwgUtils.exe';
-  ConverterFile := TPath.Finish(ExtractFilePath(Application.ExeName), ConverterFile);
-  //
-  TempFile := TFileUtils.CreateTempFile(mstClientAppModule.SessionDir, 'report');
-  try
-    Result := ChangeFileExt(TempFile, '.dxf');
-  finally
-    TFileUtils.DeleteFile(TempFile);
-    TFileUtils.DeleteFile(Result);
-  end;
-  //
-  CmdLine := '"' + ConverterFile + '" "' + aFileName + '" "' + Result + '"'; //+ ' f';
-  //
-  ExecAndWait(ConverterFile, CmdLine, True, Code);
+  TAutoCADUtils.ConvertDWGtoDXF(mstClientAppModule.SessionDir, aFileName);
 end;
 
 procedure TmstProjectImportModule.ConvertEntityCoords(Ent: TEzEntity);

@@ -34,8 +34,10 @@ Type
     FDxf_Main: Dxf_Object;
 
     FOnFileProgress: TEzFileProgressEvent;
+    FGis: TEzBaseGIS;
 
     Procedure SetDrawBox( Const Value: TEzBaseDrawBox );
+    procedure SetGis(const Value: TEzBaseGIS);
   Protected
     Procedure Notification( AComponent: TComponent; Operation: TOperation ); Override;
   Public
@@ -46,6 +48,7 @@ Type
     { properties }
     Property FileName: String Read FFileName Write FFileName;
     Property DrawBox: TEzBaseDrawBox Read FDrawBox Write SetDrawBox;
+    property Gis: TEzBaseGIS read FGis write SetGis;
     { events }
     Property OnFileProgress: TEzFileProgressEvent Read FOnFileProgress Write FOnFileProgress;
   End;
@@ -581,12 +584,15 @@ End;
 function TEzDxfFile.ProperColor(clr: TColor): TColor;
 begin
   Result:= clr;
-  If clr = ColorToRGB( FDrawBox.Color ) then
+  if Assigned(FDrawBox) then
   begin
-    if ColorToRGB( FDrawBox.Color ) = clWhite then
-      Result:= clBlack
-    else
-      Result:= clWhite;
+    If clr = ColorToRGB( FDrawBox.Color ) then
+    begin
+      if ColorToRGB( FDrawBox.Color ) = clWhite then
+        Result:= clBlack
+      else
+        Result:= clWhite;
+    end;
   end;
 end;
 
@@ -601,6 +607,11 @@ Begin
   End;
   FDrawBox := Value;
 End;
+
+procedure TEzDxfFile.SetGis(const Value: TEzBaseGIS);
+begin
+  FGis := Value;
+end;
 
 { TEzDxfImport }
 
@@ -696,6 +707,9 @@ Begin
     EzGISError( SWrongEzGIS );
   If FConverter = Nil Then
     EzGISError( SWrongProjector );
+  if FDrawBox = nil then
+    if FGis = nil then
+      FGis := FCad;
   result := True;
   FreeAndNil( FDxf_Main );
   Try
@@ -3353,7 +3367,10 @@ Var
 Begin
   Screen.Cursor := crHourglass;
   Try
-    GIS := DxfFile.FDrawBox.GIS;
+    if Assigned(DxfFile) and Assigned(DxfFile.FDrawBox) then
+      GIS := DxfFile.FDrawBox.GIS
+    else
+      GIS := DxfFile.Gis;
     Reader := DXF_Reader.Create( GIS, aname, DxfFile );
     With Reader Do
       If read_file Then

@@ -3904,7 +3904,8 @@ Begin
         If Not CheckLimits Then
         Begin
           Pass := ( LineR * [lrBetweenDiv, lrBetweenPar] = [lrBetweenDiv, lrBetweenPar] );
-        End Else
+        End
+        Else
         Begin
           Pass := ( LineR * [lrBetweenDiv, lrBetweenPar] = [lrBetweenDiv, lrBetweenPar] )
             Or ( lrAtDivStart In LineR ) Or ( lrAtDivEnd In LineR )

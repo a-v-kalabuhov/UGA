@@ -42,6 +42,7 @@
     <DCCReference Include="MD5.pas" />
     <DCCReference Include="SciZipFile.pas" />
     <DCCReference Include="uAlgs.pas" />
+    <DCCReference Include="uAutoCAD.pas" />
     <DCCReference Include="uCK36.pas" />
     <DCCReference Include="uClasses.pas" />
     <DCCReference Include="uCommonClasses.pas" />

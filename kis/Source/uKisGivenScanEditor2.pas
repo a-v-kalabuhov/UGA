@@ -8,13 +8,14 @@ uses
   JvBaseDlg, JvDesktopAlert,
   EzBaseGIS, EzBasicCtrls, EzCADCtrls, EzLib, EzEntities, EzBase, EzCmdLine, EzActions,
   VirtualTrees,
-  uKisConsts, uKisScanOrders, uKisMapScanGeometry, uKisMapClasses,
+  uGC,
+  uKisConsts, uKisScanOrders, uKisMapScanGeometry, uKisMapClasses, uKisAutoCADImport,
   uMStGISEzActionsAutoScroll;
 
 type
   TKisGivenScanEditor2 = class(TKisEntityEditor)
     Panel1: TPanel;
-    EzDrawBox1: TEzDrawBox;
+    DrawBoxMapsGiveOut: TEzDrawBox;
     vstMaps: TVirtualStringTree;
     EzCmdLine1: TEzCmdLine;
     Panel2: TPanel;
@@ -22,9 +23,9 @@ type
     ActionList1: TActionList;
     SpeedButton2: TSpeedButton;
     SpeedButton3: TSpeedButton;
-    SpeedButton4: TSpeedButton;
-    SpeedButton5: TSpeedButton;
-    btnAllUnchanged: TButton;
+    btnFullMap: TSpeedButton;
+    btnSquaresMap: TSpeedButton;
+    btnFullMapsAll: TButton;
     pnlSquares: TPanel;
     Map25: TCheckBox;
     Map24: TCheckBox;
@@ -53,11 +54,13 @@ type
     Map1: TCheckBox;
     Label1: TLabel;
     cbAlpha: TComboBox;
+    btnArea: TSpeedButton;
+    lblCoords: TLabel;
     procedure vstMapsCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
       out EditLink: IVTEditLink);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure btnAllUnchangedClick(Sender: TObject);
+    procedure btnFullMapsAllClick(Sender: TObject);
     procedure vstMapsAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure Map1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -66,12 +69,16 @@ type
     procedure SpeedButton3Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
-    procedure EzDrawBox1MouseDown2D(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer; const WX,
+    procedure DrawBoxMapsGiveOutMouseDown2D(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer; const WX,
       WY: Double);
-    procedure EzDrawBox1BeforeSelect(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer; var CanSelect: Boolean);
-    procedure SpeedButton4Click(Sender: TObject);
-    procedure SpeedButton5Click(Sender: TObject);
+    procedure DrawBoxMapsGiveOutBeforeSelect(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer; var CanSelect: Boolean);
+    procedure btnFullMapClick(Sender: TObject);
+    procedure btnSquaresMapClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
+    procedure btnAreaClick(Sender: TObject);
+    procedure DrawBoxMapsGiveOutMouseLeave(Sender: TObject);
+    procedure DrawBoxMapsGiveOutMouseMove2D(Sender: TObject; Shift: TShiftState; X, Y: Integer; const WX, WY: Double);
+    procedure DrawBoxMapsGiveOutMouseEnter(Sender: TObject);
   private type
     TComboEditLink = class(TInterfacedObject, IVTEditLink)
     private
@@ -121,9 +128,15 @@ type
     fCheckBoxUpdate: Boolean;
     fGis: TEzCAD;
     FMaps: TObjectList;
+    FArea: Boolean;
+    FAreaPoly: TEzPolygon;
+    FLayerSquares: TEzBaseLayer;
+    FLayerMap500: TEzBaseLayer;
+    FLayerZone: TEzBaseLayer;
     function AddMap(const aNomenclature: string): PVirtualNode;
     procedure AddMapToGis(aMap: TMapInfo);
     procedure AddSquaresToGis(aMap: TMapInfo);
+    procedure ClearArea();
     procedure DisplayMapsInGis();
     procedure DisplayNodeMapInfo(Node: PVirtualNode);
     procedure FillGeometry(aGeometry: TKisMapScanGeometry);
@@ -131,6 +144,7 @@ type
     function FindMapBySquare(Recno: Integer): TMapInfo;
     function GetSelectedMap(): TMapInfo;
     procedure PrepareGis();
+    function ReadAreaFile(): Boolean;
     procedure RemoveSquaresFromGis(aMap: TMapInfo);
     procedure SelectFirstMap();
     procedure UpdateMapControls(aMap: TMapInfo);
@@ -157,6 +171,7 @@ const
   SL_MAP500 = 'MAP500';
   SL_SQUARES = 'SQUARES';
   SL_ZONE = 'ZONE';
+  SL_WORK_AREA = 'Граница работ';
 
 function TKisGivenScanEditor2.AddMap(const aNomenclature: string): PVirtualNode;
 var
@@ -173,17 +188,15 @@ end;
 procedure TKisGivenScanEditor2.AddMapToGis(aMap: TMapInfo);
 var
   MapEnt: TEzEntity;
-  L1: TEzBaseLayer;
 begin
   aMap.fSquareEntities.Clear;
   // добавляем объекты для кусочков
   if not aMap.fFull then
     AddSquaresToGis(aMap);
   // добавляем объект для планшета
-  L1 := fGis.Layers.LayerByName(SL_MAP500);
   MapEnt := GetMap500Entity(aMap.fNomenclature, RedColor);
   try
-    L1.AddEntity(MapEnt);
+    FLayerMap500.AddEntity(MapEnt);
   finally
     MapEnt.Free;
   end;
@@ -191,18 +204,16 @@ end;
 
 procedure TKisGivenScanEditor2.AddSquaresToGis(aMap: TMapInfo);
 var
-  Layer: TEzBaseLayer;
   I: Integer;
   SquareEnt: TEzEntity;
   Rn: Integer;
 begin
   aMap.fSquareEntities.Clear;
-  Layer := fGis.Layers.LayerByName(SL_SQUARES);
   for I := 1 to 25 do
   begin
     SquareEnt := GetMap500SquareEntity(aMap.fNomenclature, I, GrayColor, clNone);
     try
-      Rn := Layer.AddEntity(SquareEnt);
+      Rn := FLayerSquares.AddEntity(SquareEnt);
       aMap.fSquareEntities.Add(Rn);
     finally
       SquareEnt.Free;
@@ -292,12 +303,14 @@ begin
   end;
 end;
 
-procedure TKisGivenScanEditor2.btnAllUnchangedClick(Sender: TObject);
+procedure TKisGivenScanEditor2.btnFullMapsAllClick(Sender: TObject);
 var
   Node: PVirtualNode;
   Data: ^TMapInfoRec;
 begin
   inherited;
+  ClearArea();
+  //
   Node := vstMaps.GetFirst();
   while Assigned(Node) do
   begin
@@ -311,8 +324,9 @@ begin
     end;
     Node := Node.NextSibling;
   end;
-  EzDrawBox1.RegenDrawing();
+  DrawBoxMapsGiveOut.RegenDrawing();
   vstMaps.Invalidate;
+  btnFullMap.Enabled := not FArea;
 end;
 
 procedure TKisGivenScanEditor2.btnOkClick(Sender: TObject);
@@ -320,23 +334,63 @@ var
   I, J: Integer;
   Map: TMapInfo;
   B: Boolean;
+  Geo: TKisMapScanGeometry;
+  MapGeo: TKisMapGeometry;
+  Skipped: TStringList;
+  MsgText, S: string;
 begin
-  for I := 0 to fMaps.Count - 1 do
+  if FArea then
   begin
-    Map := TMapInfo(fMaps[I]);
-    if not Map.fFull then
+    Geo := TKisMapScanGeometry.Create;
+    Geo.Forget;
+    Skipped := TStringList.Create;
+    Skipped.Forget;
+    FillGeometry(Geo);
+    for I := 0 to fMaps.Count - 1 do
     begin
-      B := False;
-      for J := 0 to Map.fSquares.Size - 1 do
+      Map := TMapInfo(fMaps[I]);
+      MapGeo := Geo.GetMapGeometry(Map.fNomenclature);
+      if MapGeo.Skip then
+        Skipped.Add(Map.fNomenclature);
+    end;
+    if Skipped.Count > 0 then
+    begin
+      if Skipped.Count = 1 then
       begin
-        B := Map.fSquares[J];
-        if B then
-          Break;
+        MsgText := 'Планшет ' + Skipped[0] + ' не используется.';
+      end
+      else
+      begin
+        MsgText := 'Планшеты не используются:' + sLineBreak;
+        for I := 0 to Skipped.Count - 1 do
+          MsgText := MsgText + Skipped[I] + sLineBreak;
+        MsgText := MsgText + sLineBreak;
       end;
-      if not B then
-      begin
-        ShowMessage('Нет выбранных квадратов на планшете ' + Map.fNomenclature + '!');
+      MsgText := MsgText + 'Эти сканы не будут выданы. ' + sLineBreak + 'Продолжить?';
+      J := MessageBox(Self.Handle, PChar(MsgText), 'Внимание!', MB_YESNO + MB_ICONWARNING);
+      if J <> ID_YES then
         Exit;
+    end;
+  end
+  else
+  begin
+    for I := 0 to fMaps.Count - 1 do
+    begin
+      Map := TMapInfo(fMaps[I]);
+      if not Map.fFull then
+      begin
+        B := False;
+        for J := 0 to Map.fSquares.Size - 1 do
+        begin
+          B := Map.fSquares[J];
+          if B then
+            Break;
+        end;
+        if not B then
+        begin
+          ShowMessage('Нет выбранных квадратов на планшете ' + Map.fNomenclature + '!');
+          Exit;
+        end;
       end;
     end;
   end;
@@ -398,14 +452,14 @@ begin
   end;
 end;
 
-procedure TKisGivenScanEditor2.EzDrawBox1BeforeSelect(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer;
+procedure TKisGivenScanEditor2.DrawBoxMapsGiveOutBeforeSelect(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer;
   var CanSelect: Boolean);
 begin
   inherited;
   CanSelect := False;
 end;
 
-procedure TKisGivenScanEditor2.EzDrawBox1MouseDown2D(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X,
+procedure TKisGivenScanEditor2.DrawBoxMapsGiveOutMouseDown2D(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X,
   Y: Integer; const WX, WY: Double);
 var
   ActId: string;
@@ -416,7 +470,8 @@ var
   Recno: Integer;
   DummyNPt: Integer;
 begin
-  if (Button = mbMiddle) then
+  // скролл по средней кнопке
+  if Button = mbMiddle then
   begin
     EzCmdLine1.Clear;
     ActId := EzCmdLine1.CurrentAction.ActionID;
@@ -426,6 +481,7 @@ begin
   else
   if Button = mbLeft then
   begin
+    // скролл с зажатым контролом
     if ssCtrl in Shift then
     begin
       ScrollAction := TmstAutoHandScrollAction.CreateAction(EzCmdLine1);
@@ -434,16 +490,19 @@ begin
     end
     else
     begin
+      // переключаем видимость квадрата по клику на нём
       if EzCmdLine1.CurrentAction is TTheDefaultAction then
       begin
-        if EzDrawBox1.PickEntity(WX, WY, 0, SL_SQUARES, Layer, Recno, DummyNPt, nil) then
+        if FArea then
+          Exit;
+        if DrawBoxMapsGiveOut.PickEntity(WX, WY, 0, SL_SQUARES, Layer, Recno, DummyNPt, nil) then
         begin
           Map := FindMapBySquare(Recno);
           if Assigned(Map) then
           begin
             I := Map.fSquareEntities.IndexOfValue(Recno);
             Map.fSquares[I] := not Map.fSquares[I];
-            EzDrawBox1.RegenDrawing();
+            DrawBoxMapsGiveOut.RegenDrawing();
             if GetSelectedMap() = Map then
               UpdateMapControls(Map);
           end;
@@ -451,6 +510,25 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TKisGivenScanEditor2.DrawBoxMapsGiveOutMouseEnter(Sender: TObject);
+begin
+  inherited;
+  lblCoords.Visible := True;
+end;
+
+procedure TKisGivenScanEditor2.DrawBoxMapsGiveOutMouseLeave(Sender: TObject);
+begin
+  inherited;
+  //lblCoords.Visible := False;
+end;
+
+procedure TKisGivenScanEditor2.DrawBoxMapsGiveOutMouseMove2D(Sender: TObject; Shift: TShiftState; X, Y: Integer;
+  const WX, WY: Double);
+begin
+  inherited;
+  lblCoords.Caption := IntToStr(Round(WY)) + ';' + IntToStr(Round(WX));
 end;
 
 procedure TKisGivenScanEditor2.FillGeometry(aGeometry: TKisMapScanGeometry);
@@ -461,14 +539,26 @@ var
   GMap: TKisMapGeometry;
 begin
   aGeometry.BackgroundAlpha := cbAlpha.ItemIndex * 10;
-  for I := 0 to FMaps.Count - 1 do
+  if FArea then
   begin
-    Map := TMapInfo(FMaps[I]);
-    GMap := aGeometry.AddMap(Map.fNomenclature, Map.fFull);
-    if not Map.fFull then
+    aGeometry.Polygon.Assign(FAreaPoly.Points);
+    for I := 0 to FMaps.Count - 1 do
     begin
-      for J := 0 to Map.fSquares.Size - 1 do
-        GMap.Squares[J + 1] := Map.fSquares[J];
+      Map := TMapInfo(FMaps[I]);
+      aGeometry.AddMap(Map.fNomenclature, Map.fFull);
+    end;
+  end
+  else
+  begin
+    for I := 0 to FMaps.Count - 1 do
+    begin
+      Map := TMapInfo(FMaps[I]);
+      GMap := aGeometry.AddMap(Map.fNomenclature, Map.fFull);
+      if not Map.fFull then
+      begin
+        for J := 0 to Map.fSquares.Size - 1 do
+          GMap.Squares[J + 1] := Map.fSquares[J];
+      end;
     end;
   end;
 end;
@@ -531,8 +621,8 @@ end;
 procedure TKisGivenScanEditor2.FormShow(Sender: TObject);
 begin
   inherited;
-  EzDrawBox1.ZoomToExtension();
-  EzDrawBox1.ZoomOut(97);
+  DrawBoxMapsGiveOut.ZoomToExtension();
+  DrawBoxMapsGiveOut.ZoomOut(97);
 end;
 
 function TKisGivenScanEditor2.GetSelectedMap: TMapInfo;
@@ -565,7 +655,7 @@ begin
         Idx := StrToInt(Chb.Caption) - 1;
         Map := GetSelectedMap();
         Map.fSquares[Idx] := Chb.Checked;
-        EzDrawBox1.RegenDrawing();
+        DrawBoxMapsGiveOut.RegenDrawing();
       finally
 
       end;
@@ -574,32 +664,100 @@ begin
 end;
 
 procedure TKisGivenScanEditor2.PrepareGis;
-var
-  L1, L2, L3: TEzBaseLayer;
 begin
   if fGis = nil then
   begin
     fGis := TEzCAD.Create(Self);
     fGis.Active := True;
-    L3 := fGis.CreateLayer(SL_ZONE, ltMemory);
-    L2 := fGis.CreateLayer(SL_SQUARES, ltMemory);
-    L1 := fGis.CreateLayer(SL_MAP500, ltMemory);
+    FLayerSquares := fGis.CreateLayer(SL_SQUARES, ltMemory);
+    FLayerZone := fGis.CreateLayer(SL_ZONE, ltMemory);
+    FLayerMap500 := fGis.CreateLayer(SL_MAP500, ltMemory);
     fGis.OnBeforePaintEntity := BeforePaintEntity;
-    EzDrawBox1.GIS := fGis;
+    DrawBoxMapsGiveOut.GIS := fGis;
+  end;
+end;
+
+function TKisGivenScanEditor2.ReadAreaFile: Boolean;
+var
+  Layer: TEzBaseLayer;
+  Ent: TEzEntity;
+  Poly: TEzPolygon;
+  I: Integer;
+begin
+  // загружаем область из файла
+  if AutoCADImport = nil then
+    AutoCADImport := TKisAutoCADImport.Create(Self);
+  Result := AutoCADImport.ReadLayerFromFile(SL_WORK_AREA, Layer);
+  if Result then
+  begin
+    if Layer = nil then
+      raise Exception.Create('В файле нет слоя "Граница работ"!');
+    if Layer.RecordCount = 0 then
+      raise Exception.Create('В слое "Граница работ" нет объектов!');
+    if Layer.RecordCount > 1 then
+      raise Exception.Create('В слое "Граница работ" больше одного объекта!');
+    Layer.First;
+    Ent := Layer.RecLoadEntity;
+    Ent.Forget;
+    if not (Ent.EntityID in [idPolyline, idPolygon]) then
+      raise Exception.Create('Объект в слое "Граница работ" не является полигоном!');
+    Poly := nil;
+    if Ent is TEzPolygon then
+    begin
+      Poly := TEzPolygon.CreateEntity([]);
+      Poly.Forget;
+      Poly.Assign(Ent);
+    end
+    else
+    begin
+      if Ent is TEzPolyline then
+      begin
+        if Ent.Points.Count < 4 then
+          raise Exception.Create('Полилиния в слое "Граница работ" незамкнута!');
+        if not EqualPoint2D(Ent.Points[0], Ent.Points[Ent.Points.Count - 1]) then
+          raise Exception.Create('Полилиния в слое "Граница работ" незамкнута!');
+        Poly := TEzPolygon.CreateEntity([]);
+        Poly.Forget;
+        for I := 0 to Ent.Points.Count - 2 do
+          Poly.Points.Add(Ent.Points[I]);
+      end;
+    end;
+    if Assigned(Poly) then
+    begin
+      // TODO : добавить проверку, что областьработ пересекается с планшетами
+      // добавляем область в слой, она должна быть поверх заливки фоном
+      FLayerZone.First;
+      while not FLayerZone.Eof do
+      begin
+        if not FLayerZone.RecIsDeleted() then
+          FLayerZone.DeleteEntity(FLayerZone.Recno);
+        FLayerZone.Next;
+      end; 
+      Poly.PenTool.FPenStyle.Style := 1;
+      Poly.PenTool.FPenStyle.Color := clRed;
+      Poly.PenTool.FPenStyle.Width := -2;
+      Poly.BrushTool.FBrushStyle.Pattern := 1;
+      Poly.BrushTool.FBrushStyle.Color := clWhite;
+
+      FLayerZone.AddEntity(Poly);
+      FLayerZone.LayerInfo.Visible := True;
+      //
+      if FAreaPoly <> nil then
+        FAreaPoly.Free;
+      FAreaPoly := Poly.Clone as TEzPolygon;
+    end;
   end;
 end;
 
 procedure TKisGivenScanEditor2.RemoveSquaresFromGis(aMap: TMapInfo);
 var
-  Layer: TEzBaseLayer;
   I: Integer;
   Rn: Integer;
 begin
-  Layer := fGis.Layers.LayerByName(SL_SQUARES);
   for I := 0 to aMap.fSquareEntities.Count - 1 do
   begin
     Rn := aMap.fSquareEntities[I];
-    Layer.DeleteEntity(Rn);
+    FLayerSquares.DeleteEntity(Rn);
   end;
   aMap.fSquareEntities.Clear;
 end;
@@ -615,22 +773,22 @@ end;
 procedure TKisGivenScanEditor2.SpeedButton1Click(Sender: TObject);
 begin
   inherited;
-  EzDrawBox1.ZoomIn(95);
+  DrawBoxMapsGiveOut.ZoomIn(95);
 end;
 
 procedure TKisGivenScanEditor2.SpeedButton2Click(Sender: TObject);
 begin
   inherited;
-  EzDrawBox1.ZoomOut(95);
+  DrawBoxMapsGiveOut.ZoomOut(95);
 end;
 
 procedure TKisGivenScanEditor2.SpeedButton3Click(Sender: TObject);
 begin
   inherited;
-  EzDrawBox1.ZoomToExtension;
+  DrawBoxMapsGiveOut.ZoomToExtension;
 end;
 
-procedure TKisGivenScanEditor2.SpeedButton4Click(Sender: TObject);
+procedure TKisGivenScanEditor2.btnFullMapClick(Sender: TObject);
 var
   Map: TMapInfo;
 begin
@@ -640,26 +798,85 @@ begin
   begin
     Map.fFull := True;
     RemoveSquaresFromGis(Map);
-    EzDrawBox1.RegenDrawing();
+    DrawBoxMapsGiveOut.RegenDrawing();
     UpdateMapControls(Map);
     vstMaps.Invalidate;
   end;
 end;
 
-procedure TKisGivenScanEditor2.SpeedButton5Click(Sender: TObject);
+procedure TKisGivenScanEditor2.btnSquaresMapClick(Sender: TObject);
 var
   Map: TMapInfo;
+  Node: PVirtualNode;
+  Data: ^TMapInfoRec;
 begin
   inherited;
+  if FArea then
+  begin
+    ClearArea();
+    //
+    FArea := False;
+    Node := vstMaps.GetFirst();
+    while Assigned(Node) do
+    begin
+      Data := vstMaps.GetNodeData(Node);
+      Data.Map.fFull := False;
+      AddSquaresToGis(Data.Map);
+      Node := Node.NextSibling;
+    end;
+  end;
+  //
   Map := GetSelectedMap();
   if Assigned(Map) and Map.fFull then
   begin
     Map.fFull := False;
     AddSquaresToGis(Map);
-    EzDrawBox1.RegenDrawing();
     UpdateMapControls(Map);
-    vstMaps.Invalidate;
   end;
+  btnFullMap.Enabled := not FArea;
+  vstMaps.Invalidate;
+  DrawBoxMapsGiveOut.RegenDrawing();
+end;
+
+procedure TKisGivenScanEditor2.ClearArea;
+begin
+  // удаляем всё что есть в слое границ работ
+  FLayerZone.First;
+  while not FLayerZone.Eof do
+  begin
+    if not FLayerZone.RecIsDeleted then
+      FLayerZone.DeleteEntity(FLayerZone.Recno);
+    FLayerZone.Next;
+  end;
+  FArea := False;
+  FreeAndNil(FAreaPoly);
+end;
+
+procedure TKisGivenScanEditor2.btnAreaClick(Sender: TObject);
+var
+  Node: PVirtualNode;
+  Data: ^TMapInfoRec;
+begin
+  inherited;
+  // загружаем область из файла
+  if not ReadAreaFile() then
+    Exit;
+  // для всех планшетов ставим признак "область"
+  // обновляем элементы управления
+  FArea := True;
+  Node := vstMaps.GetFirst();
+  while Assigned(Node) do
+  begin
+    Data := vstMaps.GetNodeData(Node);
+    Data.Map.fFull := False;
+    RemoveSquaresFromGis(Data.Map);
+    if vstMaps.Selected[Node] then
+      UpdateMapControls(Data.Map);
+    Node := Node.NextSibling;
+  end;
+  DrawBoxMapsGiveOut.RegenDrawing();
+  vstMaps.Invalidate;
+  btnFullMap.Enabled := not FArea;
 end;
 
 procedure TKisGivenScanEditor2.UpdateMapControls;
@@ -672,7 +889,7 @@ begin
   // показываем параметры карты
   fCheckBoxUpdate := True;
   try
-    pnlSquares.Visible := not aMap.fFull;
+    pnlSquares.Visible := (not aMap.fFull) and not FArea;
     if pnlSquares.Visible then
     begin
       for I := 0 to aMap.fSquares.Size - 1 do
@@ -698,6 +915,9 @@ end;
 procedure TKisGivenScanEditor2.vstMapsCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
   out EditLink: IVTEditLink);
 begin
+  EditLink := nil;
+  if FArea then
+    Exit;
   if Column = 1 then
     EditLink := TMapTypeEditLink.Create(Self);
 end;
@@ -718,6 +938,9 @@ begin
 //      FEdit.Items.Add('Планшет целиком');
 //      FEdit.Items.Add('По квадратам');
 //      FEdit.Items.Add('Область на карте');
+        if FArea then
+          CellText := 'Область работ'
+        else
         if Data.Map.fFull then
           CellText := 'Планшет целиком'
         else
@@ -872,7 +1095,7 @@ begin
   end;
   if FTree.Selected[FNode] then
     FForm.UpdateMapControls(Data.Map);
-  FForm.EzDrawBox1.RegenDrawing();
+  FForm.DrawBoxMapsGiveOut.RegenDrawing();
 end;
 
 { TKisGivenScanEditor2.TMapInfo }

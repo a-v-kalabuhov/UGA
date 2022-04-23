@@ -383,9 +383,6 @@ Type
     Property hole: TList Read Fhole; (* Hole / external contour flags *)
   End;
 
-  //Tgpc_tristrip = class(TEzClipPolygon)
-  //end;
-
   TVertexType = (* Edge intersection classes         *)
   ( vtNUL, (* Empty non-intersection            *)
     vtEMX, (* External maximum                  *)

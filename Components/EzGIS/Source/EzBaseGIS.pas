@@ -1392,8 +1392,10 @@ Type
   TEzEntityList = Class
   Private
     FList: TList;
+    FOwnEntities: Boolean;
 
     Function Get( Index: Integer ): TEzEntity;
+    procedure SetOwnEntities(const Value: Boolean);
   Public
     Constructor Create;
     Destructor Destroy; Override;
@@ -1410,6 +1412,7 @@ Type
     Procedure Clear;
 
     Property Items[Index: Integer]: TEzEntity Read Get; Default;
+    property OwnEntities: Boolean read FOwnEntities write SetOwnEntities;
   End;
 
   {-------------------------------------------------------------------------------}
@@ -2221,6 +2224,7 @@ Constructor TEzEntityList.Create;
 Begin
   Inherited Create;
   FList := TList.create;
+  FOwnEntities := True;
 End;
 
 Destructor TEzEntityList.Destroy;
@@ -2262,6 +2266,11 @@ Begin
   FList.Insert( Index, Ent );
 End;
 
+procedure TEzEntityList.SetOwnEntities(const Value: Boolean);
+begin
+  FOwnEntities := Value;
+end;
+
 Procedure TEzEntityList.Delete( Index: Integer );
 Begin
   TEzEntity( FList[Index] ).Free;
@@ -2282,8 +2291,11 @@ Procedure TEzEntityList.Clear;
 Var
   I: Integer;
 Begin
-  For I := 0 To FList.Count - 1 Do
-    TEzEntity( FList[I] ).Free;
+  if FOwnEntities then
+  begin
+    For I := 0 To FList.Count - 1 Do
+      TEzEntity( FList[I] ).Free;
+  end;
   FList.Clear;
 End;
 

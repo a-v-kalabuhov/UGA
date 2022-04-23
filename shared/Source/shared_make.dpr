@@ -35,7 +35,8 @@ uses
   uPrinters in 'uPrinters.pas',
   uDB in 'uDB.pas',
   uSQL in 'uSQL.pas',
-  uCK36 in 'uCK36.pas';
+  uCK36 in 'uCK36.pas',
+  uAutoCAD in 'uAutoCAD.pas';
 
 begin
   

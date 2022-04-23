@@ -891,6 +891,7 @@ Begin
       On E: DXF_read_exception Do
       Begin
         //stopped_thinking;
+        If Assigned( FGis ) Then
         If Assigned( FGis.OnError ) Then
         Begin
           CanContinue := true;
@@ -908,7 +909,7 @@ Begin
       End;
       On E: Exception Do
       Begin
-        If Assigned( FGis.OnError ) Then
+        If Assigned( FGis ) and Assigned( FGis.OnError ) Then
           FGis.OnError( FGIS, E.Message, esImporting, CanContinue );
       End;
     End;
@@ -2129,14 +2130,14 @@ Begin
   Except
     On E: DXF_read_exception Do
     Begin
-      If assigned( FGis.OnError ) Then
+      If assigned( FGis ) and assigned( FGis.OnError ) Then
       Begin
         FGis.OnError( FGis, E.Message, esImporting, canContinue );
       End;
     End;
     On E: EAccessViolation Do
     Begin
-      If assigned( FGis.OnError ) Then
+      If assigned( FGis ) and assigned( FGis.OnError ) Then
       Begin
         FGis.OnError( FGis, E.Message, esImporting, canContinue );
       End;

@@ -9,7 +9,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  ExplicitTop = -63
+  ExplicitTop = -129
   ExplicitWidth = 1161
   ExplicitHeight = 723
   PixelsPerInch = 96
@@ -29,7 +29,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
     Default = True
     TabOrder = 2
     ExplicitLeft = 981
-    ExplicitTop = 605
+    ExplicitTop = 652
   end
   inherited btnCancel: TButton
     Left = 1062
@@ -38,7 +38,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
     Cancel = True
     TabOrder = 3
     ExplicitLeft = 1062
-    ExplicitTop = 605
+    ExplicitTop = 652
   end
   object Panel1: TPanel [3]
     Left = 0
@@ -48,7 +48,6 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
     Anchors = [akLeft, akTop, akBottom]
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitHeight = 599
     DesignSize = (
       243
       646)
@@ -57,7 +56,17 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       Top = 536
       Width = 104
       Height = 13
+      Anchors = [akLeft, akBottom]
       Caption = #1055#1088#1086#1079#1088#1072#1095#1085#1086#1089#1090#1100' '#1092#1086#1085#1072':'
+    end
+    object lblCoords: TLabel
+      Left = 24
+      Top = 592
+      Width = 54
+      Height = 13
+      Anchors = [akLeft, akBottom]
+      Caption = '                  '
+      Visible = False
     end
     object vstMaps: TVirtualStringTree
       Left = 0
@@ -82,7 +91,6 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       OnAddToSelection = vstMapsAddToSelection
       OnCreateEditor = vstMapsCreateEditor
       OnGetText = vstMapsGetText
-      ExplicitHeight = 321
       Columns = <
         item
           Color = clWindow
@@ -105,7 +113,6 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       Height = 146
       Anchors = [akLeft, akRight, akBottom]
       TabOrder = 1
-      ExplicitTop = 327
       object Map25: TCheckBox
         AlignWithMargins = True
         Left = 192
@@ -364,6 +371,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       Width = 145
       Height = 21
       Style = csDropDownList
+      Anchors = [akLeft, akBottom]
       DropDownCount = 10
       ItemHeight = 13
       ItemIndex = 0
@@ -382,7 +390,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
         '90%')
     end
   end
-  object EzDrawBox1: TEzDrawBox [4]
+  object DrawBoxMapsGiveOut: TEzDrawBox [4]
     Left = 249
     Top = 32
     Width = 888
@@ -406,9 +414,11 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
     RubberPen.Color = clRed
     RubberPen.Mode = pmXor
     FlatScrollBar = True
-    OnMouseDown2D = EzDrawBox1MouseDown2D
-    OnBeforeSelect = EzDrawBox1BeforeSelect
-    ExplicitHeight = 567
+    OnMouseMove2D = DrawBoxMapsGiveOutMouseMove2D
+    OnMouseDown2D = DrawBoxMapsGiveOutMouseDown2D
+    OnMouseEnter = DrawBoxMapsGiveOutMouseEnter
+    OnMouseLeave = DrawBoxMapsGiveOutMouseLeave
+    OnBeforeSelect = DrawBoxMapsGiveOutBeforeSelect
     object EzCmdLine1: TEzCmdLine
       Left = 0
       Top = 571
@@ -416,7 +426,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       Height = 24
       DrawBoxList = <
         item
-          DrawBox = EzDrawBox1
+          DrawBox = DrawBoxMapsGiveOut
           Current = True
         end>
       DynamicUpdate = False
@@ -430,7 +440,6 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       TabOrder = 0
       TabStop = False
       Visible = False
-      ExplicitTop = 524
     end
   end
   object Panel2: TPanel [5]
@@ -555,35 +564,43 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       ShowHint = True
       OnClick = SpeedButton3Click
     end
-    object SpeedButton4: TSpeedButton
+    object btnFullMap: TSpeedButton
       Left = 118
       Top = 2
       Width = 130
       Height = 26
       Caption = #1042#1099#1076#1072#1090#1100' '#1094#1077#1083#1080#1082#1086#1084
-      OnClick = SpeedButton4Click
+      OnClick = btnFullMapClick
     end
-    object SpeedButton5: TSpeedButton
+    object btnSquaresMap: TSpeedButton
       Left = 254
       Top = 2
       Width = 130
       Height = 26
       Caption = #1042#1099#1076#1072#1090#1100' '#1087#1086' '#1082#1074#1072#1076#1088#1072#1090#1072#1084
-      OnClick = SpeedButton5Click
+      OnClick = btnSquaresMapClick
     end
-    object btnAllUnchanged: TButton
+    object btnArea: TSpeedButton
       Left = 390
-      Top = 3
+      Top = 2
       Width = 130
-      Height = 25
+      Height = 26
+      Caption = #1042#1099#1076#1072#1090#1100' '#1087#1086' '#1086#1073#1083#1072#1089#1090#1080
+      OnClick = btnAreaClick
+    end
+    object btnFullMapsAll: TButton
+      Left = 526
+      Top = 2
+      Width = 130
+      Height = 26
       Anchors = [akLeft, akBottom]
       Caption = #1042#1089#1077' '#1087#1083#1072#1085#1096#1077#1090#1099' '#1094#1077#1083#1080#1082#1086#1084
       TabOrder = 0
-      OnClick = btnAllUnchangedClick
+      OnClick = btnFullMapsAllClick
     end
   end
   object ActionList1: TActionList
-    Left = 88
-    Top = 64
+    Left = 8
+    Top = 48
   end
 end

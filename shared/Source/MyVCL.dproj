@@ -55,16 +55,12 @@
     </DCCReference>
     <DCCReference Include="ATxPrintProc.pas" />
     <DCCReference Include="ATxUpEdit.pas" />
-    <DCCReference Include="C:\Users\Катя\Desktop\dbrtl.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\ibxpress.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\inet.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\rtl.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\vcl.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\vcldb.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\vcljpg.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\xmlrtl.dcp" />
+    <DCCReference Include="dbrtl.dcp" />
+    <DCCReference Include="ibxpress.dcp" />
+    <DCCReference Include="inet.dcp" />
     <DCCReference Include="KMAlert.pas" />
     <DCCReference Include="PREVIEWLib_TLB.pas" />
+    <DCCReference Include="rtl.dcp" />
     <DCCReference Include="uClipboardSaver.pas" />
     <DCCReference Include="uDataSet.pas" />
     <DCCReference Include="uDBGrid.pas" />
@@ -72,5 +68,9 @@
     <DCCReference Include="uLegend.pas" />
     <DCCReference Include="uMyVCLReg.pas" />
     <DCCReference Include="uSettingsBase.pas" />
+    <DCCReference Include="vcl.dcp" />
+    <DCCReference Include="vcldb.dcp" />
+    <DCCReference Include="vcljpg.dcp" />
+    <DCCReference Include="xmlrtl.dcp" />
   </ItemGroup>
 </Project>
