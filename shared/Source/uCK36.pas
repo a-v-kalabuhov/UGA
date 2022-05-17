@@ -63,8 +63,8 @@ const
    Cosn2 = 2.15622669e4;
    Cosn3 = 6.3675584969e6;
 
-  procedure ToCK36(const _X, _Y: double; var X, Y: double; flag: boolean = false);
-  procedure ToVRN(const _X, _Y: double; var X, Y: double; flag: boolean = false);
+  procedure ToCK36(const _X, _Y: double; var X, Y: double; DoRound: boolean = false);
+  procedure ToVRN(const _X, _Y: double; var X, Y: double; DoRound: boolean = false);
 
 implementation
 
@@ -87,7 +87,7 @@ begin {GeoRound}
 end;{GeoRound}
 
 // пересчет из местной в СК-36
-procedure ToCK36(const _X, _Y: double; var X, Y: double; flag: boolean = false);
+procedure ToCK36(const _X, _Y: double; var X, Y: double; DoRound: boolean = false);
 var
   v8, v10, v70, v78: Double;
   v30, v28: double;
@@ -158,14 +158,14 @@ begin  //ToCK36
   // готовый У
   Y := ((v78 + cnt16) - const2) - 2000000.0;
   //если передан влаг округления - выполняем округление
-  if flag then
+  if DoRound then
   begin
     X := GeoRound(X);
     Y := GeoRound(Y);
   end;
 end;
 
-procedure ToVRN(const _X, _Y: double; var X, Y: double; flag: boolean = false);
+procedure ToVRN(const _X, _Y: double; var X, Y: double; DoRound: boolean = false);
 var
   edi, esi1: Extended;
   st0, st1, st2: Extended;
@@ -223,7 +223,7 @@ begin //  ToVRN
   X := V68;
   Y := V70;
     //если передан влаг округления - выполняем округление
-  if flag then
+  if DoRound then
   begin
     X := GeoRound(X);
     Y := GeoRound(Y);

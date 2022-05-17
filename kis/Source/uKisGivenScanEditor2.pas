@@ -4,13 +4,14 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, uKisEntityEditor, StdCtrls, ExtCtrls, Contnrs, ActnList, Buttons,
+  Dialogs, StdCtrls, ExtCtrls, Contnrs, ActnList, Buttons, Types,
   JvBaseDlg, JvDesktopAlert,
   EzBaseGIS, EzBasicCtrls, EzCADCtrls, EzLib, EzEntities, EzBase, EzCmdLine, EzActions,
   VirtualTrees,
-  uGC,
-  uKisConsts, uKisScanOrders, uKisMapScanGeometry, uKisMapClasses, uKisAutoCADImport,
-  uMStGISEzActionsAutoScroll;
+  uGC, uGeoUtils, uGeoTypes,
+  uEzActionsAutoScroll,
+  uKisEntityEditor, uKisConsts, uKisScanOrders, uKisMapScanGeometry, uKisMapClasses, uKisScanAreaFile,
+  uKisExceptions;
 
 type
   TKisGivenScanEditor2 = class(TKisEntityEditor)
@@ -144,13 +145,14 @@ type
     function FindMapBySquare(Recno: Integer): TMapInfo;
     function GetSelectedMap(): TMapInfo;
     procedure PrepareGis();
-    function ReadAreaFile(): Boolean;
+    function ReadAreaFile(CheckLayer, SelectLayer: Boolean): Boolean;
     procedure RemoveSquaresFromGis(aMap: TMapInfo);
     procedure SelectFirstMap();
     procedure UpdateMapControls(aMap: TMapInfo);
     procedure BeforePaintEntity(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer; Entity: TEzEntity;
       Grapher: TEzGrapher; Canvas: TCanvas; const Clip: TEzRect; DrawMode: TEzDrawMode; var CanShow: Boolean;
       var EntList: TEzEntityList; var AutoFree: Boolean);
+    function CheckAreaPolyPlacement(): Boolean;
   public
     class function Execute(ScanOrder: TKisScanOrder; Geometry: TKisMapScanGeometry): Boolean;
   end;
@@ -337,7 +339,7 @@ var
   Geo: TKisMapScanGeometry;
   MapGeo: TKisMapGeometry;
   Skipped: TStringList;
-  MsgText, S: string;
+  MsgText: string;
 begin
   if FArea then
   begin
@@ -616,6 +618,7 @@ procedure TKisGivenScanEditor2.FormDestroy(Sender: TObject);
 begin
   inherited;
   FMaps.Free;
+  FreeAndNil(FAreaPoly);
 end;
 
 procedure TKisGivenScanEditor2.FormShow(Sender: TObject);
@@ -677,55 +680,42 @@ begin
   end;
 end;
 
-function TKisGivenScanEditor2.ReadAreaFile: Boolean;
+function TKisGivenScanEditor2.ReadAreaFile(CheckLayer, SelectLayer: Boolean): Boolean;
 var
-  Layer: TEzBaseLayer;
-  Ent: TEzEntity;
   Poly: TEzPolygon;
+  Reader: TKisScanAreaFile;
   I: Integer;
 begin
+  Result := False;
   // загружаем область из файла
-  if AutoCADImport = nil then
-    AutoCADImport := TKisAutoCADImport.Create(Self);
-  Result := AutoCADImport.ReadLayerFromFile(SL_WORK_AREA, Layer);
-  if Result then
+  if SelectLayer then    
+    Reader := TKisScanAreaFileMultipleLayers.Create
+  else
+    Reader := TKisScanAreaFileSingleLayer.Create;
+  try
+    Poly := Reader.ReadPoly();
+  finally
+    Reader.Free;
+  end;
+  if Poly <> nil then
   begin
-    if Layer = nil then
-      raise Exception.Create('В файле нет слоя "Граница работ"!');
-    if Layer.RecordCount = 0 then
-      raise Exception.Create('В слое "Граница работ" нет объектов!');
-    if Layer.RecordCount > 1 then
-      raise Exception.Create('В слое "Граница работ" больше одного объекта!');
-    Layer.First;
-    Ent := Layer.RecLoadEntity;
-    Ent.Forget;
-    if not (Ent.EntityID in [idPolyline, idPolygon]) then
-      raise Exception.Create('Объект в слое "Граница работ" не является полигоном!');
-    Poly := nil;
-    if Ent is TEzPolygon then
-    begin
-      Poly := TEzPolygon.CreateEntity([]);
-      Poly.Forget;
-      Poly.Assign(Ent);
-    end
-    else
-    begin
-      if Ent is TEzPolyline then
-      begin
-        if Ent.Points.Count < 4 then
-          raise Exception.Create('Полилиния в слое "Граница работ" незамкнута!');
-        if not EqualPoint2D(Ent.Points[0], Ent.Points[Ent.Points.Count - 1]) then
-          raise Exception.Create('Полилиния в слое "Граница работ" незамкнута!');
-        Poly := TEzPolygon.CreateEntity([]);
-        Poly.Forget;
-        for I := 0 to Ent.Points.Count - 2 do
-          Poly.Points.Add(Ent.Points[I]);
-      end;
-    end;
-    if Assigned(Poly) then
-    begin
-      // TODO : добавить проверку, что областьработ пересекается с планшетами
+      // TODO : добавить проверку, что область работ пересекается с планшетами
       // добавляем область в слой, она должна быть поверх заливки фоном
+      FreeAndNil(FAreaPoly);
+      FAreaPoly := Poly.Clone as TEzPolygon;
+      if not CheckAreaPolyPlacement() then
+      begin
+        I := MessageBox(0,
+                PChar('Область работ находится за пределами выбранных планшетов!' +
+                      sLineBreak +
+                      'Всё равно открыть этот файл?'),
+                PChar('Внимание!'),
+                MB_YESNO + MB_ICONQUESTION
+             );
+        if I = ID_NO then
+          Exit;
+      end;
+      //
       FLayerZone.First;
       while not FLayerZone.Eof do
       begin
@@ -741,11 +731,7 @@ begin
 
       FLayerZone.AddEntity(Poly);
       FLayerZone.LayerInfo.Visible := True;
-      //
-      if FAreaPoly <> nil then
-        FAreaPoly.Free;
-      FAreaPoly := Poly.Clone as TEzPolygon;
-    end;
+      Result := True;
   end;
 end;
 
@@ -785,6 +771,7 @@ end;
 procedure TKisGivenScanEditor2.SpeedButton3Click(Sender: TObject);
 begin
   inherited;
+  DrawBoxMapsGiveOut.GIS.UpdateExtension;
   DrawBoxMapsGiveOut.ZoomToExtension;
 end;
 
@@ -835,7 +822,50 @@ begin
   end;
   btnFullMap.Enabled := not FArea;
   vstMaps.Invalidate;
-  DrawBoxMapsGiveOut.RegenDrawing();
+  DrawBoxMapsGiveOut.GIS.UpdateExtension();
+  DrawBoxMapsGiveOut.ZoomToExtension();
+//  DrawBoxMapsGiveOut.RegenDrawing();
+end;
+
+function TKisGivenScanEditor2.CheckAreaPolyPlacement: Boolean;
+var
+  I: Integer;
+  Map: TMapInfo;
+  N: TNomenclature;
+  R0: TRect;
+  Ri: TRect;
+begin
+//  raise Exception.Create('TKisGivenScanEditor2.CheckAreaPolyPlacement');
+  Result := False;
+  // ищем область покрытия планшетами
+  Map := TMapInfo(fMaps[0]);
+  N.Init(Map.fNomenclature, False);
+  R0 := N.Bounds();
+  for I := 1 to FMaps.Count - 1 do
+  begin
+    Map := TMapInfo(fMaps[I]);
+    N.Init(Map.fNomenclature, False);
+    Ri := N.Bounds();
+    if R0.Left > Ri.Left then
+      R0.Left := Ri.Left;
+    if R0.Bottom > Ri.Bottom then
+      R0.Bottom := Ri.Bottom;
+    if R0.Top < Ri.Top then
+      R0.Top := Ri.Top;
+    if R0.Right < Ri.Right then
+      R0.Right := Ri.Right;
+  end;
+  // проверяем, что область работ пересекается с планшетами
+  if  (FAreaPoly.FBox.xmax < R0.Left)
+      or
+      (FAreaPoly.FBox.xmin > R0.Right)
+      or
+      (FAreaPoly.FBox.ymax < R0.Bottom)
+      or
+      (FAreaPoly.FBox.ymin > R0.Top)
+  then
+    Exit;
+  Result := True;
 end;
 
 procedure TKisGivenScanEditor2.ClearArea;
@@ -859,7 +889,7 @@ var
 begin
   inherited;
   // загружаем область из файла
-  if not ReadAreaFile() then
+  if not ReadAreaFile(False, True) then
     Exit;
   // для всех планшетов ставим признак "область"
   // обновляем элементы управления
@@ -874,7 +904,9 @@ begin
       UpdateMapControls(Data.Map);
     Node := Node.NextSibling;
   end;
-  DrawBoxMapsGiveOut.RegenDrawing();
+  DrawBoxMapsGiveOut.GIS.UpdateExtension();
+  DrawBoxMapsGiveOut.ZoomToExtension();
+//  DrawBoxMapsGiveOut.RegenDrawing();
   vstMaps.Invalidate;
   btnFullMap.Enabled := not FArea;
 end;

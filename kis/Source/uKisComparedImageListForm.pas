@@ -331,21 +331,9 @@ begin
   FImages := TCompareImageList.Create;
   FHistogram := TImageHistogram.Create;
   //
-  FCurrentImage := TBitmap.Create;
-  {$IFDEF GRAPHICS_16_BIT}
-  FCurrentImage.PixelFormat := pf16bit;
-  {$ELSE}
-  FCurrentImage.PixelFormat := pf24bit;
-  {$ENDIF}
-  FCurrentImage.SetSize(5906, 5906);
+  FCurrentImage := TMapImage.CreateMapImage();
   //
-  FTempImage := TBitmap.Create;
-  {$IFDEF GRAPHICS_16_BIT}
-  FTempImage.PixelFormat := pf16bit;
-  {$ELSE}
-  FTempImage.PixelFormat := pf24bit;
-  {$ENDIF}
-  FTempImage.SetSize(5906, 5906);
+  FTempImage := TMapImage.CreateMapImage();
   //
   SetLength(FCustomColors, 1);
 //  FCustomColors[0] := $7F007F;//$A349A4;

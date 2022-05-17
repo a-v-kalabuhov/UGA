@@ -529,7 +529,7 @@ uses
   uKisAppModule, uKisConsts, uKisMapScanEditor, uKisIntf, uKisPeople,
   uKisLicensedOrgs, uKisPrintModule, uKisSearchClasses,
   uKisExceptions, uKisFileReportForm, uKisMapScansView,
-  uMStModuleFTPConnection, uKisMissingScansDlg,
+  uMStFTPConnection, uKisMissingScansDlg,
   uKisOffices, uKisMapScanViewGiveOuts, uKisImageViewer,
   uKisMapScanLoadForm2;
 
@@ -1962,7 +1962,7 @@ begin
     Eof := TfrDataset(Sender).RecNo >= FScansPrintTable.Count;
 end;
 
-procedure TKisMapScansMngr.ProcessOrderWithMissedScans;
+procedure TKisMapScansMngr.ProcessOrderWithMissedScans(var Order: TKisScanOrder; MissedScans: TStringList);
 var
   UsrChoice: TMissingScansResult;
   NewOrder: TKisScanOrder; 
@@ -2019,7 +2019,7 @@ begin
           MapList.Add(Nomen);
           Order.Maps.Next;
         end;
-        if DownloadOrderFiles(Order, MapList, nil) then
+        if DownloadOrderFiles(Order, MapList, nil) then //без возврата, т.к. не все файлы в наличии
         begin
           MissedScans.Clear;
           ShowMessage('Скопировано файлов: ' + IntToStr(Order.Maps.RecordCount) + ' .');
@@ -3625,7 +3625,7 @@ begin
   begin
     for I := 0 to Maps.Count - 1 do
     begin
-      if theMapScansStorage.DownloadFile(AppModule, Geometry, Maps[I], TargetDir, sfnDB) then
+      if theMapScansStorage.DownloadMap(AppModule, Geometry, Maps[I], TargetDir) then
         if Assigned(AfterDownload) then
           AfterDownload(Order, Maps[I]);
     end;
@@ -3652,7 +3652,7 @@ begin
   FGiveOutTemplate := Template;
   try
     FScansPrintTable.Clear;
-    if not DownloadOrderFiles(Order, MapList, AfterDownloadGiveOutFile) then
+    if not DownloadOrderFiles(Order, MapList, AfterDownloadGiveOutFile) then // все файлы заявки в наличии
       Exit;
   finally
     FGiveOutTemplate := nil;
@@ -3806,6 +3806,7 @@ var
   Scans: TObjectList;
   DoReopen: Boolean;
 begin
+  // Выдача планшетов по заявке
 //  ScanIds := TList.Create;
 //  ScanIds.Forget;
   MissedScans := TStringList.Create;
@@ -3817,9 +3818,9 @@ begin
   if Assigned(Order) then
   begin
     DoReopen := True;
-    // проверяем, что все планшеты из заявки есть в наличии
     Conn := GetConnection(True, True);
     try
+      // проверяем, что все планшеты из заявки есть в наличии
       CheckMaps(Conn, Order.Maps, MissedScans, True, True, OrderId);
       // проверяем что все планшеты есть в наличии
       if MissedScans.Count > 0 then
@@ -3917,7 +3918,7 @@ begin
         MapList.Add(Order.Maps.FieldByName(SF_NOMENCLATURE).AsString);
         Order.Maps.Next;
       end;
-      DownloadOrderFiles(Order, MapList, nil);
+      DownloadOrderFiles(Order, MapList, nil); // повторная выдача
     end;
   finally
     FreeAndNil(Order);
@@ -3976,7 +3977,7 @@ begin
           end;
           FGiveOutTemplate := Template;
           try
-            if DownloadOrderFiles(Order, MapList, AfterDownloadFileForView) then
+            if DownloadOrderFiles(Order, MapList, AfterDownloadFileForView) then // выдача для просмотра (без последующего приёма)
             begin
               if Template.CloseAfterGive then
               begin

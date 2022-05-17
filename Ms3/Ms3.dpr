@@ -12,7 +12,6 @@ uses
   uMStKernelClassesOptions in 'Source\uMStKernelClassesOptions.pas',
   uMStKernelClassesPropertiesViewers in 'Source\uMStKernelClassesPropertiesViewers.pas',
   uMStKernelGISUtils in 'Source\uMStKernelGISUtils.pas',
-  uMStModuleFTPConnection in 'Source\uMStModuleFTPConnection.pas' {MStFTPConnection: TDataModule},
   uMStModuleApp in 'Source\uMStModuleApp.pas' {MStClientAppModule: TDataModule},
   uMStModuleLotData in 'Source\uMStModuleLotData.pas' {mstLotDataModule: TDataModule},
   uMStModulePrint in 'Source\uMStModulePrint.pas' {mstPrintModule: TDataModule},
@@ -82,11 +81,9 @@ uses
   uMStKernelTypes in 'Source\uMStKernelTypes.pas',
   uMStClassesProjectsBrowser in 'Source\uMStClassesProjectsBrowser.pas',
   uMStDialogProjectsBrowserFilter in 'Source\uMStDialogProjectsBrowserFilter.pas' {mstProjectBrowserFilterDialog},
-  uMStClassesBufferZone in 'Source\uMStClassesBufferZone.pas',
   uMStDialogBufferZoneWidth in 'Source\uMStDialogBufferZoneWidth.pas' {mstZoneWidthDialog},
   uMStClassesProjectsMIFExport in 'Source\uMStClassesProjectsMIFExport.pas',
   uMStGISEzActions in 'Source\uMStGISEzActions.pas',
-  uMStGISEzActionsAutoScroll in 'Source\uMStGISEzActionsAutoScroll.pas',
   uMStGISEzActionsMeasure in 'Source\uMStGISEzActionsMeasure.pas';
 
 {$R *.RES}

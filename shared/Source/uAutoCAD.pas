@@ -10,11 +10,18 @@ type
   TAutoCADUtils = class
   public
     class function ConvertDWGtoDXF(const TempPath: string; const aFileName: string): string;
+    //
+    class function AddMap500Raster(const aVectorFile, aNomenclature, aRasterFile: string): Boolean;
   end;
 
 implementation
 
 { TAutoCADUtils }
+
+class function TAutoCADUtils.AddMap500Raster(const aVectorFile, aNomenclature, aRasterFile: string): Boolean;
+begin
+  raise Exception.Create('TAutoCADUtils.AddMap500Raster');
+end;
 
 class function TAutoCADUtils.ConvertDWGtoDXF(const TempPath: string; const aFileName: string): string;
 var

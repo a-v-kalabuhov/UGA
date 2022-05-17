@@ -7,7 +7,7 @@ inherited KisGivenScanEditor: TKisGivenScanEditor
   Position = poDesktopCenter
   OnShow = FormShow
   ExplicitWidth = 427
-  ExplicitHeight = 484
+  ExplicitHeight = 480
   PixelsPerInch = 96
   TextHeight = 13
   inherited HintWarnLabel: TLabel
@@ -24,7 +24,7 @@ inherited KisGivenScanEditor: TKisGivenScanEditor
     Default = True
     TabOrder = 3
     ExplicitLeft = 257
-    ExplicitTop = 395
+    ExplicitTop = 419
   end
   inherited btnCancel: TButton
     Left = 338
@@ -33,7 +33,7 @@ inherited KisGivenScanEditor: TKisGivenScanEditor
     Cancel = True
     TabOrder = 4
     ExplicitLeft = 338
-    ExplicitTop = 395
+    ExplicitTop = 419
   end
   object gbSender: TGroupBox [3]
     Left = 0
@@ -139,7 +139,6 @@ inherited KisGivenScanEditor: TKisGivenScanEditor
     Align = alTop
     Caption = #1042#1086#1079#1074#1088#1072#1090
     TabOrder = 2
-    ExplicitTop = 271
     object Label6: TLabel
       Left = 8
       Top = 16

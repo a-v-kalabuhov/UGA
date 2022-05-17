@@ -1,4 +1,4 @@
-unit uMStModuleFTPConnection;
+unit uMStFTPConnection;
 
 interface
 

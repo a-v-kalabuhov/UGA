@@ -159,7 +159,6 @@ uses
   uKisMapScans in 'Source\uKisMapScans.pas' {KisMapScansMngr: TDataModule},
   uKisFileReport in 'Source\uKisFileReport.pas',
   uKisFileReportForm in 'Source\uKisFileReportForm.pas' {KisFileReportForm},
-  uMStModuleFTPConnection in '..\Ms3\Source\uMStModuleFTPConnection.pas' {MStFTPConnection: TDataModule},
   uKisMapScansView in 'Source\uKisMapScansView.pas' {KisMapScansView},
   uKisScanOrders in 'Source\uKisScanOrders.pas' {KisScanOrdersMngr: TDataModule},
   uKisMissingScansDlg in 'Source\uKisMissingScansDlg.pas' {MissingScansForm},
@@ -190,8 +189,9 @@ uses
   uKisEzActions in 'Source\uKisEzActions.pas',
   uKisGivenScanEditor in 'Source\uKisGivenScanEditor.pas',
   uKisMapScanGeometry in 'Source\uKisMapScanGeometry.pas',
-  uMStGISEzActionsAutoScroll in '..\Ms3\Source\uMStGISEzActionsAutoScroll.pas',
-  uKisAutoCADImport in 'Source\uKisAutoCADImport.pas' {KisAutoCADImport: TDataModule};
+  uKisScanAreaFile in 'Source\uKisScanAreaFile.pas',
+  uKisDlgSelectAreaLayer in 'Source\uKisDlgSelectAreaLayer.pas' {KisSelectAleaLayerDialog},
+  uEzAutoCADImport in '..\EzShared\uEzAutoCADImport.pas' {EzAutoCADImport: TDataModule};
 
 {$R *.RES}
 {$SetPEFlags IMAGE_FILE_LARGE_ADDRESS_AWARE}

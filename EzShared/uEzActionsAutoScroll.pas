@@ -1,4 +1,4 @@
-unit uMStGISEzActionsAutoScroll;
+unit uEzActionsAutoScroll;
 
 interface
 

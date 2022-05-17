@@ -6,8 +6,8 @@ uses
   SysUtils, Classes, Contnrs, Forms, DB, Math, Graphics, Dialogs,
   EzLib, EzBaseGIS, EzEntities, EzBase,
   uCommonUtils, uCK36, uGC,
-  uMStKernelClasses, uMStKernelIBX, uMStConsts,
-  uMStClassesBufferZone;
+  uEzBufferZone,
+  uMStKernelClasses, uMStKernelIBX, uMStConsts;
 
 const
   NT_WATER = 1;
@@ -1069,7 +1069,7 @@ end;
 
 procedure TmstProjectLine.BuildZone(aZoneWidth: Double);
 var
-  Bldr: TmstBufferZoneBuilderPoly2;
+  Bldr: TBufferZoneBuilderPoly2;
   Points: TEzVector;
   I: Integer;
 begin
@@ -1084,7 +1084,7 @@ begin
     Points.AddPoint(Self.Points[I].X, Self.Points[I].Y);
   end;
   //
-  Bldr := TmstBufferZoneBuilderPoly2.Create;
+  Bldr := TBufferZoneBuilderPoly2.Create;
   Bldr.Forget();
   Bldr.Width := aZoneWidth;
   Bldr.Build(Points);

@@ -155,6 +155,7 @@ begin
   if Assigned(N) then
   begin
     Data := vstMaps.GetNodeData(N);
+    B := True;
     if FNewJoinCheck then
       if FNewChangesCheck then
       begin
@@ -511,11 +512,8 @@ begin
   Result := False;
   BmpFile := '';
   try
-    Bmp := TBitmap.Create;
+    Bmp := TMapImage.CreateMapImage();
     try
-      Bmp.PixelFormat := pf24bit;
-      Bmp.SetSize(5906, 5906);
-      //
       Bmp1 := TBitmap.Create;
       try
         if File1.Kind = tbEntireMap then
@@ -613,12 +611,12 @@ begin
     ResultFile := File1.FileName
   else
   if File1.Kind = tbNoChanges then
-    ResultFile := theMapScansStorage.GetFileName(AppModule, File1.Nomenclature, sfnDB)
+    ResultFile := theMapScansStorage.GetFileName(AppModule, File1.Nomenclature, sfnRaster)
   else
   if File1.Kind = tbZones then
     ResultFile := File1.MergedFile;
   //
-  SourceFile := theMapScansStorage.GetFileName(AppModule, File1.Nomenclature, sfnDB);
+  SourceFile := theMapScansStorage.GetFileName(AppModule, File1.Nomenclature, sfnRaster);
   //
   if File1.Kind = tbZones then
     DiffFile := File1.FileName;
@@ -641,12 +639,12 @@ begin
     ResultFile := File2.FileName
   else
   if File2.Kind = tbNoChanges then
-    ResultFile := theMapScansStorage.GetFileName(AppModule, File2.Nomenclature, sfnDB)
+    ResultFile := theMapScansStorage.GetFileName(AppModule, File2.Nomenclature, sfnRaster)
   else
   if File2.Kind = tbZones then
     ResultFile := File2.MergedFile;
   //
-  SourceFile := theMapScansStorage.GetFileName(AppModule, File2.Nomenclature, sfnDB);
+  SourceFile := theMapScansStorage.GetFileName(AppModule, File2.Nomenclature, sfnRaster);
   //
   if File2.Kind = tbZones then
     DiffFile := File2.FileName;
@@ -714,13 +712,13 @@ function TKisMapScanLoadForm2.MapHalfRect(Kind: TJoinKind): TRect;
 begin
   case Kind of
     jkTop:
-      Result := Rect(0, 0, 5906, 2953);
+      Result := Rect(0, 0, SZ_MAP_PX, SZ_MAP_HALF_PX);
     jkRight:
-      Result := Rect(2953, 0, 5906, 5906);
+      Result := Rect(SZ_MAP_HALF_PX, 0, SZ_MAP_PX, SZ_MAP_PX);
     jkBottom:
-      Result := Rect(0, 2953, 5906, 5906);
+      Result := Rect(0, SZ_MAP_HALF_PX, SZ_MAP_PX, SZ_MAP_PX);
     jkLeft:
-      Result := Rect(0, 0, 2953, 5906);
+      Result := Rect(0, 0, SZ_MAP_HALF_PX, SZ_MAP_PX);
   end;
 end;
 

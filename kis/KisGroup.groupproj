@@ -13,16 +13,15 @@
     <Projects Include="..\Components\FastReport\source\fr7.dproj" />
     <Projects Include="..\Components\FastReport\source\ibx\FRIBX7.dproj" />
     <Projects Include="..\Components\TDBF\Source\tdbf_d7d.dproj" />
-    <Projects Include="..\MapFile\mfTest1.dproj" />
-    <Projects Include="..\Ms3\Ms3.dproj">
+    <Projects Include="..\EzShared\EzShared_make.dproj">
       <Dependencies>..\shared\Source\shared_make.dproj</Dependencies>
     </Projects>
+    <Projects Include="..\MapFile\mfTest1.dproj" />
+    <Projects Include="..\Ms3\Ms3.dproj" />
     <Projects Include="..\Ms3\Test\Ms3Tests.dproj" />
     <Projects Include="..\shared\Source\MyVCL.dproj" />
     <Projects Include="..\shared\Source\shared_make.dproj" />
-    <Projects Include="Kis.dproj">
-      <Dependencies>..\shared\Source\shared_make.dproj</Dependencies>
-    </Projects>
+    <Projects Include="Kis.dproj" />
     <Projects Include="KisTestsProject.dproj" />
   </ItemGroup>
   <ProjectExtensions>
@@ -85,6 +84,15 @@
   <Target Name="shared_make:Make">
     <MSBuild Projects="..\shared\Source\shared_make.dproj" Targets="Make" />
   </Target>
+  <Target Name="EzShared_make" DependsOnTargets="shared_make">
+    <MSBuild Projects="..\EzShared\EzShared_make.dproj" Targets="" />
+  </Target>
+  <Target Name="EzShared_make:Clean" DependsOnTargets="shared_make:Clean">
+    <MSBuild Projects="..\EzShared\EzShared_make.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="EzShared_make:Make" DependsOnTargets="shared_make:Make">
+    <MSBuild Projects="..\EzShared\EzShared_make.dproj" Targets="Make" />
+  </Target>
   <Target Name="MyVCL">
     <MSBuild Projects="..\shared\Source\MyVCL.dproj" Targets="" />
   </Target>
@@ -94,13 +102,13 @@
   <Target Name="MyVCL:Make">
     <MSBuild Projects="..\shared\Source\MyVCL.dproj" Targets="Make" />
   </Target>
-  <Target Name="Kis" DependsOnTargets="shared_make">
+  <Target Name="Kis">
     <MSBuild Projects="Kis.dproj" Targets="" />
   </Target>
-  <Target Name="Kis:Clean" DependsOnTargets="shared_make:Clean">
+  <Target Name="Kis:Clean">
     <MSBuild Projects="Kis.dproj" Targets="Clean" />
   </Target>
-  <Target Name="Kis:Make" DependsOnTargets="shared_make:Make">
+  <Target Name="Kis:Make">
     <MSBuild Projects="Kis.dproj" Targets="Make" />
   </Target>
   <Target Name="mfTest1">
@@ -112,13 +120,13 @@
   <Target Name="mfTest1:Make">
     <MSBuild Projects="..\MapFile\mfTest1.dproj" Targets="Make" />
   </Target>
-  <Target Name="Ms3" DependsOnTargets="shared_make">
+  <Target Name="Ms3">
     <MSBuild Projects="..\Ms3\Ms3.dproj" Targets="" />
   </Target>
-  <Target Name="Ms3:Clean" DependsOnTargets="shared_make:Clean">
+  <Target Name="Ms3:Clean">
     <MSBuild Projects="..\Ms3\Ms3.dproj" Targets="Clean" />
   </Target>
-  <Target Name="Ms3:Make" DependsOnTargets="shared_make:Make">
+  <Target Name="Ms3:Make">
     <MSBuild Projects="..\Ms3\Ms3.dproj" Targets="Make" />
   </Target>
   <Target Name="KisTestsProject">
@@ -158,13 +166,13 @@
     <MSBuild Projects="..\Components\Clipper\Delphi\main demo\clipper_demo.dproj" Targets="Make" />
   </Target>
   <Target Name="Build">
-    <CallTarget Targets="fr7;FRIBX7;tdbf_d7d;EcwCL;EzGISD7;shared_make;MyVCL;Kis;mfTest1;Ms3;KisTestsProject;NewMain;Ms3Tests;clipper_demo" />
+    <CallTarget Targets="fr7;FRIBX7;tdbf_d7d;EcwCL;EzGISD7;shared_make;EzShared_make;MyVCL;Kis;mfTest1;Ms3;KisTestsProject;NewMain;Ms3Tests;clipper_demo" />
   </Target>
   <Target Name="Clean">
-    <CallTarget Targets="fr7:Clean;FRIBX7:Clean;tdbf_d7d:Clean;EcwCL:Clean;EzGISD7:Clean;shared_make:Clean;MyVCL:Clean;Kis:Clean;mfTest1:Clean;Ms3:Clean;KisTestsProject:Clean;NewMain:Clean;Ms3Tests:Clean;clipper_demo:Clean" />
+    <CallTarget Targets="fr7:Clean;FRIBX7:Clean;tdbf_d7d:Clean;EcwCL:Clean;EzGISD7:Clean;shared_make:Clean;EzShared_make:Clean;MyVCL:Clean;Kis:Clean;mfTest1:Clean;Ms3:Clean;KisTestsProject:Clean;NewMain:Clean;Ms3Tests:Clean;clipper_demo:Clean" />
   </Target>
   <Target Name="Make">
-    <CallTarget Targets="fr7:Make;FRIBX7:Make;tdbf_d7d:Make;EcwCL:Make;EzGISD7:Make;shared_make:Make;MyVCL:Make;Kis:Make;mfTest1:Make;Ms3:Make;KisTestsProject:Make;NewMain:Make;Ms3Tests:Make;clipper_demo:Make" />
+    <CallTarget Targets="fr7:Make;FRIBX7:Make;tdbf_d7d:Make;EcwCL:Make;EzGISD7:Make;shared_make:Make;EzShared_make:Make;MyVCL:Make;Kis:Make;mfTest1:Make;Ms3:Make;KisTestsProject:Make;NewMain:Make;Ms3Tests:Make;clipper_demo:Make" />
   </Target>
   <Import Condition="Exists('$(MSBuildBinPath)\Borland.Group.Targets')" Project="$(MSBuildBinPath)\Borland.Group.Targets" />
 </Project>

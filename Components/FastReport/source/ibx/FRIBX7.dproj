@@ -35,13 +35,13 @@
     <DelphiCompile Include="FRIBX7.dpk">
       <MainSource>MainSource</MainSource>
     </DelphiCompile>
-    <DCCReference Include="C:\Users\Катя\Desktop\dbrtl.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\designide.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\FR7.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\ibxpress.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\VCL.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\vcldb.dcp" />
-    <DCCReference Include="C:\Users\Катя\Desktop\vcljpg.dcp" />
+    <DCCReference Include="..\dbrtl.dcp" />
+    <DCCReference Include="..\designide.dcp" />
+    <DCCReference Include="..\FR7.dcp" />
+    <DCCReference Include="..\ibxpress.dcp" />
+    <DCCReference Include="..\VCL.dcp" />
+    <DCCReference Include="..\vcldb.dcp" />
+    <DCCReference Include="..\vcljpg.dcp" />
     <DCCReference Include="FR_IBXDB.pas" />
     <DCCReference Include="FR_IBXMd.pas" />
     <DCCReference Include="FR_IBXQuery.pas" />

@@ -7,7 +7,7 @@ uses
   Forms,
   main in 'main.pas' {MainForm},
   GR32_Misc in 'GR32_Misc.pas',
-  clipper in '..\clipper.pas';
+  clipper in '..\..\..\..\shared\Source\clipper.pas';
 
 {$R *.res}
 

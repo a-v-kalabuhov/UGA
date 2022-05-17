@@ -1,5 +1,7 @@
 // Package file for Delphi 7
 
+// JCL_DEBUG_EXPERT_GENERATEJDBG OFF
+// JCL_DEBUG_EXPERT_INSERTJDBG OFF
 package FRIBX7;
 
 {$R *.res}

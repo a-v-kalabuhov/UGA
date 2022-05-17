@@ -23,10 +23,10 @@
     <DCC_DcuOutput>Dcu</DCC_DcuOutput>
     <DCC_ObjOutput>Dcu</DCC_ObjOutput>
     <DCC_HppOutput>Dcu</DCC_HppOutput>
-    <DCC_UnitSearchPath>..\shared\Dcu;..\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;C:\Projects\kis\kis\Libs</DCC_UnitSearchPath>
-    <DCC_ResourcePath>..\shared\Dcu;..\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;C:\Projects\kis\kis\Libs</DCC_ResourcePath>
-    <DCC_ObjPath>..\shared\Dcu;..\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;C:\Projects\kis\kis\Libs</DCC_ObjPath>
-    <DCC_IncludePath>..\shared\Dcu;..\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;C:\Projects\kis\kis\Libs</DCC_IncludePath>
+    <DCC_UnitSearchPath>C:\Projects\kis\shared\Dcu;C:\Projects\kis\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu</DCC_UnitSearchPath>
+    <DCC_ResourcePath>C:\Projects\kis\shared\Dcu;C:\Projects\kis\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu</DCC_ResourcePath>
+    <DCC_ObjPath>C:\Projects\kis\shared\Dcu;C:\Projects\kis\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu</DCC_ObjPath>
+    <DCC_IncludePath>C:\Projects\kis\shared\Dcu;C:\Projects\kis\shared\Res;..\Components\FastReport\Dcu;..\Components\EzGIS\Res;C:\Projects\Components\jvcl\run;C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu</DCC_IncludePath>
     <DCC_MapFile>3</DCC_MapFile>
     <DCC_Optimize>False</DCC_Optimize>
     <DCC_IntegerOverflowCheck>True</DCC_IntegerOverflowCheck>
@@ -37,7 +37,7 @@
     <Borland.Personality>Delphi.Personality</Borland.Personality>
     <Borland.ProjectType>VCLApplication</Borland.ProjectType>
     <BorlandProject>
-<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">True</VersionInfo><VersionInfo Name="MajorVer">2</VersionInfo><VersionInfo Name="MinorVer">7</VersionInfo><VersionInfo Name="Release">32</VersionInfo><VersionInfo Name="Build">946</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1049</VersionInfo><VersionInfo Name="CodePage">1251</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">МКП УГА г.Воронежа</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Информационная система МКП УГА</VersionInfoKeys><VersionInfoKeys Name="FileVersion">2.7.32.946</VersionInfoKeys><VersionInfoKeys Name="InternalName">Kis</VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename">Kis.exe</VersionInfoKeys><VersionInfoKeys Name="ProductName">Информационная система МКП УГА</VersionInfoKeys><VersionInfoKeys Name="ProductVersion">2.7</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">Kis.dpr</Source></Source><Excluded_Packages>
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">True</VersionInfo><VersionInfo Name="MajorVer">2</VersionInfo><VersionInfo Name="MinorVer">7</VersionInfo><VersionInfo Name="Release">34</VersionInfo><VersionInfo Name="Build">957</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1049</VersionInfo><VersionInfo Name="CodePage">1251</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">МКП УГА г.Воронежа</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Информационная система МКП УГА</VersionInfoKeys><VersionInfoKeys Name="FileVersion">2.7.34.957</VersionInfoKeys><VersionInfoKeys Name="InternalName">Kis</VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename">Kis.exe</VersionInfoKeys><VersionInfoKeys Name="ProductName">Информационная система МКП УГА</VersionInfoKeys><VersionInfoKeys Name="ProductVersion">2.7</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">Kis.dpr</Source></Source><Excluded_Packages>
       <Excluded_Packages Name="$(BDS)\bin\dcloffice2k100.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
       <Excluded_Packages Name="$(BDS)\bin\dclofficexp100.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
     </Excluded_Packages></Delphi.Personality><ModelSupport>True</ModelSupport></BorlandProject></BorlandProject>
@@ -47,9 +47,8 @@
     <DelphiCompile Include="Kis.dpr">
       <MainSource>MainSource</MainSource>
     </DelphiCompile>
-    <DCCReference Include="..\Ms3\Source\uMStGISEzActionsAutoScroll.pas" />
-    <DCCReference Include="..\Ms3\Source\uMStModuleFTPConnection.pas">
-      <Form>MStFTPConnection</Form>
+    <DCCReference Include="..\EzShared\uEzAutoCADImport.pas">
+      <Form>EzAutoCADImport</Form>
       <DesignClass>TDataModule</DesignClass>
     </DCCReference>
     <DCCReference Include="Libs\AConnect6.pas">
@@ -234,10 +233,6 @@
       <Form>KisArchivalDocsMngr</Form>
       <DesignClass>TDataModule</DesignClass>
     </DCCReference>
-    <DCCReference Include="Source\uKisAutoCADImport.pas">
-      <Form>KisAutoCADImport</Form>
-      <DesignClass>TDataModule</DesignClass>
-    </DCCReference>
     <DCCReference Include="Source\uKisBankAccountsForm.pas">
       <Form>KisBankAccountsForm</Form>
     </DCCReference>
@@ -306,6 +301,9 @@
     <DCCReference Include="Source\uKisDecrees.pas">
       <Form>KisDecreeMngr</Form>
       <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uKisDlgSelectAreaLayer.pas">
+      <Form>KisSelectAleaLayerDialog</Form>
     </DCCReference>
     <DCCReference Include="Source\uKisDocTypes.pas">
       <Form>KisDocTypeMngr</Form>
@@ -495,6 +493,7 @@
       <Form>KisProjectsJournalMngr</Form>
       <DesignClass>TDataModule</DesignClass>
     </DCCReference>
+    <DCCReference Include="Source\uKisScanAreaFile.pas" />
     <DCCReference Include="Source\uKisScanHistoryFiles.pas" />
     <DCCReference Include="Source\uKisScanImagesViewForm.pas">
       <Form>KisScanImagesViewForm</Form>
@@ -566,6 +565,9 @@
     <None Include="ModelSupport_Kis\Soglass\default.txaPackage" />
     <None Include="ModelSupport_Kis\uKisAllotmentClasses\default.txaPackage" />
     <None Include="ModelSupport_Kis\uKisAppModule\default.txvpck" />
+    <None Include="ModelSupport_Kis\uKisAutoCADImport\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisAutoCADImport\default.txvpck" />
+    <None Include="ModelSupport_Kis\uKisComparedImageListForm\default.txaPackage" />
     <None Include="ModelSupport_Kis\uKisConsts\default.txaPackage" />
     <None Include="ModelSupport_Kis\uKisEntityEditor\default.txvpck" />
     <None Include="ModelSupport_Kis\uKisFactory\default.txaPackage" />
@@ -583,13 +585,18 @@
     <None Include="ModelSupport_Kis\uKisMapScanGeometry\default.txaPackage" />
     <None Include="ModelSupport_Kis\uKisMapScanGeometry\default.txvpck" />
     <None Include="ModelSupport_Kis\uKisMapScanIntf\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisMapScanLoadForm2\default.txvpck" />
     <None Include="ModelSupport_Kis\uKisMapScansView\default.txaPackage" />
     <None Include="ModelSupport_Kis\uKisMapScans\default.txvpck" />
     <None Include="ModelSupport_Kis\uKisMap\default.txaPackage" />
     <None Include="ModelSupport_Kis\uKisMap\default.txvpck" />
+    <None Include="ModelSupport_Kis\uKisScanAreaFile\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uKisScanAreaFile\default.txvpck" />
     <None Include="ModelSupport_Kis\uKisScanHistoryFiles\default.txaPackage" />
     <None Include="ModelSupport_Kis\uKisScanOrders\default.txaPackage" />
     <None Include="ModelSupport_Kis\uKisScanOrders\default.txvpck" />
+    <None Include="ModelSupport_Kis\uKisTakeBackFiles\default.txaPackage" />
     <None Include="ModelSupport_Kis\uMapScanFiles\default.txaPackage" />
+    <None Include="ModelSupport_Kis\uMapScanFiles\default.txvpck" />
   </ItemGroup>
 </Project>

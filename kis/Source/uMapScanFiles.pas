@@ -5,7 +5,7 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, ComObj, jpeg, StrUtils,
   MD5, 
-  uFileUtils, uGC, uCommonUtils, uGraphics, uGeoUtils,
+  uFileUtils, uGC, uCommonUtils, uGraphics, uGeoUtils, uAutoCAD,
   uKisUtils, uKisIntf,
   uKisAppModule,
   uKisExceptions, uKisTakeBackFiles, uKisMapScanGeometry;
@@ -53,18 +53,21 @@ type
   TMapScanArray = array of TMapScanFile;
 
   TScanFileName = (
-    sfnDB,       // скан планшета
-    sfnFormular,  // скан формуляра физического планшета
-    sfnArchive,  // архивная копия скана планшета
-    sfnArchiveZone,  // архивная копия скана планшета
-    sfnMiniDiff  // миниатюра области изменений
+    sfnRaster,          // скан планшета
+    sfnVector,      // векторный планшет
+    sfnFormular,    // скан формуляра физического планшета
+    sfnArchive,     // архивная копия скана планшета
+    sfnArchiveZone, // архивная копия скана планшета
+    sfnMiniDiff     // миниатюра области изменений
   );
 
   TMapScanStorage = class
   strict private
     procedure PrepareMini(var Scan: TMapScanFile; const Scale: Integer; aMiniFileName: String);
+    function HasVectorFile(Folders: IKisFolders; const Nomenclature: string): Boolean;
   public
     const PackZoneFiles = True;
+    const VectorExt: array[0..1] of string = ('.DXF', '.DWG');
     class function GetFileName(Folders: IKisFolders; const Nomenclature: string; const Kind: TScanFileName; Param: String = ''): string;
     class function GetMD5Hash(Folders: IKisFolders; const Nomenclature: string): string;
     class function IsGraphicFile(const FileName: String): Boolean;
@@ -73,8 +76,8 @@ type
     /// <summary>
     /// Создаём картинки и копируем их в указанную папку.
     /// </summary>
-    function DownloadFile(Folders: IKisFolders; aGeometry: TKisMapScanGeometry;
-      const Nomenclature, TargetDir: string; const Kind: TScanFileName): Boolean;
+    function DownloadMap(Folders: IKisFolders; aGeometry: TKisMapScanGeometry;
+      const Nomenclature, TargetDir: string): Boolean;
     /// <summary>
     ///   Используется для загрузки новых версий планшета с изменениями
     /// </summary>
@@ -119,15 +122,67 @@ type
     class function MakeUploadDbBackup2(Nomenclature, FileOpId, aFileExt: string; aDateTime: TDateTime): string;
   end;
 
+  TMapImage = class
+  public
+    class function CreateMapImage(BackColor: TColor = clNone): TBitmap;
+  end;
+
+  IMapStorageFileDownloader = interface
+    ['{C86AE5FC-FFDF-41D2-8A3D-69BD40CE0DE5}']
+    function Download(aGeometry: TKisMapGeometry; const TargetDir: string): Boolean;
+  end;
+
 const
     MAP_SCAN_EXT = '.bmp';
     MD5_EXT = '.md5';
     MINI_EXT = '.mini';
 
+    SZ_MAP_PX = 5906;
+    SZ_MAP_HALF_PX = SZ_MAP_PX div 2;
+
 var
   theMapScansStorage: TMapScanStorage;
 
 implementation
+
+type
+  TRasterDownloader = class(TInterfacedObject, IMapStorageFileDownloader)
+  private
+    FStorage: TMapScanStorage;
+    FFolders: IKisFolders;
+    FNomenclature: string;
+    function Download(MapGeometry: TKisMapGeometry; const TargetDir: string): Boolean;
+  public
+    constructor Create(aStorage: TMapScanStorage; Folders: IKisFolders; const Nomenclature: string);
+  end;
+
+  TVectorDownloader = class(TInterfacedObject, IMapStorageFileDownloader)
+  private
+    FStorage: TMapScanStorage;
+    FFolders: IKisFolders;
+    FNomenclature: string;
+    FTargetRaster: string;
+    //
+    function Download(MapGeometry: TKisMapGeometry; const TargetDir: string): Boolean;
+  private
+    FTargetDir: string;
+    FRasterTempFile: string;
+    FRasterSourceFile: string;
+    FRasterTargetFile: string;
+    FVectorTempFile: string;
+    FVectorSourceFile: string;
+    FVectorTargetFile: string;
+    //
+    procedure PrepareRasterToTemp(MapGeometry: TKisMapGeometry; out CopiedToTemp: Boolean);
+    function CopyTempRasterToTarget(): Boolean;
+    function CopyVectorToTemp(): Boolean;
+    function AddRasterToTempVector(): Boolean;
+    function CopyTempVectorToTarget(): Boolean;
+    procedure DeleteTempRaster();
+    procedure DeleteTempVector();
+  public
+    constructor Create(aStorage: TMapScanStorage; Folders: IKisFolders; const Nomenclature: string);
+  end;
 
 { TMapScanFile }
 
@@ -356,7 +411,7 @@ begin
   if N.Valid then
   begin
     Nomenclature := N.Nomenclature();
-    DBFileName := theMapScansStorage.GetFileName(Folders, Nomenclature, sfnDB);
+    DBFileName := theMapScansStorage.GetFileName(Folders, Nomenclature, sfnRaster);
   end
   else
   begin
@@ -368,37 +423,21 @@ end;
 
 { TMapScanStorage }
 
-function TMapScanStorage.DownloadFile(Folders: IKisFolders; aGeometry: TKisMapScanGeometry;
-      const Nomenclature, TargetDir: string; const Kind: TScanFileName): Boolean;
+function TMapScanStorage.DownloadMap(Folders: IKisFolders; aGeometry: TKisMapScanGeometry;
+      const Nomenclature, TargetDir: string): Boolean;
 var
-  Source, Target: string;
   MapGeometry: TKisMapGeometry;
-  Bmp: TBitmap;
+  Downloader: IMapStorageFileDownloader;
 begin
   Result := False;
   MapGeometry := aGeometry.GetMapGeometry(Nomenclature);
   if MapGeometry.Skip then
     Exit;
-  if MapGeometry.Full then
-  begin
-    Source := GetFileName(Folders, Nomenclature, Kind);
-    Target := TPath.Finish(TargetDir, Nomenclature, ExtractFileExt(Source));
-    TFileUtils.CopyFile(Source, Target, True);
-  end
+  if HasVectorFile(Folders, Nomenclature) then
+    Downloader := TVectorDownloader.Create(Self, Folders, Nomenclature)
   else
-  begin
-    Source := GetFileName(Folders, Nomenclature, Kind);
-    //
-    Bmp := TBitmap.CreateFromFile(Source);
-    try
-      MapGeometry.ApplyGeometryToBmp(Bmp, $7F007F);
-      Target := TPath.Finish(TargetDir, Nomenclature, ExtractFileExt(Source));
-      Bmp.SaveToFile(Target);
-    finally
-      Bmp.Free;
-    end;
-  end;
-  Result := True;
+    Downloader := TRasterDownloader.Create(Self, Folders, Nomenclature);
+  Result := Downloader.Download(MapGeometry, TargetDir);
 end;
 
 class function TMapScanStorage.FindFile(Folders: IKisFolders; const Nomenclature, MD5: String): string;
@@ -411,7 +450,7 @@ var
   Md5Value: string;
 begin
   Result := '';
-  MapFile := GetFileName(Folders, Nomenclature, sfnDB);
+  MapFile := GetFileName(Folders, Nomenclature, sfnRaster);
   MapPath := ExtractFilePath(MapFile);
   SearchMask := TPath.Finish(MapPath, '*.md5');
   FoundFiles := TStringList.Create;
@@ -451,6 +490,7 @@ var
   aMask, aFile, FoundFile: string;
   I: Integer;
   N: TNomenclature;
+  Found: Boolean;
 begin
   Result := '';
   //
@@ -461,7 +501,7 @@ begin
     aPath := TPath.Build(Folders.MapScansPath, L.DelimitedText);
     //
     case Kind of
-    sfnDB :
+    sfnRaster :
       begin
         Result := aPath.Finish(N.Nomenclature(), MAP_SCAN_EXT).Path();
         if not FileExists(Result) then
@@ -483,6 +523,17 @@ begin
             if FoundFile <> '' then
               Result := FoundFile;
           end;
+        end;
+      end;
+    sfnVector :
+      begin
+        I := 0;
+        Found := False;
+        while not Found and (I < Length(VectorExt)) do
+        begin
+          Result := aPath.Finish(N.Nomenclature(), VectorExt[I]).Path();
+          Found := FileExists(Result);
+          Inc(I);
         end;
       end;
     sfnFormular :
@@ -568,7 +619,7 @@ var
   MapFile, HashFile: string;
 begin
   Result := '';
-  MapFile := GetFileName(Folders, Nomenclature, sfnDB);
+  MapFile := GetFileName(Folders, Nomenclature, sfnRaster);
   if FileExists(MapFile) then
   begin
     HashFile := ChangeFileExt(MapFile, MD5_EXT);
@@ -579,13 +630,20 @@ begin
   end;
 end;
 
+function TMapScanStorage.HasVectorFile(Folders: IKisFolders; const Nomenclature: string): Boolean;
+var
+  VectorFileName: string;
+begin
+  VectorFileName := GetFileName(Folders, Nomenclature, sfnVector);
+  Result := FileExists(VectorFileName);
+end;
+
 class function TMapScanStorage.IsGraphicFile(const FileName: String): Boolean;
 var
   Ext: string;
 begin
   Ext := AnsiUpperCase(ExtractFileExt(FileName));
-  Result := (Ext = '.BMP') or (Ext = '.JPG') or (Ext = '.JPEG') or (Ext = '.PNG')
-     or (Ext = '.TIFF');
+  Result := (Ext = '.BMP') or (Ext = '.JPG') or (Ext = '.JPEG') or (Ext = '.PNG') or (Ext = '.TIFF');
 end;
 
 class function TMapScanStorage.IsPacked(const FileName: String): Boolean;
@@ -775,7 +833,7 @@ var
 begin
   /// [!!!]
 //  FileOpId := CreateClassID();
-  Target := GetFileName(Folders, Nomenclature, sfnDB);
+  Target := GetFileName(Folders, Nomenclature, sfnRaster);
   // TODO : ИС Заменить название файлов бекапа планшета.
 
 
@@ -892,6 +950,209 @@ begin
     if not DotExt then
       Result := Result + '.';
     Result := Result + aFileExt
+  end;
+end;
+
+{ TRasterDownloader }
+
+constructor TRasterDownloader.Create(aStorage: TMapScanStorage; Folders: IKisFolders; const Nomenclature: string);
+begin
+  FStorage := aStorage;
+  FFolders := Folders;
+  FNomenclature := Nomenclature;
+end;
+
+function TRasterDownloader.Download(MapGeometry: TKisMapGeometry; const TargetDir: string): Boolean;
+var
+  Source, Target: string;
+  Bmp: TBitmap;
+begin
+  Result := False;
+  if MapGeometry.Skip then
+    Exit;
+  Source := FStorage.GetFileName(FFolders, FNomenclature, sfnRaster);
+  if MapGeometry.Full then
+  begin
+    Target := TPath.Finish(TargetDir, FNomenclature, ExtractFileExt(Source));
+    TFileUtils.CopyFile(Source, Target, True);
+  end
+  else
+  begin
+    Bmp := TBitmap.CreateFromFile(Source);
+    try
+      MapGeometry.ApplyGeometryToBmp(Bmp, $7F007F);
+      Target := TPath.Finish(TargetDir, FNomenclature, ExtractFileExt(Source));
+      Bmp.SaveToFile(Target);
+    finally
+      Bmp.Free;
+    end;
+  end;
+  Result := True;
+end;
+
+{ TVectorDownloader }
+
+function TVectorDownloader.AddRasterToTempVector: Boolean;
+var
+  Map500FileName: string;
+//  Dwg: TAutoCADFile;
+begin
+  // открываем его
+//  Dwg := TAutoCADUtils.OpenFile(FVectorTargetFile);
+  // подкладываем растр
+//  TAutoCADUtils.AddRasterToMap(Dwg);
+  // сохраняем
+  Map500FileName := '.\' + ExtractFileName(FRasterTargetFile);
+  TAutoCADUtils.AddMap500Raster(FVectorTempFile, FNomenclature, Map500FileName);
+end;
+
+function TVectorDownloader.CopyTempRasterToTarget(): Boolean;
+begin
+  Result := TFileUtils.CopyFile(FRasterTempFile, FRasterTargetFile);
+end;
+
+function TVectorDownloader.CopyTempVectorToTarget: Boolean;
+begin
+  Result := TFileUtils.CopyFile(FVectorTempFile, FVectorTargetFile);
+end;
+
+function TVectorDownloader.CopyVectorToTemp(): Boolean;
+var
+  TempFile: string;
+begin
+  Result := False;
+  /// копируем файл вектора во временный файл
+  ///  - создаём временный файл
+  ///  - переименовываем расширение
+  ///  - копируем вектор во временный файл
+  FVectorSourceFile := FStorage.GetFileName(FFolders, FNomenclature, sfnVector);
+  if not FileExists(FVectorSourceFile) then
+    raise Exception.Create('Файл не найден ' + ExtractFileName(FVectorSourceFile));
+  TempFile := TFileUtils.CreateTempFile(AppModule.AppTempPath);
+  FVectorTempFile := ChangeFileExt(TempFile, ExtractFileExt(FVectorSourceFile));
+  if TFileUtils.RenameFile(TempFile, FVectorTempFile) then
+  begin
+    FVectorTargetFile := TPath.Finish(FTargetDir, ExtractFileName(FVectorSourceFile));
+    Result := TFileUtils.CopyFile(FVectorSourceFile, FVectorTempFile);
+  end;
+end;
+
+constructor TVectorDownloader.Create(aStorage: TMapScanStorage; Folders: IKisFolders; const Nomenclature: string);
+begin
+  FStorage := aStorage;
+  FFolders := Folders;
+  FNomenclature := Nomenclature;
+end;
+
+procedure TVectorDownloader.DeleteTempRaster;
+begin
+  if FRasterTempFile <> '' then
+    try
+      TFileUtils.DeleteFile(FRasterTempFile);
+    except
+    end;
+end;
+
+procedure TVectorDownloader.DeleteTempVector;
+begin
+  if FVectorTempFile <> '' then
+    try
+      TFileUtils.DeleteFile(FVectorTempFile);
+    except
+    end;
+end;
+
+function TVectorDownloader.Download(MapGeometry: TKisMapGeometry; const TargetDir: string): Boolean;
+var
+  CopiedToTempFile: Boolean;
+  RasterCopied: Boolean;
+begin
+  Result := False;
+  if MapGeometry.Skip then
+    Exit;
+  RasterCopied := False;
+  try
+    FTargetDir := TargetDir;
+    // подготавливаем растр, если он есть, во временный файл
+    PrepareRasterToTemp(MapGeometry, CopiedToTempFile);
+    // копируем временный файл растра в нужную папку
+    if CopiedToTempFile then
+      if not CopyTempRasterToTarget() then
+        Exit;
+    RasterCopied := True;
+    // копируем файл вектора во временный файл
+    if not CopyVectorToTemp() then
+      Exit;
+    // открываем его
+    // подкладываем растр
+    // сохраняем
+    AddRasterToTempVector();
+    // копируем временный файл и растр в нужную папку
+    if not CopyTempVectorToTarget() then
+      Exit;
+    Result := True;
+  finally
+    // удаляем временный файл
+    DeleteTempRaster();
+    DeleteTempVector();
+    if RasterCopied and not Result then
+      try
+        TFileUtils.DeleteFile(FRasterTargetFile, False);
+      except
+      end;
+  end;
+end;
+
+procedure TVectorDownloader.PrepareRasterToTemp;
+var
+  Bmp: TBitmap;
+  HasRaster: Boolean;
+begin
+  CopiedToTemp := False;
+  FRasterTempFile := '';
+  FRasterSourceFile := FStorage.GetFileName(FFolders, FNomenclature, sfnRaster);
+  FRasterTargetFile := TPath.Finish(FTargetDir, ExtractFileName(FRasterSourceFile));
+  HasRaster := FileExists(FRasterSourceFile);
+  if MapGeometry.Full then
+  begin
+    if HasRaster then
+      TFileUtils.CopyFile(FRasterSourceFile, FRasterTargetFile, True);
+  end
+  else
+  begin
+    FRasterTempFile := TFileUtils.CreateTempFile(AppModule.AppTempPath);
+    if HasRaster then
+      Bmp := TBitmap.CreateFromFile(FRasterSourceFile)
+    else
+      Bmp := TMapImage.CreateMapImage();
+    try
+      MapGeometry.ApplyGeometryToBmp(Bmp, $7F007F);
+      Bmp.SaveToFile(FRasterTempFile);
+    finally
+      Bmp.Free;
+    end;
+    CopiedToTemp := True;
+  end;
+end;
+
+{ TMapImage }
+
+class function TMapImage.CreateMapImage(BackColor: TColor): TBitmap;
+var
+  R: TRect;
+begin
+  Result := TBitmap.Create();
+  Result.PixelFormat := pf24bit;
+  Result.SetSize(SZ_MAP_PX, SZ_MAP_PX);
+  if BackColor <> clNone then
+  begin
+    R := Result.Bounds();
+    Result.Canvas.Pen.Style := psSolid;
+    Result.Canvas.Pen.Color := BackColor;
+    Result.Canvas.Brush.Style := bsSolid;
+    Result.Canvas.Brush.Color := BackColor;
+    Result.Canvas.FillRect(R);
+    Result.Canvas.FrameRect(R);
   end;
 end;
 

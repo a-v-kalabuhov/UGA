@@ -1,4 +1,4 @@
-object KisAutoCADImport: TKisAutoCADImport
+object EzAutoCADImport: TEzAutoCADImport
   OldCreateOrder = False
   OnDestroy = DataModuleDestroy
   Height = 150

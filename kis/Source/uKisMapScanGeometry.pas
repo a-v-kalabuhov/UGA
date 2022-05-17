@@ -209,8 +209,6 @@ procedure TKisMapGeometry.CalcAreaPoints;
 var
   N: TNomenclature;
   R: TRect;
-  Xleft: Double;
-  Ybottom: Double;
   Xa: Double;
   Ya: Double;
   I: Integer;
@@ -354,8 +352,7 @@ var
   N: TNomenclature;
   R: TRect;
   Ext: TEzRect;
-  I, J: Integer;
-  BoundRect: TEzVector;
+  J: Integer;
   E1, E2: TEzPolygon;
   BoundPoints: array of TEzPoint;
   Subject: TEzEntityList;

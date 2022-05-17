@@ -142,7 +142,6 @@ end;
 
 procedure ProjectToListView(ListView: TListView; Prj: TmstProject);
 var
-  I: Integer;
   Item: TListItem;
   S: string;
 begin

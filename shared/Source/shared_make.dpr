@@ -36,7 +36,10 @@ uses
   uDB in 'uDB.pas',
   uSQL in 'uSQL.pas',
   uCK36 in 'uCK36.pas',
-  uAutoCAD in 'uAutoCAD.pas';
+  uAutoCAD in 'uAutoCAD.pas',
+  clipper in 'clipper.pas',
+  uTypes in 'uTypes.pas',
+  uMStFTPConnection in 'uMStFTPConnection.pas' {MStFTPConnection: TDataModule};
 
 begin
   

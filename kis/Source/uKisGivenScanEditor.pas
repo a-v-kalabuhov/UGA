@@ -56,6 +56,11 @@ begin
   edOrgname.Text := TKisMapScanGiveOut(FEntity).HolderName;
   if Trim(edOrderNumber.Text) = '' then
     edOrderNumber.Text := 'нет';
+  if Trim(edDefinitionNumber.Text) = '' then
+  begin
+    edDefinitionNumber.Text := ' ';
+    edDefinitionNumber.SetFocus;
+  end;
 end;
 
 end.

@@ -39,6 +39,7 @@
     <DelphiCompile Include="shared_make.dpr">
       <MainSource>MainSource</MainSource>
     </DelphiCompile>
+    <DCCReference Include="clipper.pas" />
     <DCCReference Include="MD5.pas" />
     <DCCReference Include="SciZipFile.pas" />
     <DCCReference Include="uAlgs.pas" />
@@ -64,6 +65,10 @@
     <DCCReference Include="ukaProgressForm.pas">
       <Form>kaProgressForm</Form>
     </DCCReference>
+    <DCCReference Include="uMStFTPConnection.pas">
+      <Form>MStFTPConnection</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
     <DCCReference Include="uPrinters.pas" />
     <DCCReference Include="uProgressModule.pas">
       <Form>kaProgressModule</Form>
@@ -74,6 +79,7 @@
     <DCCReference Include="uSQLParsers.pas" />
     <DCCReference Include="uStringUtils.pas" />
     <DCCReference Include="uTasks.pas" />
+    <DCCReference Include="uTypes.pas" />
     <DCCReference Include="uVCLUtils.pas" />
     <DCCReference Include="uWordReport.pas" />
   </ItemGroup>

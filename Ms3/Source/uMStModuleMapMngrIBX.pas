@@ -18,7 +18,7 @@ uses
   uMStImportEzClasses,
   uMStDialogLogin,
   uMStClassesLots, uMStClassesProjects,
-  uMStModuleStats, uMStModuleGlobalParameters, uMStModuleFTPConnection, uMStModuleOrders, uMStModuleLotData;
+  uMStModuleStats, uMStModuleGlobalParameters, uMStFTPConnection, uMStModuleOrders, uMStModuleLotData;
 
 type
   TmstDataKind = (dkMaps, dkLayers, dkStreets, dkAddresses, dkLotsMain);

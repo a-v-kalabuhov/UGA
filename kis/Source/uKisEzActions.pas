@@ -85,7 +85,7 @@ end;
 Procedure TKisMapMeasureAction.ShowAreaAndPerimeter;
 Var
   TmpPoly: TEzPolyLine;
-  cnt, nd: Integer;
+  cnt: Integer;
   s: String;
   r: Windows.TRect;
   Perimeter: Double;
@@ -161,7 +161,7 @@ Var
   CurrPoint: TEzPoint;
 //  P1, P2: TEzPoint;
 //  Angle, Area, Perimeter, DX, DY: Double;
-  nd: Integer;
+//  nd: Integer;
 Begin
   With CmdLine Do
   Begin

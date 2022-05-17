@@ -289,7 +289,7 @@ var
   Scan: TKisMapScan;
 begin
   Scan := TKisMapScan(Entity);
-  ImgFile := theMapScansStorage.GetFileName(AppModule, Scan.Nomenclature, sfnDB);
+  ImgFile := theMapScansStorage.GetFileName(AppModule, Scan.Nomenclature, sfnRaster);
   if (ImgFile = '') or not FileExists(ImgFile) then
     raise EKisException.Create('Файл планшета ' + Scan.Nomenclature + ' не обнаружен!');
   //
@@ -1280,7 +1280,7 @@ begin
     Viewer := TKisImagesViewFactory.CreateViewer();
     Files := TStringList.Create;
     Files.Forget();
-    aFileName := theMapScansStorage.GetFileName(AppModule, Scan.Nomenclature, sfnDB);
+    aFileName := theMapScansStorage.GetFileName(AppModule, Scan.Nomenclature, sfnRaster);
     if FileExists(aFileName) then
     begin
       Files.Add(aFileName);

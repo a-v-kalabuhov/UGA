@@ -9,7 +9,6 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  ExplicitTop = -129
   ExplicitWidth = 1161
   ExplicitHeight = 723
   PixelsPerInch = 96
@@ -373,7 +372,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       Style = csDropDownList
       Anchors = [akLeft, akBottom]
       DropDownCount = 10
-      ItemHeight = 13
+      ItemHeight = 0
       ItemIndex = 0
       TabOrder = 2
       Text = '0%'

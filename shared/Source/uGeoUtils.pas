@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Classes, SysUtils, StrUtils,
-  uGC, uGeoTypes, uCommonUtils;
+  uGC, uGeoTypes, uCommonUtils, uCK36;
 
 type
   TPart1 = record
@@ -53,7 +53,7 @@ type
     Krasnolesny: Boolean;
     Scale: TGeoScale;
     PartCount: Integer;
-    Top500, Left500: Integer;
+    Top500, Left500, Bottom500, Right500: Integer;
     Top2000, Left2000: Integer;
     Valid: Boolean;
     procedure Init(const aNomenclature: string; const StrictNumbers: Boolean);
@@ -79,6 +79,7 @@ type
     class function GetNeighbourMap(const Nomenclature: String; const Position: TNeighbour4): string;
     class function IsNomenclatureValid(const aNomenclature: String; const StrictNumbers: Boolean): Boolean;
     class function GetNomenclature(const aNomenclature: String; const StrictNumbers: Boolean): TNomenclature;
+    class function IsMCK36(const X, Y: Double): Boolean;
   private
     class function GetPart1(const aValue: String): TPart1;
     class function GetPart2(const aValue: String; const StrictCheck: Boolean): TPart2;
@@ -86,6 +87,17 @@ type
     class function ConvertPartChar(const PartIdx: Integer; const aChar: Char): Char;
     class function IsValidPostfix(const aValue: String): Boolean;
   end;
+
+  TCoords = record
+    X, Y: Double;
+    /// <summary>
+    /// True - Если это геодезические координаты (x - вверх, y - вправо)
+    /// </summary>
+    Geo: Boolean;
+    function GetCoordSystem(): TCoordSystem;
+    procedure Convert(ToCs: TCoordSystem);
+  end;
+
 
   function GetNomenclatureCoords500(var aNomenclature: String; var aTop, aLeft: Integer): Boolean;
 
@@ -645,6 +657,16 @@ begin
   Result := (aValue = RR) or (aValue = LL) or (aValue = RL) or (aValue = LR);
 end;
 
+class function TGeoUtils.IsMCK36(const X, Y: Double): Boolean;
+var
+  Coords: TCoords;
+begin
+  Coords.X := X;
+  Coords.Y := Y;
+  Coords.Geo := True;
+  Result := Coords.GetCoordSystem() = csMCK36;
+end;
+
 class function TGeoUtils.IsNomenclatureValid(const aNomenclature: String; const StrictNumbers: Boolean): Boolean;
 var
   N: TNomenclature;
@@ -1090,6 +1112,91 @@ begin
   end
   else
     Result := '';
+end;
+
+{ TCoords }
+
+procedure TCoords.Convert(ToCs: TCoordSystem);
+var
+  TheCs: TCoordSystem;
+  X1, Y1, X2, Y2: Double;
+begin
+  if not (ToCs in [csVrn, csMCK36]) then
+    raise Exception.Create('Неизвестная координатная система!');
+
+  TheCs := GetCoordSystem();
+  if TheCs = ToCs then
+    Exit;
+  case ToCs of
+    csVrn:
+      begin
+        if Geo then
+        begin
+          X1 := X;
+          Y1 := Y;
+        end
+        else
+        begin
+          X1 := Y;
+          Y1 := X;
+        end;
+        uCK36.ToVRN(X1, Y1, X2, Y2);
+        if Geo then
+        begin
+          X := X2;
+          Y := Y2;
+        end
+        else
+        begin
+          X := Y2;
+          Y := X2;
+        end;
+      end;
+    csMCK36:
+      begin
+        if Geo then
+        begin
+          X1 := X;
+          Y1 := Y;
+        end
+        else
+        begin
+          X1 := Y;
+          Y1 := X;
+        end;
+        uCK36.ToCK36(X1, Y1, X2, Y2);
+        if Geo then
+        begin
+          X := X2;
+          Y := Y2;
+        end
+        else
+        begin
+          X := Y2;
+          Y := X2;
+        end;
+      end;
+  else
+    raise Exception.Create('Неизвестная координатная система!');
+  end;
+end;
+
+function TCoords.GetCoordSystem: TCoordSystem;
+var
+  Is36: Boolean;
+begin
+  if Geo then
+  begin
+    Is36 := (X > 400000) or (Y > 1000000);
+  end
+  else
+  begin
+    Is36 := (Y > 400000) or (X > 1000000);
+  end;
+  if Is36 then
+    Result := csMCK36
+  else
+    Result := csVrn;
 end;
 
 end.

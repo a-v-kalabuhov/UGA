@@ -1,4 +1,4 @@
-unit uMStClassesBufferZone;
+unit uEzBufferZone;
 
 interface
 
@@ -8,7 +8,7 @@ uses
   Clipper;
 
 type
-  TmstBufferZoneBuilderLine = class
+  TBufferZoneBuilderLine = class
   private
     FBuffer: TEzVector;
     FWidth: Double;
@@ -29,7 +29,7 @@ type
     property Width: Double read FWidth write SetWidth;
   end;
 
-  TmstBufferZoneBuilderPoly = class
+  TBufferZoneBuilderPoly = class
   private type
     TLine = record
       A, B, C: Double;
@@ -47,7 +47,7 @@ type
     FLine1: TLine;
     FLine2: TLine;
     FEntities: TEzEntityList;
-    FBuilder: TmstBufferZoneBuilderLine;
+    FBuilder: TBufferZoneBuilderLine;
     FWidth: Double;
     procedure CalcRects();
     procedure ConnectRects(R1, R2: TEzEntity);
@@ -62,7 +62,7 @@ type
     property Width: Double read FWidth write SetWidth;
   end;
 
-  TmstBufferZoneBuilderPoly2 = class
+  TBufferZoneBuilderPoly2 = class
   private
     FBuffer: TEzVector;
     FWidth: Double;
@@ -82,9 +82,9 @@ type
   end;
 implementation
 
-{ TmstBufferZoneBuilderLine }
+{ TBufferZoneBuilderLine }
 
-function TmstBufferZoneBuilderLine.BufferPoly: TEzPolygon;
+function TBufferZoneBuilderLine.BufferPoly: TEzPolygon;
 begin
   Result := TEzPolygon.Create(4, False);
   Result.Points.Add(FBuffer[0]);
@@ -93,7 +93,7 @@ begin
   Result.Points.Add(FBuffer[3]);
 end;
 
-procedure TmstBufferZoneBuilderLine.Build(const Pt1, Pt2: TEzPoint);
+procedure TBufferZoneBuilderLine.Build(const Pt1, Pt2: TEzPoint);
 begin
   // центр
   FCenter := Point2D((Pt1.x + Pt2.x) / 2, (Pt1.y + Pt2.y) / 2);
@@ -105,19 +105,19 @@ begin
   Prepare(Pt2, Pt1);
 end;
 
-constructor TmstBufferZoneBuilderLine.Create;
+constructor TBufferZoneBuilderLine.Create;
 begin
   FBuffer := TEzVector.Create(0);
   FBuffer.CanGrow := True;
 end;
 
-destructor TmstBufferZoneBuilderLine.Destroy;
+destructor TBufferZoneBuilderLine.Destroy;
 begin
   FBuffer.Free;
   inherited;
 end;
 
-procedure TmstBufferZoneBuilderLine.Prepare(const Pt1, Pt2: TEzPoint);
+procedure TBufferZoneBuilderLine.Prepare(const Pt1, Pt2: TEzPoint);
 var
   Matrix: TEzMatrix;
   Pt1B: TEzPoint;
@@ -135,14 +135,14 @@ begin
   FBuffer.Add(Pt2B);
 end;
 
-procedure TmstBufferZoneBuilderLine.SetWidth(const Value: Double);
+procedure TBufferZoneBuilderLine.SetWidth(const Value: Double);
 begin
   FWidth := Value;
 end;
 
-{ TmstBufferZoneBuilderPoly }
+{ TBufferZoneBuilderPoly }
 
-procedure TmstBufferZoneBuilderPoly.Build(aLine: TEzVector);
+procedure TBufferZoneBuilderPoly.Build(aLine: TEzVector);
 begin
   FBuffer.Clear;
   FLine1.Empty := True;
@@ -161,7 +161,7 @@ begin
   JoinRects();
 end;
 
-procedure TmstBufferZoneBuilderPoly.CalcRects;
+procedure TBufferZoneBuilderPoly.CalcRects;
 var
   aRect: TEzEntity;
   R1, R2: TEzEntity;
@@ -190,7 +190,7 @@ begin
   FLine2.Empty := True;
 end;
 
-procedure TmstBufferZoneBuilderPoly.ConnectRects(R1, R2: TEzEntity);
+procedure TBufferZoneBuilderPoly.ConnectRects(R1, R2: TEzEntity);
 var
   HasBreak: Boolean;
   Break1, Break2: Boolean;
@@ -257,25 +257,25 @@ begin
   end;
 end;
 
-constructor TmstBufferZoneBuilderPoly.Create;
+constructor TBufferZoneBuilderPoly.Create;
 begin
   FBuffer := TEzVector.Create(0);
   FBuffer.CanGrow := True;
-  FBuilder := TmstBufferZoneBuilderLine.Create;
+  FBuilder := TBufferZoneBuilderLine.Create;
   FWidth := 2;
   FBuilder.Width := 2;
   FLine1.Empty := True;
   FLine2.Empty := True;
 end;
 
-destructor TmstBufferZoneBuilderPoly.Destroy;
+destructor TBufferZoneBuilderPoly.Destroy;
 begin
   FBuffer.Free;
   FBuilder.Free;
   inherited;
 end;
 
-procedure TmstBufferZoneBuilderPoly.JoinRects;
+procedure TBufferZoneBuilderPoly.JoinRects;
 var
   Clp: TClipper;
 begin
@@ -288,15 +288,15 @@ begin
   end;
 end;
 
-procedure TmstBufferZoneBuilderPoly.SetWidth(const Value: Double);
+procedure TBufferZoneBuilderPoly.SetWidth(const Value: Double);
 begin
   FWidth := Value;
   FBuilder.Width := FWidth;
 end;
 
-{ TmstBufferZoneBuilderPoly.TLine }
+{ TBufferZoneBuilderPoly.TLine }
 
-procedure TmstBufferZoneBuilderPoly.TLine.Calc(Pt1, Pt2: TEzPoint);
+procedure TBufferZoneBuilderPoly.TLine.Calc(Pt1, Pt2: TEzPoint);
 begin
   P1 := Pt1;
   P2 := Pt2;
@@ -306,9 +306,9 @@ begin
   EMpty := False;
 end;
 
-{ TmstBufferZoneBuilderPoly2 }
+{ TBufferZoneBuilderPoly2 }
 
-procedure TmstBufferZoneBuilderPoly2.Build(aLine: TEzVector);
+procedure TBufferZoneBuilderPoly2.Build(aLine: TEzVector);
 var
   Subj, Rslt: TPath;
   Sol: TPaths;
@@ -334,19 +334,19 @@ begin
   end;
 end;
 
-constructor TmstBufferZoneBuilderPoly2.Create;
+constructor TBufferZoneBuilderPoly2.Create;
 begin
   FBuffer := TEzVector.Create(0);
   FBuffer.CanGrow := True;
 end;
 
-destructor TmstBufferZoneBuilderPoly2.Destroy;
+destructor TBufferZoneBuilderPoly2.Destroy;
 begin
   FBuffer.Free;
   inherited;
 end;
 
-procedure TmstBufferZoneBuilderPoly2.SetWidth(const Value: Double);
+procedure TBufferZoneBuilderPoly2.SetWidth(const Value: Double);
 begin
   FWidth := Value;
 end;

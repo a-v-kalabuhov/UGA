@@ -134,6 +134,10 @@ inherited KisMapScanEditor: TKisMapScanEditor
     TabOrder = 7
     object tabHistor: TTabSheet
       Caption = #1048#1089#1090#1086#1088#1080#1103
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         1037
         398)
@@ -303,6 +307,10 @@ inherited KisMapScanEditor: TKisMapScanEditor
       Caption = #1060#1086#1088#1084#1091#1083#1103#1088
       ImageIndex = -1
       OnShow = tabHistoryShow
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -548,6 +556,10 @@ inherited KisMapScanEditor: TKisMapScanEditor
     object TabSheet2: TTabSheet
       Caption = #1060#1086#1088#1084#1091#1083#1103#1088' - '#1089#1090#1072#1088#1099#1081
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         1037
         398)
