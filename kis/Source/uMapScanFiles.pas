@@ -1004,6 +1004,7 @@ begin
   // сохраняем
   Map500FileName := '.\' + ExtractFileName(FRasterTargetFile);
   TAutoCADUtils.AddMap500Raster(FVectorTempFile, FNomenclature, Map500FileName);
+  Result := True;
 end;
 
 function TVectorDownloader.CopyTempRasterToTarget(): Boolean;

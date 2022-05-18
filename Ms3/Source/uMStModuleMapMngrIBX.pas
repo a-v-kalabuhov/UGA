@@ -64,6 +64,7 @@ type
     function GetLotCategories(Index: Integer): TmstLotCategory;
   private
     FAppModule: ImstAppModule;
+    FUserLogActive: Boolean;
     procedure LoadLotCategories();
     procedure SetAppModule(const Value: ImstAppModule);
     function GetAppInfo: string;
@@ -101,7 +102,7 @@ type
     procedure LoadRedLines(Layer: TEzBaseLayer);
     procedure LoadStreets(aStreetList: TmstStreetList); 
     function  Logon(aUser: TmstUser): Boolean;
-    procedure LogUserAcion(const UserAction, Info: string); 
+    procedure LogUserAcion(const UserAction, Info: string);
     function  SetMapImage(aMapList: TmstMapList; aMap: TmstMap; const FileName: String): Boolean;
     procedure DeleteLayer(aLayer: TmstLayer);
     procedure SaveLayer(aLayer: TmstLayer);
@@ -1188,6 +1189,8 @@ var
   Conn: IIBXConnection;
   Q: TDataSet;
 begin
+   if not FUserLogActive then
+     Exit;
   Conn := GetConnection(cmWriteOnly, dmGeo);
   Q := Conn.GetDataSet(SQ_LOG_USER_ACTION);
 //    + 'VALUES (:OFFICES_ID, :PEOPLE_ID, :IP_ADDRESS, :USER_NAME, :ACCOUNT_NAME, :USER_ACTION, :DETAILS)';

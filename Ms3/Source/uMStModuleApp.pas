@@ -1273,7 +1273,6 @@ procedure TMStClientAppModule.LogError(E: Exception; Info: TStrings);
 var
   FileName, S: String;
   Mode: Word;
-  AppInfo: String;
 begin
   try
     FileName := TPath.Finish(Self.MainWorkDir, 'errors.log');
@@ -1632,9 +1631,6 @@ procedure TMStClientAppModule.GISBeforePaintEntity(Sender: TObject;
   Grapher: TEzGrapher; Canvas: TCanvas; const Clip: TEzRect;
   DrawMode: TEzDrawMode; var CanShow: Boolean; var EntList: TEzEntityList;
   var AutoFree: Boolean);
-var
-  NetId: Integer;
-  Nt: TmstProjectNetType;
 begin
   Layer.Recno := Recno;
   if Pos('CADASTR_', Layer.Name) = 1 then

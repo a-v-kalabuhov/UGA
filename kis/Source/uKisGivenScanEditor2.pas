@@ -9,7 +9,7 @@ uses
   EzBaseGIS, EzBasicCtrls, EzCADCtrls, EzLib, EzEntities, EzBase, EzCmdLine, EzActions,
   VirtualTrees,
   uGC, uGeoUtils, uGeoTypes,
-  uEzActionsAutoScroll,
+  uEzActionsAutoScroll, uEzEntityCSConvert,
   uKisEntityEditor, uKisConsts, uKisScanOrders, uKisMapScanGeometry, uKisMapClasses, uKisScanAreaFile,
   uKisExceptions;
 
@@ -59,6 +59,7 @@ type
     lblCoords: TLabel;
     Label2: TLabel;
     edArea: TEdit;
+    SpeedButton4: TSpeedButton;
     procedure vstMapsCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
       out EditLink: IVTEditLink);
     procedure FormCreate(Sender: TObject);
@@ -82,6 +83,7 @@ type
     procedure DrawBoxMapsGiveOutMouseLeave(Sender: TObject);
     procedure DrawBoxMapsGiveOutMouseMove2D(Sender: TObject; Shift: TShiftState; X, Y: Integer; const WX, WY: Double);
     procedure DrawBoxMapsGiveOutMouseEnter(Sender: TObject);
+    procedure SpeedButton4Click(Sender: TObject);
   private type
     TComboEditLink = class(TInterfacedObject, IVTEditLink)
     private
@@ -157,6 +159,7 @@ type
       var EntList: TEzEntityList; var AutoFree: Boolean);
     function CheckAreaPolyPlacement(): Boolean;
     procedure UpdateWorkArea();
+    procedure AddAreaPolyToGis();
   public
     class function Execute(ScanOrder: TKisScanOrder; Geometry: TKisMapScanGeometry; out TargetDir: string): Boolean;
   end;
@@ -178,6 +181,25 @@ const
   SL_SQUARES = 'SQUARES';
   SL_ZONE = 'ZONE';
   SL_WORK_AREA = 'Граница работ';
+
+procedure TKisGivenScanEditor2.AddAreaPolyToGis;
+begin
+  FLayerZone.First;
+  while not FLayerZone.Eof do
+  begin
+    if not FLayerZone.RecIsDeleted() then
+      FLayerZone.DeleteEntity(FLayerZone.Recno);
+    FLayerZone.Next;
+  end; 
+  FAreaPoly.PenTool.FPenStyle.Style := 1;
+  FAreaPoly.PenTool.FPenStyle.Color := clRed;
+  FAreaPoly.PenTool.FPenStyle.Width := -2;
+  FAreaPoly.BrushTool.FBrushStyle.Pattern := 1;
+  FAreaPoly.BrushTool.FBrushStyle.Color := clWhite;
+
+  FLayerZone.AddEntity(FAreaPoly);
+  FLayerZone.LayerInfo.Visible := True;
+end;
 
 function TKisGivenScanEditor2.AddMap(const aNomenclature: string): PVirtualNode;
 var
@@ -330,9 +352,11 @@ begin
     end;
     Node := Node.NextSibling;
   end;
-  DrawBoxMapsGiveOut.RegenDrawing();
+  DrawBoxMapsGiveOut.GIS.UpdateExtension();
+  DrawBoxMapsGiveOut.ZoomToExtension();
   vstMaps.Invalidate;
   btnFullMap.Enabled := not FArea;
+  SpeedButton4.Enabled := FArea;
   UpdateWorkArea();
 end;
 
@@ -669,6 +693,7 @@ begin
         Map := GetSelectedMap();
         Map.fSquares[Idx] := Chb.Checked;
         DrawBoxMapsGiveOut.RegenDrawing();
+        UpdateWorkArea();
       finally
 
       end;
@@ -709,39 +734,25 @@ begin
   end;
   if Poly <> nil then
   begin
-      // TODO : добавить проверку, что область работ пересекается с планшетами
-      // добавляем область в слой, она должна быть поверх заливки фоном
-      FreeAndNil(FAreaPoly);
-      FAreaPoly := Poly.Clone as TEzPolygon;
-      if not CheckAreaPolyPlacement() then
-      begin
-        I := MessageBox(0,
-                PChar('Область работ находится за пределами выбранных планшетов!' +
-                      sLineBreak +
-                      'Всё равно открыть этот файл?'),
-                PChar('Внимание!'),
-                MB_YESNO + MB_ICONQUESTION
-             );
-        if I = ID_NO then
-          Exit;
-      end;
-      //
-      FLayerZone.First;
-      while not FLayerZone.Eof do
-      begin
-        if not FLayerZone.RecIsDeleted() then
-          FLayerZone.DeleteEntity(FLayerZone.Recno);
-        FLayerZone.Next;
-      end; 
-      Poly.PenTool.FPenStyle.Style := 1;
-      Poly.PenTool.FPenStyle.Color := clRed;
-      Poly.PenTool.FPenStyle.Width := -2;
-      Poly.BrushTool.FBrushStyle.Pattern := 1;
-      Poly.BrushTool.FBrushStyle.Color := clWhite;
-
-      FLayerZone.AddEntity(Poly);
-      FLayerZone.LayerInfo.Visible := True;
-      Result := True;
+    // TODO : добавить проверку, что область работ пересекается с планшетами
+    // добавляем область в слой, она должна быть поверх заливки фоном
+    FreeAndNil(FAreaPoly);
+    FAreaPoly := Poly.Clone as TEzPolygon;
+    if not CheckAreaPolyPlacement() then
+    begin
+      I := MessageBox(0,
+              PChar('Область работ находится за пределами выбранных планшетов!' +
+                    sLineBreak +
+                    'Всё равно открыть этот файл?'),
+              PChar('Внимание!'),
+              MB_YESNO + MB_ICONQUESTION
+           );
+      if I = ID_NO then
+        Exit;
+    end;
+    //
+    AddAreaPolyToGis();
+    Result := True;
   end;
 end;
 
@@ -785,20 +796,37 @@ begin
   DrawBoxMapsGiveOut.ZoomToExtension;
 end;
 
+procedure TKisGivenScanEditor2.SpeedButton4Click(Sender: TObject);
+begin
+  inherited;
+  if Assigned(FAreaPoly) and FArea then
+  begin
+    TEzCSConverter.ExchangeXY(FAreaPoly);
+    AddAreaPolyToGis();
+    DrawBoxMapsGiveOut.GIS.UpdateExtension;
+    DrawBoxMapsGiveOut.ZoomToExtension;
+  end;
+end;
+
 procedure TKisGivenScanEditor2.btnFullMapClick(Sender: TObject);
 var
   Map: TMapInfo;
 begin
   inherited;
   Map := GetSelectedMap();
-  if Assigned(Map) and not Map.fFull then
+  if Assigned(Map) then
   begin
-    Map.fFull := True;
-    RemoveSquaresFromGis(Map);
-    DrawBoxMapsGiveOut.RegenDrawing();
-    UpdateMapControls(Map);
-    vstMaps.Invalidate;
-    UpdateWorkArea();
+    FArea := False;
+    SpeedButton4.Enabled := FArea;
+    if not Map.fFull then
+    begin
+      Map.fFull := True;
+      RemoveSquaresFromGis(Map);
+      DrawBoxMapsGiveOut.RegenDrawing();
+      UpdateMapControls(Map);
+      vstMaps.Invalidate;
+      UpdateWorkArea();
+    end;
   end;
 end;
 
@@ -832,6 +860,7 @@ begin
     UpdateMapControls(Map);
   end;
   btnFullMap.Enabled := not FArea;
+  SpeedButton4.Enabled := FArea;
   vstMaps.Invalidate;
   DrawBoxMapsGiveOut.GIS.UpdateExtension();
   DrawBoxMapsGiveOut.ZoomToExtension();
@@ -891,6 +920,7 @@ begin
     FLayerZone.Next;
   end;
   FArea := False;
+  SpeedButton4.Enabled := FArea;
   FreeAndNil(FAreaPoly);
 end;
 
@@ -921,6 +951,7 @@ begin
 //  DrawBoxMapsGiveOut.RegenDrawing();
   vstMaps.Invalidate;
   btnFullMap.Enabled := not FArea;
+  SpeedButton4.Enabled := FArea;
   UpdateWorkArea();
 end;
 
@@ -948,6 +979,7 @@ begin
   finally
     fCheckBoxUpdate := False;
   end;
+  SpeedButton4.Enabled := FArea;
 end;
 
 procedure TKisGivenScanEditor2.UpdateWorkArea;
@@ -1192,6 +1224,7 @@ begin
   if FTree.Selected[FNode] then
     FForm.UpdateMapControls(Data.Map);
   FForm.DrawBoxMapsGiveOut.RegenDrawing();
+  FForm.UpdateWorkArea();
 end;
 
 { TKisGivenScanEditor2.TMapInfo }

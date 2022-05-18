@@ -10,7 +10,6 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
   OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitLeft = -34
-  ExplicitTop = -95
   ExplicitWidth = 1161
   ExplicitHeight = 723
   PixelsPerInch = 96
@@ -584,7 +583,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       OnClick = SpeedButton3Click
     end
     object btnFullMap: TSpeedButton
-      Left = 118
+      Left = 160
       Top = 2
       Width = 130
       Height = 26
@@ -592,7 +591,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       OnClick = btnFullMapClick
     end
     object btnSquaresMap: TSpeedButton
-      Left = 254
+      Left = 296
       Top = 2
       Width = 130
       Height = 26
@@ -600,15 +599,38 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       OnClick = btnSquaresMapClick
     end
     object btnArea: TSpeedButton
-      Left = 390
+      Left = 432
       Top = 2
       Width = 130
       Height = 26
       Caption = #1042#1099#1076#1072#1090#1100' '#1087#1086' '#1086#1073#1083#1072#1089#1090#1080
       OnClick = btnAreaClick
     end
+    object SpeedButton4: TSpeedButton
+      Left = 94
+      Top = 2
+      Width = 27
+      Height = 26
+      Hint = #1055#1086#1084#1077#1085#1103#1090#1100' '#1082#1086#1086#1088#1076#1080#1085#1072#1090#1099' '#1086#1073#1083#1072#1089#1090#1080' '#1084#1077#1089#1090#1072#1084#1080' X<--->Y'
+      Enabled = False
+      Glyph.Data = {
+        5A010000424D5A01000000000000760000002800000013000000130000000100
+        040000000000E4000000C40E0000C40E00001000000000000000000000000000
+        8000008000000080800080000000800080008080000080808000C0C0C0000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00F00FFF00FFFF
+        F0FFFFF00000F00FFF00FFFF00FFFFF00000FF00F00FFFF00000FFF00000FFF0
+        00FFFFF000000FF00000FFF000FFFFFF00F202F00000FF00F00FFFFFF0FF00F0
+        0000F00FFF00FFFFFFFF00F00000F00FFF00FFFFFFF002F00000FFFFFFFFFFFF
+        FF000FF00000FF20FFFFFFFFFF02FFF00000F000FFFFFFFFFFFFFFF00000200F
+        FFFFFFFF00FFFFF0000000FFFFFFFFFF00FFFFF0000000FF0FFFFFFF00FFFFF0
+        0000202F00FFFFF0000FFFF00000F000000FFF000000FFF00000FF00000FF000
+        FF000FF00000FFFF00FFF00FFFF00FF00000FFFF0FFFF00FFFF00FF00000}
+      ParentShowHint = False
+      ShowHint = True
+      OnClick = SpeedButton4Click
+    end
     object btnFullMapsAll: TButton
-      Left = 526
+      Left = 568
       Top = 2
       Width = 130
       Height = 26

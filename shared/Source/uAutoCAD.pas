@@ -19,8 +19,21 @@ implementation
 { TAutoCADUtils }
 
 class function TAutoCADUtils.AddMap500Raster(const aVectorFile, aNomenclature, aRasterFile: string): Boolean;
+var
+  Dwg: IDwgFile;
+  N: TNomenclature;
 begin
   raise Exception.Create('TAutoCADUtils.AddMap500Raster');
+  //
+  // создаём COM-объект
+  Dwg := CreateDwgFile();
+  // открываем файл
+  Dwg.Open(aVectorFile);
+  // добавляем растр
+  N.Init(aNomenclature);
+  Dwg.AddRaster(LayerName, aRasterFile, N.Bounds);
+  // сохраняем
+  Dwg.Save(aVectorFile);
 end;
 
 class function TAutoCADUtils.ConvertDWGtoDXF(const TempPath: string; const aFileName: string): string;

@@ -470,7 +470,6 @@ procedure TmstProjectImportModule.LoadPlacesFromLayer(Layer: TmstprojectLayer; E
 var
   Ent: TEzEntity;
   Place: TmstProjectPlace;
-  I: Integer;
 begin
   EzLayer.First;
   while not EzLayer.Eof do
