@@ -421,7 +421,8 @@ Function EqualMatrix2D( Const M1, M2: TEzMatrix ): Boolean;
 Function EqualRect2D( Const R1, R2: TEzRect ): Boolean;
 Function EqualPoint2D( Const P1, P2: TEzPoint ): Boolean;
 Function FuzzEqualPoint2D( Const P1, P2: TEzPoint ): Boolean;
-Function Point2D( Const AX, AY: Double ): TEzPoint;
+Function Point2D( Const AX, AY: Double ): TEzPoint; overload;
+Function Point2D( Const APt: TPoint ): TEzPoint; overload;
 Function Rect2D( Const AXmin, AYmin, AXmax, AYmax: Double ): TEzRect;
 Function ReorderRect2D( Const R: TEzRect ): TEzRect;
 Function ReorderRect( Const R: TRect ): TRect;
@@ -3053,12 +3054,21 @@ End;
 
 {graphics routines}
 
-Function Point2D( Const AX, AY: Double ): TEzPoint;
+Function Point2D( Const AX, AY: Double ): TEzPoint; overload;
 Begin
   With Result Do
   Begin
     X := AX;
     Y := AY;
+  End;
+End;
+
+Function Point2D( Const APt: TPoint ): TEzPoint; overload;
+Begin
+  With Result Do
+  Begin
+    X := APt.X;
+    Y := APt.Y;
   End;
 End;
 

@@ -273,7 +273,8 @@ Type
     Function GetEntityID: TEzEntityID; Override;
     Function BasicInfoAsString: string; Override;
   Public
-    Constructor CreateEntity( Const P1, P2: TEzPoint );
+    Constructor CreateEntity( Const P1, P2: TEzPoint ); overload;
+    Constructor CreateEntity( Const aRect: TRect ); overload;
     Destructor Destroy; Override;
     Procedure Draw( Grapher: TEzGrapher; Canvas: TCanvas; Const Clip: TEzRect;
       DrawMode: TEzDrawMode; Data: Pointer = Nil ); Override;
@@ -2678,7 +2679,7 @@ End;
 {                  TEzRectangle                                              }
 {------------------------------------------------------------------------------}
 
-Constructor TEzRectangle.CreateEntity( Const P1, P2: TEzPoint );
+Constructor TEzRectangle.CreateEntity( Const P1, P2: TEzPoint ); 
 var
   Box: TEzRect;
 begin
@@ -2691,6 +2692,15 @@ begin
   FPoints[0]:= Box.Emin;
   FPoints[1]:= Box.Emax;
   EndUpdate;
+End;
+
+Constructor TEzRectangle.CreateEntity( Const aRect: TRect ); 
+var
+  P1, P2: TEzPoint;
+begin
+  P1 := Point2D(aRect.TopLeft);
+  P2 := Point2D(aRect.BottomRight);
+  CreateEntity( [P1, P2], False );
 End;
 
 Destructor TEzRectangle.Destroy;

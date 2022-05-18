@@ -434,7 +434,7 @@ type
     /// Показываем визуальный редактор геометрии выдачи сканов.
     /// В редакторе заполняется нужная геометрия.
     /// </summary>
-    function DefineGiveOutGeometry(aOrder: TKisScanOrder; out aGeometry: TKisMapScanGeometry): Boolean;
+    function DefineGiveOutGeometry(aOrder: TKisScanOrder; out aGeometry: TKisMapScanGeometry; out TargetDir: string): Boolean;
     procedure ProcessOrderWithMissedScans(var Order: TKisScanOrder; MissedScans: TStringList);
     function GetNewGiveOutTemplate(Order: TKisScanOrder; Term: Integer): TKisMapScanGiveOut;
     function GiveOutOrderFiles(Order: TKisScanOrder; Template: TKisMapScanGiveOut; Scans: TList; CopyAllFiles: Boolean): Boolean;
@@ -519,7 +519,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Types, FileCtrl,
+  Types, 
   // FastReport
   fr_class, fr_dset,
   // Common
@@ -1528,10 +1528,10 @@ begin
   AppModule.Pool.Back(dsMapScans.Transaction);
 end;
 
-function TKisMapScansMngr.DefineGiveOutGeometry(aOrder: TKisScanOrder; out aGeometry: TKisMapScanGeometry): Boolean;
+function TKisMapScansMngr.DefineGiveOutGeometry(aOrder: TKisScanOrder; out aGeometry: TKisMapScanGeometry; out TargetDir: string): Boolean;
 begin
   aGeometry := TKisMapScanGeometry.Create;
-  Result := TKisGivenScanEditor2.Execute(aOrder, aGeometry);
+  Result := TKisGivenScanEditor2.Execute(aOrder, aGeometry, TargetDir);
   if not Result then
     FreeAndNil(aGeometry);
 end;
@@ -3619,9 +3619,7 @@ var
   I: Integer;
 begin
   Result := False;
-  if not DefineGiveOutGeometry(Order, Geometry) then
-    Exit;
-  if SelectDirectory('Куда копировать?', '', TargetDir) then
+  if DefineGiveOutGeometry(Order, Geometry, TargetDir) then
   begin
     for I := 0 to Maps.Count - 1 do
     begin
@@ -3629,8 +3627,8 @@ begin
         if Assigned(AfterDownload) then
           AfterDownload(Order, Maps[I]);
     end;
+    Result := True;
   end;
-  Result := True;
 end;
 
 function TKisMapScansMngr.GiveOutOrderFiles(Order: TKisScanOrder; Template: TKisMapScanGiveOut; Scans: TList; CopyAllFiles: Boolean): Boolean;

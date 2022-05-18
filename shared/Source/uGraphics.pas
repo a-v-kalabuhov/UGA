@@ -320,34 +320,30 @@ end;
 
 procedure TCanvasExt.AlphaBlend;
 var
-  Bmp: TBitmap;
   Blend: TBlendFunction;
   Alpha: Byte;
   Tw, Th: Integer;
   Sw, Sh: Integer;
 begin
-  if Assigned(Bmp) then
-  begin
-    FillChar(Blend, SizeOf(Blend), 0);
-    Blend.BlendOp := AC_SRC_OVER;
-    Blend.BlendFlags := 0;
-    Blend.AlphaFormat := 0;
-    // для каждого пикселя свой альфа - картинка в формате 32 бита
+  FillChar(Blend, SizeOf(Blend), 0);
+  Blend.BlendOp := AC_SRC_OVER;
+  Blend.BlendFlags := 0;
+  Blend.AlphaFormat := 0;
+  // для каждого пикселя свой альфа - картинка в формате 32 бита
 //    Blend.AlphaFormat := AC_SRC_ALPHA;
-    Alpha := Round(255 / 100 * AlphaPercent);
-    Blend.SourceConstantAlpha := Alpha;
-    Tw := TargetRect.Right - TargetRect.Left;
-    Th := TargetRect.Bottom - TargetRect.Top;
-    Sw := SourceRect.Right - SourceRect.Left;
-    Sh := SourceRect.Bottom - SourceRect.Top;
-    if Windows.AlphaBlend(
-        Self.Handle, TargetRect.Left, TargetRect.Top, Tw, Th,
-        Source.Handle, SourceRect.Left, SourceRect.Top, Sw, Sh,
-        Blend)
-    then
-    else
-      RaiseLastOSError;
-  end;
+  Alpha := Round(255 / 100 * AlphaPercent);
+  Blend.SourceConstantAlpha := Alpha;
+  Tw := TargetRect.Right - TargetRect.Left;
+  Th := TargetRect.Bottom - TargetRect.Top;
+  Sw := SourceRect.Right - SourceRect.Left;
+  Sh := SourceRect.Bottom - SourceRect.Top;
+  if Windows.AlphaBlend(
+      Self.Handle, TargetRect.Left, TargetRect.Top, Tw, Th,
+      Source.Handle, SourceRect.Left, SourceRect.Top, Sw, Sh,
+      Blend)
+  then
+  else
+    RaiseLastOSError;
 end;
 
 procedure TCanvasExt.BeginClipping(const aRect: TRect);

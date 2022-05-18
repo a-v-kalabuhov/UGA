@@ -9,6 +9,8 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
+  ExplicitLeft = -34
+  ExplicitTop = -95
   ExplicitWidth = 1161
   ExplicitHeight = 723
   PixelsPerInch = 96
@@ -41,7 +43,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
   end
   object Panel1: TPanel [3]
     Left = 0
-    Top = 0
+    Top = 5
     Width = 243
     Height = 646
     Anchors = [akLeft, akTop, akBottom]
@@ -60,12 +62,20 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
     end
     object lblCoords: TLabel
       Left = 24
-      Top = 592
+      Top = 630
       Width = 54
       Height = 13
       Anchors = [akLeft, akBottom]
       Caption = '                  '
       Visible = False
+    end
+    object Label2: TLabel
+      Left = 24
+      Top = 583
+      Width = 192
+      Height = 13
+      Anchors = [akLeft, akBottom]
+      Caption = #1055#1083#1086#1097#1072#1076#1100' '#1086#1073#1083#1072#1089#1090#1080' '#1087#1088#1086#1074#1077#1076#1077#1085#1080#1103' '#1088#1072#1073#1086#1090':'
     end
     object vstMaps: TVirtualStringTree
       Left = 0
@@ -372,7 +382,7 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
       Style = csDropDownList
       Anchors = [akLeft, akBottom]
       DropDownCount = 10
-      ItemHeight = 0
+      ItemHeight = 13
       ItemIndex = 0
       TabOrder = 2
       Text = '0%'
@@ -387,6 +397,16 @@ inherited KisGivenScanEditor2: TKisGivenScanEditor2
         '70%'
         '80%'
         '90%')
+    end
+    object edArea: TEdit
+      Left = 24
+      Top = 599
+      Width = 145
+      Height = 21
+      ParentColor = True
+      ReadOnly = True
+      TabOrder = 3
+      Text = '-'
     end
   end
   object DrawBoxMapsGiveOut: TEzDrawBox [4]

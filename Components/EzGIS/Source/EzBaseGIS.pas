@@ -3618,7 +3618,9 @@ Begin
     If ( Entity1.Points.Parts.Count < 2 ) And ( Entity2.Points.Parts.Count < 2 ) Then
     Begin
       subject.add( Entity1 );
+      subject.OwnEntities := False;
       clipping.Add( Entity2 );
+      clipping.OwnEntities := False;
     End
     Else
       EzGISError( SMultiPartNotSupported );
@@ -3647,10 +3649,9 @@ Begin
         Result.Points.Add( TmpEnt.Points[J] );
         Inc( part );
       End;
-      If Result.Points.Count = 0 Then
-        FreeAndNil( Result );
     End;
-
+    If Result.Points.Count = 0 Then
+      FreeAndNil( Result );
     If Result <> Nil Then
     Begin
       TEzOpenedEntity( Result ).PenTool.Assign( TEzOpenedEntity( Entity1 ).PenTool );

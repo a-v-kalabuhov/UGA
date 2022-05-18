@@ -3,7 +3,7 @@ object KisSelectAleaLayerDialog: TKisSelectAleaLayerDialog
   Top = 108
   BorderStyle = bsDialog
   Caption = 'Dialog'
-  ClientHeight = 179
+  ClientHeight = 112
   ClientWidth = 384
   Color = clBtnFace
   ParentFont = True
@@ -11,12 +11,19 @@ object KisSelectAleaLayerDialog: TKisSelectAleaLayerDialog
   Position = poScreenCenter
   DesignSize = (
     384
-    179)
+    112)
   PixelsPerInch = 96
   TextHeight = 13
-  object OKBtn: TButton
-    Left = 300
+  object Label1: TLabel
+    Left = 8
     Top = 8
+    Width = 29
+    Height = 13
+    Caption = #1057#1083#1086#1080':'
+  end
+  object OKBtn: TButton
+    Left = 220
+    Top = 80
     Width = 75
     Height = 25
     Anchors = [akTop, akRight]
@@ -26,8 +33,8 @@ object KisSelectAleaLayerDialog: TKisSelectAleaLayerDialog
     TabOrder = 0
   end
   object CancelBtn: TButton
-    Left = 300
-    Top = 38
+    Left = 301
+    Top = 80
     Width = 75
     Height = 25
     Anchors = [akTop, akRight]
@@ -36,13 +43,14 @@ object KisSelectAleaLayerDialog: TKisSelectAleaLayerDialog
     ModalResult = 2
     TabOrder = 1
   end
-  object RadioGroup1: TRadioGroup
+  object ComboBox1: TComboBox
     Left = 8
-    Top = 2
-    Width = 286
-    Height = 169
-    Anchors = [akLeft, akTop, akRight, akBottom]
-    Caption = #1057#1083#1086#1080
+    Top = 24
+    Width = 368
+    Height = 21
+    Style = csDropDownList
+    DropDownCount = 15
+    ItemHeight = 13
     TabOrder = 2
   end
 end

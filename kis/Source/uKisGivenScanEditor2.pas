@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Contnrs, ActnList, Buttons, Types,
+  Dialogs, StdCtrls, ExtCtrls, Contnrs, ActnList, Buttons, Types, FileCtrl,
   JvBaseDlg, JvDesktopAlert,
   EzBaseGIS, EzBasicCtrls, EzCADCtrls, EzLib, EzEntities, EzBase, EzCmdLine, EzActions,
   VirtualTrees,
@@ -57,6 +57,8 @@ type
     cbAlpha: TComboBox;
     btnArea: TSpeedButton;
     lblCoords: TLabel;
+    Label2: TLabel;
+    edArea: TEdit;
     procedure vstMapsCreateEditor(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
       out EditLink: IVTEditLink);
     procedure FormCreate(Sender: TObject);
@@ -134,6 +136,7 @@ type
     FLayerSquares: TEzBaseLayer;
     FLayerMap500: TEzBaseLayer;
     FLayerZone: TEzBaseLayer;
+    FTargetDir: string;
     function AddMap(const aNomenclature: string): PVirtualNode;
     procedure AddMapToGis(aMap: TMapInfo);
     procedure AddSquaresToGis(aMap: TMapInfo);
@@ -153,8 +156,9 @@ type
       Grapher: TEzGrapher; Canvas: TCanvas; const Clip: TEzRect; DrawMode: TEzDrawMode; var CanShow: Boolean;
       var EntList: TEzEntityList; var AutoFree: Boolean);
     function CheckAreaPolyPlacement(): Boolean;
+    procedure UpdateWorkArea();
   public
-    class function Execute(ScanOrder: TKisScanOrder; Geometry: TKisMapScanGeometry): Boolean;
+    class function Execute(ScanOrder: TKisScanOrder; Geometry: TKisMapScanGeometry; out TargetDir: string): Boolean;
   end;
 
 implementation
@@ -329,6 +333,7 @@ begin
   DrawBoxMapsGiveOut.RegenDrawing();
   vstMaps.Invalidate;
   btnFullMap.Enabled := not FArea;
+  UpdateWorkArea();
 end;
 
 procedure TKisGivenScanEditor2.btnOkClick(Sender: TObject);
@@ -396,7 +401,8 @@ begin
       end;
     end;
   end;
-  ModalResult := mrOK;
+  if SelectDirectory('Куда копировать?', '', FTargetDir) then
+    ModalResult := mrOK;
 end;
 
 procedure TKisGivenScanEditor2.DisplayMapsInGis;
@@ -426,7 +432,7 @@ begin
   end;
 end;
 
-class function TKisGivenScanEditor2.Execute(ScanOrder: TKisScanOrder; Geometry: TKisMapScanGeometry): Boolean;
+class function TKisGivenScanEditor2.Execute(ScanOrder: TKisScanOrder; Geometry: TKisMapScanGeometry; out TargetDir: string): Boolean;
 var
   Frm: TKisGivenScanEditor2;
 begin
@@ -448,7 +454,10 @@ begin
     //
     Result := Frm.ShowModal = mrOk;
     if Result then
+    begin
       Frm.FillGeometry(Geometry);
+      TargetDir := Frm.FTargetDir; 
+    end;
   finally
     FreeAndNil(Frm);
   end;
@@ -507,6 +516,7 @@ begin
             DrawBoxMapsGiveOut.RegenDrawing();
             if GetSelectedMap() = Map then
               UpdateMapControls(Map);
+            UpdateWorkArea();
           end;
         end;
       end;
@@ -788,6 +798,7 @@ begin
     DrawBoxMapsGiveOut.RegenDrawing();
     UpdateMapControls(Map);
     vstMaps.Invalidate;
+    UpdateWorkArea();
   end;
 end;
 
@@ -825,6 +836,7 @@ begin
   DrawBoxMapsGiveOut.GIS.UpdateExtension();
   DrawBoxMapsGiveOut.ZoomToExtension();
 //  DrawBoxMapsGiveOut.RegenDrawing();
+  UpdateWorkArea();
 end;
 
 function TKisGivenScanEditor2.CheckAreaPolyPlacement: Boolean;
@@ -909,6 +921,7 @@ begin
 //  DrawBoxMapsGiveOut.RegenDrawing();
   vstMaps.Invalidate;
   btnFullMap.Enabled := not FArea;
+  UpdateWorkArea();
 end;
 
 procedure TKisGivenScanEditor2.UpdateMapControls;
@@ -935,6 +948,52 @@ begin
   finally
     fCheckBoxUpdate := False;
   end;
+end;
+
+procedure TKisGivenScanEditor2.UpdateWorkArea;
+var
+  I: Integer;
+  Area: Double;
+  Map: TMapInfo;
+  J: Integer;
+  N: TNomenclature;
+  EzR: TEzEntity;
+  TempEnt: TEzEntity;
+begin
+  Area := 0;
+  for I := 0 to FMaps.Count - 1 do
+  begin
+    Map := TMapInfo(fMaps[I]);
+    if Map.fFull then
+      Area := Area + 250 * 250
+    else
+    if FArea then
+    begin
+      N.Init(Map.fNomenclature, False);
+      EzR := TEzRectangle.CreateEntity(N.Bounds());
+      try
+        TempEnt := DrawBoxMapsGiveOut.GIS.EntityIntersect(EzR, FAreaPoly);
+        if Assigned(TempEnt) then
+        try
+          Area := Area + TempEnt.Area;
+        finally
+          TempEnt.Free;
+        end;
+      finally
+        EzR.Free;
+      end;
+    end
+    else
+    begin
+      for J := 0 to Map.fSquares.Size - 1 do
+        if Map.fSquares[J] then
+          Area := Area + 2500;
+    end;
+  end;
+  if Area = 0 then
+    edArea.Text := '-'
+  else
+    edArea.Text := IntToStr(Round(Area)) + ' кв.м.';
 end;
 
 procedure TKisGivenScanEditor2.vstMapsAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
@@ -1104,7 +1163,7 @@ begin
   inherited;
   FEdit.Items.Add('Планшет целиком');
   FEdit.Items.Add('По квадратам');
-//  FEdit.Items.Add('Область на карте');
+//  FEdit.Items.Add('Область работ');
 end;
 
 procedure TKisGivenScanEditor2.TMapTypeEditLink.UpdateNodeData;
@@ -1118,6 +1177,11 @@ begin
       begin
         Data.Map.fFull := True;
         FForm.RemoveSquaresFromGis(Data.Map);
+      end;
+  1:
+      begin
+        Data.Map.fFull := False;
+        FForm.AddSquaresToGis(Data.Map);
       end;
   else
       begin
