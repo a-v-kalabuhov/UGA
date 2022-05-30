@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Buttons,
   Dialogs, ComCtrls, StdCtrls, ToolWin, ExtCtrls, ActnList, ImgList, OleCtrls, Jpeg,
   ATImageBox, ATPrintPreview, ATxPrintProc,
-  uKisFileReport, uKisIntf, uMapScanFiles;
+  uFileUtils, uAutoCAD,
+  uKisFileReport, uKisIntf, uMapScanFiles, uKisAppModule;
 
 type
   TKisComparedImageForm = class(TForm, IKisImageViewer)
@@ -33,6 +34,7 @@ type
     procedure chkFitClick(Sender: TObject);
     procedure btnSaveImageClick(Sender: TObject);
     procedure btnPrintClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     FFileState: TImageCompareState;
     FUpdatingSelfOptions: Boolean;
@@ -47,9 +49,11 @@ type
     procedure SetAllowPrint(Value: Boolean);
     function GetAllowSave: Boolean;
     procedure SetAllowSave(Value: Boolean);
+    procedure PrepareTempFile(const aFileName: string);
   private
     FOptPrepared: Boolean;
     FOpt: TATPrintOptions;
+    FTempFile: string;
   public
     function Execute(aFileState: TImageCompareState): Boolean;
   end;
@@ -129,8 +133,9 @@ begin
   Box.ImageFitToWindow := chkFit.Checked;
 end;
 
-function TKisComparedImageForm.ConfirmImage(const aCaption,
-  aFileName: string): Boolean;
+function TKisComparedImageForm.ConfirmImage(const aCaption, aFileName: string): Boolean;
+var
+  FileToView: string;
 begin
   FFileState := nil;
   lArea.Visible := False;
@@ -147,16 +152,25 @@ begin
   Box.ImageDrag := True;
   Box.ImageKeepPosition := True;
   //
+  PrepareTempFile(aFileName);
+  if FTempFile <> '' then
+    FileToView := FTempFile
+  else
+    FileToView := aFileName;
   try
-    Box.Image.Picture.LoadFromFile(aFileName);
+    Box.Image.Picture.LoadFromFile(FileToView);
   finally
     Box.UpdateImageInfo;
     UpdateSelfScaleOptions;
+    if FileExists(FTempFile) then
+      DeleteFile(FTempFile);
   end;
   Result := ShowModal = mrOK;
 end;
 
 function TKisComparedImageForm.Execute(aFileState: TImageCompareState): Boolean;
+var
+  FileToView: string;
 begin
   Button2.Visible := True;
   FFileState := aFileState;
@@ -180,13 +194,25 @@ begin
   Box.ImageDrag := True;
   Box.ImageKeepPosition := True;
   //
+  PrepareTempFile(FFileState.CompareImage);
+  if FTempFile <> '' then
+    FileToView := FTempFile
+  else
+    FileToView := FFileState.CompareImage;
   try
-    Box.Image.Picture.LoadFromFile(FFileState.CompareImage);
+    Box.Image.Picture.LoadFromFile(FileToView);
   finally
     Box.UpdateImageInfo;
     UpdateSelfScaleOptions;
+    if FileExists(FTempFile) then
+      DeleteFile(FTempFile);
   end;
   Result := ShowModal = mrOk;
+end;
+
+procedure TKisComparedImageForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Box.Image.Picture.Graphic := nil;
 end;
 
 function TKisComparedImageForm.GetAllowPrint: Boolean;
@@ -216,6 +242,24 @@ begin
     Result := 'очень сильно';
 end;
 
+procedure TKisComparedImageForm.PrepareTempFile;
+var
+  Bmp: TBitmap;
+begin
+  FTempFile := '';
+  if TMapScanStorage.FileIsVector(aFileName) then
+  begin
+    FTempFile := TFileUtils.GenerateTempFileName(AppModule.AppTempPath());
+    FTempFile := ChangeFileExt(FTempFile, '.bmp');
+    Bmp := TAutoCADUtils.ExportToBitmap(aFileName, SZ_MAP_PX, SZ_MAP_PX);
+    try
+      Bmp.SaveToFile(FTempFile);
+    finally
+      Bmp.Free;
+    end;
+  end;
+end;
+
 procedure TKisComparedImageForm.SetAllowPrint(Value: Boolean);
 begin
   btnPrint.Visible := Value;
@@ -227,6 +271,8 @@ begin
 end;
 
 procedure TKisComparedImageForm.ShowImage;
+var
+  FileToView: string;
 begin
   FFileState := nil;
   Caption := aCaption;
@@ -244,11 +290,18 @@ begin
   Box.ImageDrag := True;
   Box.ImageKeepPosition := True;
   //
+  PrepareTempFile(aFileName);
+  if FTempFile <> '' then
+    FileToView := FTempFile
+  else
+    FileToView := aFileName;
   try
-    Box.Image.Picture.LoadFromFile(aFileName);
+    Box.Image.Picture.LoadFromFile(FileToView);
   finally
     Box.UpdateImageInfo;
     UpdateSelfScaleOptions;
+    if FileExists(FTempFile) then
+      DeleteFile(FTempFile);
   end;
   ShowModal;
 end;

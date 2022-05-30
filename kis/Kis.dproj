@@ -37,7 +37,7 @@
     <Borland.Personality>Delphi.Personality</Borland.Personality>
     <Borland.ProjectType>VCLApplication</Borland.ProjectType>
     <BorlandProject>
-<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">True</VersionInfo><VersionInfo Name="MajorVer">2</VersionInfo><VersionInfo Name="MinorVer">7</VersionInfo><VersionInfo Name="Release">36</VersionInfo><VersionInfo Name="Build">964</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1049</VersionInfo><VersionInfo Name="CodePage">1251</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">МКП УГА г.Воронежа</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Информационная система МКП УГА</VersionInfoKeys><VersionInfoKeys Name="FileVersion">2.7.36.964</VersionInfoKeys><VersionInfoKeys Name="InternalName">Kis</VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename">Kis.exe</VersionInfoKeys><VersionInfoKeys Name="ProductName">Информационная система МКП УГА</VersionInfoKeys><VersionInfoKeys Name="ProductVersion">2.7</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">Kis.dpr</Source></Source><Excluded_Packages>
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">True</VersionInfo><VersionInfo Name="MajorVer">2</VersionInfo><VersionInfo Name="MinorVer">7</VersionInfo><VersionInfo Name="Release">36</VersionInfo><VersionInfo Name="Build">987</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1049</VersionInfo><VersionInfo Name="CodePage">1251</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">МКП УГА г.Воронежа</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Информационная система МКП УГА</VersionInfoKeys><VersionInfoKeys Name="FileVersion">2.7.36.987</VersionInfoKeys><VersionInfoKeys Name="InternalName">Kis</VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename">Kis.exe</VersionInfoKeys><VersionInfoKeys Name="ProductName">Информационная система МКП УГА</VersionInfoKeys><VersionInfoKeys Name="ProductVersion">2.7</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">Kis.dpr</Source></Source><Excluded_Packages>
       <Excluded_Packages Name="$(BDS)\bin\dcloffice2k100.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
       <Excluded_Packages Name="$(BDS)\bin\dclofficexp100.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
     </Excluded_Packages></Delphi.Personality><ModelSupport>True</ModelSupport></BorlandProject></BorlandProject>
@@ -309,6 +309,9 @@
       <Form>KisDocTypeMngr</Form>
       <DesignClass>TDataModule</DesignClass>
     </DCCReference>
+    <DCCReference Include="Source\uKisDwgTakeBackViewForm.pas">
+      <Form>KisDwgTakeBackViewForm</Form>
+    </DCCReference>
     <DCCReference Include="Source\uKisEntityEditor.pas">
       <Form>KisEntityEditor</Form>
     </DCCReference>
@@ -535,6 +538,7 @@
     <DCCReference Include="Source\uKisStreetSelectorForm.pas">
       <Form>KisStreetSelectorForm</Form>
     </DCCReference>
+    <DCCReference Include="Source\uKisTakeBackFileCompareEditor.pas" />
     <DCCReference Include="Source\uKisTakeBackFileProcessor.pas" />
     <DCCReference Include="Source\uKisTakeBackFiles.pas" />
     <DCCReference Include="Source\uKisUtils.pas" />
@@ -595,6 +599,7 @@
     <None Include="ModelSupport_Kis\uKisScanHistoryFiles\default.txaPackage" />
     <None Include="ModelSupport_Kis\uKisScanOrders\default.txaPackage" />
     <None Include="ModelSupport_Kis\uKisScanOrders\default.txvpck" />
+    <None Include="ModelSupport_Kis\uKisTakeBackFileProcessor\default.txaPackage" />
     <None Include="ModelSupport_Kis\uKisTakeBackFiles\default.txaPackage" />
     <None Include="ModelSupport_Kis\uMapScanFiles\default.txaPackage" />
     <None Include="ModelSupport_Kis\uMapScanFiles\default.txvpck" />

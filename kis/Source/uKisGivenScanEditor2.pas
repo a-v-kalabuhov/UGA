@@ -10,6 +10,7 @@ uses
   VirtualTrees,
   uGC, uGeoUtils, uGeoTypes,
   uEzActionsAutoScroll, uEzEntityCSConvert,
+  uMapScanFiles,
   uKisEntityEditor, uKisConsts, uKisScanOrders, uKisMapScanGeometry, uKisMapClasses, uKisScanAreaFile,
   uKisExceptions;
 
@@ -175,7 +176,6 @@ const
   GreenColor = $88FF88;
   RedColor = clRed;
   GrayColor = clGray;
-  EmptyColor = $7F007F;
 
   SL_MAP500 = 'MAP500';
   SL_SQUARES = 'SQUARES';
@@ -281,8 +281,8 @@ begin
         begin
           Square.PenTool.Color := clWhite;
           Square.FontTool.Color := clWhite;
-          Square.BrushTool.ForeColor := EmptyColor;
-          Square.BrushTool.BackColor := EmptyColor;
+          Square.BrushTool.ForeColor := CL_MAP_SCAN_BACK;
+          Square.BrushTool.BackColor := CL_MAP_SCAN_BACK;
           Square.BrushTool.Pattern := 1;
         end;
       end

@@ -39,6 +39,8 @@
     <DelphiCompile Include="shared_make.dpr">
       <MainSource>MainSource</MainSource>
     </DelphiCompile>
+    <DCCReference Include="CadDll\sgcadimage.pas" />
+    <DCCReference Include="CadDll\sgConsts.pas" />
     <DCCReference Include="clipper.pas" />
     <DCCReference Include="MD5.pas" />
     <DCCReference Include="SciZipFile.pas" />
@@ -53,6 +55,7 @@
     <DCCReference Include="uDBGrid.pas" />
     <DCCReference Include="uDebug.pas" />
     <DCCReference Include="uDisableWindowGhosting.pas" />
+    <DCCReference Include="uDwgFile.pas" />
     <DCCReference Include="uFileUtils.pas" />
     <DCCReference Include="uGC.pas" />
     <DCCReference Include="uGeoTypes.pas" />

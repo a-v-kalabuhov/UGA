@@ -11,7 +11,7 @@ uses
   //
   EzBaseGIS, EzBasicCtrls, EzCtrls, EzCmdLine, EzEntities, EzLib, EzBase, EzActions, EzConsts,
   //
-  uGraphics, uGC, uFileUtils, uDebug, uDisableWindowGhosting, uGeoUtils,
+  uGraphics, uGC, uFileUtils, uDebug, uDisableWindowGhosting, uGeoUtils, uAutoCAD, uMapScanFiles,
   //
   uKisIntf, uKisExceptions, uKisEzActions;
 
@@ -827,10 +827,21 @@ begin
   begin
     if FileExists(Found.FileName) then
     begin
-      try
-        Bmp := TBitmap.CreateFromFile(Found.FileName);
-        Img.Bitmap := Bmp;
-      except
+      if theMapScansStorage.FileIsVector(Found.FileName) then
+      begin
+        try
+          Bmp := TAutoCADUtils.ExportToBitmap(Found.FileName, SZ_MAP_PX, SZ_MAP_PX);
+          Img.Bitmap := Bmp;
+        except
+        end;
+      end
+      else
+      begin
+        try
+          Bmp := TBitmap.CreateFromFile(Found.FileName);
+          Img.Bitmap := Bmp;
+        except
+        end;
       end;
     end;
   end;
@@ -857,7 +868,7 @@ end;
 
 function TKisImagesViewEzGIS.CheckJoin(Folders: IKisFolders; const aTitle: string): Boolean;
 begin
-  GetForm.CheckJoin(Folders, aTitle);
+  Result := GetForm.CheckJoin(Folders, aTitle);
 end;
 
 destructor TKisImagesViewEzGIS.Destroy;

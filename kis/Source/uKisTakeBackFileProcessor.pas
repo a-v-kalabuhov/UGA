@@ -4,9 +4,9 @@ interface
 
 uses
   SysUtils, Classes, Contnrs, Windows, Graphics, 
-  uMapScanFiles, uTasks, uGraphics, uImageHistogram, uImageCompare,
+  uMapScanFiles, uTasks, uGraphics, uImageHistogram, uImageCompare, uDrawTransparent, uAutoCAD,
   //uKisAppModule,
-  uKisTakeBackFiles, uFileUtils, uKisIntf, uDrawTransparent;
+  uKisTakeBackFiles, uFileUtils, uKisIntf;
 
 type
   TScanBitmaps = class
@@ -36,6 +36,33 @@ type
     DiffStrength: Integer;
   end;
 
+  TVectorBitmaps = class
+  private
+    FZone: TBitmap;
+    FDiff: TBitmap;
+    FNewVector: TBitmap;
+    FOldVector: TBitmap;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    //
+    procedure Clear();
+    //
+    property OldVector: TBitmap read FOldVector write FOldVector;
+    property NewVector: TBitmap read FNewVector write FNewVector;
+    /// <summary>
+    ///   Файл с разницей между первыми OldVector и NewVector.
+    /// </summary>
+    property Diff: TBitmap read FDiff write FDiff;
+    /// <summary>
+    /// Файл с областью работ. 
+    /// </summary>
+    property Zone: TBitmap read FZone write FZone;
+  public
+    DiffArea: Integer;
+    DiffStrength: Integer;
+  end;
+
   TCompareImageLayer = (layOriginal, layNewVersion, layDifference);
   TCompareImageLayers = set of TCompareImageLayer;
 
@@ -43,15 +70,21 @@ type
   private
     FScan: TMapScanFile;
     FBitmaps: TScanBitmaps;
+    FVBitmaps: TVectorBitmaps;
     FHistogram: TImageHistogram;
     FMergedFile: String;
     FMixedFiles: TStringList;
   strict private
     function CreateEmptyFile(Folders: IKisFolders): string;
+    /// <summary>
+    ///  Загружает файл в битмэп.
+    ///  Если это векторный файл, то отрисовывает его на битмэпе.
+    /// </summary>
     function GetBitmap(const aFilename: String): TBitmap;
     function PrepareHistogram(Bitmap: TBitmap; const ColorCount: Byte): Boolean;
     procedure PrepareDiffBitmap(Folders: IKisFolders);
     procedure PrepareMergedFileName(Folders: IKisFolders);
+    function GetWorkZoneFileName(const aFile: TTakeBackFileInfo): string;
   public
     constructor Create();
     destructor Destroy(); override;
@@ -63,12 +96,17 @@ type
     /// </summary>
     procedure Prepare(Folders: IKisFolders; const aFile: TTakeBackFileInfo);
     /// <summary>
+    /// Загружаем файлы, строим гистограмму.
+    /// </summary>
+    procedure PrepareVector(Folders: IKisFolders; const aFile: TTakeBackFileInfo);
+    /// <summary>
     /// Если Rebuild, то заново грузим файлы.
     /// Соединяем зону с исходным планшетом.
     /// </summary>
     procedure PrepareImages(Folders: IKisFolders; const Rebuild, FileType: Boolean; const aFileName: string; const SelectedColor: TColor);
     //
     property Bitmaps: TScanBitmaps read FBitmaps;
+    property VBitmaps: TVectorBitmaps read FVBitmaps;
     property Histogram: TImageHistogram read FHistogram;
     property MergedFileName: string read FMergedFile;
     property Scan: TMapScanFile read FScan;
@@ -104,7 +142,9 @@ type
 procedure TTakeBackFileProcessor.Clear;
 begin
   FreeAndNil(FBitmaps);
+  FreeAndNil(FVBitmaps);
   FBitmaps := TScanBitmaps.Create;
+  FVBitmaps := TVectorBitmaps.Create;
   TFileUtils.DeleteFile(FMergedFile);
   FMergedFile := '';
 end;
@@ -112,6 +152,7 @@ end;
 constructor TTakeBackFileProcessor.Create;
 begin
   FBitmaps := TScanBitmaps.Create;
+  FVBitmaps := TVectorBitmaps.Create;
   FHistogram := TImageHistogram.Create;
   FMixedFiles := TStringList.Create;
 end;
@@ -131,6 +172,7 @@ begin
   FreeAndNil(FMixedFiles);
   FreeAndNil(FHistogram);
   FreeAndNil(FBitmaps);
+  FreeAndNil(FVBitmaps);
   inherited;
 end;
 
@@ -138,13 +180,28 @@ function TTakeBackFileProcessor.GetBitmap(const aFilename: String): TBitmap;
 var
   Tmp: TBitmap;
 begin
-  Result := TBitmap.Create;
-  Tmp := TBitmap.CreateFromFile(aFileName);
-  Tmp.Forget;
-  Result.CopyFrom(Tmp, True);
+  if theMapScansStorage.FileIsVector(aFilename) then
+  begin
+    Result := TAutoCADUtils.ExportToBitmap(aFilename, SZ_MAP_PX, SZ_MAP_PX);
+  end
+  else
+  begin
+    Result := TBitmap.Create;
+    Tmp := TBitmap.CreateFromFile(aFileName);
+    Tmp.Forget;
+    Result.CopyFrom(Tmp, True);
+  end;
   {$IFDEF GRAPHICS_16_BIT}
   Result.PixelFormat := pf16bit;
   {$ENDIF}
+end;
+
+function TTakeBackFileProcessor.GetWorkZoneFileName(const aFile: TTakeBackFileInfo): string;
+var
+  S: string;
+begin
+  S := theMapScansStorage.GenMapZoneShortFileName(aFile.Nomenclature);
+  Result := ExtractFilePath(aFile.FileName) + S;
 end;
 
 procedure TTakeBackFileProcessor.MergeImages(Folders: IKisFolders; const TransparentColor: TColor);
@@ -299,6 +356,38 @@ begin
   end;
 end;
 
+procedure TTakeBackFileProcessor.PrepareVector(Folders: IKisFolders; const aFile: TTakeBackFileInfo);
+var
+  WzFilename: string;
+begin
+  FVBitmaps.Clear();
+  //
+  FScan.PrepareFileName(Folders, aFile.Nomenclature);
+  FScan.ComparedFileName := aFile.Nomenclature;
+  FScan.FullFileName := aFile.MergedFile;
+  //
+  FVBitmaps.NewVector := GetBitmap(aFile.FileName);
+  FVBitmaps.NewVector.TransparentColor := clWhite;
+  FVBitmaps.NewVector.Transparent := True;
+  FVBitmaps.OldVector := FScan.PrepareBitmap(True, True);//GetBitmap(aFile.FileName);
+  FVBitmaps.OldVector.TransparentColor := clWhite;
+  FVBitmaps.OldVector.Transparent := True;
+  WzFilename := GetWorkZoneFileName(aFile);
+  if FileExists(WzFilename) then
+    FVBitmaps.Zone := GetBitmap(WzFileName);
+//  FreeAndNil(FHistogram);
+//  FHistogram := TImageHistogram.Create;
+//  PrepareHistogram(Bmp, Folders.ThreadCount);
+  //
+//  if aFile.Kind = tbZones then
+//    Bitmaps.Diff := Bmp
+//  else
+//    Bitmaps.Upload := Bmp;
+  //
+//  if not Assigned(Bitmaps.DB) then
+//    Bitmaps.DB := FScan.PrepareBitmap(True, True);
+end;
+
 { TScanBitmaps }
 
 procedure TScanBitmaps.Clear;
@@ -366,10 +455,33 @@ begin
     FBitmaps.Add(TScanBitmaps.Create);
 end;
 
-procedure TCompareImageList.SetScans(const Index: Integer;
-  const Value: TMapScanFile);
+procedure TCompareImageList.SetScans(const Index: Integer; const Value: TMapScanFile);
 begin
   FScans[Index] := Value;
+end;
+
+{ TVectorBitmaps }
+
+procedure TVectorBitmaps.Clear;
+begin
+  DiffArea := -1;
+  DiffStrength := -1;
+  FreeAndNil(FDiff);
+  FreeAndNil(FZone);
+  FreeAndNil(FNewVector);
+  FreeAndNil(FOldVector);
+end;
+
+constructor TVectorBitmaps.Create;
+begin
+  DiffArea := -1;
+  DiffStrength := -1;
+end;
+
+destructor TVectorBitmaps.Destroy;
+begin
+  Clear();
+  inherited;
 end;
 
 end.

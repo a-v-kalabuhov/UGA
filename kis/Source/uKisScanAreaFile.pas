@@ -115,24 +115,29 @@ begin
   TEzAutoCADImport.Instance.TempPath := AppModule.AppTempPath;
   B := TEzAutoCADImport.Instance.ReadLayerFromFile(FLayerName, Import, Layer);
   try
-    if B then
-    begin
-      if FCheckLayer then
+    try
+      if B then
       begin
-        if Layer = nil then
-          raise Exception.Create('В файле нет слоя "' + FLayerName + '"!');
-        if Layer.RecordCount = 0 then
-          raise Exception.Create('В слое "' + FLayerName + '" нет объектов!');
-        if Layer.RecordCount > 1 then
-          raise Exception.Create('В слое "' + FLayerName + '" больше одного объекта!');
+        if FCheckLayer then
+        begin
+          if Layer = nil then
+            raise Exception.Create('В файле нет слоя "' + FLayerName + '"!');
+          if Layer.RecordCount = 0 then
+            raise Exception.Create('В слое "' + FLayerName + '" нет объектов!');
+          if Layer.RecordCount > 1 then
+            raise Exception.Create('В слое "' + FLayerName + '" больше одного объекта!');
+        end;
+        Layer.First;
+        if not (Layer.RecEntityID in [idPolyline, idPolygon]) then
+          raise Exception.Create('Объект в слое "' + FLayerName + '" не является полигоном!');
+        Result := RecMakePoly(Layer);
       end;
-      Layer.First;
-      if not (Layer.RecEntityID in [idPolyline, idPolygon]) then
-        raise Exception.Create('Объект в слое "' + FLayerName + '" не является полигоном!');
-      Result := RecMakePoly(Layer);
+    finally
+      DeleteFile(Import.FileName);
+      FreeAndNil(Import);
     end;
   finally
-    FreeAndNil(Import);
+
   end;
 end;
 
@@ -248,6 +253,7 @@ begin
       end;
     end;
   finally
+    DeleteFile(Import.FileName);
     FreeAndNil(Import);
   end;
 end;

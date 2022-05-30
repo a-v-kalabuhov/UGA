@@ -52,14 +52,10 @@ object KisMapScanLoadForm2: TKisMapScanLoadForm2
     Top = 27
     Width = 877
     Height = 310
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = #1055#1088#1086#1074#1077#1088#1082#1072' '#1092#1072#1081#1083#1086#1074
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         869
         282)
@@ -172,10 +168,6 @@ object KisMapScanLoadForm2: TKisMapScanLoadForm2
       Caption = #1057#1090#1099#1082#1086#1074#1082#1072
       ImageIndex = 1
       OnShow = TabSheet2Show
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         869
         282)
@@ -239,6 +231,13 @@ object KisMapScanLoadForm2: TKisMapScanLoadForm2
     Filter = #1048#1079#1086#1073#1088#1072#1078#1077#1085#1080#1103' Windows (*.bmp)|*.bmp'
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Left = 184
+    Top = 8
+  end
+  object OpenDwgDialog1: TOpenDialog
+    DefaultExt = '.dwg'
+    Filter = #1060#1072#1081#1083#1099' DWG (*.dwg)|*.dwg'
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
+    Left = 240
     Top = 8
   end
 end

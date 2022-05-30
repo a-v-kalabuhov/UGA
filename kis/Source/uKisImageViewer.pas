@@ -5,6 +5,7 @@ interface
 uses
   Forms,
   uKisIntf, uKisMapScanIntf,
+  uKisTakeBackFileCompareEditor,
   uKisComparedImageForm, uKisComparedImageListForm, uKisScanTakeBackImageViewForm;
 
 type

@@ -336,8 +336,7 @@ begin
   FTempImage := TMapImage.CreateMapImage();
   //
   SetLength(FCustomColors, 1);
-//  FCustomColors[0] := $7F007F;//$A349A4;
-  FCustomColors[0] := $7F007F;//$A349A4;
+  FCustomColors[0] := CL_MAP_SCAN_BACK;//$A349A4;
 end;
 
 destructor TKisComparedImageListForm.Destroy;
@@ -381,7 +380,7 @@ begin
   PrepareHistogram(Bmp);
 
   UpdateColorList;
-  cbColor.ColorValue := $7F007F;
+  cbColor.ColorValue := CL_MAP_SCAN_BACK;
   if aFile.Kind = tbZones then
   begin
     FImages.Bitmaps[0].Diff := Bmp;

@@ -15,6 +15,9 @@ object KisComparedImageForm: TKisComparedImageForm
   OldCreateOrder = False
   Position = poMainFormCenter
   WindowState = wsMaximized
+  OnClose = FormClose
+  ExplicitWidth = 320
+  ExplicitHeight = 240
   DesignSize = (
     738
     426)

@@ -232,7 +232,7 @@ begin
   if Go2 = nil then
   begin
     // планшет возвращён, результатом будет актуальный планшет
-    ResultFile := TMapScanStorage.GetFileName(AppModule, FNomenclature, sfnRaster);
+    ResultFile := TMapScanStorage.GetFileName(AppModule, FNomenclature, TMapScanStorage.GetFileKind(AppModule, FNomenclature));
   end
   else
   begin

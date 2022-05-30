@@ -28,6 +28,7 @@ type
     vstJoin: TVirtualStringTree;
     btnShowJoin: TBitBtn;
     btnAllUnchanged: TButton;
+    OpenDwgDialog1: TOpenDialog;
     procedure btnLoadClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -164,6 +165,8 @@ begin
       end
       else
       begin
+        // эта штука не вызывается
+        // это старый редактор, я его заменил на новый
         View := TKisImageViewerFactory.CreateImageCompareViewer();
         B := View.CompareTakeBackFile(Data.FileInfo);
       end;
@@ -180,15 +183,21 @@ var
   ImgFile: String;
   Data: ^TFileInfoRec;
   Node: PVirtualNode;
+  Dlg: TOpenDialog;
 begin
   Node := vstMaps.GetFirstSelected();
   if Assigned(Node) then
   begin
     Data := vstMaps.GetNodeData(Node);
     if Data.FileInfo.Kind <> tbNoChanges then //[tbEntireMap, tbZones] then
-      if OpenPictureDialog1.Execute(Handle) then
+    begin
+      if theMapScansStorage.HasVectorFile(AppModule, Data.FileInfo.Nomenclature) then
+        Dlg := OpenDwgDialog1
+      else
+        Dlg := OpenPictureDialog1;
+      if Dlg.Execute(Handle) then
       begin
-        ImgFile := OpenPictureDialog1.Files[0];
+        ImgFile := Dlg.Files[0];
         if FileExists(ImgFile) and (Data.FileInfo.FileName <> ImgFile) then
         begin
           Data.FileInfo.FileName := ImgFile;
@@ -197,6 +206,7 @@ begin
           UpdateButtons;
         end;
       end;
+    end;
   end;
 end;
 
@@ -278,6 +288,7 @@ begin
     end
     else
     begin
+      // этот код не вызывается, это старый редактор, он заменён новым 
       Data.Confirmed := CheckJoin1(File1, File2, Data.Kind);
     end;
     vstJoin.InvalidateNode(N);
@@ -312,11 +323,22 @@ begin
         end;
       tbZones:
         begin
-          FScans[I].FullFileName := FFiles[I].MergedFile;
-          FScans[I].ComparedFileName := FFiles[I].FileName;
-          FScans[I].PrepareHash(sfkUpload);
-          FScans[I].PrepareHash(sfkDiff);
-          FScans[I].State := FScans[I].State + [sfsDiffZone];
+          if theMapScansStorage.FileIsVector(FFiles[I].FileName) then
+          begin
+            FScans[I].FullFileName := FFiles[I].FileName;
+            FScans[I].PrepareHash(sfkUpload);
+            FScans[I].ComparedFileName := theMapScansStorage.GetVectorZoneFileName(FFiles[I].FileName, FFiles[I].Nomenclature);
+            FScans[I].PrepareHash(sfkDiff);
+            FScans[I].State := FScans[I].State + [sfsDiffZone];
+          end
+          else
+          begin
+            FScans[I].FullFileName := FFiles[I].MergedFile;
+            FScans[I].PrepareHash(sfkUpload);
+            FScans[I].ComparedFileName := FFiles[I].FileName;
+            FScans[I].PrepareHash(sfkDiff);
+            FScans[I].State := FScans[I].State + [sfsDiffZone];
+          end;
         end;
     end;
     if FFiles[I].Kind <> tbNoChanges then
@@ -596,6 +618,8 @@ var
   ResultFile, SourceFile, DiffFile: string;
   X, Y: Integer;
   ImgRect: TRect;
+  Sfn1: TScanFileName;
+  Sfn2: TScanFileName;
 begin
   aViewer := TKisImagesViewFactory.CreateViewer();
 //  aViewer.AddImage(aFileName, 'Source', 'Оригинальный планшет', Rect(0, 0, 250, 250));
@@ -607,16 +631,28 @@ begin
   ResultFile := '';
   SourceFile := '';
   DiffFile := '';
+  Sfn1 := theMapScansStorage.GetFileKind(AppModule, File1.Nomenclature);
   if File1.Kind = tbEntireMap then
     ResultFile := File1.FileName
   else
   if File1.Kind = tbNoChanges then
-    ResultFile := theMapScansStorage.GetFileName(AppModule, File1.Nomenclature, sfnRaster)
+    ResultFile := theMapScansStorage.GetFileName(AppModule, File1.Nomenclature, Sfn1)
   else
   if File1.Kind = tbZones then
-    ResultFile := File1.MergedFile;
+  begin
+    if Sfn1 = sfnVector then
+    begin
+      ResultFile := File1.FileName;
+      DiffFile := theMapScansStorage.GetVectorZoneFileName(File1.FileName, File1.Nomenclature);
+    end
+    else
+    begin
+      ResultFile := File1.MergedFile;
+      DiffFile := File1.FileName;
+    end;
+  end;
   //
-  SourceFile := theMapScansStorage.GetFileName(AppModule, File1.Nomenclature, sfnRaster);
+  SourceFile := theMapScansStorage.GetFileName(AppModule, File1.Nomenclature, Sfn1);
   //
   if File1.Kind = tbZones then
     DiffFile := File1.FileName;
@@ -635,16 +671,28 @@ begin
   ResultFile := '';
   SourceFile := '';
   DiffFile := '';
+  Sfn2 := theMapScansStorage.GetFileKind(AppModule, File2.Nomenclature);
   if File2.Kind = tbEntireMap then
     ResultFile := File2.FileName
   else
   if File2.Kind = tbNoChanges then
-    ResultFile := theMapScansStorage.GetFileName(AppModule, File2.Nomenclature, sfnRaster)
+    ResultFile := theMapScansStorage.GetFileName(AppModule, File2.Nomenclature, Sfn2)
   else
   if File2.Kind = tbZones then
-    ResultFile := File2.MergedFile;
+  begin
+    if Sfn2 = sfnVector then
+    begin
+      ResultFile := File2.FileName;
+      DiffFile := theMapScansStorage.GetVectorZoneFileName(File2.FileName, File2.Nomenclature);
+    end
+    else
+    begin
+      ResultFile := File2.MergedFile;
+      DiffFile := File2.FileName;
+    end;
+  end;
   //
-  SourceFile := theMapScansStorage.GetFileName(AppModule, File2.Nomenclature, sfnRaster);
+  SourceFile := theMapScansStorage.GetFileName(AppModule, File2.Nomenclature, Sfn2);
   //
   if File2.Kind = tbZones then
     DiffFile := File2.FileName;
@@ -655,8 +703,8 @@ begin
   ImgRect.Bottom := X - 250;
   ImgRect.Right := Y + 250;
   aViewer.AddImage(SourceFile, 'Source', 'Оригинальные планшеты', ImgRect);
-  if FileExists(DiffFIle) then
-    aViewer.AddImage(DiffFIle, 'Diff', 'Область изменений', ImgRect);
+  if FileExists(DiffFile) then
+    aViewer.AddImage(DiffFile, 'Diff', 'Область изменений', ImgRect);
   aViewer.AddImage(ResultFile, 'Result', 'Результат', ImgRect);
   aViewer.AddNomenclature(File2.Nomenclature);
   //

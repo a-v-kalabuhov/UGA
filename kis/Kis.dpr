@@ -185,13 +185,15 @@ uses
   uKisImagesViewFactory in 'Source\uKisImagesViewFactory.pas',
   uKisMapPrint in 'Source\uKisMapPrint.pas',
   uKisMapPrintDialog1 in 'Source\uKisMapPrintDialog1.pas' {KisMapPrintDialogForm},
-  uKisScanTakeBackImageViewForm in 'Source\uKisScanTakeBackImageViewForm.pas' {KisScanTakeBackImageViewForm},
+  uKisDwgTakeBackViewForm in 'Source\uKisDwgTakeBackViewForm.pas' {KisDwgTakeBackViewForm},
   uKisEzActions in 'Source\uKisEzActions.pas',
   uKisGivenScanEditor in 'Source\uKisGivenScanEditor.pas',
   uKisMapScanGeometry in 'Source\uKisMapScanGeometry.pas',
   uKisScanAreaFile in 'Source\uKisScanAreaFile.pas',
   uKisDlgSelectAreaLayer in 'Source\uKisDlgSelectAreaLayer.pas' {KisSelectAleaLayerDialog},
-  uEzAutoCADImport in '..\EzShared\uEzAutoCADImport.pas' {EzAutoCADImport: TDataModule};
+  uEzAutoCADImport in '..\EzShared\uEzAutoCADImport.pas' {EzAutoCADImport: TDataModule},
+  uKisTakeBackFileCompareEditor in 'Source\uKisTakeBackFileCompareEditor.pas',
+  uKisScanTakeBackImageViewForm in 'Source\uKisScanTakeBackImageViewForm.pas' {KisScanTakeBackImageViewForm};
 
 {$R *.RES}
 {$SetPEFlags IMAGE_FILE_LARGE_ADDRESS_AWARE}

@@ -42,7 +42,7 @@ uses
   // Jedi
   JvComponentBase, JvFormPlacement, JvBaseDlg, JvDesktopAlert,
   // shared
-  uIBXUtils, uCommonUtils, uGC,
+  uIBXUtils, uCommonUtils, uGC, uDwgFile,
   // Project
   IBChild, uMfClasses, uKisFilters;
 
@@ -231,6 +231,7 @@ resourcestring
 
 procedure TKisMainView.FormShow(Sender: TObject);
 begin
+  TDwgFile.RegisterLibrary();
   UpdateData;
 end;
 

@@ -24,6 +24,7 @@ type
     //
     function Bounds(): TRect;
     procedure DrawMix(Bitmap: TBitmap; const AlphaPercent: Byte; const X: Integer = 0; const Y: Integer = 0);
+    procedure FillBackground(aColor: TColor);
   end;
 
   TCanvasExt = class helper for TCanvas
@@ -59,6 +60,28 @@ begin
     Result := BitmapInfo.bmiHeader.biHeight >= 0;
   finally
     FreeAndNil(Stream);
+  end;
+end;
+
+procedure TBitmapExt.FillBackground(aColor: TColor);
+var
+  PenR: TPenRecall;
+  BrushR: TBrushRecall;
+  R: TRect;
+begin
+  PenR := TPenRecall.Create(Canvas.Pen);
+  BrushR := TBrushRecall.Create(Canvas.Brush);
+  try
+    Canvas.Pen.Style := psSolid;
+    Canvas.Pen.Color := aColor;
+    Canvas.Brush.Style := bsSolid;
+    Canvas.Brush.Color := aColor;
+    R := Bounds();
+    Canvas.FillRect(R);
+    Canvas.FrameRect(R);
+  finally
+    BrushR.Free;
+    PenR.Free;
   end;
 end;
 

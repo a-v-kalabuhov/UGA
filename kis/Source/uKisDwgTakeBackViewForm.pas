@@ -1,4 +1,4 @@
-﻿unit uKisScanTakeBackImageViewForm;
+﻿unit uKisDwgTakeBackViewForm;
 
 interface
 
@@ -12,58 +12,56 @@ uses
   //
   EzBaseGIS, EzBasicCtrls, EzCtrls, EzCmdLine, EzEntities, EzLib, EzBase, EzActions, EzConsts,
   //
-  uDisableWindowGhosting, uGraphics, uGC, uImageCompare, uImageHistogram, uFileUtils, uDebug, 
+  uDisableWindowGhosting, uGraphics, uGC, uImageCompare, uImageHistogram, uFileUtils, uDebug,
+  uDrawTransparent,
   //
   uKisFileReport, uMapScanFiles, uKisTakeBackFiles, uKisEzActions, uKisAppModule,
   uKisIntf, uKisMapScanIntf, uKisTakeBackFileProcessor, uKisExceptions;
 
 type
-  TKisScanTakeBackImageViewForm = class(TForm)
+  TKisDwgTakeBackViewForm = class(TForm)
     ToolBar1: TToolBar;
     ActionList1: TActionList;
     ToolButton1: TToolButton;
     acConfirm: TAction;
     ImageList1: TImageList;
+    ToolButton2: TToolButton;
+    GIS1: TEzMemoryGIS;
+    pnlPictureType: TPanel;
+    Label2: TLabel;
+    cbFileType: TComboBox;
+    ToolBar2: TToolBar;
+    ToolButton3: TToolButton;
+    PageControl1: TPageControl;
+    tsCompare: TTabSheet;
     Panel1: TPanel;
     pnlInfo: TPanel;
     Label1: TLabel;
     LabelScale: TLabel;
     lArea: TLabel;
     lRank: TLabel;
-    TrackBar1: TTrackBar;
     Bevel1: TBevel;
-    ToolButton2: TToolButton;
-    ColorDialog1: TColorDialog;
-    GIS1: TEzMemoryGIS;
+    TrackBar1: TTrackBar;
+    chbOriginal: TCheckBox;
+    chbNewVersion: TCheckBox;
+    chbZone: TCheckBox;
+    Button1: TButton;
+    chbCrosses: TCheckBox;
+    cbOriginalAlpha: TComboBox;
+    cbNewVersionAlpha: TComboBox;
+    cbZoneAlpha: TComboBox;
     EzDrawBox1: TEzDrawBox;
     EzCmdLine1: TEzCmdLine;
-    Button1: TButton;
-    pnlPictureType: TPanel;
-    Label2: TLabel;
-    lColor: TLabel;
-    cbFileType: TComboBox;
-    cbColor: TJvColorComboBox;
-    btnAddColor: TButton;
-    ToolBar2: TToolBar;
-    ToolButton3: TToolButton;
-    chbCrosses: TCheckBox;
-    chbOriginal: TCheckBox;
-    cbOriginalAlpha: TComboBox;
-    chbNewVersion: TCheckBox;
-    chbDiff: TCheckBox;
-    cbNewVersionAlpha: TComboBox;
-    cbDiffAlpha: TComboBox;
+    tsLines: TTabSheet;
     procedure TrackBar1Change(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure acConfirmExecute(Sender: TObject);
     procedure chbOriginalClick(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
     procedure cbFileTypeChange(Sender: TObject);
-    procedure cbColorChange(Sender: TObject);
-    procedure btnAddColorClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure chbNewVersionClick(Sender: TObject);
-    procedure chbDiffClick(Sender: TObject);
+    procedure chbZoneClick(Sender: TObject);
     procedure EzDrawBox1ZoomChange(Sender: TObject; const Scale: Double);
     procedure EzDrawBox1MouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint;
       var Handled: Boolean);
@@ -79,7 +77,7 @@ type
     procedure chbCrossesClick(Sender: TObject);
     procedure cbOriginalAlphaChange(Sender: TObject);
     procedure cbNewVersionAlphaChange(Sender: TObject);
-    procedure cbDiffAlphaChange(Sender: TObject);
+    procedure cbZoneAlphaChange(Sender: TObject);
     procedure GIS1BeforePaintEntity(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer; Entity: TEzEntity;
       Grapher: TEzGrapher; Canvas: TCanvas; const Clip: TEzRect; DrawMode: TEzDrawMode; var CanShow: Boolean;
       var EntList: TEzEntityList; var AutoFree: Boolean);
@@ -109,15 +107,13 @@ type
     FFile: TTakeBackFileInfo;
     FTick1, FTick2: Cardinal;
     FShowed: Boolean;
-    FCustomColors: array of TColor;
     FFolders: IKisFolders;
     FAlphaOriginal: Integer;
     FAlphaNewVersion: Integer;
     FAlphaDiff: Integer;
-    function GetSelectedColor: TColor;
+    FImage: TBitmap;
+    procedure PrepareImage();
     procedure PrepareUI();
-    procedure UpdateColorInfo(Idx: Integer);
-    procedure UpdateColorList;
   private
     { IKisTakeBackFileCompareEditor }
     procedure ShowEntireMap;
@@ -128,14 +124,22 @@ type
     destructor Destroy; override;
     //
     function Execute(Folders: IKisFolders; var aFile: TTakeBackFileInfo): Boolean;
+    //
     procedure SetFolders(Value: IKisFolders);
   end;
 
 implementation
 
+const
+  SL_ZONE = 'ZONE';
+  SL_OLD = 'OLD';
+  SL_NEW = 'NEW';
+  SL_IMAGE = 'IMAGE';
+  S_SettingsSection = 'DwgTakeBackForm';
+
 {$R *.dfm}
 
-procedure TKisScanTakeBackImageViewForm.acConfirmExecute(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.acConfirmExecute(Sender: TObject);
 begin
   ModalResult := mrOK;
 end;
@@ -150,94 +154,63 @@ begin
     ) ;
 end;
 
-procedure TKisScanTakeBackImageViewForm.btnAddColorClick(Sender: TObject);
-var
-  I: Integer;
-  A: Char;
-  S: string;
-begin
-  ColorDialog1.CustomColors.Clear;
-  A := 'A';
-  for I := 0 to Length(FCustomColors) - 1 do
-  begin
-    S := IntToHex(FCustomColors[I], 6);
-    ColorDialog1.CustomColors.Add('Color' + A + '=' + S);
-    Inc(A);
-  end;
-  if ColorDialog1.Execute(Handle) then
-  begin
-    SetLength(FCustomColors, ColorDialog1.CustomColors.Count);
-    for I := 0 to ColorDialog1.CustomColors.Count - 1 do
-    begin
-      S := ColorDialog1.CustomColors.ValueFromIndex[I];
-      FCustomColors[I] := HexToTColor(S);
-    end;
-    UpdateColorList;
-  end;
-end;
-
-procedure TKisScanTakeBackImageViewForm.Button1Click(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.Button1Click(Sender: TObject);
 begin
   ShowEntireMap();
   UpdateScale;
 end;
 
-procedure TKisScanTakeBackImageViewForm.cbColorChange(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.cbZoneAlphaChange(Sender: TObject);
 begin
-  if FStartup then
-    Exit;
-  // готовим картинку по настройкам "слоёв"
-  if FFile.Kind = tbZones then
-  begin
-    FProcessor.MergeImages(FFolders, GetSelectedColor);
-  end;
-  ShowSelectedImages(False);
+  SetImageAlpha(SL_ZONE, cbZoneAlpha.ItemIndex);
 end;
 
-procedure TKisScanTakeBackImageViewForm.cbDiffAlphaChange(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.cbFileTypeChange(Sender: TObject);
 begin
-  SetImageAlpha('Diff', cbDiffAlpha.ItemIndex);
-end;
-
-procedure TKisScanTakeBackImageViewForm.cbFileTypeChange(Sender: TObject);
-begin
-  UpdateColorInfo(cbFileType.ItemIndex);
   ShowSelectedImages(True);
 end;
 
-procedure TKisScanTakeBackImageViewForm.cbNewVersionAlphaChange(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.cbNewVersionAlphaChange(Sender: TObject);
 begin
-  SetImageAlpha('Upload', cbNewVersionAlpha.ItemIndex);
+  SetImageAlpha(SL_NEW, cbNewVersionAlpha.ItemIndex);
 end;
 
-procedure TKisScanTakeBackImageViewForm.cbOriginalAlphaChange(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.cbOriginalAlphaChange(Sender: TObject);
 begin
-  SetImageAlpha('DB', cbOriginalAlpha.ItemIndex);
+  SetImageAlpha(SL_OLD, cbOriginalAlpha.ItemIndex);
 end;
 
-procedure TKisScanTakeBackImageViewForm.chbCrossesClick(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.chbCrossesClick(Sender: TObject);
 begin
   EzDrawBox1.ScreenGrid.Show := not EzDrawBox1.ScreenGrid.Show;
   EzDrawBox1.RegenDrawing();
 end;
 
-procedure TKisScanTakeBackImageViewForm.chbDiffClick(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.chbZoneClick(Sender: TObject);
 var
   Layer: TEzBaseLayer;
 begin
-  Layer := Gis1.Layers.LayerByName('Diff');
+  PrepareImage();
+  EzDrawBox1.RegenDrawing;
+  Exit;
+  //
+  Layer := Gis1.Layers.LayerByName(SL_ZONE);
   if Assigned(Layer) then
   begin
-    Layer.LayerInfo.Visible := chbDiff.Checked;
+    Layer.LayerInfo.Visible := chbZone.Checked;
     EzDrawBox1.RegenDrawing;
   end;
 end;
 
-procedure TKisScanTakeBackImageViewForm.chbNewVersionClick(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.chbNewVersionClick(Sender: TObject);
 var
   Layer: TEzBaseLayer;
 begin
-  Layer := Gis1.Layers.LayerByName('Upload');
+  PrepareImage();
+  EzDrawBox1.RegenDrawing;
+  Exit;
+  //
+  Layer := Gis1.Layers.LayerByName(SL_NEW);
   if Assigned(Layer) then
   begin
     Layer.LayerInfo.Visible := chbNewVersion.Checked;
@@ -245,11 +218,15 @@ begin
   end;
 end;
 
-procedure TKisScanTakeBackImageViewForm.chbOriginalClick(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.chbOriginalClick(Sender: TObject);
 var
   Layer: TEzBaseLayer;
 begin
-  Layer := Gis1.Layers.LayerByName('DB');
+  PrepareImage();
+  EzDrawBox1.RegenDrawing;
+  Exit;
+  //
+  Layer := Gis1.Layers.LayerByName(SL_OLD);
   if Assigned(Layer) then
   begin
     Layer.LayerInfo.Visible := chbOriginal.Checked;
@@ -257,33 +234,31 @@ begin
   end;
 end;
 
-procedure TKisScanTakeBackImageViewForm.ShowEntireMap();
+procedure TKisDwgTakeBackViewForm.ShowEntireMap();
 begin
   EzDrawBox1.ZoomToExtension();
 end;
 
-constructor TKisScanTakeBackImageViewForm.Create(AOwner: TComponent);
+constructor TKisDwgTakeBackViewForm.Create(AOwner: TComponent);
 begin
   inherited;
   FProcessor := TTakeBackFileProcessor.Create();
-  //
-  SetLength(FCustomColors, 1);
-  FCustomColors[0] := CL_MAP_SCAN_BACK;//$A349A4;
 end;
 
-destructor TKisScanTakeBackImageViewForm.Destroy;
+destructor TKisDwgTakeBackViewForm.Destroy;
 begin
+  FreeAndNil(FImage);
   FreeAndNil(FProcessor);
   inherited;
 end;
 
-procedure TKisScanTakeBackImageViewForm.EndScaleUpdate;
+procedure TKisDwgTakeBackViewForm.EndScaleUpdate;
 begin
   if FScaleUpdateCount > 0 then
     Dec(FScaleUpdateCount);
 end;
 
-function TKisScanTakeBackImageViewForm.Execute(Folders: IKisFolders; var aFile: TTakeBackFileInfo): Boolean;
+function TKisDwgTakeBackViewForm.Execute(Folders: IKisFolders; var aFile: TTakeBackFileInfo): Boolean;
 begin
   FTick1 := GetTickCount;
   //
@@ -293,12 +268,12 @@ begin
   //50%
   //75%
   //90%
-  FAlphaOriginal := AppModule.ReadAppParamDef('TakeBackForm', 'DBAlpha', varInteger, 0);
-  cbOriginalAlpha.ItemIndex := IfThen(FAlphaOriginal < 0, 0, FAlphaOriginal);
-  FAlphaNewVersion := AppModule.ReadAppParamDef('TakeBackForm', 'NewAlpha', varInteger, 2);
-  cbNewVersionAlpha.ItemIndex := IfThen(FAlphaNewVersion < 0, 0, FAlphaNewVersion);
-  FAlphaDiff := AppModule.ReadAppParamDef('TakeBackForm', 'DiffAlpha', varInteger, 3);
-  cbDiffAlpha.ItemIndex := IfThen(FAlphaDiff < 0, 0, FAlphaDiff);
+//  FAlphaOriginal := AppModule.ReadAppParamDef(S_SettingsSection, 'AlphaOld', varInteger, 0);
+//  cbOriginalAlpha.ItemIndex := IfThen(FAlphaOriginal < 0, 0, FAlphaOriginal);
+//  FAlphaNewVersion := AppModule.ReadAppParamDef(S_SettingsSection, 'AlphaNew', varInteger, 2);
+//  cbNewVersionAlpha.ItemIndex := IfThen(FAlphaNewVersion < 0, 0, FAlphaNewVersion);
+//  FAlphaDiff := AppModule.ReadAppParamDef(S_SettingsSection, 'AlphaZone', varInteger, 3);
+//  cbZoneAlpha.ItemIndex := IfThen(FAlphaDiff < 0, 0, FAlphaDiff);
   //
   FShowed := False;
   FFolders := Folders;
@@ -311,19 +286,16 @@ begin
   // - изменения
   FStartup := True;
   try
-    FProcessor.Prepare(Folders, aFile);
-    UpdateColorList;
-  //  cbColor.ColorValue := cbColor.Colors[0];
+    // заполняем VBitmaps
+    FProcessor.PrepareVector(Folders, aFile);
     if aFile.Kind = tbZones then
     begin
       cbFileType.ItemIndex := 1;
-      UpdateColorInfo(1);
     end
     else
     //    if aFile.Kind = tbEntireMap then
     begin
       cbFileType.ItemIndex := 0;
-      UpdateColorInfo(0);
     end;
   finally
     FStartup := False;
@@ -351,18 +323,18 @@ begin
   else
     FProcessor.Clear();
   //
-  AppModule.SaveAppParam('TakeBackForm', 'DBAlpha', cbOriginalAlpha.ItemIndex);
-  AppModule.SaveAppParam('TakeBackForm', 'NewAlpha', cbNewVersionAlpha.ItemIndex);
-  AppModule.SaveAppParam('TakeBackForm', 'DiffAlpha', cbDiffAlpha.ItemIndex);
+//  AppModule.SaveAppParam(S_SettingsSection, 'AlphaOld', cbOriginalAlpha.ItemIndex);
+//  AppModule.SaveAppParam(S_SettingsSection, 'AlphaNew', cbNewVersionAlpha.ItemIndex);
+//  AppModule.SaveAppParam(S_SettingsSection, 'AlphaZone', cbZoneAlpha.ItemIndex);
 end;
 
-procedure TKisScanTakeBackImageViewForm.EzDrawBox1BeforeSelect(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer;
+procedure TKisDwgTakeBackViewForm.EzDrawBox1BeforeSelect(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer;
   var CanSelect: Boolean);
 begin
   CanSelect := False;
 end;
 
-procedure TKisScanTakeBackImageViewForm.EzDrawBox1MouseDown2D(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X,
+procedure TKisDwgTakeBackViewForm.EzDrawBox1MouseDown2D(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X,
   Y: Integer; const WX, WY: Double);
 var
   S: ShortString;
@@ -392,7 +364,7 @@ begin
   end;
 end;
 
-procedure TKisScanTakeBackImageViewForm.EzDrawBox1MouseLeave(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.EzDrawBox1MouseLeave(Sender: TObject);
 var
   S, S1: String;
 begin
@@ -409,7 +381,7 @@ begin
   end;
 end;
 
-procedure TKisScanTakeBackImageViewForm.EzDrawBox1MouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer;
+procedure TKisDwgTakeBackViewForm.EzDrawBox1MouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer;
   MousePos: TPoint; var Handled: Boolean);
 var
   Pt: TPoint;
@@ -427,12 +399,12 @@ begin
   end;
 end;
 
-procedure TKisScanTakeBackImageViewForm.EzDrawBox1ZoomChange(Sender: TObject; const Scale: Double);
+procedure TKisDwgTakeBackViewForm.EzDrawBox1ZoomChange(Sender: TObject; const Scale: Double);
 begin
   UpdateScale;
 end;
 
-procedure TKisScanTakeBackImageViewForm.FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer;
+procedure TKisDwgTakeBackViewForm.FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer;
   MousePos: TPoint; var Handled: Boolean);
 var
   Pt, ClPt: TPoint;
@@ -460,12 +432,12 @@ begin
   end;
 end;
 
-procedure TKisScanTakeBackImageViewForm.FormResize(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.FormResize(Sender: TObject);
 begin
   SendMessage(Handle, WM_SHOW_MAP, 0, 0);
 end;
 
-procedure TKisScanTakeBackImageViewForm.FormShow(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.FormShow(Sender: TObject);
 begin
 //  ShowEntireMap();
   FTick2 := GetTickCount;
@@ -473,8 +445,10 @@ begin
   EzDrawBox1.SetFocus;
 end;
 
-function TKisScanTakeBackImageViewForm.GetAlpha(Index: Integer): Byte;
+function TKisDwgTakeBackViewForm.GetAlpha(Index: Integer): Byte;
 begin
+  Result := 0;
+  Exit;
   //непрозрачный
   //10%
   //25%
@@ -492,7 +466,7 @@ begin
   end;
 end;
 
-function TKisScanTakeBackImageViewForm.GetRank(Value: Integer): string;
+function TKisDwgTakeBackViewForm.GetRank(Value: Integer): string;
 begin
   if Value = 0 then
     Result := 'изменений нет'
@@ -512,57 +486,85 @@ begin
     Result := 'очень сильно';
 end;
 
-function TKisScanTakeBackImageViewForm.GetSelectedColor: TColor;
-begin
-  if cbColor.ItemIndex < 0 then
-    Result := CL_MAP_SCAN_BACK
-  else
-    Result := cbColor.ColorValue;
-end;
-
-procedure TKisScanTakeBackImageViewForm.GIS1BeforePaintEntity(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer;
+procedure TKisDwgTakeBackViewForm.GIS1BeforePaintEntity(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer;
   Entity: TEzEntity; Grapher: TEzGrapher; Canvas: TCanvas; const Clip: TEzRect; DrawMode: TEzDrawMode;
   var CanShow: Boolean; var EntList: TEzEntityList; var AutoFree: Boolean);
 begin
   if Entity.EntityID = idBitmapRef then
   begin
-    if Layer.Name = 'DB' then
-      TEzBitmapRef(Entity).Image := FProcessor.Bitmaps.DB
+    if (Layer.Name = SL_ZONE) then
+    begin
+      if Assigned(FProcessor.VBitmaps.Zone) then
+        TEzBitmapRef(Entity).Image := FProcessor.VBitmaps.Zone
+    end
     else
-    if Layer.Name = 'Upload' then
-      TEzBitmapRef(Entity).Image := FProcessor.Bitmaps.Upload
+    if Layer.Name = SL_OLD then
+      TEzBitmapRef(Entity).Image := FProcessor.VBitmaps.OldVector
     else
-    if Layer.Name = 'Diff' then
-      TEzBitmapRef(Entity).Image := FProcessor.Bitmaps.Diff;
+    if Layer.Name = SL_NEW then
+      TEzBitmapRef(Entity).Image := FProcessor.VBitmaps.NewVector
+    else
+    if Layer.Name = SL_IMAGE then
+      TEzBitmapRef(Entity).Image := FImage;
   end;
 end;
 
-function TKisScanTakeBackImageViewForm.IsScaleUpdating: Boolean;
+function TKisDwgTakeBackViewForm.IsScaleUpdating: Boolean;
 begin
   Result := FScaleUpdateCount > 0;
 end;
 
-procedure TKisScanTakeBackImageViewForm.pnlPictureTypeResize(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.pnlPictureTypeResize(Sender: TObject);
 begin
   Panel1.Margins.Top := pnlPictureType.Height + 1;
 end;
 
-procedure TKisScanTakeBackImageViewForm.PrepareGis;
+procedure TKisDwgTakeBackViewForm.PrepareGis;
 begin
   if FGisPrepared then
     Exit;
   GIS1.Close;
   //
-  AddPicture2('DB', FProcessor.Bitmaps.DB, FAlphaOriginal);
-  AddPicture2('Upload', FProcessor.Bitmaps.Upload, FAlphaNewVersion);
-  AddPicture2('Diff', FProcessor.Bitmaps.Diff, FAlphaDiff);
+  PrepareImage();
+//  AddPicture2(SL_ZONE, FProcessor.VBitmaps.Zone, FAlphaDiff);
+//  AddPicture2(SL_OLD, FProcessor.VBitmaps.OldVector, FAlphaOriginal);
+//  AddPicture2(SL_NEW, FProcessor.VBitmaps.NewVector, FAlphaNewVersion);
+  AddPicture2(SL_IMAGE, FImage, FAlphaNewVersion);
   //
   GIS1.Open;
   //
   FGisPrepared := True;
 end;
 
-procedure TKisScanTakeBackImageViewForm.PrepareUI();
+procedure TKisDwgTakeBackViewForm.PrepareImage;
+var
+  Drawer: IDrawTransparent;
+  Kind: TDrawTransparentKind;
+  I: Integer;
+  Filled: Boolean;
+begin
+  Filled := False;
+  if FImage = nil then
+  begin
+    FImage := TMapImage.CreateMapImage(CL_MAP_SCAN_BACK);
+    Filled := True;
+  end;
+  Kind := drawThreaded;
+  Drawer := TDrawTransparentFactory.GetDraw(FFolders, Kind);
+  if chbZone.Checked and Assigned(FProcessor.VBitmaps.Zone) then
+    FImage.Canvas.Draw(0, 0, FProcessor.VBitmaps.Zone)
+  else
+  if not Filled then
+    FImage.FillBackground(CL_MAP_SCAN_BACK);
+  if chbOriginal.Checked then
+    Drawer.Draw(FImage, FProcessor.VBitmaps.OldVector, clWhite);
+//    FImage.Canvas.Draw(0, 0, FProcessor.VBitmaps.OldVector);
+  if chbNewVersion.Checked then
+    Drawer.Draw(FImage, FProcessor.VBitmaps.NewVector, clWhite);
+//    FImage.Canvas.Draw(0, 0, FProcessor.VBitmaps.NewVector);
+end;
+
+procedure TKisDwgTakeBackViewForm.PrepareUI();
 begin
   pnlPictureType.Visible := True;
   Bevel1.Visible := True;
@@ -571,7 +573,7 @@ begin
   lRank.Visible := False;
 end;
 
-procedure TKisScanTakeBackImageViewForm.ShowSelectedImages;
+procedure TKisDwgTakeBackViewForm.ShowSelectedImages;
 var
   P: Double;
   PStr: string;
@@ -580,7 +582,7 @@ begin
   pnlInfo.Visible := True;
   EzDrawBox1.Visible := True;
   // готовим картинку по настройкам "слоёв"
-  if not Assigned(FProcessor.Bitmaps.DB) then
+  if not Assigned(FProcessor.VBitmaps.OldVector) then
   begin
     raise EKisExtException.Create(
       'Невозможно открыть планшет ' + FProcessor.Scan.Nomenclature + ' !' +
@@ -588,21 +590,21 @@ begin
       FProcessor.Scan.AsText(True)
     );
   end;
-  FProcessor.PrepareImages(FFolders, Rebuild, cbFileType.ItemIndex = 0, FFile.FileName, GetSelectedColor);
+//  FProcessor.PrepareImages(FFolders, Rebuild, cbFileType.ItemIndex = 0, FFile.FileName, GetSelectedColor);
   //
-  if FProcessor.Bitmaps.DiffArea < 0 then
+  if FProcessor.VBitmaps.DiffArea < 0 then
     lArea.Visible := False
   else
   begin
     lArea.Visible := True;
     PArea := '';
-    if FProcessor.Bitmaps.DiffArea = 0 then
+    if FProcessor.VBitmaps.DiffArea = 0 then
     begin
       PStr := '0'
     end
     else
     begin
-      P := FProcessor.Bitmaps.DiffArea / (FProcessor.Bitmaps.Diff.Width * FProcessor.Bitmaps.Diff.Height);
+      P := FProcessor.VBitmaps.DiffArea / (FProcessor.VBitmaps.OldVector.Width * FProcessor.VBitmaps.OldVector.Height);
       if P > 1 then
         PStr := FloatToStr(P)
       else
@@ -611,12 +613,12 @@ begin
     end;
     lArea.Caption := 'Изменения на ' + PStr + '% площади' + PArea
   end;
-  if FProcessor.Bitmaps.DiffStrength < 0 then
+  if FProcessor.VBitmaps.DiffStrength < 0 then
     lRank.Visible := False
   else
   begin
     lRank.Visible := True;
-    lRank.Caption := 'Степень изменения: ' + GetRank(FProcessor.Bitmaps.DiffStrength) + '.';
+    lRank.Caption := 'Степень изменения: ' + GetRank(FProcessor.VBitmaps.DiffStrength) + '.';
   end;
   //
   PrepareGis();
@@ -624,12 +626,12 @@ begin
   EzDrawBox1.RegenDrawing;
 end;
 
-procedure TKisScanTakeBackImageViewForm.ToolButton2Click(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.ToolButton2Click(Sender: TObject);
 begin
   ModalResult := mrCancel;
 end;
 
-procedure TKisScanTakeBackImageViewForm.ToolButton3Click(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.ToolButton3Click(Sender: TObject);
 var
   Act: TKisMapMeasureAction;
 begin
@@ -642,61 +644,22 @@ begin
   end;
 end;
 
-procedure TKisScanTakeBackImageViewForm.TrackBar1Change(Sender: TObject);
+procedure TKisDwgTakeBackViewForm.TrackBar1Change(Sender: TObject);
 begin
   SetScale(TrackBar1.Position, Point(-1, -1), True);
 end;
 
-procedure TKisScanTakeBackImageViewForm.UpdateColorInfo;
-begin
-  if Idx = 1 then // область изменений
-  begin
-    lColor.Visible := True;
-    cbColor.Visible := True;
-  end
-  else
-  begin
-    lColor.Visible := False;
-    cbColor.Visible := False;
-  end;
-end;
-
-procedure TKisScanTakeBackImageViewForm.UpdateColorList;
-var
-  Clr: TColor;
-  I: Integer;
-begin
-  Clr := GetSelectedColor;
-  if FProcessor.Histogram.Count = 0 then
-    cbColor.AddColor(clBlack, '')
-  else
-  begin
-    cbColor.Clear;
-    for I := 0 to Min(Pred(FProcessor.Histogram.Count), 9) do
-      if (I = 0) or ((FProcessor.Histogram.Colors[I].Count / FProcessor.Histogram.TotalCount) > 0.001) then
-        cbColor.AddColor(FProcessor.Histogram.Colors[I].Color, '');
-  end;
-  //
-  for I := 0 to Length(FCustomColors) - 1 do
-    if cbColor.FindColor(FCustomColors[I]) < 0 then
-      cbColor.AddColor(FCustomColors[I], '');
-  //
-  if cbColor.FindColor(Clr) >= 0 then
-    cbColor.ColorValue := Clr
-  else
-    cbColor.ColorValue := CL_MAP_SCAN_BACK;//cbColor.Colors[0];
-end;
-
-procedure TKisScanTakeBackImageViewForm.SetFolders(Value: IKisFolders);
+procedure TKisDwgTakeBackViewForm.SetFolders(Value: IKisFolders);
 begin
   FFolders := Value;
 end;
 
-procedure TKisScanTakeBackImageViewForm.SetImageAlpha;
+procedure TKisDwgTakeBackViewForm.SetImageAlpha;
 var
   Layer: TEzBaseLayer;
   Ent: TEzEntity;
 begin
+  Exit;
   if not FGisPrepared then
     Exit;
   Layer := Gis1.Layers.LayerByName(aLayerName);
@@ -715,12 +678,14 @@ begin
   end;
 end;
 
-procedure TKisScanTakeBackImageViewForm.AddPicture2(const aLayerName: string; aBitmap: TBitmap; const AlphaIndex: Integer);
+procedure TKisDwgTakeBackViewForm.AddPicture2(const aLayerName: string; aBitmap: TBitmap; const AlphaIndex: Integer);
 var
   Layer1: TEzBaseLayer;
   BmpRef: TEzBitmapRef;
 begin
   Layer1 := GIS1.CreateLayer(aLayerName, ltMemory);
+  if not Assigned(aBitmap) then
+    Exit;
   BmpRef := TEzBitmapRef.CreateEntity(Point2D(0, 0), Point2D(250, 250), aBitmap);
   BmpRef.Forget();
   BmpRef.AlphaChannel := GetAlpha(AlphaIndex);
@@ -728,12 +693,12 @@ begin
   Layer1.UpdateExtension;
 end;
 
-procedure TKisScanTakeBackImageViewForm.BeginScaleUpdate;
+procedure TKisDwgTakeBackViewForm.BeginScaleUpdate;
 begin
   Inc(FScaleUpdateCount);
 end;
 
-procedure TKisScanTakeBackImageViewForm.SetScale(aScale: Integer; aPoint: TPoint; Force: Boolean);
+procedure TKisDwgTakeBackViewForm.SetScale(aScale: Integer; aPoint: TPoint; Force: Boolean);
 var
   ZoomRect: TEzRect; // видимая область в мировых координатах
   X1, X2, Y1, Y2, Xc, Yc: Double;
@@ -804,7 +769,7 @@ begin
   end;
 end;
 
-procedure TKisScanTakeBackImageViewForm.UpdateScale;
+procedure TKisDwgTakeBackViewForm.UpdateScale;
 var
   Scale, Screen50Cm: Double;
   VisibleWidth: Double;
@@ -843,7 +808,7 @@ begin
   end;
 end;
 
-procedure TKisScanTakeBackImageViewForm.WMShowMap(var Msg: TMessage);
+procedure TKisDwgTakeBackViewForm.WMShowMap(var Msg: TMessage);
 begin
 //  EzDrawBox1.Resize;
 //  ShowEntireMap();
@@ -854,7 +819,7 @@ begin
   end;
 end;
 
-procedure TKisScanTakeBackImageViewForm.DisplayScaleValue(Value: Integer);
+procedure TKisDwgTakeBackViewForm.DisplayScaleValue(Value: Integer);
 begin
   if Value < 1 then
     Value := 1

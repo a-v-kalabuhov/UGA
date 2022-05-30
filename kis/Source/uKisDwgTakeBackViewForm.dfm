@@ -1,10 +1,10 @@
-object KisScanTakeBackImageViewForm: TKisScanTakeBackImageViewForm
+object KisDwgTakeBackViewForm: TKisDwgTakeBackViewForm
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = #1057#1088#1072#1074#1085#1077#1085#1080#1077' '#1087#1083#1072#1085#1096#1077#1090#1086#1074
-  ClientHeight = 511
-  ClientWidth = 907
+  ClientHeight = 596
+  ClientWidth = 1031
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -45,260 +45,13 @@ object KisScanTakeBackImageViewForm: TKisScanTakeBackImageViewForm
       OnClick = ToolButton2Click
     end
   end
-  object Panel1: TPanel
-    AlignWithMargins = True
-    Left = 0
-    Top = 50
-    Width = 907
-    Height = 461
-    Margins.Left = 0
-    Margins.Top = 50
-    Margins.Right = 0
-    Margins.Bottom = 0
-    Align = alClient
-    BevelOuter = bvNone
-    TabOrder = 1
-    object pnlInfo: TPanel
-      Left = 0
-      Top = 0
-      Width = 907
-      Height = 89
-      Align = alTop
-      TabOrder = 0
-      DesignSize = (
-        907
-        89)
-      object Label1: TLabel
-        Left = 8
-        Top = 2
-        Width = 49
-        Height = 13
-        Caption = #1052#1072#1089#1096#1090#1072#1073':'
-      end
-      object LabelScale: TLabel
-        Left = 8
-        Top = 16
-        Width = 49
-        Height = 13
-        Alignment = taCenter
-        AutoSize = False
-        Caption = '100%'
-      end
-      object lArea: TLabel
-        Left = 845
-        Top = 2
-        Width = 54
-        Height = 13
-        Alignment = taRightJustify
-        Anchors = [akTop, akRight]
-        Caption = #1048#1079#1084#1077#1085#1077#1085#1080#1103
-        ExplicitLeft = 676
-      end
-      object lRank: TLabel
-        Left = 870
-        Top = 16
-        Width = 29
-        Height = 13
-        Alignment = taRightJustify
-        Anchors = [akTop, akRight]
-        Caption = '100%'
-        ExplicitLeft = 701
-      end
-      object Bevel1: TBevel
-        Left = 6
-        Top = 32
-        Width = 896
-        Height = 2
-        Anchors = [akLeft, akTop, akRight]
-        ExplicitWidth = 771
-      end
-      object TrackBar1: TTrackBar
-        Left = 63
-        Top = 6
-        Width = 217
-        Height = 25
-        Max = 20
-        Min = 1
-        PageSize = 5
-        Frequency = 5
-        Position = 1
-        TabOrder = 0
-        ThumbLength = 16
-        OnChange = TrackBar1Change
-      end
-      object chbOriginal: TCheckBox
-        Left = 6
-        Top = 40
-        Width = 131
-        Height = 17
-        Caption = #1054#1088#1080#1075#1080#1085#1072#1083' '#1087#1083#1072#1085#1096#1077#1090#1072
-        Checked = True
-        State = cbChecked
-        TabOrder = 1
-        OnClick = chbOriginalClick
-      end
-      object chbNewVersion: TCheckBox
-        Left = 169
-        Top = 40
-        Width = 106
-        Height = 17
-        Caption = #1053#1086#1074#1099#1081' '#1087#1083#1072#1085#1096#1077#1090
-        Checked = True
-        State = cbChecked
-        TabOrder = 2
-        OnClick = chbNewVersionClick
-      end
-      object chbDiff: TCheckBox
-        Left = 338
-        Top = 40
-        Width = 97
-        Height = 17
-        Caption = #1048#1079#1084#1077#1085#1077#1085#1080#1103
-        Checked = True
-        State = cbChecked
-        TabOrder = 3
-        OnClick = chbDiffClick
-      end
-      object Button1: TButton
-        Left = 286
-        Top = 2
-        Width = 133
-        Height = 25
-        Caption = #1055#1086#1082#1072#1079#1072#1090#1100' '#1087#1086#1083#1085#1086#1089#1090#1100#1102
-        TabOrder = 4
-        OnClick = Button1Click
-      end
-      object chbCrosses: TCheckBox
-        Left = 459
-        Top = 6
-        Width = 62
-        Height = 17
-        Caption = #1050#1088#1077#1089#1090#1099
-        TabOrder = 5
-        OnClick = chbCrossesClick
-      end
-      object cbOriginalAlpha: TComboBox
-        Left = 6
-        Top = 63
-        Width = 120
-        Height = 21
-        Hint = #1055#1088#1086#1079#1088#1072#1095#1085#1086#1089#1090#1100' '#1086#1088#1080#1075#1080#1085#1072#1083#1100#1085#1086#1075#1086' '#1087#1083#1072#1085#1096#1077#1090#1072
-        Style = csDropDownList
-        ItemHeight = 13
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 6
-        OnChange = cbOriginalAlphaChange
-        Items.Strings = (
-          #1085#1077#1087#1088#1086#1079#1088#1072#1095#1085#1099#1081
-          '10%'
-          '25%'
-          '50%'
-          '75%'
-          '90%')
-      end
-      object cbNewVersionAlpha: TComboBox
-        Left = 161
-        Top = 63
-        Width = 120
-        Height = 21
-        Hint = #1055#1088#1086#1079#1088#1072#1095#1085#1086#1089#1090#1100' '#1085#1086#1074#1086#1075#1086' '#1087#1083#1072#1085#1096#1077#1090#1072
-        Style = csDropDownList
-        ItemHeight = 13
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 7
-        OnChange = cbNewVersionAlphaChange
-        Items.Strings = (
-          #1085#1077#1087#1088#1086#1079#1088#1072#1095#1085#1099#1081
-          '10%'
-          '25%'
-          '50%'
-          '75%'
-          '90%')
-      end
-      object cbDiffAlpha: TComboBox
-        Left = 315
-        Top = 63
-        Width = 120
-        Height = 21
-        Hint = #1055#1088#1086#1079#1088#1072#1095#1085#1086#1089#1090#1100' '#1080#1079#1084#1077#1085#1077#1085#1080#1081
-        Style = csDropDownList
-        ItemHeight = 13
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 8
-        OnChange = cbDiffAlphaChange
-        Items.Strings = (
-          #1085#1077#1087#1088#1086#1079#1088#1072#1095#1085#1099#1081
-          '10%'
-          '25%'
-          '50%'
-          '75%'
-          '90%')
-      end
-    end
-    object EzDrawBox1: TEzDrawBox
-      Left = 0
-      Top = 89
-      Width = 907
-      Height = 372
-      BorderStyle = bsNone
-      UseThread = False
-      Align = alClient
-      TabOrder = 1
-      OnMouseWheel = EzDrawBox1MouseWheel
-      GIS = GIS1
-      DefaultScaleUnits = suMms
-      SnapToGuidelinesDist = 1.000000000000000000
-      ScreenGrid.Step.X = 50.000000000000000000
-      ScreenGrid.Step.Y = 50.000000000000000000
-      ShowMapExtents = False
-      ShowLayerExtents = False
-      GridInfo.Grid.X = 50.000000000000000000
-      GridInfo.Grid.Y = 50.000000000000000000
-      GridInfo.GridColor = clMaroon
-      GridInfo.DrawAsCross = True
-      GridInfo.GridSnap.X = 0.500000000000000000
-      GridInfo.GridSnap.Y = 0.500000000000000000
-      RubberPen.Color = clRed
-      RubberPen.Mode = pmXor
-      FlatScrollBar = True
-      OnMouseDown2D = EzDrawBox1MouseDown2D
-      OnMouseLeave = EzDrawBox1MouseLeave
-      OnBeforeSelect = EzDrawBox1BeforeSelect
-      OnZoomChange = EzDrawBox1ZoomChange
-      object EzCmdLine1: TEzCmdLine
-        Left = 0
-        Top = 331
-        Width = 890
-        Height = 24
-        DrawBoxList = <
-          item
-            DrawBox = EzDrawBox1
-            Current = False
-          end>
-        DynamicUpdate = False
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        Color = clWhite
-        Align = alBottom
-        TabOrder = 0
-        TabStop = False
-        Visible = False
-      end
-    end
-  end
   object pnlPictureType: TPanel
     Left = 199
     Top = 0
-    Width = 539
+    Width = 210
     Height = 36
     ParentColor = True
-    TabOrder = 2
+    TabOrder = 1
     Visible = False
     OnResize = pnlPictureTypeResize
     object Label2: TLabel
@@ -307,13 +60,6 @@ object KisScanTakeBackImageViewForm: TKisScanTakeBackImageViewForm
       Width = 57
       Height = 13
       Caption = #1058#1080#1087' '#1092#1072#1081#1083#1072':'
-    end
-    object lColor: TLabel
-      Left = 224
-      Top = 10
-      Width = 59
-      Height = 13
-      Caption = #1062#1074#1077#1090' '#1092#1086#1085#1072':'
     end
     object cbFileType: TComboBox
       Left = 72
@@ -328,27 +74,6 @@ object KisScanTakeBackImageViewForm: TKisScanTakeBackImageViewForm
         #1055#1083#1072#1085#1096#1077#1090' '#1094#1077#1083#1080#1082#1086#1084
         #1058#1086#1083#1100#1082#1086' '#1080#1079#1084#1077#1085#1077#1085#1080#1103)
     end
-    object cbColor: TJvColorComboBox
-      Left = 289
-      Top = 7
-      Width = 145
-      Height = 20
-      ColorDialogText = 'Custom...'
-      DroppedDownWidth = 145
-      NewColorText = 'Custom'
-      Options = []
-      TabOrder = 1
-      OnChange = cbColorChange
-    end
-    object btnAddColor: TButton
-      Left = 440
-      Top = 5
-      Width = 89
-      Height = 25
-      Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1094#1074#1077#1090
-      TabOrder = 2
-      OnClick = btnAddColorClick
-    end
   end
   object ToolBar2: TToolBar
     Left = 149
@@ -362,7 +87,7 @@ object KisScanTakeBackImageViewForm: TKisScanTakeBackImageViewForm
     Caption = 'ToolBar1'
     Images = ImageList1
     ShowCaptions = True
-    TabOrder = 3
+    TabOrder = 2
     Transparent = True
     object ToolButton3: TToolButton
       Left = 0
@@ -373,6 +98,277 @@ object KisScanTakeBackImageViewForm: TKisScanTakeBackImageViewForm
       ParentShowHint = False
       ShowHint = True
       OnClick = ToolButton3Click
+    end
+  end
+  object PageControl1: TPageControl
+    AlignWithMargins = True
+    Left = 0
+    Top = 45
+    Width = 1031
+    Height = 551
+    Margins.Left = 0
+    Margins.Top = 45
+    Margins.Right = 0
+    Margins.Bottom = 0
+    ActivePage = tsCompare
+    Align = alClient
+    TabOrder = 3
+    object tsCompare: TTabSheet
+      Caption = #1057#1088#1072#1074#1085#1080#1090#1100' '#1089#1086' '#1089#1090#1072#1088#1099#1084
+      object Panel1: TPanel
+        Left = 0
+        Top = 0
+        Width = 1023
+        Height = 523
+        Margins.Left = 0
+        Margins.Top = 50
+        Margins.Right = 0
+        Margins.Bottom = 0
+        Align = alClient
+        BevelOuter = bvNone
+        TabOrder = 0
+        object pnlInfo: TPanel
+          Left = 0
+          Top = 0
+          Width = 1023
+          Height = 89
+          Align = alTop
+          TabOrder = 0
+          DesignSize = (
+            1023
+            89)
+          object Label1: TLabel
+            Left = 8
+            Top = 2
+            Width = 49
+            Height = 13
+            Caption = #1052#1072#1089#1096#1090#1072#1073':'
+          end
+          object LabelScale: TLabel
+            Left = 8
+            Top = 16
+            Width = 49
+            Height = 13
+            Alignment = taCenter
+            AutoSize = False
+            Caption = '100%'
+          end
+          object lArea: TLabel
+            Left = 963
+            Top = 2
+            Width = 54
+            Height = 13
+            Alignment = taRightJustify
+            Anchors = [akTop, akRight]
+            Caption = #1048#1079#1084#1077#1085#1077#1085#1080#1103
+          end
+          object lRank: TLabel
+            Left = 988
+            Top = 16
+            Width = 29
+            Height = 13
+            Alignment = taRightJustify
+            Anchors = [akTop, akRight]
+            Caption = '100%'
+          end
+          object Bevel1: TBevel
+            Left = 6
+            Top = 32
+            Width = 1011
+            Height = 2
+            Anchors = [akLeft, akTop, akRight]
+          end
+          object TrackBar1: TTrackBar
+            Left = 63
+            Top = 6
+            Width = 217
+            Height = 25
+            Max = 20
+            Min = 1
+            PageSize = 5
+            Frequency = 5
+            Position = 1
+            TabOrder = 0
+            ThumbLength = 16
+            OnChange = TrackBar1Change
+          end
+          object chbOriginal: TCheckBox
+            Left = 6
+            Top = 40
+            Width = 131
+            Height = 17
+            Caption = #1054#1088#1080#1075#1080#1085#1072#1083' '#1087#1083#1072#1085#1096#1077#1090#1072
+            Checked = True
+            State = cbChecked
+            TabOrder = 1
+            OnClick = chbOriginalClick
+          end
+          object chbNewVersion: TCheckBox
+            Left = 161
+            Top = 40
+            Width = 106
+            Height = 17
+            Caption = #1053#1086#1074#1099#1081' '#1087#1083#1072#1085#1096#1077#1090
+            Checked = True
+            State = cbChecked
+            TabOrder = 2
+            OnClick = chbNewVersionClick
+          end
+          object chbZone: TCheckBox
+            Left = 315
+            Top = 40
+            Width = 175
+            Height = 17
+            Caption = #1055#1086#1076#1086#1089#1085#1086#1074#1072'/'#1054#1073#1083#1072#1089#1090#1100' '#1088#1072#1073#1086#1090
+            Checked = True
+            State = cbChecked
+            TabOrder = 3
+            OnClick = chbZoneClick
+          end
+          object Button1: TButton
+            Left = 286
+            Top = 2
+            Width = 133
+            Height = 25
+            Caption = #1055#1086#1082#1072#1079#1072#1090#1100' '#1087#1086#1083#1085#1086#1089#1090#1100#1102
+            TabOrder = 4
+            OnClick = Button1Click
+          end
+          object chbCrosses: TCheckBox
+            Left = 459
+            Top = 6
+            Width = 62
+            Height = 17
+            Caption = #1050#1088#1077#1089#1090#1099
+            TabOrder = 5
+            OnClick = chbCrossesClick
+          end
+          object cbOriginalAlpha: TComboBox
+            Left = 6
+            Top = 63
+            Width = 120
+            Height = 21
+            Hint = #1055#1088#1086#1079#1088#1072#1095#1085#1086#1089#1090#1100' '#1086#1088#1080#1075#1080#1085#1072#1083#1100#1085#1086#1075#1086' '#1087#1083#1072#1085#1096#1077#1090#1072
+            Style = csDropDownList
+            ItemHeight = 13
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 6
+            Visible = False
+            OnChange = cbOriginalAlphaChange
+            Items.Strings = (
+              #1085#1077#1087#1088#1086#1079#1088#1072#1095#1085#1099#1081
+              '10%'
+              '25%'
+              '50%'
+              '75%'
+              '90%')
+          end
+          object cbNewVersionAlpha: TComboBox
+            Left = 161
+            Top = 63
+            Width = 120
+            Height = 21
+            Hint = #1055#1088#1086#1079#1088#1072#1095#1085#1086#1089#1090#1100' '#1085#1086#1074#1086#1075#1086' '#1087#1083#1072#1085#1096#1077#1090#1072
+            Style = csDropDownList
+            ItemHeight = 13
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 7
+            Visible = False
+            OnChange = cbNewVersionAlphaChange
+            Items.Strings = (
+              #1085#1077#1087#1088#1086#1079#1088#1072#1095#1085#1099#1081
+              '10%'
+              '25%'
+              '50%'
+              '75%'
+              '90%')
+          end
+          object cbZoneAlpha: TComboBox
+            Left = 315
+            Top = 63
+            Width = 120
+            Height = 21
+            Hint = #1055#1088#1086#1079#1088#1072#1095#1085#1086#1089#1090#1100' '#1087#1086#1076#1086#1089#1085#1086#1074#1099
+            Style = csDropDownList
+            ItemHeight = 13
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 8
+            Visible = False
+            OnChange = cbZoneAlphaChange
+            Items.Strings = (
+              #1085#1077#1087#1088#1086#1079#1088#1072#1095#1085#1099#1081
+              '10%'
+              '25%'
+              '50%'
+              '75%'
+              '90%')
+          end
+        end
+        object EzDrawBox1: TEzDrawBox
+          Left = 0
+          Top = 89
+          Width = 1023
+          Height = 434
+          BorderStyle = bsNone
+          UseThread = False
+          Align = alClient
+          TabOrder = 1
+          OnMouseWheel = EzDrawBox1MouseWheel
+          GIS = GIS1
+          DefaultScaleUnits = suMms
+          SnapToGuidelinesDist = 1.000000000000000000
+          ScreenGrid.Step.X = 50.000000000000000000
+          ScreenGrid.Step.Y = 50.000000000000000000
+          ShowMapExtents = False
+          ShowLayerExtents = False
+          GridInfo.Grid.X = 50.000000000000000000
+          GridInfo.Grid.Y = 50.000000000000000000
+          GridInfo.GridColor = clMaroon
+          GridInfo.DrawAsCross = True
+          GridInfo.GridSnap.X = 0.500000000000000000
+          GridInfo.GridSnap.Y = 0.500000000000000000
+          RubberPen.Color = clRed
+          RubberPen.Mode = pmXor
+          FlatScrollBar = True
+          OnMouseDown2D = EzDrawBox1MouseDown2D
+          OnMouseLeave = EzDrawBox1MouseLeave
+          OnBeforeSelect = EzDrawBox1BeforeSelect
+          OnZoomChange = EzDrawBox1ZoomChange
+          object EzCmdLine1: TEzCmdLine
+            Left = 0
+            Top = 393
+            Width = 1006
+            Height = 24
+            DrawBoxList = <
+              item
+                DrawBox = EzDrawBox1
+                Current = False
+              end>
+            DynamicUpdate = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -12
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            Color = clWhite
+            Align = alBottom
+            TabOrder = 0
+            TabStop = False
+            Visible = False
+          end
+        end
+      end
+    end
+    object tsLines: TTabSheet
+      Caption = #1055#1088#1086#1074#1077#1088#1080#1090#1100' '#1083#1080#1085#1080#1080' '#1080' '#1090#1077#1082#1089#1090
+      ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
   end
   object ActionList1: TActionList
@@ -389,7 +385,7 @@ object KisScanTakeBackImageViewForm: TKisScanTakeBackImageViewForm
     Left = 40
     Top = 144
     Bitmap = {
-      494C010103000400740010001000FFFFFFFF2000FFFFFFFFFFFFFFFF424D3600
+      494C0101030004007C0010001000FFFFFFFF2000FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -520,11 +516,6 @@ object KisScanTakeBackImageViewForm: TKisScanTakeBackImageViewForm
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000}
-  end
-  object ColorDialog1: TColorDialog
-    Options = [cdFullOpen, cdSolidColor, cdAnyColor]
-    Left = 704
-    Top = 8
   end
   object GIS1: TEzMemoryGIS
     Active = False

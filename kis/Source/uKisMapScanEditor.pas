@@ -10,7 +10,7 @@ uses
   ATImageBox, ATPrintPreview, ATxPrintProc,
   JvBaseDlg, JvDesktopAlert, JvExControls, JvArrowButton,
   FR_Class,
-  uDBGrid, uCommonUtils, uGC, uGraphics,
+  uDBGrid, uCommonUtils, uGC, uGraphics, uAutoCAD,
   uKisClasses, uKisMapPrint,
   uKisIntf, uKisMapScanIntf, uKisExceptions, uKisEntityEditor, uKisScanHistoryFiles, uKisPrintModule,
   uKisImagesViewFactory;
@@ -287,9 +287,15 @@ var
   ImgExt: string;
   Bmp: TBitmap;
   Scan: TKisMapScan;
+  Vector: Boolean;
 begin
   Scan := TKisMapScan(Entity);
-  ImgFile := theMapScansStorage.GetFileName(AppModule, Scan.Nomenclature, sfnRaster);
+  Vector := theMapScansStorage.HasVectorFile(AppModule, Scan.Nomenclature);
+  if Vector then
+    ImgFile := theMapScansStorage.GetFileName(AppModule, Scan.Nomenclature, sfnVector)
+  else
+    ImgFile := theMapScansStorage.GetFileName(AppModule, Scan.Nomenclature, sfnRaster);
+  //
   if (ImgFile = '') or not FileExists(ImgFile) then
     raise EKisException.Create('Файл планшета ' + Scan.Nomenclature + ' не обнаружен!');
   //
@@ -299,7 +305,10 @@ begin
     ImgTmpFile := ChangeFileExt(TmpFile, ImgExt);
     TFileUtils.RenameFile(TmpFile, ImgTmpFile);
     TFileUtils.CopyFile(ImgFile, ImgTmpFile);
-    Bmp := TBitmap.CreateFromFile(ImgTmpFile);
+    if Vector then
+      Bmp := TAutoCADUtils.ExportToBitmap(ImgTmpFile, SZ_MAP_PX, SZ_MAP_PX)
+    else
+      Bmp := TBitmap.CreateFromFile(ImgTmpFile);
     Bmp.Forget();
     //PrintMap(Bmp);
     PrintMap2(Bmp);
@@ -785,7 +794,10 @@ begin
       ImgTmpFile := ChangeFileExt(TmpFile, ImgExt);
       TFileUtils.RenameFile(TmpFile, ImgTmpFile);
       OpFile.SaveImage(ImgTmpFile);
-      Result := TBitmap.CreateFromFile(ImgTmpFile);
+      if TMapScanStorage.FileIsVector(ImgTmpFile) then
+        Result := TAutoCADUtils.ExportToBitmap(ImgTmpFile, SZ_MAP_PX, SZ_MAP_PX)
+      else
+        Result := TBitmap.CreateFromFile(ImgTmpFile);
       Result.Canvas.Pen.Style := psSolid;
       Result.Canvas.Pen.Color := clBlack;
       Result.Canvas.Pen.Width := 10;
@@ -1107,7 +1119,7 @@ begin
           TmpFile := TFileUtils.CreateTempFile(AppModule.AppTempPath);
           TmpImgFile := OpItem.GetSaveImageFileName();
           TmpImgFile := ChangeFileExt(TmpFile, ExtractFileExt(TmpImgFile));
-          TFileutils.RenameFile(TmpFile, TmpImgFile);
+          TFileUtils.RenameFile(TmpFile, TmpImgFile);
           TmpJpegFile := ChangeFileExt(TmpFile, '.jpg');
           try
             OpItem.SaveImage(TmpImgFile);
@@ -1164,8 +1176,16 @@ begin
         ImgTmpFile := ChangeFileExt(TmpFile, ImgExt);
         TFileUtils.RenameFile(TmpFile, ImgTmpFile);
         OpFile.SaveImage(ImgTmpFile);
-        Bmp := TBitmap.CreateFromFile(ImgTmpFile);
-        Bmp.SaveToJpeg(SaveDialog2.Files[0]);
+        Bmp := nil;
+        try
+          if TMapScanStorage.FileIsVector(ImgTmpFile) then
+            Bmp := TAutoCADUtils.ExportToBitmap(ImgTmpFile, SZ_MAP_PX, SZ_MAP_PX)
+          else
+            Bmp := TBitmap.CreateFromFile(ImgTmpFile);
+          Bmp.SaveToJpeg(SaveDialog2.Files[0]);
+        finally
+          FreeAndNil(Bmp);
+        end;
       finally
         TFileUtils.DeleteFile(ImgTmpFile);
         TFileUtils.DeleteFile(TmpFile);
@@ -1308,7 +1328,10 @@ begin
     OpFileDiff := nil;
     FileOpId := Gout2.FileOperationId;
     Op := FScanHistory.Operation(FileOpId);
-    OpFileRes := Op.GetFile(fileSource);
+    if Assigned(Op) then
+      OpFileRes := Op.GetFile(fileSource)
+    else
+      OpFileRes := nil;
     ResTitle := 'Планшет';
   end
   else

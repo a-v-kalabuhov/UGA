@@ -40,6 +40,8 @@ type
       property Target: String read FTarget write FTarget;
       property Status: Boolean read FStatus;
     end;
+  private
+    class function NewTempFile(DoCreateFile: Boolean; Dir: string = ''; Prefix: string = '~'): string;
   public
     class var DontRaiseExceptions: Boolean;
     /// <summary>
@@ -49,6 +51,7 @@ type
     class function CopyFile(const SourceFile, DestFile: string;
       const OverWrite: Boolean = True; const Async: Boolean = False): Boolean;
     class function CreateTempFile(Dir: string = ''; Prefix: string = '~'): string;
+    class function GenerateTempFileName(Dir: string = ''; Prefix: string = '~'): string;
     class function DeleteDirectory(const aDirectory: String; const FailIfDontExists: Boolean = False): Boolean;
     class function DeleteFile(const FileName: String; const FailIfDontExists: Boolean = False): Boolean;
     class function DirUp(const Path: String): String;
@@ -107,6 +110,13 @@ type
     class function Combine(const Path1, Path2: string): string;
     class function Finish(Path1, FileName: string): string; overload;
     class function Finish(Path1, FileName, FileExt: string): string; overload;
+  end;
+
+  TFilePath = class
+  public
+    class function AddPostfix(const aFullFileName, aPostfix: string): string;
+    class function FileIsJPEG(const aFileName: string): Boolean;
+    class function ReplacePath(const aFullFileName, aNewPath: string): string;
   end;
 
 const
@@ -369,6 +379,8 @@ var
   LastError: Cardinal;
   Tmp: string;
 begin
+  Result := NewTempFile(True, Dir, Prefix);
+  Exit;
   if Trim(Dir) = '' then
     Dir := GetTempPath;
   SetLength(Tmp, MAX_PATH);
@@ -489,6 +501,32 @@ begin
     I := FindNext(F);
   end;
   FindClose(F);
+end;
+
+class function TFileUtils.GenerateTempFileName(Dir, Prefix: string): string;
+var
+  LastError: Cardinal;
+  Tmp: string;
+begin
+  Result := NewTempFile(False, Dir, Prefix);
+  Exit;
+  if Trim(Dir) = '' then
+    Dir := GetTempPath;
+  SetLength(Tmp, MAX_PATH);
+  if Windows.GetTempFileName(PChar(Dir), PChar(Prefix), 1, PChar(Tmp)) = 0 then
+  if not DontRaiseExceptions then
+  begin
+    LastError := GetLastError;
+    if LastError <> 0 then
+      raise EFile.Create('Системный сбой. Код '
+        + IntToStr(LastError) + '.' + sLineBreak + SysErrorMessage(LastError)
+        + sLineBreak + 'Невозможно создать временный файл в каталоге:'
+        + sLineBreak + Dir,
+        Dir)
+    else
+      RaiseLastOSError(LastError);
+  end;
+  Result := StrPas(PChar(Tmp));
 end;
 
 class function TFileUtils.GetSpecialFolderLocation(const Folder: Integer;
@@ -649,6 +687,35 @@ class function TFileUtils.LoadFile(const FileName: string): TStrings;
     Result.Free;
     raise;
   end;
+end;
+
+class function TFileUtils.NewTempFile(DoCreateFile: Boolean; Dir, Prefix: string): string;
+var
+  LastError: Cardinal;
+  Tmp: string;
+  Unique: Cardinal;
+begin
+  if Trim(Dir) = '' then
+    Dir := GetTempPath;
+  SetLength(Tmp, MAX_PATH);
+  if DoCreateFile then
+    Unique := 0
+  else
+    Unique := 1;
+  if Windows.GetTempFileName(PChar(Dir), PChar(Prefix), Unique, PChar(Tmp)) = 0 then
+  if not DontRaiseExceptions then
+  begin
+    LastError := GetLastError;
+    if LastError <> 0 then
+      raise EFile.Create('Системный сбой. Код '
+        + IntToStr(LastError) + '.' + sLineBreak + SysErrorMessage(LastError)
+        + sLineBreak + 'Невозможно создать временный файл в каталоге:'
+        + sLineBreak + Dir,
+        Dir)
+    else
+      RaiseLastOSError(LastError);
+  end;
+  Result := StrPas(PChar(Tmp));
 end;
 
 class function TFileUtils.RenameFile(const OldName, NewName: string): Boolean;
@@ -874,6 +941,40 @@ end;
 function TPath.TPathImpl.Combine(const aPath: string): IPath;
 begin
   Result := TPath.TPathImpl.Create(TPath.Combine(FPath, aPath));
+end;
+
+{ TFilePath }
+
+class function TFilePath.AddPostfix(const aFullFileName, aPostfix: string): string;
+var
+  FPath: string;
+  FName: string;
+  FExt: string;
+begin
+  Result := aFullFileName;
+  FPath := ExtractFilePath(aFullFileName);
+  FName := ExtractFileName(aFullFileName);
+  FExt := ExtractFileExt(aFullFileName);
+  if FExt <> '' then
+    SetLength(FName, Length(FName) - Length(FExt));
+  FName := FName + aPostfix + FExt;
+  if FPath <> '' then
+    Result := TPath.Finish(FPath, FName)
+  else
+    Result := FName;
+end;
+
+class function TFilePath.FileIsJPEG(const aFileName: string): Boolean;
+var
+  Ext: string;
+begin
+  Ext := AnsiUpperCase(ExtractFileExt(aFileName));
+  Result := (Ext = '.JPG') or (Ext = '.JPEG') or (Ext = '.JPE');  
+end;
+
+class function TFilePath.ReplacePath(const aFullFileName, aNewPath: string): string;
+begin
+  Result := TPath.Finish(aNewPath, ExtractFileName(aFullFileName));
 end;
 
 end.

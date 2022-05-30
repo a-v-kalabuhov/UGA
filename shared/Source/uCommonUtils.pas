@@ -260,7 +260,9 @@ begin
   sui.cb := SizeOf(sui);
   sui.dwFlags := STARTF_USESHOWWINDOW or STARTF_FORCEONFEEDBACK;
   if Hide then
-    sui.wShowWindow := SW_HIDE;
+    sui.wShowWindow := SW_HIDE
+  else
+    sui.wShowWindow := SW_SHOWNORMAL;
   Win32Check(CreateProcess(PChar(ExeName), PChar(Params), nil, nil, False, 0, nil, nil, sui, pi));
   try
     CloseHandle(pi.hThread);

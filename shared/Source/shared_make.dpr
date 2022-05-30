@@ -39,7 +39,10 @@ uses
   uAutoCAD in 'uAutoCAD.pas',
   clipper in 'clipper.pas',
   uTypes in 'uTypes.pas',
-  uMStFTPConnection in 'uMStFTPConnection.pas' {MStFTPConnection: TDataModule};
+  uMStFTPConnection in 'uMStFTPConnection.pas' {MStFTPConnection: TDataModule},
+  uDwgFile in 'uDwgFile.pas',
+  sgcadimage in 'CadDll\sgcadimage.pas',
+  sgConsts in 'CadDll\sgConsts.pas';
 
 begin
   

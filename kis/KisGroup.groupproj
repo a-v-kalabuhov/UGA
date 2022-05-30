@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup />
   <ItemGroup>
-    <Projects Include="..\Components\Clipper\Delphi\main demo\clipper_demo.dproj" />
+    <Projects Include="..\Components\CadDll\Demos\View\DemoDelphi\DemoDelphi.dproj" />
     <Projects Include="..\Components\ECWCompress\EcwCL.dproj" />
     <Projects Include="..\Components\EzGIS\Demos\NewMain\NewMain.dproj" />
     <Projects Include="..\Components\EzGIS\Source\EzGISD7.dproj">
@@ -21,6 +21,7 @@
     <Projects Include="..\Ms3\Test\Ms3Tests.dproj" />
     <Projects Include="..\shared\Source\MyVCL.dproj" />
     <Projects Include="..\shared\Source\shared_make.dproj" />
+    <Projects Include="..\Tests\KisTestDwgCom.dproj" />
     <Projects Include="Kis.dproj" />
     <Projects Include="KisTestsProject.dproj" />
   </ItemGroup>
@@ -156,23 +157,32 @@
   <Target Name="Ms3Tests:Make">
     <MSBuild Projects="..\Ms3\Test\Ms3Tests.dproj" Targets="Make" />
   </Target>
-  <Target Name="clipper_demo">
-    <MSBuild Projects="..\Components\Clipper\Delphi\main demo\clipper_demo.dproj" Targets="" />
+  <Target Name="KisTestDwgCom">
+    <MSBuild Projects="..\Tests\KisTestDwgCom.dproj" Targets="" />
   </Target>
-  <Target Name="clipper_demo:Clean">
-    <MSBuild Projects="..\Components\Clipper\Delphi\main demo\clipper_demo.dproj" Targets="Clean" />
+  <Target Name="KisTestDwgCom:Clean">
+    <MSBuild Projects="..\Tests\KisTestDwgCom.dproj" Targets="Clean" />
   </Target>
-  <Target Name="clipper_demo:Make">
-    <MSBuild Projects="..\Components\Clipper\Delphi\main demo\clipper_demo.dproj" Targets="Make" />
+  <Target Name="KisTestDwgCom:Make">
+    <MSBuild Projects="..\Tests\KisTestDwgCom.dproj" Targets="Make" />
+  </Target>
+  <Target Name="DemoDelphi">
+    <MSBuild Projects="..\Components\CadDll\Demos\View\DemoDelphi\DemoDelphi.dproj" Targets="" />
+  </Target>
+  <Target Name="DemoDelphi:Clean">
+    <MSBuild Projects="..\Components\CadDll\Demos\View\DemoDelphi\DemoDelphi.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="DemoDelphi:Make">
+    <MSBuild Projects="..\Components\CadDll\Demos\View\DemoDelphi\DemoDelphi.dproj" Targets="Make" />
   </Target>
   <Target Name="Build">
-    <CallTarget Targets="fr7;FRIBX7;tdbf_d7d;EcwCL;EzGISD7;shared_make;EzShared_make;MyVCL;Kis;mfTest1;Ms3;KisTestsProject;NewMain;Ms3Tests;clipper_demo" />
+    <CallTarget Targets="fr7;FRIBX7;tdbf_d7d;EcwCL;EzGISD7;shared_make;EzShared_make;MyVCL;Kis;mfTest1;Ms3;KisTestsProject;NewMain;Ms3Tests;KisTestDwgCom;DemoDelphi" />
   </Target>
   <Target Name="Clean">
-    <CallTarget Targets="fr7:Clean;FRIBX7:Clean;tdbf_d7d:Clean;EcwCL:Clean;EzGISD7:Clean;shared_make:Clean;EzShared_make:Clean;MyVCL:Clean;Kis:Clean;mfTest1:Clean;Ms3:Clean;KisTestsProject:Clean;NewMain:Clean;Ms3Tests:Clean;clipper_demo:Clean" />
+    <CallTarget Targets="fr7:Clean;FRIBX7:Clean;tdbf_d7d:Clean;EcwCL:Clean;EzGISD7:Clean;shared_make:Clean;EzShared_make:Clean;MyVCL:Clean;Kis:Clean;mfTest1:Clean;Ms3:Clean;KisTestsProject:Clean;NewMain:Clean;Ms3Tests:Clean;KisTestDwgCom:Clean;DemoDelphi:Clean" />
   </Target>
   <Target Name="Make">
-    <CallTarget Targets="fr7:Make;FRIBX7:Make;tdbf_d7d:Make;EcwCL:Make;EzGISD7:Make;shared_make:Make;EzShared_make:Make;MyVCL:Make;Kis:Make;mfTest1:Make;Ms3:Make;KisTestsProject:Make;NewMain:Make;Ms3Tests:Make;clipper_demo:Make" />
+    <CallTarget Targets="fr7:Make;FRIBX7:Make;tdbf_d7d:Make;EcwCL:Make;EzGISD7:Make;shared_make:Make;EzShared_make:Make;MyVCL:Make;Kis:Make;mfTest1:Make;Ms3:Make;KisTestsProject:Make;NewMain:Make;Ms3Tests:Make;KisTestDwgCom:Make;DemoDelphi:Make" />
   </Target>
   <Import Condition="Exists('$(MSBuildBinPath)\Borland.Group.Targets')" Project="$(MSBuildBinPath)\Borland.Group.Targets" />
 </Project>

@@ -1442,6 +1442,7 @@ var
   ScanOrder: TKisScanOrder;
   ScanId: Integer;
   Conn: IKisConnection;
+  HasVector: Boolean;
 begin
   ScanOrder := Order as TKisScanOrder;
   Gv2 := AppModule[kmMapScanViewGiveOuts].CreateNewEntity() as TKisMapScanGiveOut2;
@@ -1457,7 +1458,8 @@ begin
   Gv2.PersonWhoGiveId := FGiveOutTemplate.PersonWhoGiveId;
   Gv2.OfficeId := FGiveOutTemplate.OfficeId;
   Gv2.PeopleName := FGiveOutTemplate.PeopleName;
-  Gv2.MD5Old := theMapScansStorage.GetMD5Hash(AppModule, Nomenclature);
+  HasVector := theMapScansStorage.HasVectorFile(AppModule, Nomenclature);
+  Gv2.MD5Old := theMapScansStorage.GetMD5Hash(AppModule, Nomenclature, HasVector);
   Gv2.Nomenclature := Nomenclature;
   Conn := GetConnection(True, False);
   ScanId := GetScanIdByNomenclature(Conn, Nomenclature);
@@ -1475,8 +1477,10 @@ var
   Scan: TKisMapScan;
   Conn: IKisConnection;
   Go: TKisMapScanGiveOut;
+  HasVector: Boolean;
 begin
-  OldMD5 := theMapScansStorage.GetMD5Hash(AppModule, Nomenclature);
+  HasVector := theMapScansStorage.HasVectorFile(AppModule, Nomenclature);
+  OldMD5 := theMapScansStorage.GetMD5Hash(AppModule, Nomenclature, HasVector);
   FScansPrintTable.Add(Nomenclature + '=' + OldMD5);
   //
   ScanOrder := Order as TKisScanOrder;
@@ -3936,6 +3940,7 @@ var
   TheGiveOut: TKisMapScanGiveOut;
   Map: TKisScanOrderMap;
   MapList: TStringList;
+  HasVector: Boolean;
 begin
   MissedScans := TStringList.Create;
   MissedScans.Forget;
@@ -3990,8 +3995,9 @@ begin
                   //
                   Map := Order.FindMap(TheScan.Nomenclature);
                   //
+                  HasVector := theMapScansStorage.HasVectorFile(AppModule, TheScan.Nomenclature);
                   TheGiveOut := TheScan.GiveOutSilent(Template);
-                  TheGiveOut.MD5Old := theMapScansStorage.GetMD5Hash(AppModule, TheScan.Nomenclature);
+                  TheGiveOut.MD5Old := theMapScansStorage.GetMD5Hash(AppModule, TheScan.Nomenclature, HasVector);
                   TheGiveOut.ScanOrderMapId := Map.Id;
                   TheGiveOut.Modified := True;
                   //
@@ -4194,6 +4200,7 @@ var
   GiveOut: TKisMapScanGiveOut;
   S, ErrMsg, Nomen, FileOpId: string;
   N: TNomenclature;
+  HasVector: Boolean;
 begin
   // Выбор файла(ов).
   OpenDialog1.Title := 'Добавляем сканы';
@@ -4262,7 +4269,8 @@ begin
               GiveOut.DateOfBack := Scan.StartDate;
               GiveOut.PeopleId := AppModule.User.PeopleId;
               GiveOut.OfficeId := AppModule.User.OfficeID;
-              GiveOut.MD5New := theMapScansStorage.GetMD5Hash(AppModule, Nomen);
+              HasVector := theMapScansStorage.HasVectorFile(AppModule, Nomen);
+              GiveOut.MD5New := theMapScansStorage.GetMD5Hash(AppModule, Nomen, HasVector);
               GiveOut.FileOperationId := FileOpId;
               GiveOut.Head := Scan;
               //

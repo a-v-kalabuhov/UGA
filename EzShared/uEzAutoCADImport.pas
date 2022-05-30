@@ -57,8 +57,11 @@ begin
   FileExt := ExtractFileExt(OpenDialog1.Files[0]);
   FileExt := AnsiUpperCase(FileExt);
   if FileExt <> '.DXF' then
+  begin
+    TAutoCADUtils.TempPath := FTempPath;
     // конвертируем файл в dxf
-    FDxfFileName := TAutoCADUtils.ConvertDWGtoDXF(FTempPath, OpenDialog1.Files[0])
+    FDxfFileName := TAutoCADUtils.ConvertDWGtoDXF(OpenDialog1.Files[0])
+  end
   else
     FDxfFilename := OpenDialog1.Files[0];
   // из dxf читаем список слоёв
@@ -81,7 +84,8 @@ begin
   if not OpenDialog1.Execute() then
     Exit;
   // конвертируем файл в dxf
-  FDxfFileName := TAutoCADUtils.ConvertDWGtoDXF(FTempPath, OpenDialog1.Files[0]);
+  TAutoCADUtils.TempPath := FTempPath;
+  FDxfFileName := TAutoCADUtils.ConvertDWGtoDXF(OpenDialog1.Files[0]);
   // из dxf читаем список слоёв
   Import := TEzDxfImport.Create(Self);
   Import.FileName := FDxfFileName;
