@@ -759,6 +759,7 @@ procedure TKisMapScanEditor.FormShow(Sender: TObject);
 begin
   inherited;
   AppModule.ReadGridProperties(Self, dbgGivenMapList);
+  PageControl1.ActivePageIndex := 0;
 end;
 
 function TKisMapScanEditor.FormularGetCurrentFileOpId: string;

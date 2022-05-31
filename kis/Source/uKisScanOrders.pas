@@ -511,6 +511,14 @@ begin
   end;
 end;
 
+var
+  OrderId1, MapId1: Integer;
+  
+function IsMyGiveOut(Gout: TKisMapScanGiveOut): Boolean;
+begin
+  Result := (Gout.OrdersId = OrderId1) and (Gout.ScanOrderMapId = MapId1);
+end;
+
 procedure TKisScanOrdersMngr.FindAndDeleteMapGiveOut(Order: TKisScanOrder; const aMap: TKisScanOrderMap);
 var
   ScanMngr: TKisMapScansMngr;
@@ -526,7 +534,6 @@ begin
   // Получаем менеджер
   ScanMngr := AppModule.Mngrs[kmMapScans] as TKisMapScansMngr;
   // Получаем объект - скан
-  Gout := nil;
   B := AppModule.GetFieldValue(
           Self.DefaultTransaction,
           ST_MAP_SCANS_GIVEOUTS,
@@ -539,10 +546,14 @@ begin
     ScanId := Value;
     Scan := ScanMngr.GetEntity(ScanId) as TKisMapScan;
     Scan.Forget();
+    Gout := nil;
     if not Scan.GiveOuts.IsEmpty then
     begin
       // Получаем объект - выдачу
-      Gout := Scan.GetGiveOut(Scan.GiveOuts.RecordCount);
+      OrderId1 := Order.ID;
+      MapId1 := aMap.Id;
+      Gout := Scan.FindGiveOut(IsMyGiveOut, True);
+      //Gout := Scan.GetGiveOut(Scan.GiveOuts.RecordCount);
       if Gout.ScanOrderMapId <> aMap.Id then
         Gout := nil;
     end;
@@ -1238,11 +1249,15 @@ end;
 
 function TKisScanOrder.IsAllMapsInStore: Boolean;
 begin
-  Result := False;
+  Result := True;
   Maps.First;
-  while not (Maps.Eof or Result) do
+  while not Maps.Eof do
   begin
-    Result := MapObjects[Maps.RecNo].InStore;
+    if not MapObjects[Maps.RecNo].InStore then
+    begin
+      Result := False;
+      Exit;
+    end;
     Maps.Next;
   end;
 end;
