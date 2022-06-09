@@ -231,7 +231,10 @@ resourcestring
 
 procedure TKisMainView.FormShow(Sender: TObject);
 begin
-  TDwgFile.RegisterLibrary();
+  try
+    TDwgFile.RegisterLibrary();
+  except
+  end;
   UpdateData;
 end;
 

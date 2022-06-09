@@ -291,6 +291,7 @@ type
     property StartDate: String read FStartDate write SetStartDate;
     property GiveOuts: TDataSet read GetGiveOuts;
     function GetGiveOut(const Recno: Integer): TKisMapScanGiveOut;
+    procedure RemoveGiveOut(Gout: TKisMapScanGiveOut);
     /// <summary>
     ///   Формуляр планшета с графическим отображением области изменения.
     /// </summary>
@@ -1292,6 +1293,20 @@ begin
   end;
 end;
 
+procedure TKisMapScan.RemoveGiveOut(Gout: TKisMapScanGiveOut);
+begin
+  GiveOuts.First;
+  while not GiveOuts.Eof do
+  begin
+    if GiveOuts.FieldByName(SF_ID).AsInteger = Gout.ID then
+    begin
+      GiveOuts.Delete;
+      Exit;
+    end;
+    GiveOuts.Next;
+  end;
+end;
+
 procedure TKisMapScan.UnprepareEditor(Editor: TKisEntityEditor);
 begin
   with Editor as TKisMapScanEditor do
@@ -1578,6 +1593,7 @@ begin
   Result.OfficeId := Order.OfficeId;
   Result.LicensedOrgId := Order.LicensedOrgId;
   Result.Holder := Order.LicensedOrgId > 0;
+  Result.OrdersId := Order.Id;
   if Result.Holder then
   begin
     if not AppModule.GetFieldValue(
@@ -2717,19 +2733,19 @@ var
   Conn: IKisConnection;
   OffId: Integer;
 begin
-  Conn := GetConnection(True, True);
+//  Conn := GetConnection(True, True);
   if not Ent.Holder then
   begin
     if FindOfficeId(Ent, OffId) then
        Ent.OfficeId := OffId;
-    with Conn.GetDataSet(Format(SQ_FIND_ORDER, [Ent.OfficeId, Ent.OrderNumber])) do
-    try
-      Open;
-      Ent.OrdersId := FieldByName(SF_ID).AsInteger;
-      Close;
-    finally
-      FreeConnection(Conn, True);
-    end;
+//    with Conn.GetDataSet(Format(SQ_FIND_ORDER, [Ent.OfficeId, Ent.OrderNumber])) do
+//    try
+//      Open;
+//      Ent.OrdersId := FieldByName(SF_ID).AsInteger;
+//      Close;
+//    finally
+//      FreeConnection(Conn, True);
+//    end;
   end;
 end;
 

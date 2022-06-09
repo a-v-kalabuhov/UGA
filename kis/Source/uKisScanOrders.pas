@@ -512,11 +512,16 @@ begin
 end;
 
 var
-  OrderId1, MapId1: Integer;
+  OrderId1, MapScanId1: Integer;
   
 function IsMyGiveOut(Gout: TKisMapScanGiveOut): Boolean;
 begin
-  Result := (Gout.OrdersId = OrderId1) and (Gout.ScanOrderMapId = MapId1);
+  Result := (Gout.OrdersId = OrderId1) and (Gout.ScanOrderMapId = MapScanId1);
+end;
+
+function IsMyGiveOut2(Gout: TKisMapScanGiveOut): Boolean;
+begin
+  Result := (Gout.OrdersId = 0) and (Gout.ScanOrderMapId = MapScanId1);
 end;
 
 procedure TKisScanOrdersMngr.FindAndDeleteMapGiveOut(Order: TKisScanOrder; const aMap: TKisScanOrderMap);
@@ -551,10 +556,14 @@ begin
     begin
       // Получаем объект - выдачу
       OrderId1 := Order.ID;
-      MapId1 := aMap.Id;
+      MapScanId1 := aMap.Id;
       Gout := Scan.FindGiveOut(IsMyGiveOut, True);
-      //Gout := Scan.GetGiveOut(Scan.GiveOuts.RecordCount);
-      if Gout.ScanOrderMapId <> aMap.Id then
+      if Gout = nil then
+        Gout := Scan.GetGiveOut(Scan.GiveOuts.RecordCount);
+      if Gout = nil then
+        Gout := Scan.FindGiveOut(IsMyGiveOut2, True);
+
+      if Assigned(Gout) and (Gout.ScanOrderMapId <> aMap.Id) then
         Gout := nil;
     end;
     // Если выдача есть, то её надо удалить
@@ -573,8 +582,9 @@ begin
     //
     if Assigned(Scan) then
     begin
-      Scan.GiveOuts.Last;
-      Scan.GiveOuts.Delete;
+      Scan.RemoveGiveOut(Gout);
+//      Scan.GiveOuts.Last;
+//      Scan.GiveOuts.Delete;
       Scan.Modified := True;
       ScanMngr.SaveEntity(Scan);
     end;
