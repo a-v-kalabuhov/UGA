@@ -13,6 +13,7 @@ type
     ['{68A09629-23B1-4386-AE7D-CAC313576E88}']
     procedure ExecDataSet(DataSet: TDataSet);
     function  GetDataSet(const SQL: String): TDataSet;
+    function  GetRecordCount(const SQL: String; const Fetch: Boolean): Integer;
     procedure SetParam(DataSet: TDataSet; const ParamName: String; const ParamValue: Variant);
     procedure SetBlobParam(DataSet: TDataSet; const ParamName: String; Stream: TStream);
     procedure Commit();

@@ -49,7 +49,9 @@ type
     /// </summary>
     class function ClearDirectory(Path: string; Mask: string = '*'; SubDirectories: Boolean = True): Boolean;
     class function CopyFile(const SourceFile, DestFile: string;
-      const OverWrite: Boolean = True; const Async: Boolean = False): Boolean;
+      const OverWrite: Boolean = True; const Async: Boolean = False): Boolean; overload;
+    class function CopyFile(const SourceFile, DestFile: string;
+      const OverWrite: Boolean; out ErrorMessage: string): Boolean; overload;
     class function CreateTempFile(Dir: string = ''; Prefix: string = '~'): string;
     class function GenerateTempFileName(Dir: string = ''; Prefix: string = '~'): string;
     class function DeleteDirectory(const aDirectory: String; const FailIfDontExists: Boolean = False): Boolean;
@@ -361,9 +363,39 @@ begin
   begin
     Result := Windows.CopyFile(PChar(SourceFile), PChar(DestFile), not OverWrite);
     if not Result then
+    begin
+      if not DontRaiseExceptions then
+      begin
+        LastError := GetLastError;
+        if LastError <> 0 then
+          raise ECopyFile.Create('Системный сбой. Код '
+            + IntToStr(LastError) + '.' + sLineBreak + SysErrorMessage(LastError),
+            DestFile, SourceFile)
+        else
+          RaiseLastOSError(LastError);
+      end;
+    end;
+  end;
+end;
+
+class function TFileUtils.CopyFile(const SourceFile, DestFile: string; const OverWrite: Boolean;
+  out ErrorMessage: string): Boolean;
+var
+  LastError: Cardinal;
+begin
+  ErrorMessage := '';
+  Result := Windows.CopyFile(PChar(SourceFile), PChar(DestFile), not OverWrite);
+  if not Result then
+  begin
+    LastError := GetLastError;
+      ErrorMessage :=
+        'Системный сбой. Код ' + IntToStr(LastError) + '.' + sLineBreak;
+    if LastError <> 0 then
+      ErrorMessage := ErrorMessage + SysErrorMessage(LastError)
+    else
+      ErrorMessage := ErrorMessage + 'Неизвестная ошибка!';
     if not DontRaiseExceptions then
     begin
-      LastError := GetLastError;
       if LastError <> 0 then
         raise ECopyFile.Create('Системный сбой. Код '
           + IntToStr(LastError) + '.' + sLineBreak + SysErrorMessage(LastError),

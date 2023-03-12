@@ -154,6 +154,7 @@ type
     procedure SaveLastUserOfficeId;
     procedure PrepareCadastralBlock(Layer: TEzBaseLayer; Entity: TEzEntity;
       const Clip: TEzRect; var EntList: TEzEntityList);
+    function IntLoadMapImage(aMap: TmstMap): Boolean;  // MapId = Entity.ID
   protected
     function GetLotLayer(const LotCategoryId: Integer): TEzBaseLayer;
     procedure LoadLotFromDataSets(ALot: TmstLot; MainDataSet, ContoursDataSet, PointsDataSet: TDataSet);
@@ -179,7 +180,7 @@ type
     procedure LoadProjects(const aLeft, aTop, aRight, aBottom: Double; CallBack: TProgressEvent2);
     procedure LoadProjectsByField(const FieldName, Text: String; OnPrjLoaded: TNotifyEvent);
     // Загрузка изображения планшета
-    procedure LoadMapImage(MapEntityId: Integer);  // MapId = Entity.ID
+    function LoadMapImage(MapEntityId: Integer): Boolean;  // MapId = Entity.ID
     // Поиск адреса и установке его на экране
     procedure LocateAddress(const DbId: Integer);
     // Поиск участка и установке его на экране
@@ -966,28 +967,26 @@ begin
   end;
 end;
 
-procedure TMStClientAppModule.LoadMapImage(MapEntityId: Integer);
+function TMStClientAppModule.LoadMapImage(MapEntityId: Integer): Boolean;
 var
   TmpMap: TmstMap;
-  MapEnt: TEzEntity;
+  N: TNomenclature;
 begin
-  if LayerMaps = nil then
-    raise ELayerNotFound.Create('Невозможно отобразить планшет!' + #13#10 + 'Отсутсвует слой планшетов.');
-  with LayerMaps do
+  if (LayerMaps = nil) or (LayerMapImages = nil) then
+    raise ELayerNotFound.Create('Невозможно отобразить планшет!' + #13#10 + 'Отсутствует слой планшетов.');
+  TmpMap := FMaps.GetByMapEntityId(MapEntityId);
+  Result := IntLoadMapImage(TmpMap);
+  if not Result then
   begin
-    TmpMap := FMaps.GetByMapEntityId(MapEntityId);
-    if FMapMngr.GetMapImage(FMaps, TmpMap, Self.SessionDir) then
+    N := TGeoUtils.GetNomenclature(TmpMap.MapName, False);
+    if N.Secret then
     begin
-      if TmpMap.MapImageId < 0 then
-      begin
-        MapEnt := GetMapImageEntity(TmpMap.MapName, TmpMap.FileName);
-        MapEnt.Forget;
-        TmpMap.MapImageId := LayerMapImages.AddEntity(MapEnt);
-      end;
-    end
-    else
-      Application.MessageBox(PChar('Не удалось загрузить планшет!'),
-        PChar('Ошибка'), MB_OK + MB_ICONSTOP);
+      // не нашли секретный, попытаемся показать обычный
+      N.ReBuild(False);
+      TmpMap := FMaps.GetByNomenclature(N.Nomenclature, False);
+      if Assigned(TmpMap) then
+        Result := IntLoadMapImage(TmpMap);
+    end;
   end;
 end;
 
@@ -1188,6 +1187,55 @@ begin
         FStack.AddObject(Tmp);
     end;
   end;
+end;
+
+function TMStClientAppModule.IntLoadMapImage(aMap: TmstMap): Boolean;
+var
+  TmpMapOld: TmstMap;
+  TmpMapNew: TmstMap;
+  MapEnt: TEzEntity;
+  MapName: string;
+  N: TNomenclature;
+  FileLoaded: Boolean;
+begin
+  Result := False;
+  TmpMapOld := aMap;
+  TmpMapNew := aMap;
+  // проверяем по каким правилам сформирована номенклатура - по старым или по новым
+  N := TGeoUtils.GetNomenclature(aMap.MapName, False);
+  MapName := AnsiUpperCase(N.Nomenclature());
+  // если сформирована и записана в базу старая номенклатура, то искать будем сначала новый файл
+  if MapName <> AnsiUpperCase(aMap.MapName) then
+  begin
+    TmpMapNew := FMaps.GetByNomenclature(MapName, False);
+    if Assigned(TmpMapNew) then
+      aMap := TmpMapNew;
+  end;
+  FileLoaded := FMapMngr.GetMapImage(FMaps, aMap, Self.SessionDir);
+  if FileLoaded then
+  begin
+    if TmpMapOld.MapImageId < 0 then
+    begin
+      MapEnt := GetMapImageEntity(aMap.MapName, aMap.FileName);
+      MapEnt.Forget;
+      TmpMapOld.MapImageId := LayerMapImages.AddEntity(MapEnt);
+    end;
+  end;
+  // файл не нашли на сервере и номенклатура была старая
+  if not FileLoaded and (TmpMapOld <> TmpMapNew) then
+  begin
+    FileLoaded := FMapMngr.GetMapImage(FMaps, TmpMapOld, Self.SessionDir);
+    if FileLoaded then
+    begin
+      if TmpMapOld.MapImageId < 0 then
+      begin
+        MapEnt := GetMapImageEntity(TmpMapOld.MapName, TmpMapOld.FileName);
+        MapEnt.Forget();
+        TmpMapOld.MapImageId := LayerMapImages.AddEntity(MapEnt);
+      end;
+    end;
+  end;
+  Result := FileLoaded;
 end;
 
 function TMStClientAppModule.IsProjectLoaded(const aId: Integer): Boolean;
@@ -1899,6 +1947,7 @@ var
   I: Integer;
   TmpMap: TmstMap;
   TmpMapFileName: string;
+  TmpMapEnt: TEzEntity;
 begin
   Result := False;
   MapName := ExtractFileName(FileName);
@@ -1912,7 +1961,7 @@ begin
   end;
   MapName := TGeoUtils.GetNomenclature(MapName, False).Nomenclature();
   try
-    TmpMap := FMaps.GetByNomenclature(MapName);
+    TmpMap := FMaps.GetByNomenclature(MapName, False);
     if not Assigned(TmpMap) then
     begin
       TmpMap := TmstMap.Create;
@@ -1926,8 +1975,9 @@ begin
         TmpMapFileName := TPath.Finish(Self.SessionDir, MapName);
         CopyFile(PChar(FileName), PChar(TmpMapFileName), False);
         TmpMap.FileName := TmpMapFileName;
-        TmpMap.MapImageId := LayerMapImages.AddEntity(
-          TEzEntity(IEntity(GetMapImageEntity(TmpMap.MapName, TmpMap.FileName)).Entity));
+        TmpMapEnt := GetMapImageEntity(TmpMap.MapName, TmpMap.FileName);
+        TmpMapEnt.Forget();
+        TmpMap.MapImageId := LayerMapImages.AddEntity(TmpMapEnt);
         TmpMap.ImageLoaded := True;
       end
       else
@@ -1938,7 +1988,8 @@ begin
     end
     else
     begin
-      TmpMap.Free;
+      FMaps.Remove(TmpMap);
+      //TmpMap.Free;
       Message := 'Не удалось загрузить планшет ' + MapName + ' из файла ' + FileName + '!';
     end;
   except
@@ -1972,7 +2023,7 @@ begin
     begin
       for i := 0 to Pred(MapFiles.Count) do
       begin
-        TmpMap := FMaps.GetByNomenclature(MapFiles[i]);
+        TmpMap := FMaps.GetByNomenclature(MapFiles[i], False);
         if not Assigned(TmpMap) then
         begin
           Message := 'Планшет не обнаружен: ' + MapFiles[i];
@@ -2005,7 +2056,7 @@ var
 begin
   Result := False;
   try
-    TmpMap := FMaps.GetByNomenclature(MapName);
+    TmpMap := FMaps.GetByNomenclature(MapName, False);
     if not Assigned(TmpMap) then
     begin
       Message := 'Планшет не обнаружен: ' + MapName;

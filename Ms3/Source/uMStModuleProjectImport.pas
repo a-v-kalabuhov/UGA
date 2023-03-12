@@ -248,7 +248,7 @@ end;
 
 function TmstProjectImportModule.ConvertDWGtoDXF(const aFileName: string): string;
 begin
-  TAutoCADUtils.ConvertDWGtoDXF(mstClientAppModule.SessionDir, aFileName);
+  TAutoCADUtils.ConvertDWGtoDXF({mstClientAppModule.SessionDir, }aFileName);
 end;
 
 procedure TmstProjectImportModule.ConvertEntityCoords(Ent: TEzEntity);

@@ -22,7 +22,7 @@ type
     // файл в базе планшетов
     DBFileName: String;
     // результат сравнения
-    ComparedFileName: String;
+    DiffFileName: String;
     // хэш файла в базе
     MD5HashOld: String;
     // хэш файла на флешке
@@ -238,8 +238,8 @@ begin
     end;
   sfkDiff :
     begin
-      if FileExists(ComparedFileName) then
-        MD5HashDiff := MD5DigestToStr(MD5File(ComparedFileName))
+      if FileExists(DiffFileName) then
+        MD5HashDiff := MD5DigestToStr(MD5File(DiffFileName))
       else
         MD5HashDiff := '';
       State := State + [sfsHashDiff];
@@ -291,16 +291,16 @@ const
   Delim = sLineBreak;//'; ';
 begin
   Result :=
-    'Номенклатура:          ' + Nomenclature + Delim +
-    'Файл на флешке:        ' + FullFileName + Delim +
-    'Файл в базе планшетов: ' + DBFileName + Delim +
-    'Результат сравнения:   ' + ComparedFileName + Delim +
-    'Хэш файла в базе:      ' + MD5HashOld + Delim +
-    'Хэш файла на флешке:   ' + MD5HashNew + Delim +
-    'Хэш файла изменений:   ' + MD5HashDiff + Delim +
+    'Номенклатура:                    ' + Nomenclature + Delim +
+    'Готовый новый планшет:           ' + FullFileName + Delim +
+    'Файл в базе планшетов:           ' + DBFileName + Delim +
+    'Область изменений:               ' + DiffFileName + Delim +
+    'Хэш файла в базе:                ' + MD5HashOld + Delim +
+    'Хэш нового планшета:             ' + MD5HashNew + Delim +
+    'Хэш файла изменений:             ' + MD5HashDiff + Delim +
     'ID файла для сохранения истории: ' + FileOpId + Delim +
-    'Состояние:             ' + StateAsText() + Delim +
-    'Статус приёма:         ' + GetTBKindName() + '.';
+    'Состояние:                       ' + StateAsText() + Delim +
+    'Статус приёма:                   ' + GetTBKindName() + '.';
   if AddLog then
     Result := Result + sLineBreak + 'Лог оперций: ' + sLineBreak + Log; 
 end;
@@ -310,7 +310,7 @@ begin
   Nomenclature := '';
   FullFileName := '';
   DBFileName := '';
-  ComparedFileName := '';
+  DiffFileName := '';
   MD5HashOld := '';
   MD5HashNew := '';
   State := [];
@@ -319,7 +319,7 @@ end;
 
 function TMapScanFile.DiffFile: string;
 begin
-  Result := ComparedFileName;
+  Result := DiffFileName;
 end;
 
 function TMapScanFile.GetNewHash: string;
@@ -751,7 +751,7 @@ var
 begin
   try
     // грузим файл
-    Bmp := TBitmap.CreateFromFile(Scan.ComparedFileName);
+    Bmp := TBitmap.CreateFromFile(Scan.DiffFileName);
     Bmp.Forget();
     // создаём приёмник в 2 раза меньше размеров
     MiniBmp := TBitmap.Create;
@@ -782,11 +782,13 @@ var
   ArchFile, // копируем текущий планшет в архивный файл
   HashFile, ArchHashFile, NewFile: string;
   DiffZoneFile, DiffZoneHashFile: string;
+  TmpZoneZipFile: string;
   OverWrit, B: Boolean;
   Msg: string;
+  Error1: string;
 const
   S_COPY_OK = 'Файл скопирован: из "%s" в "%s"';
-  S_COPY_BAD = 'Ошибка копировании файла: из "%s" в "%s"';
+  S_COPY_BAD = 'Ошибка копирования файла: из "%s" в "%s"';
   S_CREATE_OK = 'Файл создан: "%s"';
   S_CREATE_BAD = 'Ошибка создания файла: "%s"';
   S_FILES_EQUAL = 'Файл не изменился - копировать в базу нет необходимости!';
@@ -794,10 +796,13 @@ const
   S_FOLDER_BAD = 'Не удалсь создать папку: "%s"';
   S_OVERWRITE_OK = 'Файл перезаписан: из "%s" в "%s"';
   S_OVERWRITE_BAD = 'Ошибка перезаписи файла: из "%s" в "%s"';
+  S_PACK_OK = 'Файл упакован: из "%s" в "%s"';
+  S_PACK_BAD = 'Ошибка упаковки файла: из "%s" в "%s"';
   S_RENAME_OK = 'Файл переименован: из "%s" в "%s"';
   S_RENAME_BAD = 'Ошибка при переименовании файла: из "%s" в "%s"';
   S_WRITE_OK = 'Файл записан: "%s"';
   S_WRITE_BAD = 'Ошибка записи файла: "%s"';
+  S_ZONE_NOT_FOUND = 'Файл области изменений не найден: "%s"';
 begin
   // перебираем файлы
   try
@@ -861,11 +866,13 @@ begin
       end;
       // копируем новый файл на место старого
       OverWrit := FileExists(OldFile);
-      B := TFileUtils.CopyFile(NewFile, OldFile, False);
+      B := TFileUtils.CopyFile(NewFile, OldFile, OverWrit, Error1);
       if OverWrit then
         Msg := IfThen(B, S_OVERWRITE_OK, S_OVERWRITE_BAD)
       else
         Msg := IfThen(B, S_COPY_OK, S_COPY_BAD);
+      if not B then
+        Msg := Msg + sLineBreak + Error1;
       Scan.AddLogLine(Format(Msg, [NewFile, OldFile]));
       //
       OverWrit := FileExists(HashFile);
@@ -878,30 +885,49 @@ begin
       // теперь область изменений
       if sfsDiffZone in Scan.State then
       begin
-        DiffZoneFile := TPath.Finish(
-            OldFilePath,
-            TMapFileName.MakeDiffZone(Scan.Nomenclature, Scan.FileOpId, ExtractFileExt(Scan.ComparedFileName), Now)
-        );
-        DiffZoneHashFile := ChangeFileExt(DiffZoneFile, MD5_EXT);
-        if PackZoneFiles then
-        begin
-          DiffZoneFile := ChangeFileExt(DiffZoneFile, '.zip');
-          B := TFileUtils.PackFile(Scan.ComparedFileName, DiffZoneFile, [packConvertFilenamesToOEM]);
-        end
+        if not FileExists(Scan.DiffFileName) then
+          Scan.AddLogLine(Format(S_ZONE_NOT_FOUND, [Scan.DiffFileName]))
         else
-          B := TFileUtils.CopyFile(Scan.ComparedFileName, DiffZoneFile, True);
-        Scan.AddLogLine(Format(IfThen(B, S_COPY_OK, S_COPY_BAD), [Scan.ComparedFileName, DiffZoneFile]));
-        //
-        if not (sfsHashDiff in Scan.State) then
-          Scan.PrepareHash(sfkDiff);
-        B := TFileUtils.WriteFile(DiffZoneHashFile, Scan.MD5HashDiff);
-        Scan.AddLogLine(Format(IfThen(B, S_CREATE_OK, S_CREATE_BAD), [DiffZoneHashFile]));
-        // делаем миниатюру для истории
-        if FileExists(Scan.ComparedFileName) then
         begin
-          // делаем файл миниатюру
-          PrepareMini(Scan, 10, ChangeFileExt(DiffZoneFile, MINI_EXT) + MAP_SCAN_EXT);
-        end;
+          DiffZoneFile := TPath.Finish(
+              OldFilePath,
+              TMapFileName.MakeDiffZone(Scan.Nomenclature, Scan.FileOpId, ExtractFileExt(Scan.DiffFileName), Now)
+          );
+          DiffZoneHashFile := ChangeFileExt(DiffZoneFile, MD5_EXT);
+          if PackZoneFiles = True then
+          begin
+            DiffZoneFile := ChangeFileExt(DiffZoneFile, '.zip');
+            TmpZoneZipFile := TFileUtils.GenerateTempFileName(AppModule.AppTempPath);
+            TmpZoneZipFile := ChangeFileExt(TmpZoneZipFile, '.zip');
+            B := TFileUtils.PackFile(Scan.DiffFileName, TmpZoneZipFile, [packConvertFilenamesToOEM]);
+            Scan.AddLogLine(Format(IfThen(B, S_PACK_OK, S_PACK_BAD), [Scan.DiffFileName, TmpZoneZipFile]));
+            if B then
+            begin
+              B := TFileUtils.CopyFile(TmpZoneZipFile, DiffZoneFile, True, Error1);
+              Msg := Format(IfThen(B, S_COPY_OK, S_COPY_BAD), [Scan.DiffFileName, DiffZoneFile]);
+              if not B then
+                Msg := Msg + sLineBreak + Error1;
+              Scan.AddLogLine(Msg);
+              TFileUtils.DeleteFile(TmpZoneZipFile);
+            end;
+          end
+          else
+          begin
+            B := TFileUtils.CopyFile(Scan.DiffFileName, DiffZoneFile, True);
+            Scan.AddLogLine(Format(IfThen(B, S_COPY_OK, S_COPY_BAD), [Scan.DiffFileName, DiffZoneFile]));
+          end;
+          //
+          if not (sfsHashDiff in Scan.State) then
+            Scan.PrepareHash(sfkDiff);
+          B := TFileUtils.WriteFile(DiffZoneHashFile, Scan.MD5HashDiff);
+          Scan.AddLogLine(Format(IfThen(B, S_CREATE_OK, S_CREATE_BAD), [DiffZoneHashFile]));
+          // делаем миниатюру для истории
+          if FileExists(Scan.DiffFileName) then
+          begin
+            // делаем файл миниатюру
+            PrepareMini(Scan, 10, ChangeFileExt(DiffZoneFile, MINI_EXT) + MAP_SCAN_EXT);
+          end;
+        end
       end
       else
       begin
@@ -912,7 +938,7 @@ begin
       Scan.AddLogLine(S_FILES_EQUAL + sLineBreak +
         ' DB: [' + Scan.DBFileName + ']' + sLineBreak +
         ' New: [' + Scan.FullFileName + ']' + sLineBreak +
-        ' Zone: [' + Scan.ComparedFileName + ']');
+        ' Zone: [' + Scan.DiffFileName + ']');
   except
     raise;
   end;

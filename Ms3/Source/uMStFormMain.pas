@@ -1263,7 +1263,13 @@ procedure TmstClientMainForm.LoadImage(Sender: TObject); // +
 begin
   Screen.Cursor := crHourGlass;
   try
-    MStClientAppModule.LoadMapImage(TMenuItem(Sender).Tag);
+    if not MStClientAppModule.LoadMapImage(TMenuItem(Sender).Tag) then
+    begin
+      Application.MessageBox(
+        PChar('Не удалось загрузить планшет!'),
+        PChar('Ошибка'),
+        MB_OK + MB_ICONSTOP);
+    end;
     DrawBox.RegenDrawing;
   finally
     Screen.Cursor := crDefault;

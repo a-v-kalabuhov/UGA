@@ -61,12 +61,15 @@ type
     function AsStrings(const Delimiter: Char): TStrings;
     function GetValidParts(): string;
     /// <summary>
-    /// Возвращает коорлинаты прямоугольника планшета в городской системе координат.  
+    /// Возвращает коорлинаты прямоугольника планшета в городской системе координат.
     /// </summary>
     function Bounds: TRect;
     //
     property Parts[const Index: Integer]: string read GetParts;
     property Neighbour[const Position: TNeighbour4]: TNomenclature read GetNeighbour;
+  public
+    function Build(P1: TPart1; P2: TPart2; P3: TPart3): TNomenclature;
+    procedure ReBuild(const Secret: Boolean);
   end;
 
   TGeoUtils = class
@@ -798,6 +801,16 @@ begin
   Result.Bottom := Result.Top - 250;
 end;
 
+function TNomenclature.Build(P1: TPart1; P2: TPart2; P3: TPart3): TNomenclature;
+var
+  NomenclatureText: string;
+begin
+  P1.FoundKrasnolesny := P1.FoundKrasnolesny or P3.FoundKrasnolesny;
+  P3.FoundKrasnolesny := False;
+  NomenclatureText := P1.GetValidText() + '-' + P2.GetValidText() + '-' + P3.GetValidText(False);
+  Result.Init(NomenclatureText, False);
+end;
+
 procedure TNomenclature.CalcTopLeft1;
 var
   I: Integer;
@@ -1034,6 +1047,21 @@ begin
     if PartCount > 2 then
       Result := Result + '-' + Part3;
   end;
+end;
+
+procedure TNomenclature.ReBuild(const Secret: Boolean);
+var
+  Tmp1: TPart1;
+  Tmp2: TPart2;
+  Tmp3: TPart3;
+  N: TNomenclature;
+begin
+  Tmp1 := fP1;
+  Tmp1.FoundSecret := Secret;
+  Tmp2 := fP2;
+  Tmp3 := fP3;
+  N := Build(Tmp1, Tmp2, Tmp3);
+  Init(N.Nomenclature, False);
 end;
 
 { TPart1 }

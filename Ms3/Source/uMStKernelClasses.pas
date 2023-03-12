@@ -7,7 +7,7 @@ interface
 
 uses
   // System
-  SysUtils, Windows, Classes, Contnrs, Controls, CheckLst, 
+  SysUtils, Windows, Classes, Contnrs, Controls, CheckLst, StrUtils, 
   // Common
   uCommonUtils,  
   //
@@ -256,7 +256,7 @@ type
     function GetByDatabaseId(const DatabaseID: Integer): TmstMap;
     function GetByMapEntityId(const MapEntityId: Integer): TmstMap;
     function GetByMapImageId(const MapImageId: Integer): TmstMap;
-    function GetByNomenclature(const aNomenclature: String): TmstMap;
+    function GetByNomenclature(const aNomenclature: String; const CaseSensitive: Boolean): TmstMap;
     function AddMap: TmstMap;
     procedure IncCounter;
     property ImageCounter: Cardinal read FImageCounter;
@@ -487,16 +487,22 @@ begin
 end;
 
 function TmstMapList.GetByNomenclature(
-  const aNomenclature: String): TmstMap;
+  const aNomenclature: String; const CaseSensitive: Boolean): TmstMap;
 var
   I: Integer;
+  CmpNomenclature: string;
+  CmpMapNameUp: string;
 begin
+  CmpNomenclature := IfThen(CaseSensitive, aNomenclature, AnsiUpperCase(aNomenclature));
   for I := 0 to Pred(Count) do
-    if Items[I].MapName = aNomenclature then
+  begin
+    CmpMapNameUp := IfThen(CaseSensitive, Items[I].MapName, AnsiUpperCase(Items[I].MapName));
+    if CmpMapNameUp = CmpNomenclature then
     begin
       Result := Items[I];
       Exit;
     end;
+  end;
   Result := nil;
 end;
 

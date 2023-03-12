@@ -10,7 +10,7 @@ uses
   //
   EzLib, EzBaseGIS, EzEntities,
   //
-  uGC, uCommonUtils, uIBXUtils, SciZipFile,
+  uGC, uCommonUtils, uIBXUtils, SciZipFile, uGeoUtils,
   //
   uMStConsts, uMStKernelTypes, 
   uMStKernelAppModule, uMStKernelSemantic, uMStKernelClassesOptions, uMStKernelGISUtils,
@@ -32,6 +32,7 @@ type
   protected
     procedure ExecDataSet(DataSet: TDataSet);
     function  GetDataSet(const aSQL: String): TDataSet;
+    function  GetRecordCount(const aSQL: String; const Fetch: Boolean): Integer;
     procedure SetParam(DataSet: TDataSet; const ParamName: String; const ParamValue: Variant);
     procedure SetBlobParam(DataSet: TDataSet; const ParamName: String; Stream: TStream);
     procedure Commit();
@@ -1349,6 +1350,24 @@ begin
     Prepare;
   end;
   FDataSets.InsertComponent(Result);
+end;
+
+function TIBXConnection.GetRecordCount(const aSQL: String; const Fetch: Boolean): Integer;
+var
+  Query: TIBQuery;
+begin
+  Result := -1;
+  Query := TIBQuery.Create(nil);
+  try
+    Query.Transaction := FTransaction;
+    Query.SQL.Text := aSQL;
+    Query.Open;
+    if Fetch then     
+      Query.FetchAll();
+    Result := Query.RecordCount;
+  finally
+    Query.Free;
+  end;
 end;
 
 procedure TIBXConnection.SetBlobParam(DataSet: TDataSet; const ParamName: String; Stream: TStream);

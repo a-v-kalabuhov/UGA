@@ -3418,7 +3418,7 @@ begin
       Query.Params[3].AsString := Scans[I].Nomenclature;
       Query.Params[4].AsString := Scans[I].FullFileName;
       Query.Params[5].AsString := Scans[I].DBFileName;
-      Query.Params[6].AsString := Scans[I].ComparedFileName;
+      Query.Params[6].AsString := Scans[I].DiffFileName;
       Query.Params[7].AsString := Scans[I].MD5HashOld;
       Query.Params[8].AsString := Scans[I].MD5HashNew;
       Query.Params[9].AsString := Scans[I].MD5HashDiff;

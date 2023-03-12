@@ -327,7 +327,7 @@ begin
           begin
             FScans[I].FullFileName := FFiles[I].FileName;
             FScans[I].PrepareHash(sfkUpload);
-            FScans[I].ComparedFileName := theMapScansStorage.GetVectorZoneFileName(FFiles[I].FileName, FFiles[I].Nomenclature);
+            FScans[I].DiffFileName := theMapScansStorage.GetVectorZoneFileName(FFiles[I].FileName, FFiles[I].Nomenclature);
             FScans[I].PrepareHash(sfkDiff);
             FScans[I].State := FScans[I].State + [sfsDiffZone];
           end
@@ -335,7 +335,7 @@ begin
           begin
             FScans[I].FullFileName := FFiles[I].MergedFile;
             FScans[I].PrepareHash(sfkUpload);
-            FScans[I].ComparedFileName := FFiles[I].FileName;
+            FScans[I].DiffFileName := FFiles[I].FileName;
             FScans[I].PrepareHash(sfkDiff);
             FScans[I].State := FScans[I].State + [sfsDiffZone];
           end;
@@ -347,14 +347,16 @@ begin
   end;
   //
   Result := True;
-//  Exit;
+  //
   if NoChangesList.Count > 0 then
   begin
     NoChangesList.Insert(0, 'Планшеты не имеют изменений: ');
     NoChangesList.Append('');
     NoChangesList.Append('Пометить их как "Без изменений"?');
-    NoChangesList.Append('Да - пометить и принять, Нет - принять как есть,');
-    NoChangesList.Append('Отмена - не помечать и не принимать');
+    NoChangesList.Append('');
+    NoChangesList.Append('Да - пометить и принять, без новой записи в формуляре.');
+    NoChangesList.Append('Нет - принять как есть, будет создана новая запись в формуляре.');
+    NoChangesList.Append('Отмена - пока не принимать, остаться в окне приёма планшетов.');
     A := MessageBox(Handle, PChar(NoChangesList.Text), 'Внимание!', MB_YESNOCANCEL + MB_ICONQUESTION);
     case A of
     ID_YES:

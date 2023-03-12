@@ -52,10 +52,14 @@ object KisMapScanLoadForm2: TKisMapScanLoadForm2
     Top = 27
     Width = 877
     Height = 310
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = #1055#1088#1086#1074#1077#1088#1082#1072' '#1092#1072#1081#1083#1086#1074
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         869
         282)
@@ -168,6 +172,10 @@ object KisMapScanLoadForm2: TKisMapScanLoadForm2
       Caption = #1057#1090#1099#1082#1086#1074#1082#1072
       ImageIndex = 1
       OnShow = TabSheet2Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         869
         282)

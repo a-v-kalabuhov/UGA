@@ -235,7 +235,7 @@ var
 begin
   FScan.PrepareFileName(Folders, aFile.Nomenclature);
   //
-  FScan.ComparedFileName := aFile.Nomenclature;
+  FScan.DiffFileName := aFile.Nomenclature;
   FScan.FullFileName := aFile.MergedFile;
   //
   Bmp := GetBitmap(aFile.FileName);
@@ -258,10 +258,10 @@ var
   BmpFile: string;
   aBitmap: TBitmap;
 begin
-  FScan.ComparedFileName := TFileUtils.CreateTempFile(Folders.AppTempPath);
-  BmpFile := ChangeFileExt(FScan.ComparedFileName, '.bmp');
-  if RenameFile(Scan.ComparedFileName, BmpFile) then
-    FScan.ComparedFileName := BmpFile;
+  FScan.DiffFileName := TFileUtils.CreateTempFile(Folders.AppTempPath);
+  BmpFile := ChangeFileExt(FScan.DiffFileName, '.bmp');
+  if RenameFile(Scan.DiffFileName, BmpFile) then
+    FScan.DiffFileName := BmpFile;
   Comparer := TImageCompareFactory.CreateImageCompare(icaKalabuhov);
 //    Comparer := TImageCompareFactory.CreateImageCompare(icaCompareExe);
 //  Comparer.Compare2(Scan.DBFileName, Scan.FullFileName, Result, Bitmaps.DiffArea, Bitmaps.DiffStrength);
@@ -293,7 +293,7 @@ begin
   if FileType then
   begin
     FScan.FullFileName := aFileName;
-    FScan.ComparedFileName := FMergedFile;
+    FScan.DiffFileName := FMergedFile;
     if Rebuild and Assigned(Bitmaps.Upload) then
     begin
       Bitmaps.Upload.Free;
@@ -317,7 +317,7 @@ begin
   else
   begin
     FScan.FullFileName := FMergedFile;
-    FScan.ComparedFileName := aFileName;
+    FScan.DiffFileName := aFileName;
     if Rebuild and Assigned(Bitmaps.Diff) then
     begin
       Bitmaps.Diff.Free;
@@ -325,7 +325,7 @@ begin
     end;
     if Rebuild or not Assigned(Bitmaps.Diff) then
     begin
-      Bitmaps.Diff := GetBitmap(FScan.ComparedFileName);
+      Bitmaps.Diff := GetBitmap(FScan.DiffFileName);
       {$IFDEF GRAPHICS_16_BIT}
       Bitmaps.Diff.PixelFormat := pf16bit;
       {$ENDIF}
@@ -363,7 +363,7 @@ begin
   FVBitmaps.Clear();
   //
   FScan.PrepareFileName(Folders, aFile.Nomenclature);
-  FScan.ComparedFileName := aFile.Nomenclature;
+  FScan.DiffFileName := aFile.Nomenclature;
   FScan.FullFileName := aFile.MergedFile;
   //
   FVBitmaps.NewVector := GetBitmap(aFile.FileName);

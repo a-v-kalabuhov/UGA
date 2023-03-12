@@ -299,7 +299,7 @@ begin
     ShowSelectedImages(False);
     ShowModal;
   finally
-    TFileUtils.DeleteFile(FImages.Scans[0].ComparedFileName);
+    TFileUtils.DeleteFile(FImages.Scans[0].DiffFileName);
     TFileUtils.DeleteFile(FMergedFile);
   end;
 end;
@@ -370,7 +370,7 @@ begin
   LoadMapList(Files);
   //
   aScan := FImages.Scans[0];
-  aScan.ComparedFileName := aFile.FileName;
+  aScan.DiffFileName := aFile.FileName;
   aScan.FullFileName := aFile.MergedFile;
   FImages.Scans[0] := aScan;
   //
@@ -551,10 +551,10 @@ var
   BmpFile: string;
 begin
   Result := nil;
-  Scan.ComparedFileName := TFileUtils.CreateTempFile(AppModule.AppTempPath);
-  BmpFile := ChangeFileExt(Scan.ComparedFileName, '.bmp');
-  if RenameFile(Scan.ComparedFileName, BmpFile) then
-    Scan.ComparedFileName := BmpFile;
+  Scan.DiffFileName := TFileUtils.CreateTempFile(AppModule.AppTempPath);
+  BmpFile := ChangeFileExt(Scan.DiffFileName, '.bmp');
+  if RenameFile(Scan.DiffFileName, BmpFile) then
+    Scan.DiffFileName := BmpFile;
   Comparer := TImageCompareFactory.CreateImageCompare(icaKalabuhov);
 //    Comparer := TImageCompareFactory.CreateImageCompare(icaCompareExe);
 //  Comparer.Compare2(Scan.DBFileName, Scan.FullFileName, Result, Bitmaps.DiffArea, Bitmaps.DiffStrength);
@@ -676,7 +676,7 @@ begin
     begin
       PrepareMergedFileName;
       Scan.FullFileName := FFile.FileName;
-      Scan.ComparedFileName := FMergedFile;
+      Scan.DiffFileName := FMergedFile;
       if Rebuild and Assigned(Imgs.Upload) then
       begin
         Imgs.Upload.Free;
@@ -706,7 +706,7 @@ begin
     begin
       PrepareMergedFileName;
       Scan.FullFileName := FMergedFile;
-      Scan.ComparedFileName := FFile.FileName;
+      Scan.DiffFileName := FFile.FileName;
       if Rebuild and Assigned(Imgs.Diff) then
       begin
         Imgs.Diff.Free;
@@ -714,7 +714,7 @@ begin
       end;
       if Rebuild or not Assigned(Imgs.Diff) then
       begin
-        Imgs.Diff := GetBitmap(Scan.ComparedFileName);
+        Imgs.Diff := GetBitmap(Scan.DiffFileName);
         {$IFDEF GRAPHICS_16_BIT}
         Imgs.Diff.PixelFormat := pf16bit;
         {$ENDIF}
