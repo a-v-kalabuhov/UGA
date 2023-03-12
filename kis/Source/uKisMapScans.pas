@@ -425,6 +425,9 @@ type
     ///   Принять несколько файлов сразу.
     /// </summary>
     procedure TakeBackList(var Scans: TMapScanArray; anOrder: TKisEntity);
+    procedure TakeBackListItem(Conn: IKisConnection;
+      var Scans: TMapScanArray; anOrder: TKisEntity; Idx: Integer;
+      var Template: TKisMapScanGiveOut);
     /// <summary>
     /// Сохраняем отчёт о загрузке файлов в базу.
     /// </summary>
@@ -2730,7 +2733,7 @@ end;
 
 procedure TKisMapScansMngr.SetOrderId(Ent: TKisMapScanGiveOut);
 var
-  Conn: IKisConnection;
+//  Conn: IKisConnection;
   OffId: Integer;
 begin
 //  Conn := GetConnection(True, True);
@@ -2753,11 +2756,9 @@ procedure TKisMapScansMngr.TakeBackList;
 var
   Conn: IKisConnection;
   I: Integer;
-  Template, Gout: TKisMapScanGiveOut;
+  Template: TKisMapScanGiveOut;
   TheOrder: TKisScanOrder;
-  Nomen, MD5Hash: string;
-  TheScan: TKisMapScan;
-  Map: TKisScanOrderMap;
+  MD5Hash: string;
 begin
   // TODO: надо сначала подготовить список файлов, попытаться залить его, а потом уже сохранять объекты в Бд
   if Assigned(anOrder) then
@@ -2766,6 +2767,26 @@ begin
     Template := nil;
     Conn := GetConnection(True, True, True);
     try
+      for I := 0 to Length(Scans) - 1 do
+      begin
+        TakeBackListItem(Conn, Scans, anOrder, I, Template);
+        if Template = nil then
+          Break;
+      end;
+{$REGION 'Вынесено в TakeBackListItem'}
+  (*
+      if sfsDiffZone in Scans[0].State then
+      begin
+        if not (sfsHashDiff in Scans[0].State) then
+          Scans[0].PrepareHash(sfkDiff);
+        Gout.MD5New := Scans[0].MD5HashDiff;
+      end
+      else
+      begin
+        if not (sfsHashNew in Scans[0].State) then
+          Scans[0].PrepareHash(sfkUpload);
+        Gout.MD5New := Scans[0].MD5HashNew;
+      end;
       // показываем окно с параметрами
       // Номенклатура первого скана в заявке
       Nomen := Scans[0].Nomenclature;
@@ -2780,13 +2801,15 @@ begin
           Scans[0].FileOpId := Template.FileOperationId;
           // обновляем сущности-сканы в БД
           theMapScansStorage.UploadDBFile(AppModule, Scans[0]);
-          if Scans[0].MD5HashOld = Scans[0].MD5HashNew then
-          begin
-            Template.FileOperationId := S_FILEOP_NO_CHANGES;
-            Scans[0].FileOpId := S_FILEOP_NO_CHANGES;
-          end;
+          if Scans[0].TakeBackKind = tbNoChanges then
+            if Scans[0].MD5HashOld = Scans[0].MD5HashNew then
+            begin
+              Template.FileOperationId := S_FILEOP_NO_CHANGES;
+              Scans[0].FileOpId := S_FILEOP_NO_CHANGES;
+            end;
           AddReportLine(True, TheScan.Nomenclature, 'Успешно скопирован!', Scans[0].AsText(True));
-          if (sfsDiffZone in Scans[0].State) {and (Scans[0].MD5HashOld <> Scans[0].MD5HashNew)} then
+          if not (Scans[0].TakeBackKind in [tbNone, tbNoChanges]) then
+//          if (sfsDiffZone in Scans[0].State) {and (Scans[0].MD5HashOld <> Scans[0].MD5HashNew)} then
           begin
             TheScan.AddHistoryFromGiveOut(Template);
           end;
@@ -2806,15 +2829,6 @@ begin
         //
         for I := 1 to Pred(Length(Scans)) do
         try
-          Nomen := Scans[I].Nomenclature;
-          TheScan := FindScan(Conn, Nomen);
-          TheScan.Forget;
-          if not Assigned(TheScan) then
-            raise EKisException.Create('Скан планшета ' + Nomen + ' не обнаружен в базе данных!');
-          //
-          Map := TheOrder.FindMap(Nomen);
-          Gout := TheScan.FindGiveOut(Map.ID, True);
-          TheScan.TakeBackSilent(Gout, Template);
           if sfsDiffZone in Scans[I].State then
           begin
             if not (sfsHashDiff in Scans[I].State) then
@@ -2827,6 +2841,15 @@ begin
               Scans[I].PrepareHash(sfkUpload);
             Gout.MD5New := Scans[I].MD5HashNew;
           end;
+          Nomen := Scans[I].Nomenclature;
+          TheScan := FindScan(Conn, Nomen);
+          TheScan.Forget;
+          if not Assigned(TheScan) then
+            raise EKisException.Create('Скан планшета ' + Nomen + ' не обнаружен в базе данных!');
+          //
+          Map := TheOrder.FindMap(Nomen);
+          Gout := TheScan.FindGiveOut(Map.ID, True);
+          TheScan.TakeBackSilent(Gout, Template);
           Gout.FileOperationId := CreateClassID;
           Scans[I].FileOpId := Gout.FileOperationId;
           //
@@ -2852,6 +2875,8 @@ begin
       end
       else
         Template := nil;
+      *)
+{$ENDREGION}
     finally
       // если есть ошибки, то откатываем изменения и показываем отчёт
       FreeConnection(Conn, not FReport.ContainsError);
@@ -2890,6 +2915,83 @@ begin
         if Assigned(TheOrder) then
           SafeReopen(dsOrdersTakeBack, SF_ID);
       end;
+    end;
+  end;
+end;
+
+procedure TKisMapScansMngr.TakeBackListItem(Conn: IKisConnection;
+  var Scans: TMapScanArray; anOrder: TKisEntity; Idx: Integer;
+  var Template: TKisMapScanGiveOut);
+var
+  Nomen: string;
+  TheScan: TKisMapScan;
+  TheOrder: TKisScanOrder;
+  Map: TKisScanOrderMap;
+  Gout: TKisMapScanGiveOut;
+begin
+  Template := nil;
+  Nomen := Scans[Idx].Nomenclature;
+  TheScan := FindScan(Conn, Nomen);
+  if not Assigned(TheScan) then
+    raise EKisException.Create('Скан планшета ' + Nomen + ' не обнаружен в базе данных!');
+  TheScan.Forget();
+  //
+  TheOrder := anOrder as TKisScanOrder;
+  Map := TheOrder.FindMap(Nomen);
+  Gout := TheScan.FindGiveOut(Map.ID, True);
+  //
+  if sfsDiffZone in Scans[Idx].State then
+  begin
+    if not (sfsHashDiff in Scans[Idx].State) then
+      Scans[Idx].PrepareHash(sfkDiff);
+    Gout.MD5New := Scans[Idx].MD5HashDiff;
+  end
+  else
+  begin
+    if not (sfsHashNew in Scans[Idx].State) then
+      Scans[Idx].PrepareHash(sfkUpload);
+    Gout.MD5New := Scans[Idx].MD5HashNew;
+  end;
+  //
+  if Idx = 0 then
+  begin
+    if TheScan.TakeBack(Template, Scans[Idx].MD5HashNew) then
+      Template := Gout
+    else
+      Exit;
+  end
+  else
+  begin
+    TheScan.TakeBackSilent(Gout, Template);
+  end;
+  //
+  try
+    Gout.FileOperationId := CreateClassID;
+    Scans[Idx].FileOpId := Gout.FileOperationId;
+    // обновляем сущности-сканы в БД
+    theMapScansStorage.UploadDBFile(AppModule, Scans[Idx]);
+    if Scans[Idx].TakeBackKind = tbNoChanges then
+//    if Scans[Idx].MD5HashOld = Scans[Idx].MD5HashNew then
+    begin
+      Gout.FileOperationId := S_FILEOP_NO_CHANGES;
+      Scans[Idx].FileOpId := S_FILEOP_NO_CHANGES;
+    end;
+    AddReportLine(True, TheScan.Nomenclature, 'Успешно скопирован!', Scans[Idx].AsText(True));
+    if not (Scans[Idx].TakeBackKind in [tbNone, tbNoChanges]) then
+//  if (sfsDiffZone in Scans[0].State) {and (Scans[0].MD5HashOld <> Scans[0].MD5HashNew)} then
+    begin
+      TheScan.AddHistoryFromGiveOut(Gout);
+    end;
+    //
+    SaveEntity(TheScan);
+  except
+    on E: Exception do
+    begin
+      AddReportLine(False, TheScan.Nomenclature,
+        'Ошибка при сохранении планшета! ' + E.Message,
+        Scans[Idx].AsText(True) + sLineBreak +
+        'Стек вызовов: ' + sLineBreak + GetDebugString);
+      Scans[Idx].AddLogLine('Ошибка: ' + E.Message);
     end;
   end;
 end;
@@ -4182,10 +4284,11 @@ begin
     TBFiles := TTakeBackFiles.Create;
     TBFiles.Forget;
     try
-      // визуальное сравнение
+      // выполняем визуальное сравнение
       if TKisMapScanLoadForm2.Execute(Order, TBFiles, Scans) then
       begin
         FReport.Clear;
+        // заливаем планшеты на сервер и записываем данные о принёми в БД
         TakeBackList(Scans, Order);
       end;
     finally

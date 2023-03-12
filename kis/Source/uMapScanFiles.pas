@@ -811,7 +811,8 @@ begin
     if not (sfsHashNew in Scan.State) then
       Scan.PrepareHash(sfkUpload);
     //
-    if (Scan.MD5HashOld <> Scan.MD5HashNew) or (sfsDiffZone in Scan.State) then  // если нет изменений то не копируем файл
+    if Scan.TakeBackKind <> tbNoChanges then  // если нет изменений то не копируем файл
+//    if (Scan.MD5HashOld <> Scan.MD5HashNew) or (sfsDiffZone in Scan.State) then  // если нет изменений то не копируем файл
     begin
       if not (sfsNamePrepared in Scan.State) then
         Scan.PrepareFileName(Folders, '');

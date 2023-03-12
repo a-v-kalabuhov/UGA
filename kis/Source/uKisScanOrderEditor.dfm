@@ -11,6 +11,7 @@ inherited KisScanOrderEditor: TKisScanOrderEditor
   inherited HintWarnLabel: TLabel
     Left = 8
     Top = 308
+    Margins.Bottom = 0
     Anchors = [akLeft, akBottom]
     ExplicitLeft = 8
     ExplicitTop = 308
@@ -85,7 +86,7 @@ inherited KisScanOrderEditor: TKisScanOrderEditor
       Height = 21
       Style = csDropDownList
       Color = clInfoBk
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 4
       Visible = False
       OnChange = cbOfficesChange
@@ -159,13 +160,13 @@ inherited KisScanOrderEditor: TKisScanOrderEditor
       Width = 399
       Height = 21
       Color = clInfoBk
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 3
       Text = 'cbWorkType'
     end
     object chbAnnulled: TCheckBox
-      Left = 313
-      Top = 37
+      Left = 318
+      Top = 35
       Width = 97
       Height = 17
       Caption = #1040#1085#1085#1091#1083#1080#1088#1086#1074#1072#1085#1072
