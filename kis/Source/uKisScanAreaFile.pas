@@ -133,7 +133,7 @@ begin
         Result := RecMakePoly(Layer);
       end;
     finally
-      DeleteFile(Import.FileName);
+      SysUtils.DeleteFile(Import.FileName);
       FreeAndNil(Import);
     end;
   finally
@@ -253,7 +253,7 @@ begin
       end;
     end;
   finally
-    DeleteFile(Import.FileName);
+    SysUtils.DeleteFile(Import.FileName);
     FreeAndNil(Import);
   end;
 end;

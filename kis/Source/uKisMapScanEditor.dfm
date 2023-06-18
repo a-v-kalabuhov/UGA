@@ -49,7 +49,7 @@ inherited KisMapScanEditor: TKisMapScanEditor
     Left = 928
     Top = 486
     Anchors = [akRight, akBottom]
-    ExplicitLeft = 897
+    ExplicitLeft = 928
     ExplicitTop = 486
   end
   inherited btnCancel: TButton
@@ -57,7 +57,7 @@ inherited KisMapScanEditor: TKisMapScanEditor
     Top = 486
     Anchors = [akRight, akBottom]
     Default = True
-    ExplicitLeft = 978
+    ExplicitLeft = 1009
     ExplicitTop = 486
   end
   object edNomenclature: TEdit [6]
@@ -129,13 +129,15 @@ inherited KisMapScanEditor: TKisMapScanEditor
     Top = 54
     Width = 1076
     Height = 426
-    ActivePage = tabHistor
+    ActivePage = tabHistory
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 7
-    ExplicitWidth = 1045
     object tabHistor: TTabSheet
       Caption = #1048#1089#1090#1086#1088#1080#1103
-      ExplicitWidth = 1037
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         1068
         398)
@@ -305,7 +307,10 @@ inherited KisMapScanEditor: TKisMapScanEditor
       Caption = #1060#1086#1088#1084#1091#1083#1103#1088
       ImageIndex = -1
       OnShow = tabHistoryShow
-      ExplicitWidth = 1037
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -314,7 +319,6 @@ inherited KisMapScanEditor: TKisMapScanEditor
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 1037
         DesignSize = (
           1068
           398)
@@ -339,7 +343,6 @@ inherited KisMapScanEditor: TKisMapScanEditor
             00DD0FFFFF0788E7F0DD0FFFFF08888780DD0FFFFF08E88780DD0FFFFF07EE87
             F0DD0FFFFFF078870DDD0FFFFFFF0000DDDD0FFFFFFFFFF0DDDD0FFFFFFF0000
             DDDD0FFFFFFF080DDDDD0FFFFFFF00DDDDDD000000000DDDDDDD}
-          ExplicitLeft = 885
         end
         object dbgHistoryList: TDBGrid
           Left = 2
@@ -499,7 +502,6 @@ inherited KisMapScanEditor: TKisMapScanEditor
           Ctl3D = False
           ParentCtl3D = False
           TabOrder = 5
-          ExplicitLeft = 675
           object pbPreview: TPaintBox
             Left = 0
             Top = 0
@@ -529,7 +531,6 @@ inherited KisMapScanEditor: TKisMapScanEditor
             0002088888877788080200000000000008800888888888808080200000000008
             0800220FFFFFFFF080802220F00000F000022220FFFFFFFF022222220F00000F
             022222220FFFFFFFF02222222000000000222222222222222222}
-          ExplicitLeft = 520
         end
         object btnSaveHistoryImage: TBitBtn
           Left = 706
@@ -550,14 +551,16 @@ inherited KisMapScanEditor: TKisMapScanEditor
             030AA03300000000030AA03333333333330AA03300000000330AA03088888888
             030AA03088888888030AA03088888888030AA03088888888030AA03088888888
             000AA03088888888080AA00000000000000AAAAAAAAAAAAAAAAA}
-          ExplicitLeft = 675
         end
       end
     end
     object TabSheet2: TTabSheet
       Caption = #1060#1086#1088#1084#1091#1083#1103#1088' - '#1089#1090#1072#1088#1099#1081
       ImageIndex = 1
-      ExplicitWidth = 1037
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         1068
         398)
@@ -570,7 +573,6 @@ inherited KisMapScanEditor: TKisMapScanEditor
         BevelOuter = bvNone
         Caption = #1042#1099#1073#1077#1088#1080#1090#1077' '#1085#1086#1084#1077#1085#1082#1083#1072#1090#1091#1088#1091' '#1087#1083#1072#1085#1096#1077#1090#1072' '#1074' '#1089#1087#1080#1089#1082#1077' '#1089#1083#1077#1074#1072'.'
         TabOrder = 0
-        ExplicitWidth = 1034
         object Panel2: TPanel
           Left = 0
           Top = 0
@@ -579,7 +581,6 @@ inherited KisMapScanEditor: TKisMapScanEditor
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitWidth = 1034
           object Label4: TLabel
             Left = 8
             Top = 2
@@ -632,7 +633,6 @@ inherited KisMapScanEditor: TKisMapScanEditor
           Color = 16511726
           ParentColor = False
           TabOrder = 1
-          ExplicitWidth = 1034
         end
       end
       object btnLoadHistoryImage: TButton
@@ -666,7 +666,6 @@ inherited KisMapScanEditor: TKisMapScanEditor
     Caption = #1055#1077#1095#1072#1090#1072#1090#1100' '#1087#1083#1072#1085#1096#1077#1090
     TabOrder = 8
     OnClick = btnPrintMapClick
-    ExplicitLeft = 891
   end
   inherited Alert: TJvDesktopAlert
     Left = 56

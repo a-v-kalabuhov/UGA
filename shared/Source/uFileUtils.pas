@@ -514,11 +514,14 @@ class procedure TFileUtils.FindFile(const aMask: string; var aFileName: String);
 var
   F: TSearchRec;
 begin
-  if FindFirst(aMask, faAnyFile, F) = 0 then
-    aFileName := F.Name            
-  else
-    aFileName := '';
-  FindClose(F);
+  try
+    if FindFirst(aMask, faAnyFile, F) = 0 then
+      aFileName := F.Name
+    else
+      aFileName := '';
+  finally
+    FindClose(F);
+  end;
 end;
 
 class procedure TFileUtils.FindFiles(const aMask: string; Files: TStrings);
@@ -527,12 +530,15 @@ var
   I: Integer;
 begin
   I := FindFirst(aMask, faAnyFile, F);
-  while I = 0 do
-  begin
-    Files.Add(F.Name);
-    I := FindNext(F);
+  try
+    while I = 0 do
+    begin
+      Files.Add(F.Name);
+      I := FindNext(F);
+    end;
+  finally
+    FindClose(F);
   end;
-  FindClose(F);
 end;
 
 class function TFileUtils.GenerateTempFileName(Dir, Prefix: string): string;

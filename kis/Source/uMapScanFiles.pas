@@ -74,7 +74,8 @@ type
     const VectorExt: array[0..1] of string = ('.DXF', '.DWG');
     class function GetFileKind(Folders: IKisFolders; const Nomenclature: string): TScanFileName;
     class function GetFileName(Folders: IKisFolders; const Nomenclature: string; const Kind: TScanFileName; Param: String = ''): string;
-    class function GetMD5Hash(Folders: IKisFolders; const Nomenclature: string; Vector: Boolean): string;
+    class function GetMD5Hash(Folders: IKisFolders; const Nomenclature: string; Vector: Boolean): string; overload;
+    class function GetMD5Hash(Folders: IKisFolders; const aFileName: string): string; overload;
     class function IsGraphicFile(const FileName: String): Boolean;
     class function IsPacked(const FileName: String): Boolean;
     class function FindFile(Folders: IKisFolders; const Nomenclature: string; const MD5: String): string;
@@ -492,8 +493,9 @@ var
   MapPath, SearchMask: string;
   GraphicMask: string;
   FoundFiles, GraphicFiles: TStringList;
-  I, K: Integer;
+  I, J, K: Integer;
   Md5Value: string;
+  FoundFileName: string;
 begin
   Result := '';
   MapFile := GetFileName(Folders, Nomenclature, sfnRaster);
@@ -506,16 +508,25 @@ begin
   TFileUtils.FindFiles(SearchMask, FoundFiles);
   for I := 0 to FoundFiles.Count - 1 do
   begin
-    Md5Value := TFileUtils.ReadFile(FoundFiles[I]);
+    FoundFileName := TPath.Finish(MapPath, FoundFiles[I]);
+    Md5Value := TFileUtils.ReadFile(FoundFileName);
     if Md5Value = MD5 then
     begin
-      GraphicMask := ChangeFileExt(FoundFiles[I], '') + '.*';
+      GraphicMask := ChangeFileExt(FoundFileName, '') + '.*';
       GraphicFiles.Clear();
       TFileUtils.FindFiles(GraphicMask, GraphicFiles);
+      // 
       K := GraphicFiles.IndexOf(FoundFiles[I]);
       if K >= 0 then
         GraphicFiles.Delete(K);
       K := GraphicFiles.IndexOf(ChangeFileExt(FoundFiles[I], MAP_SCAN_EXT));
+      //
+      J := 0;
+      while (K < 0) and (J < Length(TMapScanStorage.VectorExt)) do
+      begin
+        K := GraphicFiles.IndexOf(ChangeFileExt(FoundFiles[I], TMapScanStorage.VectorExt[J]));
+        Inc(J);
+      end;
       if K >= 0 then
       begin
         Result := GraphicFiles[K];
@@ -675,6 +686,31 @@ begin
             Inc(I);
           end;
         end;
+      end;
+    end;
+  end;
+end;
+
+class function TMapScanStorage.GetMD5Hash(Folders: IKisFolders; const aFileName: string): string;
+var
+  HashFile, Ext: string;
+  FileKind: TScanFileName;
+begin
+  Result := '';
+  if FileExists(aFileName) then
+  begin
+    if FileIsVector(aFileName) then
+      HashFile := ChangeFileExt(aFileName, MD5V_EXT)
+    else
+      HashFile := ChangeFileExt(aFileName, MD5_EXT);
+    if FileExists(HashFile) then
+      Result := TFileUtils.ReadFile(HashFile)
+    else
+    begin
+      Result := MD5DigestToStr(MD5File(aFileName));
+      try
+        TFileUtils.WriteFile(HashFile, Result);
+      except
       end;
     end;
   end;

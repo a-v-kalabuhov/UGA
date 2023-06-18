@@ -140,9 +140,9 @@ type
     FHistoryImageChanged: Boolean;
     FHistoryImageLoaded: Boolean;
     FHistoryImageFile: string;
-    FScanHistory: TKisScanHistoryFiles;
-    FScanHistoryPrepared: Boolean;
-    procedure PrepareScanHistory();
+    FHistoryIndex: TKisScanHistoryIndex;
+    //FScanHistory: TKisScanHistoryFiles;
+    procedure PrepareHistoryIndex();
     procedure UpdateImageScaleOptions;
     procedure UpdateSelfOptions;
     procedure UpdateSelfScaleOptions;
@@ -158,10 +158,16 @@ type
     function GetHistoryImageForPrint(): TBitmap;
     procedure PrepareFormularWordDoc(ImgFiles: TStrings);
     function SaveImageForWord(MapHistElem: TKisEntity): string;
+    procedure ViewChangedImage(Recno: Integer);
     procedure ViewCurrentHistoryImages();
+    procedure ViewInitialImage(const BackupFileOpId: string; aGiveOut: TKisEntity);
+    procedure ViewSingleInitialImage(aRecno: Integer);
     procedure PrintMap(Bmp: TBitmap);
     procedure PrintMap2(Bmp: TBitmap);
   public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    //
     property HistoryImage: TPicture read GetHistoryImage;
     /// <summary>
     /// Загрузили новую картинку формуляра.
@@ -338,8 +344,7 @@ begin
   inherited;
   if dsGiveOuts.DataSet.IsEmpty then
     Exit;
-  if not FScanHistoryPrepared then
-    PrepareScanHistory();
+  PrepareHistoryIndex();
   ViewCurrentHistoryImages();
 end;
 
@@ -379,9 +384,18 @@ end;
 procedure TKisMapScanEditor.acSaveDiffZoneExecute(Sender: TObject);
 var
   OpFile: TFileOperationItem;
+  R: TKisScanHistoryRecord;
 begin
   inherited;
-  OpFile := GetCurrFormularOperationFile(fileDiffZone);
+  // выбираем запись
+  R := FHistoryIndex.Get(TKisMapScan(Entity).MapHistory.RecNo);
+  // в записи смотрим файл зоны
+  if not R.HasDiffZone() then
+    Exit;
+  OpFile := R.GetFile(fileDiffZone);
+  // если его нет, то выходим
+  // если есть, то сохраняем
+  //OpFile := GetCurrFormularOperationFile(fileDiffZone);
   if not OpFile.HasImage() then
   begin
     raise EKisException.Create(
@@ -395,29 +409,21 @@ end;
 
 procedure TKisMapScanEditor.acSaveDiffZoneUpdate(Sender: TObject);
 var
-  FileOpId: string;
-  Op: TFileOperation;
-  B: Boolean;
+  R: TKisScanHistoryRecord;
 begin
   inherited;
-  if not FScanHistoryPrepared then
-    PrepareScanHistory();
-  // получаем данные о файлах в нужной нам операции
-  FileOpId := FormularGetCurrentFileOpId();
-  Op := FScanHistory.Operation(FileOpId);
-  B := Assigned(Op) and (Op.Kind <> fileopInitialUpload);
-  acSaveDiffZone.Enabled := B;
-  acSaveMapOld.Enabled := B;
-  B := Assigned(Op);
-  acSaveMapNew.Enabled := B;
+  PrepareHistoryIndex();
+  R := FHistoryIndex.Get(TKisMapScan(Entity).MapHistory.RecNo);
+  acSaveDiffZone.Enabled := Assigned(R) and R.HasDiffZone();
+  acSaveMapOld.Enabled := Assigned(R) and R.HasSource();
+  acSaveMapNew.Enabled := Assigned(R);
 end;
 
 function TKisMapScanEditor.GetCurrFormularOperationFile(const ItemKind: TFileOperationItemKind): TFileOperationItem;
 var
   FileOpId: string;
 begin
-  if not FScanHistoryPrepared then
-    PrepareScanHistory();
+  PrepareHistoryIndex();
   // получаем данные о файлах в нужной нам операции
   FileOpId := FormularGetCurrentFileOpId();
   Result := GetFormularOperationFile(FileOpId, ItemKind);
@@ -425,26 +431,30 @@ end;
 
 function TKisMapScanEditor.GetFormularOperationFile(const FileOpId: string; const ItemKind: TFileOperationItemKind): TFileOperationItem;
 var
-  Op: TFileOperation;
+  R: TKisScanHistoryRecord;
 begin
-  if not FScanHistoryPrepared then
-    PrepareScanHistory();
-  Op := FScanHistory.Operation(FileOpId);
-  if not Assigned(Op) then
+  inherited;
+  PrepareHistoryIndex();
+//  acSaveDiffZone.Enabled := Assigned(R) and R.HasDiffZone();
+//  acSaveMapOld.Enabled := Assigned(R) and R.HasSource();
+//  acSaveMapNew.Enabled := Assigned(R);
+  R := FHistoryIndex.FindRecord(FileOpId);
+  if not Assigned(R) then
   begin
     raise EKisException.Create(
       'Пакет файлов для операции с индексом [' + FileOpId + '] не найден!'
     );
   end;
   //
-  if (ItemKind = fileDiffZone) and (Op.Kind = fileopInitialUpload) then
+  if (ItemKind = fileDiffZone) then
+  if R.Prev = nil then
   begin
     raise EKisException.Create(
       'Для первой загрузки планшета не может быть области изменений!' + sLineBreak + 'Код: ' + FileOpid
     );
   end;
-
-  Result := Op.GetFile(ItemKind);
+  //
+  Result := R.GetFile(ItemKind);
 end;
 
 procedure TKisMapScanEditor.acSaveMapNewExecute(Sender: TObject);
@@ -504,19 +514,18 @@ end;
 procedure TKisMapScanEditor.acViewDiffZoneUpdate(Sender: TObject);
 var
   FileOpId: string;
-  Op: TFileOperation;
+  R: TKisScanHistoryRecord;
   B: Boolean;
 begin
   inherited;
-  if not FScanHistoryPrepared then
-    PrepareScanHistory();
+  PrepareHistoryIndex();
   // получаем данные о файлах в нужной нам операции
   FileOpId := FormularGetCurrentFileOpId();
-  Op := FScanHistory.Operation(FileOpId);
-  B := Assigned(Op) and (Op.Kind <> fileopInitialUpload);
+  R := FHistoryIndex.FindRecord(FileOpId);
+  B := Assigned(R) and (R.Prev <> nil);
   acViewDiffZone.Enabled := B;
   acViewMapOld.Enabled := B;
-  B := Assigned(Op);
+  B := Assigned(R);
   acViewMapNew.Enabled := B;
   acViewMapHistory.Enabled := B;
 end;
@@ -666,6 +675,12 @@ begin
   Box.ImageFitToWindow := chkFit.Checked;
 end;
 
+constructor TKisMapScanEditor.Create(AOwner: TComponent);
+begin
+  inherited;
+  FHistoryIndex := TKisScanHistoryIndex_v1.Create;
+end;
+
 procedure TKisMapScanEditor.dbgGivenMapListCellColors(Sender: TObject;
   Field: TField; var Background, FontColor: TColor; State: TGridDrawState;
   var FontStyle: TFontStyles);
@@ -729,6 +744,12 @@ begin
     dbgHistoryList.DataSource.DataSet.Post;
 end;
 
+destructor TKisMapScanEditor.Destroy;
+begin
+  FreeAndNil(FHistoryIndex);
+  inherited;
+end;
+
 procedure TKisMapScanEditor.dsMapHistoryStateChange(Sender: TObject);
 begin
   inherited;
@@ -751,8 +772,7 @@ procedure TKisMapScanEditor.FormClose(Sender: TObject; var Action: TCloseAction)
 begin
   inherited;
   AppModule.WriteGridProperties(Self, dbgGivenMapList);
-  FScanHistoryPrepared := False;
-  FreeAndNil(FScanHistory);
+  FreeAndNil(FHistoryIndex);
 end;
 
 procedure TKisMapScanEditor.FormShow(Sender: TObject);
@@ -1011,15 +1031,14 @@ begin
   end;
 end;
 
-procedure TKisMapScanEditor.PrepareScanHistory;
+procedure TKisMapScanEditor.PrepareHistoryIndex();
 var
   Scan: TKisMapScan;
 begin
   Scan := TKisMapScan(Self.Entity);
   // получаем список файлов по истории скана
-  FScanHistory := TKisScanHistoryFiles.Create;
-  FScanHistory.Fill(Scan);
-  FScanHistoryPrepared := True;
+  if not FHistoryIndex.Prepared then
+    FHistoryIndex.Prepare(Scan);
 end;
 
 procedure TKisMapScanEditor.PrintMap(Bmp: TBitmap);
@@ -1084,7 +1103,7 @@ end;
 function TKisMapScanEditor.SaveImageForWord(MapHistElem: TKisEntity): string;
 var
   ScanHist: TKisMapScanHistoryElement;
-  Op: TFileOperation;
+  R: TKisScanHistoryRecord;
   OpItem: TFileOperationItem;
   TmpFile, TmpImgFile, TmpJpegFile, TmpMfFile: string;
   Bmp: TBitmap;
@@ -1109,12 +1128,11 @@ begin
     end
     else
     begin
-      if not FScanHistoryPrepared then
-        PrepareScanHistory();
-      Op := FScanHistory.Operation(ScanHist.FileOpId);
-      if Assigned(Op) then
+      PrepareHistoryIndex();
+      R := FHistoryIndex.FindRecord(ScanHist.FileOpId);
+      if Assigned(R) then
       begin
-        OpItem := Op.GetFile(fileDiffZone);
+        OpItem := R.GetFile(fileDiffZone);
         if Assigned(OpItem) and OpItem.HasImage() then
         begin
           TmpFile := TFileUtils.CreateTempFile(AppModule.AppTempPath);
@@ -1137,7 +1155,11 @@ begin
             TFileUtils.DeleteFile(TmpFile);
           end;
         end;
-      end;
+      end
+      else
+        raise EKisException.Create(
+          'Пакет файлов для операции с индексом [' + ScanHist.FileOpId + '] не найден!'
+        );
     end;
   end;
 end;
@@ -1274,118 +1296,48 @@ begin
   FUpdatingSelfOptions := False;
 end;
 
-procedure TKisMapScanEditor.ViewCurrentHistoryImages;
+procedure TKisMapScanEditor.ViewChangedImage;
 var
-  Viewer: IKisImagesView;
-  OpFileRes, OpFileSrc, OpFileDiff: TFileOperationItem;
-  aTitle: string;
   I: Integer;
-  FileOpId: string;
+  R: TKisScanHistoryRecord;
+  OpFileRes, OpFileSrc, OpFileDiff: TFileOperationItem;
   HasDiff: Boolean;
-  aFileName: string;
+  Viewer: IKisImagesView;
   Files: TStringList;
-  Scan: TKisMapScan;
-  Gout, Gout2: TKisMapScanGiveOut;
-  Op: TFileOperation;
-  ResTitle: string;
+  aFileName: string;
+  aTitle: string;
+  Gout: TKisMapScanGiveOut;
 begin
-  inherited;
-  if not FScanHistoryPrepared then
-    PrepareScanHistory();
-  //
-  Scan := TKisMapScan(Entity);
-  Gout := Scan.GetGiveOut(dsGiveOuts.DataSet.RecNo);
-  Gout2 := Gout;
-  if dsGiveOuts.DataSet.RecordCount = 1 then
+  I := 0;
+  R := FHistoryIndex.Get(Recno);
+  if not Assigned(R) then
   begin
-    Viewer := TKisImagesViewFactory.CreateViewer();
-    Files := TStringList.Create;
-    Files.Forget();
-    aFileName := theMapScansStorage.GetFileName(AppModule, Scan.Nomenclature, sfnRaster);
-    if FileExists(aFileName) then
-    begin
-      Files.Add(aFileName);
-      Viewer.AddImage(aFileName, 'Source', 'Планшет', Rect(0, 0, 250, 250));
-    end
-    else
-      raise EFile.Create('Файл планшета не найден!', aFileName);
-    //
-    if Files.Count > 0 then
-    begin
-      aTitle := TKisMapScan(Entity).Nomenclature;
-      aTitle := aTitle + ': Выдан - ' + Gout.DateOfGive;
-      if Gout.DateOfBack <> '' then
-        aTitle := aTitle + '; Принят - ' + Gout.DateOfBack;
-      Viewer.Execute(AppModule, aTitle, 0);
-    end;
-    Exit;
+    raise EKisException.Create(
+      'Пакет файлов для операции с индексом не найден!'
+    );
   end;
   //
-  if dsGiveOuts.DataSet.RecNo = 1 then
+  OpFileRes := R.GetFile(fileResult);
+  if Assigned(OpFileRes) and OpFileRes.HasImage() then
+    Inc(I);
+  OpFileSrc := R.GetFile(fileSource);
+  if Assigned(OpFileSrc) and OpFileSrc.HasImage() then
+    Inc(I);
+  HasDiff := False;
+  OpFileDiff := R.GetFile(fileDiffZone);
+  if Assigned(OpFileDiff) and OpFileDiff.HasImage() then
   begin
-    Gout2 := Scan.GetGiveOut(dsGiveOuts.DataSet.RecNo + 1);
-    OpFileSrc := nil;
-    HasDiff := False;
-    OpFileDiff := nil;
-    FileOpId := Gout2.FileOperationId;
-    Op := FScanHistory.Operation(FileOpId);
-    if Assigned(Op) then
-      OpFileRes := Op.GetFile(fileSource)
-    else
-      OpFileRes := nil;
-    ResTitle := 'Планшет';
-  end
-  else
-  if Gout.MD5Old = Gout.MD5New then
-  begin
-    if dsGiveOuts.DataSet.RecNo > 1 then
-      Gout2 := Scan.GetGiveOut(dsGiveOuts.DataSet.RecNo - 1)
-    else
-      Exit;
-    OpFileSrc := nil;
-    HasDiff := False;
-    OpFileDiff := nil;
-    FileOpId := Gout2.FileOperationId;
-    Op := FScanHistory.Operation(FileOpId);
-    OpFileRes := Op.GetFile(fileResult);
-    ResTitle := 'Планшет без изменений';
-  end
-  else
-  begin
-    FileOpId := Gout2.FileOperationId;
-    //
-    I := 0;
-    Op := FScanHistory.Operation(FileOpId);
-    if not Assigned(Op) then
-    begin
-      raise EKisException.Create(
-        'Пакет файлов для операции с индексом [' + FileOpId + '] не найден!'
-      );
-    end;
-    //
-    OpFileRes := Op.GetFile(fileResult);
-    if Assigned(OpFileRes) and OpFileRes.HasImage() then
-      Inc(I);
-    OpFileSrc := Op.GetFile(fileSource);
-    if Assigned(OpFileSrc) and OpFileSrc.HasImage() then
-      Inc(I);
-    HasDiff := False;
-    OpFileDiff := Op.GetFile(fileDiffZone);
-    if Assigned(OpFileDiff) and OpFileDiff.HasImage() then
-    begin
-      Inc(I);
-      HasDiff := True;
-    end;
-    if I = 0 then
-    begin
-      raise EKisException.Create(
-        'Файлы изображений не найдены!' + sLineBreak +
-        'Код операции: ' + FileOpId
-      );
-    end;
-    ResTitle := 'Принятый планшет';
+    Inc(I);
+    HasDiff := True;
   end;
-  //
+  if I = 0 then
+  begin
+    raise EKisException.Create(
+      'Файлы изображений не найдены!' + sLineBreak +
+      'Код операции: ' + R.FileOpId
+    );
+  end;
+
   Viewer := TKisImagesViewFactory.CreateViewer();
   Files := TStringList.Create;
   Files.Forget();
@@ -1402,14 +1354,20 @@ begin
       Files.Add(aFileName);
       Viewer.AddImage(aFileName, 'Diff', 'Область изменений', Rect(0, 0, 250, 250));
     end;
-    if Assigned(OpFileRes) and OpFileRes.HasImage() then
+    if Assigned(OpFileRes)
+       and
+       (Assigned(OpFileSrc) and (OpFileSrc.MD5 <> OpFileRes.MD5))
+       and
+       OpFileRes.HasImage()
+    then
     begin
       aFileName := SaveOperationItemToTempFile(OpFileRes);
       Files.Add(aFileName);
-      Viewer.AddImage(aFileName, 'Result', ResTitle, Rect(0, 0, 250, 250));
+      Viewer.AddImage(aFileName, 'Result', 'Принятый планшет', Rect(0, 0, 250, 250));
     end;
     //
     aTitle := TKisMapScan(Entity).Nomenclature;
+    Gout := TKisMapScan(Entity).GetGiveOut(dsGiveOuts.DataSet.RecNo);
     aTitle := aTitle + ': Выдан - ' + Gout.DateOfGive;
     if Gout.DateOfBack <> '' then
       aTitle := aTitle + '; Принят - ' + Gout.DateOfBack;
@@ -1417,6 +1375,81 @@ begin
   finally
     for I := 0 to Files.Count - 1 do
       TFileUtils.DeleteFile(FIles[I]);
+  end;
+end;
+
+procedure TKisMapScanEditor.ViewCurrentHistoryImages;
+var
+  Scan: TKisMapScan;
+  Gout: TKisMapScanGiveOut;
+  R: TKisScanHistoryRecord;
+  DiffZone: TFileOperationItem;
+begin
+  inherited;
+  PrepareHistoryIndex();
+  //
+  Scan := TKisMapScan(Entity);
+  Gout := Scan.GetGiveOut(dsGiveOuts.DataSet.RecNo);
+  if Gout.Annulled then
+  begin
+    ShowMessage('Заявка была аннулирована!');
+    Exit;
+  end;
+  //
+  R := FHistoryIndex.Get(dsGiveOuts.DataSet.RecNo);
+  if R.Prev = nil then
+    ViewSingleInitialImage(dsGiveOuts.DataSet.RecNo)
+  else
+  if Gout.MD5Old = Gout.MD5New then
+  begin
+    DiffZone := R.GetFile(fileDiffZone);
+    if Assigned(DiffZone) and (DiffZone.MD5 <> '') and DiffZone.HasImage() then
+      ViewChangedImage(dsGiveOuts.DataSet.RecNo)
+    else
+      ViewSingleInitialImage(dsGiveOuts.DataSet.RecNo);
+  end
+  else
+  if Gout.MD5New = '' then
+    ViewSingleInitialImage(dsGiveOuts.DataSet.RecNo)
+  else
+    ViewChangedImage(dsGiveOuts.DataSet.RecNo);
+end;
+
+procedure TKisMapScanEditor.ViewInitialImage(const BackupFileOpId: string; aGiveOut: TKisEntity);
+var
+  Viewer: IKisImagesView;
+  Files: TStringList;
+  aFileName: string;
+  aTitle: string;
+  Gout: TKisMapScanGiveOut;
+  R: TKisScanHistoryRecord;
+  I: Integer;
+  OpFile: TFileOperationItem;
+begin
+  Viewer := TKisImagesViewFactory.CreateViewer();
+  Files := TStringList.Create;
+  Files.Forget();
+  try
+    R := FHistoryIndex.FindRecord(BackupFileOpId);
+    if R = nil then
+      raise EKisException.Create('Файл операции не найден!' + sLineBreak + BackupFileOpId);
+    OpFile := R.GetFile(fileSource);
+    if OpFile.HasImage() then
+    begin
+      aFileName := SaveOperationItemToTempFile(OpFile);
+      Files.Add(aFileName);
+      Viewer.AddImage(aFileName, 'Result', 'Планшет', Rect(0, 0, 250, 250));
+    end;
+    //
+    aTitle := TKisMapScan(Entity).Nomenclature;
+    Gout := TKisMapScanGiveOut(aGiveOut);
+    aTitle := aTitle + ': Выдан - ' + Gout.DateOfGive;
+    if Gout.DateOfBack <> '' then
+      aTitle := aTitle + '; Принят - ' + Gout.DateOfBack;
+    Viewer.Execute(AppModule, aTitle, 0);
+  finally
+    for I := 0 to Files.Count - 1 do
+      TFileUtils.DeleteFile(Files[I]);
   end;
 end;
 
@@ -1443,6 +1476,39 @@ begin
   finally
     TFileUtils.DeleteFile(ImgTmpFile);
     TFileUtils.DeleteFile(TmpFile);
+  end;
+end;
+
+procedure TKisMapScanEditor.ViewSingleInitialImage;
+var
+  aFileName: string;
+  MapScan: TKisMapScan;
+  Viewer: IKisImagesView;
+  aTitle: string;
+  Gout: TKisMapScanGiveOut;
+  R: TKisScanHistoryRecord;
+begin
+  MapScan := TKisMapScan(Entity);
+  R := FHistoryIndex.Get(aRecNo);
+  Gout := MapScan.GetGiveOut(aRecNo);
+  if Gout.MD5New = '' then
+    aFileName := R.GetFile(fileSource).FileName
+  else
+    aFileName := R.GetFile(fileResult).FileName;
+  if FileExists(aFileName) then
+  begin
+    Viewer := TKisImagesViewFactory.CreateViewer();
+    Viewer.AddImage(aFileName, 'Source', 'Планшет', Rect(0, 0, 250, 250));
+    aTitle := MapScan.Nomenclature;
+    aTitle := aTitle + ': Выдан - ' + Gout.DateOfGive;
+    if Gout.DateOfBack <> '' then
+      aTitle := aTitle + '; Принят - ' + Gout.DateOfBack;
+    Viewer.Execute(AppModule, aTitle, 0);
+  end
+  else
+  begin
+    aFileName := '...\' + ExtractFileName(aFileName);
+    raise EFile.Create('Файл планшета не найден!', aFileName);
   end;
 end;
 

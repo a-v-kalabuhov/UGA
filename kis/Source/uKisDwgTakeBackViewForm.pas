@@ -540,7 +540,6 @@ procedure TKisDwgTakeBackViewForm.PrepareImage;
 var
   Drawer: IDrawTransparent;
   Kind: TDrawTransparentKind;
-  I: Integer;
   Filled: Boolean;
 begin
   Filled := False;

@@ -184,6 +184,7 @@ type
     property MyEditor: TKisGivenScanEditor read GetMyEditor;
     //
     function HasChangesInMap(): Boolean;
+    function HasFileOperation(): Boolean;
   end;
 
   TScanGiveOutsCtrlr = class(TKisEntityController)
@@ -905,6 +906,9 @@ begin
   //
   if GvRecNo > 0 then
     Result := FGiveOutsCtrlr[GvRecNo]
+  else
+  if (I > 0) and (FGiveOuts.RecordCount > 0) then
+    Result := FGiveOutsCtrlr[I]
   else
     Result := nil;
   //
@@ -1830,7 +1834,7 @@ begin
     end;
   end;
   //
-  FView.Caption := 'Сканы Планшеты 1:500';  //заголовок формы
+  FView.Caption := 'Журнал выдачи и проверки материалов';//'Сканы Планшеты 1:500';  //заголовок формы
   FView.Grid.OnCellColors := GridCellColors;
   FView.Grid.OnLogicalColumn := GridLogicalColumn;
   FView.Grid.OnGetLogicalValue := GridGetLogicalValue;
@@ -2340,16 +2344,26 @@ begin
   Result := False;
   if Annulled then
     Exit;
+  if not HasFileOperation then
+    Exit;
+  if MD5New = '' then
+    Exit;
+//  if MD5New = MD5Old then
+//    Exit;
+  Result := MD5New <> MD5Old;
+end;
+
+function TKisMapScanGiveOut.HasFileOperation: Boolean;
+begin
+  Result := False;
+  if Annulled then
+    Exit;
   if (FileOperationId = '')
      or
      (FileOperationId = S_FILEOP_NO_CHANGES)
      or
      (FileOperationId = S_FILEOP_NO_RETURN)
   then
-    Exit;
-  if MD5New = '' then
-    Exit;
-  if MD5New = MD5Old then
     Exit;
   Result := True;
 end;
@@ -2955,7 +2969,7 @@ begin
   //
   if Idx = 0 then
   begin
-    if TheScan.TakeBack(Template, Scans[Idx].MD5HashNew) then
+    if TheScan.TakeBack(Gout, Scans[Idx].MD5HashNew) then
       Template := Gout
     else
       Exit;

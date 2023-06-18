@@ -18,7 +18,9 @@
       <Dependencies>..\shared\Source\shared_make.dproj</Dependencies>
     </Projects>
     <Projects Include="..\MapFile\mfTest1.dproj" />
-    <Projects Include="..\Ms3\Ms3.dproj" />
+    <Projects Include="..\Ms3\Ms3.dproj">
+      <Dependencies>..\shared\Source\shared_make.dproj</Dependencies>
+    </Projects>
     <Projects Include="..\Ms3\Test\Ms3Tests.dproj" />
     <Projects Include="..\shared\Source\MyVCL.dproj" />
     <Projects Include="..\shared\Source\shared_make.dproj" />
@@ -122,13 +124,13 @@
   <Target Name="mfTest1:Make">
     <MSBuild Projects="..\MapFile\mfTest1.dproj" Targets="Make" />
   </Target>
-  <Target Name="Ms3">
+  <Target Name="Ms3" DependsOnTargets="shared_make">
     <MSBuild Projects="..\Ms3\Ms3.dproj" Targets="" />
   </Target>
-  <Target Name="Ms3:Clean">
+  <Target Name="Ms3:Clean" DependsOnTargets="shared_make:Clean">
     <MSBuild Projects="..\Ms3\Ms3.dproj" Targets="Clean" />
   </Target>
-  <Target Name="Ms3:Make">
+  <Target Name="Ms3:Make" DependsOnTargets="shared_make:Make">
     <MSBuild Projects="..\Ms3\Ms3.dproj" Targets="Make" />
   </Target>
   <Target Name="KisTestsProject">
