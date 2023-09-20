@@ -11,7 +11,7 @@ interface
 uses
   // System
   Windows, Messages, SysUtils, Classes, Contnrs, Graphics, Forms, Controls, AppEvnts, DB,
-  IniFiles, Variants, StdCtrls, DBGrids, Registry, DBClient, Math,
+  IniFiles, Variants, StdCtrls, DBGrids, Registry, DBClient, Math, jpeg,
   //
   JclDebug, uEcwFuncs,
   // EzGIS
@@ -147,6 +147,7 @@ type
       Entity: TEzEntity; var EntList: TEzEntityList; var CanShow: Boolean);
     procedure PrepareEntityToPrintMode(Layer: TEzBaseLayer;
       Entity: TEzEntity; var EntList: TEzEntityList; var CanShow: Boolean);
+    procedure PrepareM500Bitmap(aRef: TEzPictureRef);
     procedure DeleteMapEntity(aMap: TmstMap);
     function GetLastUserId: Integer;
     function GetLastUserOfficeId: Integer;
@@ -910,6 +911,7 @@ end;
 procedure TMStClientAppModule.LoadLayerMapImages;
 var
   I: Integer;
+  ImgEnt: TEzEntity;
 begin
   if Assigned(FMaps) and Assigned(LayerMapImages) then
   try
@@ -919,7 +921,14 @@ begin
 //    LayerMaps.StartBatchInsert;
     for I := 0 to Pred(FMaps.Count) do
       if FMaps[I].ImageLoaded then
-        FMaps[I].MapImageId := LayerMapImages.AddEntity(IEntity(GetMapImageEntity(FMaps[I].MapName, FMaps[I].FileName)).Entity);
+      begin
+        ImgEnt := GetMapImageEntity(FMaps[I].MapName, FMaps[I].FileName, FMaps[I].ImageExt);
+        try
+          FMaps[I].MapImageId := LayerMapImages.AddEntity(ImgEnt);
+        finally
+          FreeAndNil(ImgEnt);
+        end;
+      end;
   finally
 //    LayerMaps.FinishBatchInsert;
   end;
@@ -1216,7 +1225,7 @@ begin
   begin
     if TmpMapOld.MapImageId < 0 then
     begin
-      MapEnt := GetMapImageEntity(aMap.MapName, aMap.FileName);
+      MapEnt := GetMapImageEntity(aMap.MapName, aMap.FileName, aMap.ImageExt);
       MapEnt.Forget;
       TmpMapOld.MapImageId := LayerMapImages.AddEntity(MapEnt);
     end;
@@ -1229,7 +1238,7 @@ begin
     begin
       if TmpMapOld.MapImageId < 0 then
       begin
-        MapEnt := GetMapImageEntity(TmpMapOld.MapName, TmpMapOld.FileName);
+        MapEnt := GetMapImageEntity(TmpMapOld.MapName, TmpMapOld.FileName, TmpMapOld.ImageExt);
         MapEnt.Forget();
         TmpMapOld.MapImageId := LayerMapImages.AddEntity(MapEnt);
       end;
@@ -1687,6 +1696,12 @@ begin
   if Layer.Name = SL_WATERMARKS then
     CanShow := Grapher.Device = adPrinter
   else
+  if Layer.Name = SL_MAP_IMAGES_LAYER then
+  begin
+    if Entity.EntityID = idPictureRef then
+      PrepareM500Bitmap(TEzPictureRef(Entity));
+  end
+  else
   if Mode = amPrint then
   begin
     if Grapher.Device = adPrinter then
@@ -1975,7 +1990,7 @@ begin
         TmpMapFileName := TPath.Finish(Self.SessionDir, MapName);
         CopyFile(PChar(FileName), PChar(TmpMapFileName), False);
         TmpMap.FileName := TmpMapFileName;
-        TmpMapEnt := GetMapImageEntity(TmpMap.MapName, TmpMap.FileName);
+        TmpMapEnt := GetMapImageEntity(TmpMap.MapName, TmpMap.FileName, TmpMap.ImageExt);
         TmpMapEnt.Forget();
         TmpMap.MapImageId := LayerMapImages.AddEntity(TmpMapEnt);
         TmpMap.ImageLoaded := True;
@@ -2516,6 +2531,46 @@ begin
             TEzOpenedEntity(Entity).PenTool.Width := mstPrintModule.ReportLines.AnnulledLine.MapWidth[mstPrintModule.ReportScale];
           end;
         end;
+    end;
+  end;
+end;
+
+procedure TMStClientAppModule.PrepareM500Bitmap(aRef: TEzPictureRef);
+var
+  M: TmstMap;
+  Bmp: TBitmap;
+  JPG: TJPEGImage;
+begin
+  if aRef.Stream = nil then
+  begin
+    M := FMaps.GetByMapImageId(aRef.Id);
+    if (M <> nil) and (M.ImageExt in [imgBMP, imgJPEG]) then
+    begin
+      Bmp := TBitmap.Create;
+      try
+        case M.ImageExt of
+          imgBMP:
+            begin
+              Bmp.PixelFormat := pf24bit;
+              Bmp.LoadFromFile(M.FileName);
+            end;
+          imgJPEG:
+            begin
+              Bmp.PixelFormat := pf24bit;
+              JPG := TJPEGImage.Create;
+              try
+                JPG.LoadFromFile(M.FileName);
+                Bmp.Assign(JPG);
+              finally
+                FreeAndNil(JPG);
+              end;
+            end;
+        end;
+        aRef.Stream := TMemoryStream.Create;
+        Bmp.SaveToStream(aRef.Stream);
+      finally
+        Bmp.Free;
+      end;
     end;
   end;
 end;

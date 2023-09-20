@@ -222,12 +222,14 @@ type
     FImageLoaded: Boolean;
     FMapEntityId: Integer;
     FMapImageId: Integer;
+    FImageExt: TmstImageExt;
     procedure SetMapName(const Value: String);
     procedure SetFileName(const Value: String);
     procedure SetImageLoaded(const Value: Boolean);
     procedure SetMapEntityId(const Value: Integer);
     procedure SetMapImageId(const Value: Integer);
     procedure Init;
+    procedure SetImageExt(const Value: TmstImageExt);
   protected
     function GetObjectId: Integer; override;
     function GetText: String; override;
@@ -235,6 +237,7 @@ type
     constructor Create; override;
     // Номенклатура
     property MapName: String read FMapName write SetMapName;
+    property ImageExt: TmstImageExt read FImageExt write SetImageExt;
     // Полный путь к файлу картинки
     property FileName: String read FFileName write SetFileName;
     // Загружена картинка или нет
@@ -418,6 +421,11 @@ begin
   FFileName := Value;
 end;
 
+procedure TmstMap.SetImageExt(const Value: TmstImageExt);
+begin
+  FImageExt := Value;
+end;
+
 procedure TmstMap.SetImageLoaded(const Value: Boolean);
 begin
   FImageLoaded := Value;
@@ -486,8 +494,8 @@ begin
   Result := nil;
 end;
 
-function TmstMapList.GetByNomenclature(
-  const aNomenclature: String; const CaseSensitive: Boolean): TmstMap;
+function TmstMapList.GetByNomenclature(const aNomenclature: String;
+  const CaseSensitive: Boolean): TmstMap;
 var
   I: Integer;
   CmpNomenclature: string;

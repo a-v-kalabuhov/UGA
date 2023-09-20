@@ -9,6 +9,7 @@ type
   TmstLotType = (ltActual, ltAnnuled, ltReg, ltCategorized);
   TmstPrintPermission = (ppDenied, ppWaterMark, ppFull);
   TmstMapReportErrorMode = (mreDeny = 0, mreWatermarks = 1);
+  TmstImageExt = (imgGFA, imgBMP, imgJPEG);
 
 implementation
 

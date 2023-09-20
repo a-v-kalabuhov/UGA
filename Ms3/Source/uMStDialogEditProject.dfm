@@ -540,7 +540,6 @@ object mstEditProjectDialog: TmstEditProjectDialog
     Alignment = taLeftJustify
     Caption = #1052#1057#1050'36'
     TabOrder = 3
-    OnClick = chbConfirmedClick
   end
   object dsCoords: TRxMemoryData
     FieldDefs = <

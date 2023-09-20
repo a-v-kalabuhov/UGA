@@ -110,8 +110,12 @@ type
     function GetOrgName(OrgId: Integer): string;
     procedure ShowZDelta();
     procedure FindFirstLineLayer();
+    procedure SetCanSave(const Value: Boolean);
+    function GetCanSave: Boolean;
   public
     function Execute(aProject: TmstProject): Boolean;
+    //
+    property CanSave: Boolean read GetCanSave write SetCanSave;
   end;
 
 var
@@ -297,7 +301,10 @@ begin
     if I >= 0 then
     begin
       if cbLayers.ItemIndex <> I then
+      begin
         cbLayers.ItemIndex := I;
+        cbLayersChange(cbLayers);
+      end;
       for J := 0 to FTempProject.Lines.Count - 1 do
       begin
         Line := FTempProject.Lines[J];
@@ -380,6 +387,11 @@ begin
 //  LoadLineInfo(FSelectedLine);
 end;
 
+function TmstEditProjectDialog.GetCanSave: Boolean;
+begin
+  Result := btnOK.Visible;
+end;
+
 function TmstEditProjectDialog.GetOrgName(OrgId: Integer): string;
 var
   aDb: IDb;
@@ -439,9 +451,10 @@ begin
       begin
         if FTempProject.CK36 then
         begin
-          uCK36.ToVRN(Line.Points[J].X, Line.Points[J].Y, X, Y);
-          Pts[J].x := Y;
-          Pts[J].y := X;
+//          uCK36.ToVRN(Line.Points[J].X, Line.Points[J].Y, X, Y);
+          uCK36.ToVRN(Line.Points[J].X, Line.Points[J].Y, Y, X);
+          Pts[J].x := X;
+          Pts[J].y := Y;
         end
         else
         begin
@@ -672,6 +685,8 @@ begin
   BlocksToGIS();
   LinesToGIS();
   PlacesToGIS();
+  //
+  EzDrawBox1.GIS.QuickUpdateExtension;
   EzDrawBox1.ZoomToExtension;
 end;
 
@@ -751,6 +766,11 @@ end;
 function TmstEditProjectDialog.SelectOrg(var Id: Integer; out OrgName: string): Boolean;
 begin
   Result := mstClientAppModule.MapMngr.SelectOrg(Id, OrgName);
+end;
+
+procedure TmstEditProjectDialog.SetCanSave(const Value: Boolean);
+begin
+  btnOK.Visible := Value;
 end;
 
 procedure TmstEditProjectDialog.ShowZDelta;

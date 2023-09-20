@@ -560,7 +560,7 @@ object mstClientMainForm: TmstClientMainForm
           Height = 21
           Hint = #1052#1072#1089#1096#1090#1072#1073' '#1086#1090#1095#1077#1090#1072
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 0
           OnChange = cbReportScaleChange
           Items.Strings = (
@@ -744,7 +744,7 @@ object mstClientMainForm: TmstClientMainForm
         Left = 115
         Top = 0
         Width = 67
-        Height = 13
+        Height = 22
         Caption = '      '#1055#1083#1072#1085#1096#1077#1090':'
         Layout = tlCenter
       end
@@ -770,7 +770,7 @@ object mstClientMainForm: TmstClientMainForm
         Left = 265
         Top = 0
         Width = 61
-        Height = 13
+        Height = 22
         Caption = '        '#1054#1090#1074#1086#1076':'
         Layout = tlCenter
       end
@@ -1282,7 +1282,7 @@ object mstClientMainForm: TmstClientMainForm
     end
     object acLotVisible: TAction
       Category = 'Lots'
-      Caption = 'acLotVisible'
+      Caption = '-'
       ImageIndex = 5
     end
     object acLotProperties: TAction
@@ -1454,7 +1454,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 80
     Top = 256
     Bitmap = {
-      494C0101540078017C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101540078018C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000006001000001002000000000000060
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4431,7 +4431,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 460
     Top = 224
     Bitmap = {
-      494C010112001300740110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010112001300840110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

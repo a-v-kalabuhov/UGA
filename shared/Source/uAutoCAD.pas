@@ -87,12 +87,14 @@ begin
     TFileUtils.DeleteFile(Result);
   end;
   //
-  CmdLine := '"' + ConverterFile + '" todxf "' + aFileName + '" "' + Result + '"'; //+ ' f';
+//  CmdLine := '"' + ConverterFile + '" todxf "' + aFileName + '" "' + Result + '"'; //+ ' f';
+  CmdLine := '"' + ConverterFile + '" "' + aFileName + '" "' + Result + '"'; //+ ' f';
   //
   {$IFDEF SHOW_CMD_LINE}
-  ExecAndWait(ConverterFile, CmdLine, False, Code);
+  if not ExecAndWait(ConverterFile, CmdLine, False, Code) then
   {$ELSE}
-  ExecAndWait(ConverterFile, CmdLine, True, Code);
+  if not ExecAndWait(ConverterFile, CmdLine, True, Code) then
+    Result := '';
   {$ENDIF}
 end;
 

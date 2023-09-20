@@ -518,6 +518,7 @@ type
     function FindProject(const Address: string): Boolean;
     procedure LocateProjectLine(const ClickPoint: TEzPoint);
     function GetProjectToExport(Sender: TObject; const ProjectId: Integer): TmstProject;
+    procedure LoadSessionOptions();
   private
     FNetTypesUpdate: Boolean;
     procedure NetTypeMenuClick(Sender: TObject);
@@ -1157,6 +1158,7 @@ begin
   if CanClose then
     Finalize(Points);
   mstClientAppModule.WriteFormPosition(Application, Self);
+  mstClientAppModule.SetOption('Session', 'Map500Search', edtFastFindMap.Text);
 end;
 
 procedure TmstClientMainForm.FormCreate(Sender: TObject);
@@ -1165,6 +1167,8 @@ begin
   mstClientAppModule.ReadFormPosition(Application, Self);
   CmdLine.AccuSnap.Enabled := False;
   Caption := Application.Title;
+  //
+  LoadSessionOptions();
 end;
 
 procedure TmstClientMainForm.FormDestroy(Sender: TObject); // +
@@ -1409,6 +1413,15 @@ begin
         LoadProjects(aLeft, aTop, aLeft + 250, aTop - 250);
       end;
     end;
+end;
+
+procedure TmstClientMainForm.LoadSessionOptions;
+var
+  S: string;
+begin
+  S := mstClientAppModule.GetOption('Session', 'Map500Search', '');
+  if S <> '' then
+    edtFastFindMap.Text := S;
 end;
 
 procedure TmstClientMainForm.LoadWatermark(aMapMngr: TMStIBXMapMngr);

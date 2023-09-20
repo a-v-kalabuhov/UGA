@@ -26,6 +26,7 @@ type
     Label1: TLabel;
     edSearch: TEdit;
     procedure edSearchChange(Sender: TObject);
+    procedure dbgridDblClick(Sender: TObject);
   public
     function Execute(var Id: Integer; out OrgName: string): Boolean; 
   end;
@@ -36,6 +37,23 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TmstSelectOrgDialog.dbgridDblClick(Sender: TObject);
+var
+  Pt: TPoint;
+  Cell: TGridCoord;
+begin
+  //
+  Pt := dbgrid.ScreenToClient(Mouse.CursorPos);
+  Cell := dbgrid.MouseCoord(Pt.X, Pt.Y);
+  if Cell.X > 0 then
+  if Cell.Y > 0 then
+  begin
+    if Cell.X = dbgrid.Col then
+    if Cell.Y = dbgrid.Row then
+      ModalResult := mrOk;
+  end;
+end;
 
 procedure TmstSelectOrgDialog.edSearchChange(Sender: TObject);
 var

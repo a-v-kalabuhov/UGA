@@ -451,6 +451,7 @@ Type
     FOriginalImage: TBitmap;
     FRotatedImage: TBitmap;
     FLoaded: Boolean;
+    FOwnImage: Boolean;
     procedure SetVisible(const Value: Boolean);
     procedure SetBitmapImage(const Value: TBitmap);
     procedure MakeRotatedBitmap();
@@ -473,6 +474,7 @@ Type
       0= opaque, 255= transparent }
     Property AlphaChannel: byte {$IFDEF BCB} Read GetAlphaChannel Write SetAlphaChannel {$ELSE} Read FAlphaChannel Write FAlphaChannel {$ENDIF};
     property Image: TBitmap read FOriginalImage write SetBitmapImage;
+    property OwnImage: Boolean read FOwnImage write FOwnImage;
     property Visible: Boolean read FVisible write SetVisible;
   End;
 
@@ -4115,8 +4117,12 @@ Begin
       Pass := DoReadFile
     Else
     Begin
-      FStream.Seek( 0, 0 );
-      FBitmap.LoadFromStream( FStream );
+      if not Assigned(FBitmap) then
+      begin
+        FStream.Seek( 0, 0 );
+        FBitmap := TBitmap.Create;
+        FBitmap.LoadFromStream( FStream );
+      end;
       Pass := True;
     End;
   End
@@ -9899,6 +9905,8 @@ end;
 destructor TEzBitmapRef.Destroy;
 begin
   FreeAndNil(FRotatedImage);
+  if FOwnImage then
+    FreeAndNil(FOriginalImage);
   inherited;
 end;
 

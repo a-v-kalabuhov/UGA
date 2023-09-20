@@ -37,6 +37,7 @@ object mstSelectOrgDialog: TmstSelectOrgDialog
     TitleFont.Height = -11
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
+    OnDblClick = dbgridDblClick
     Columns = <
       item
         Expanded = False

@@ -822,6 +822,7 @@ var
   OverWrit, B: Boolean;
   Msg: string;
   Error1: string;
+  AdditionalFile: string;
 const
   S_COPY_OK = 'Файл скопирован: из "%s" в "%s"';
   S_COPY_BAD = 'Ошибка копирования файла: из "%s" в "%s"';
@@ -839,6 +840,9 @@ const
   S_WRITE_OK = 'Файл записан: "%s"';
   S_WRITE_BAD = 'Ошибка записи файла: "%s"';
   S_ZONE_NOT_FOUND = 'Файл области изменений не найден: "%s"';
+  S_ADDITIONAL_FOLDER_NOT_FOUND = 'Дополнительная папка не найдена!';
+  S_ADDITIONAL_FILE_COPIED = 'Создана копия планшета:';
+  S_ADDITIONAL_FILE_COPY_ERROR = 'Не удалось создать копию планшета:';
 begin
   // перебираем файлы
   try
@@ -970,21 +974,40 @@ begin
       begin
         // TODO : надо сделать миниатюру планшета, если был принят целиком планшет
       end;
+      // если всё прошло гладко, то отправляем файлы в дополнительную папку
+      if DirectoryExists(Folders.MapScansTempPath) then
+      begin
+        NewFile := Scan.FullFileName;
+        AdditionalFile := TPath.Finish(Folders.MapScansTempPath, ExtractFileName(Scan.DBFileName));
+        if TFileUtils.CopyFile(NewFile, AdditionalFile, True, Error1) then
+        begin
+          Scan.AddLogLine(S_ADDITIONAL_FILE_COPIED + sLineBreak +
+              ' Файл : [' + NewFile + ']' + sLineBreak +
+              ' Копия: [' + AdditionalFile + ']');
+        end
+        else
+        begin
+          Scan.AddLogLine(S_ADDITIONAL_FILE_COPY_ERROR + sLineBreak +
+              ' Файл : [' + NewFile + ']' + sLineBreak +
+              ' Копия: [' + AdditionalFile + ']' + sLineBreak +
+              ' Ошибка: ' + Error1
+              );
+        end;
+      end
+      else
+      begin
+        Scan.AddLogLine(S_ADDITIONAL_FOLDER_NOT_FOUND + sLineBreak + Folders.MapScansTempPath);
+      end;
     end
     else
+    begin
       Scan.AddLogLine(S_FILES_EQUAL + sLineBreak +
-        ' DB: [' + Scan.DBFileName + ']' + sLineBreak +
-        ' New: [' + Scan.FullFileName + ']' + sLineBreak +
-        ' Zone: [' + Scan.DiffFileName + ']');
+          ' DB: [' + Scan.DBFileName + ']' + sLineBreak +
+          ' New: [' + Scan.FullFileName + ']' + sLineBreak +
+          ' Zone: [' + Scan.DiffFileName + ']');
+    end;
   except
     raise;
-  end;
-  // если всё прошло гладко, то отправляем файлы в дополнительную папку 
-  if DirectoryExists(Folders.MapScansTempPath) then
-  begin
-    OldFile := Scan.FullFileName;
-    NewFile := TPath.Finish(Folders.MapScansTempPath, Scan.Nomenclature, ExtractFileExt(OldFile));
-    TFileUtils.CopyFile(OldFile, NewFile, True, True);
   end;
 end;
 

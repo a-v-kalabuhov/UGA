@@ -36,8 +36,8 @@ type
   private
     FDxfImport: TEzDxfImport;
     FCK36: Boolean;
-    // True - первая координата X - направлена вверх, False - направлена в сторону
-    FXY: Boolean;
+    // Меняем местами X и Y
+    FExchangeXY: Boolean;
     FMissingLayers: TStrings;
     FRecordCount: Integer;
     FRecordToImport: Integer;
@@ -71,7 +71,7 @@ type
     ///   Колинчство осевых линий
     /// </summary>
     property LinesCount: Integer read FLinesCount;
-    property XY: Boolean read FXY;
+//    property ExchangeXY: Boolean read FExchangeXY;
     //
     property Project: TmstProject read FProject;
   end;
@@ -107,7 +107,9 @@ begin
     Fields.Forget();
     Fields.Add('UID;N;11;0');
     Fields.Add('LAYER_ID;N;11;0');
-    ImportLayer := FDrawBox.GIS.Layers.CreateNew(SL_PROJECT_IMPORT, Fields);
+    ImportLayer := FDrawBox.GIS.Layers.LayerByName(SL_PROJECT_IMPORT);
+    if ImportLayer = nil then    
+      ImportLayer := FDrawBox.GIS.Layers.CreateNew(SL_PROJECT_IMPORT, Fields);
     //
     // в этот слой скидываем объекты
     // для каждого объекта должно быть ID слоя проекта в таблице
@@ -172,7 +174,7 @@ var
   I: Integer;
   L: TEzBaseLayer;
 begin
-  FXY := True;
+  FExchangeXY := False;
   FCK36 := False;
   // ищем по всем объектам в каде хотя бы одну точку с координатами больше 1000000
   // если есть такая, то смотрим вторую координату
@@ -182,7 +184,6 @@ begin
     L := FDxfImport.Cad.Layers[I];
     if L.LayerInfo.Extension.X2 > 1000000 then
     begin
-      FXY := False;
       if L.LayerInfo.Extension.Y2 > 400000 then
       begin
         FCK36 := True;
@@ -194,6 +195,7 @@ begin
     begin
       if L.LayerInfo.Extension.X2 > 400000 then
       begin
+        FExchangeXY := True;
         FCK36 := True;
         Exit;
       end;
@@ -248,32 +250,30 @@ end;
 
 function TmstProjectImportModule.ConvertDWGtoDXF(const aFileName: string): string;
 begin
-  TAutoCADUtils.ConvertDWGtoDXF({mstClientAppModule.SessionDir, }aFileName);
+  Result := TAutoCADUtils.ConvertDWGtoDXF({mstClientAppModule.SessionDir, }aFileName);
 end;
 
 procedure TmstProjectImportModule.ConvertEntityCoords(Ent: TEzEntity);
 var
   I: Integer;
   Pt: TEzPoint;
+  PtGeo: TEzPoint;
+  PtEz: TEzPoint;
   X, Y: Double;
 begin
   for I := 0 to Ent.Points.Count - 1 do
   begin
-    if FXY then
-    begin
-      X := Ent.Points[I].x;
-      Y := Ent.Points[I].y;
-    end
+    PtEz := Ent.Points[I];
+    if FExchangeXY then
+      PtGeo := PtEz
     else
     begin
-      X := Ent.Points[I].y;
-      Y := Ent.Points[I].x;
+      PtGeo.x := PtEz.y;
+      PtGeo.y := PtEz.x;
     end;
     if FCK36 then
-      uCK36.ToVRN(X, Y, Pt.y, Pt.x)
-    else
-      Pt := Point2D(X, Y);
-    Ent.Points[I] := Pt;
+      uCK36.ToVRN(PtGeo.X, PtGeo.Y, PtEz.y, PtEz.x);
+    Ent.Points[I] := PtEz;//Point2D(PtGeo.Y, PtGeo.X);
   end;
 end;
 
@@ -312,7 +312,7 @@ begin
     // прочитать проект из слоя
     ReadProject2();
     // открыть окно редактирования
-    if FProject.Edit() then
+    if FProject.Edit(True) then
     begin
       // если сохранили, то сохранеям в БД и показываем в слое проектов
       FProject.Save(mstClientAppModule.MapMngr as IDb);
@@ -376,6 +376,7 @@ var
   I: Integer;
   Pt: TEzPoint;
 begin
+  FExchangeXY := Value;
   L := FDrawBox.GIS.Layers.LayerByName(SL_PROJECT_IMPORT);
   if Assigned(L) then
   begin
@@ -430,7 +431,7 @@ var
   Ent: TEzEntity;
   Line: TmstProjectLine;
   I: Integer;
-  Pt: TEzPoint;
+  Pt, PtGeo: TEzPoint;
 begin
   EzLayer.First;
   while not EzLayer.Eof do
@@ -443,7 +444,16 @@ begin
       for I := 0 to Ent.Points.Count - 1 do
       begin
         Pt := Ent.Points[I];
-        Line.Points.Add(Pt.y, Pt.x);
+        if FExchangeXY then
+        begin
+          PtGeo:= PT;
+        end
+        else
+        begin
+          PtGeo.x := Pt.y;
+          PtGeo.y := Pt.x;
+        end;
+        Line.Points.Add(PtGeo.x, PtGeo.y);
       end;
     end
     else
@@ -454,7 +464,16 @@ begin
       for I := 0 to Ent.Points.Count - 1 do
       begin
         Pt := Ent.Points[I];
-        Line.Points.Add(Pt.y, Pt.x);
+        if FExchangeXY then
+        begin
+          PtGeo:= Pt;
+        end
+        else
+        begin
+          PtGeo.x := Pt.y;
+          PtGeo.y := Pt.x;
+        end;
+        Line.Points.Add(PtGeo.x, PtGeo.y);
       end;
     end
     else

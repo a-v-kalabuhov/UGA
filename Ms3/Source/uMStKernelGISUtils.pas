@@ -8,13 +8,13 @@ interface
 
 uses
   // System
-  SysUtils, Classes, Graphics, Printers, Types, Windows, Math,
+  SysUtils, Classes, Windows, Graphics, Printers, Types, Math, jpeg,
   // EzGIS
   EzBaseGIS, EzLib, EzEntities, EzBase,
   // Common
   uGC, uGeoUtils, uCK36,
   // Project
-  uMstKernelClasses,
+  uMstKernelClasses, uMStKernelTypes,
   uMStClassesLots;
 
 type
@@ -44,7 +44,7 @@ type
 
   function GetMap500Entity(const Nomenclature: String; Color: Integer): TEzEntity;
   function GetMap500Rect(const Nomenclature: String): TEzRect;
-  function GetMapImageEntity(const Nomenclature, FileName: String): TEzEntity;
+  function GetMapImageEntity(const Nomenclature, FileName: String; ImgExt: TmstImageExt): TEzEntity;
 
   function ContourToEntity(aContour: TmstLotContour): TEzEntity;
 
@@ -208,16 +208,62 @@ begin
   Result := ReorderRect2D(Result);
 end;
 
-function GetMapImageEntity(const Nomenclature, FileName: String): TEzEntity;
+function GetMapImageEntity(const Nomenclature, FileName: String; ImgExt: TmstImageExt): TEzEntity;
 var
   X, Y: Integer;
+  Bmp: TBitmap;
+  JPG: TJPEGImage;
 begin
   TGeoUtils.MapTopLeft(Nomenclature, X, Y);
-  Result := TEzERMapper.CreateEntity(
-                  Point2D(Y, X),
-                  Point2D(Y + 250, X - 250),
-                  FileName
-  );
+  case ImgExt of
+    imgGFA:
+      Result := TEzERMapper.CreateEntity(
+                      Point2D(Y, X),
+                      Point2D(Y + 250, X - 250),
+                      FileName
+      );
+    imgBMP:
+      begin
+        Bmp := TBitmap.Create;
+        try
+          Bmp.PixelFormat := pf24bit;
+          Bmp.LoadFromFile(FileName);
+          Result := TEzPictureRef.CreateEntity(
+                          Point2D(Y, X),
+                          Point2D(Y + 250, X - 250),
+                          ''
+          );
+          TEzPictureRef(Result).Stream := TMemoryStream.Create;
+          Bmp.SaveToStream(TEzPictureRef(Result).Stream);
+        finally
+          Bmp.Free;
+        end;
+        //TEzBitmapRef(Result).OwnImage := True;
+      end;
+    imgJPEG:
+      begin
+        Bmp := TBitmap.Create;
+        try
+          Bmp.PixelFormat := pf24bit;
+          JPG := TJPEGImage.Create;
+          try
+            JPG.LoadFromFile(FileName);
+            Bmp.Assign(JPG);
+          finally
+            FreeAndNil(JPG);
+          end;
+          Result := TEzPictureRef.CreateEntity(
+                          Point2D(Y, X),
+                          Point2D(Y + 250, X - 250),
+                          ''
+          );
+          TEzPictureRef(Result).Stream := TMemoryStream.Create;
+          Bmp.SaveToStream(TEzPictureRef(Result).Stream);
+        finally
+          Bmp.Free;
+        end;
+      end;
+  end;
 end;
 
 procedure GetLotPoints(ALot: TmstLot; var Points: array of TEzPoint);

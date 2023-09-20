@@ -11,9 +11,10 @@ uses
   //
   uFileUtils, uGC,
   //
-  uMStKernelClasses, uMStModuleApp, uMStConsts, uMStKernelSemantic, uMStModuleMapMngrIBX,
+  uMStKernelClasses, uMStModuleApp, uMStConsts, uMStKernelSemantic, uMStKernelIBX,
+  uMStModuleMapMngrIBX,
   uMStClassesProjects, uMStClassesProjectsBrowser,
-  uMStDialogProjectsBrowserFilter, ActnList;
+  uMStDialogProjectsBrowserFilter, ActnList, IBUpdateSQL;
 
 type
   TMStProjectBrowserForm = class(TForm)
@@ -41,6 +42,8 @@ type
     SpeedButton3: TSpeedButton;
     btnDisplay: TSpeedButton;
     ActionList1: TActionList;
+    btnProperties: TSpeedButton;
+    IBUpdateSQL1: TIBUpdateSQL;
     procedure chbTransparencyClick(Sender: TObject);
     procedure trackAlphaChange(Sender: TObject);
     procedure btnDisplayClick(Sender: TObject);
@@ -63,6 +66,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure IBQuery1AfterScroll(DataSet: TDataSet);
     procedure IBQuery1AfterClose(DataSet: TDataSet);
+    procedure btnPropertiesClick(Sender: TObject);
   private
     FDrawBox: TEzBaseDrawBox;
     FFilter: TmstProjectsBrowserFilter;
@@ -589,6 +593,32 @@ begin
       kaDBGrid1.Refresh;
     end;
   end;
+end;
+
+procedure TMStProjectBrowserForm.btnPropertiesClick(Sender: TObject);
+var
+  PrjId: Integer;
+  Prj: TmstProject;
+begin
+  if not IBQuery1.Active then
+    Exit;
+  PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+  Prj := GetProjectAndLoadToGIS(PrjId);
+  if not Assigned(Prj) then
+  begin
+    ShowMessage(
+      'Не удалось загрузить проект!' + sLineBreak +
+      'Обратитесь к администратору.');
+  end
+  else
+  begin
+    if Prj.Edit(True) then
+    begin
+      Prj.Save(mstClientAppModule.MapMngr as IDb);
+      IBQuery1.Refresh;
+    end;
+  end;
+
 end;
 
 procedure TMStProjectBrowserForm.btnZoneClick(Sender: TObject);

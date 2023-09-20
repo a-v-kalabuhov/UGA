@@ -398,7 +398,7 @@ begin
       Init(Fuser.IsAdministrator,
            mstClientAppModule.GetOption('FTP', 'Host', ''),
            StrToInt(mstClientAppModule.GetOption('FTP', 'Port', '21')));
-      InStream := GetFile(ftGISData, '');
+      InStream := GetDataFile('');
       InStream.Position := 0;
       OutStream := TFileStream.Create(DirectoryName + 'data.zip', fmCreate);
       OutStream.CopyFrom(InStream, InStream.Size);
@@ -562,6 +562,7 @@ function TMStIBXMapMngr.GetMapImage(aMapList: TmstMapList;
 var
   InStream, OutStream: TStream;
   FileName: String;
+  ImgExt: TftpImageExt;
 begin
   Result := False;
   if Assigned(aMapList) and Assigned(aMap) then
@@ -574,7 +575,7 @@ begin
            mstClientAppModule.GetOption('FTP', 'Host', ''),
            StrToInt(mstClientAppModule.GetOption('FTP', 'Port', '21')));
       // качаем файл
-      InStream := GetFile(ftImage, aMap.MapName);
+      InStream := GetImgFile(aMap.MapName, ImgExt);
       try
         // увеличиваем счетчик файлов на 1
         aMapList.IncCounter;
@@ -592,6 +593,11 @@ begin
       // обновляем параметры aMap
       aMap.FileName := FileName;
       aMap.ImageLoaded := True;
+      case ImgExt of
+        ftpGFA  : aMap.ImageExt := imgGFA;
+        ftpBMP  : aMap.ImageExt := imgBMP;
+        ftpJPEG : aMap.ImageExt := imgJPEG;
+      end;
       Result := True;
     finally
       Free;

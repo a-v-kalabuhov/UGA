@@ -3,8 +3,8 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   Top = 0
   BorderStyle = bsSizeToolWin
   Caption = #1057#1087#1080#1089#1086#1082' '#1087#1088#1086#1077#1082#1090#1086#1074
-  ClientHeight = 508
-  ClientWidth = 783
+  ClientHeight = 488
+  ClientWidth = 944
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,16 +21,17 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 783
+    Width = 944
     Height = 29
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 783
     DesignSize = (
-      783
+      944
       29)
     object btnClose: TSpeedButton
-      Left = 668
+      Left = 829
       Top = 3
       Width = 110
       Height = 23
@@ -95,17 +96,19 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   end
   object Panel3: TPanel
     Left = 0
-    Top = 472
-    Width = 783
+    Top = 452
+    Width = 944
     Height = 36
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 472
+    ExplicitWidth = 783
     DesignSize = (
-      783
+      944
       36)
     object btnCoords: TSpeedButton
-      Left = 656
+      Left = 817
       Top = 6
       Width = 122
       Height = 23
@@ -115,7 +118,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
       ExplicitLeft = 920
     end
     object btnZone: TSpeedButton
-      Left = 424
+      Left = 585
       Top = 6
       Width = 110
       Height = 23
@@ -125,7 +128,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
       ExplicitLeft = 688
     end
     object SpeedButton3: TSpeedButton
-      Left = 540
+      Left = 701
       Top = 6
       Width = 110
       Height = 23
@@ -135,7 +138,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
       ExplicitLeft = 804
     end
     object btnDisplay: TSpeedButton
-      Left = 308
+      Left = 469
       Top = 6
       Width = 110
       Height = 23
@@ -168,24 +171,25 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   object PageControl1: TPageControl
     Left = 0
     Top = 29
-    Width = 783
-    Height = 443
+    Width = 944
+    Height = 423
     ActivePage = tabData
     Align = alClient
     TabOrder = 2
+    ExplicitWidth = 783
+    ExplicitHeight = 443
     object tabData: TTabSheet
       Caption = #1055#1088#1086#1077#1082#1090#1099
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 775
+      ExplicitHeight = 415
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 775
+        Width = 936
         Height = 33
         Align = alTop
         TabOrder = 0
+        ExplicitWidth = 775
         object btnFilterStart: TSpeedButton
           Left = 4
           Top = 1
@@ -220,12 +224,47 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
             88888999908880F9988889900088800099888888888888888888}
           OnClick = btnFilterClearClick
         end
+        object btnProperties: TSpeedButton
+          Left = 170
+          Top = 1
+          Width = 94
+          Height = 26
+          Caption = #1057#1074#1086#1081#1089#1090#1074#1072
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            1800000000000003000000000000000000000000000000000000FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FF000000000000FF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00
+            0000FFFFFF000000000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF000000FFFFFFFFFFFFFFFFFFFFFFFF0000000000
+            00FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000FF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FF000000FFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFF
+            FFFFFFFFC0C0C0000000FF00FFFF00FFFF00FFFF00FFFF00FF000000FFFFFFFF
+            FFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFF000000000000000000
+            000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF0000
+            00FFFFFFFFFFFF00000000000000000000000000000000000000000000000000
+            0000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FF0000
+            FF0000FF0000FF0000FF0000000000000000000000000000000000000000FFFF
+            FFFFFFFF000000FF00FF000000000000FF0000FF0000FF000000000000000000
+            0000000000000000FF00FFFF00FF000000000000FF00FF000000000000000000
+            000000FF0000000000000000000000000000000000000000FF00FFFF00FFFF00
+            FFFF00FFFF00FF00000000000000000000000000000000000000000080808000
+            FFFF808080000000FF00FFFF00FFFF00FFFF00FFFF00FF0000000000000000FF
+            0000FF0000FF00000000000000FFFF00FFFF00FFFF000000FF00FFFF00FFFF00
+            FFFF00FFFF00FF0000000000000000FF0000FF0000FF00000000000080808000
+            FFFF808080000000000000FF00FFFF00FFFF00FF000000FF00FF0000000000FF
+            0000FF0000FF000000000000000000000000000000000000FF00FF0000000000
+            00000000FF00FFFF00FF00000000000000000000000000000000000000000000
+            0000000000000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          OnClick = btnPropertiesClick
+        end
       end
       object kaDBGrid1: TkaDBGrid
         Left = 0
         Top = 33
-        Width = 775
-        Height = 382
+        Width = 936
+        Height = 362
         Align = alClient
         DataSource = DataSource1
         TabOrder = 1
@@ -363,6 +402,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
       '    LICENSED_ORGS ORGS1 ON (PRJS.EXECUTOR_ORGS_ID = ORGS1.ID)'
       '    LEFT JOIN'
       '    LICENSED_ORGS ORGS2 ON (PRJS.CUSTOMER_ORGS_ID = ORGS2.ID)')
+    UpdateObject = IBUpdateSQL1
     Left = 584
     Top = 144
   end
@@ -381,5 +421,33 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   object ActionList1: TActionList
     Left = 144
     Top = 208
+  end
+  object IBUpdateSQL1: TIBUpdateSQL
+    RefreshSQL.Strings = (
+      'SELECT '
+      
+        '       PRJS.ID AS PROJECT_ID, PRJS.ADDRESS, PRJS.DOC_NUMBER, PRJ' +
+        'S.DOC_DATE, PRJS.CONFIRMED, PRJS.CONFIRM_DATE,'
+      
+        '       LINES.ID AS LINE_ID, LINES.INFO, LINES.DIAMETER, LINES.VO' +
+        'LTAGE,'
+      '       LAYERS.ID AS LAYER_ID, LAYERS.NAME AS LAYER_NAME,'
+      '       ORGS2.NAME AS CUSTOMER, ORGS1.NAME AS EXECUTOR'
+      'FROM'
+      '    PROJECT_LINES LINES'
+      '    LEFT JOIN'
+      
+        '    PROJECT_LAYERS LAYERS ON (LINES.PROJECT_LAYERS_ID = LAYERS.I' +
+        'D)'
+      '    LEFT JOIN'
+      '    PROJECTS PRJS ON (LINES.PROJECTS_ID = PROJECTS.ID)'
+      '    LEFT JOIN'
+      '    LICENSED_ORGS ORGS1 ON (PRJS.EXECUTOR_ORGS_ID = ORGS1.ID)'
+      '    LEFT JOIN'
+      '    LICENSED_ORGS ORGS2 ON (PRJS.CUSTOMER_ORGS_ID = ORGS2.ID)'
+      'WHERE '
+      '    PRJS.ID=:PROJECT_ID')
+    Left = 616
+    Top = 144
   end
 end

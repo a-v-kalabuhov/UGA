@@ -88,7 +88,7 @@ begin
   Label8.Caption := IntToStr(Import.MissingLayers.Count);
   ListBox1.Items.Assign(Import.MissingLayers);
   CheckBox1.Checked := Import.CK36;
-  CheckBox2.Checked := Import.XY;
+  CheckBox2.Checked := Import.ExchangeXY;
   Top := 0;
   Left := 0;
   Show;

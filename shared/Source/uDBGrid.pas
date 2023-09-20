@@ -53,6 +53,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     property Col;
+    property Row;
     property CurrentCol: TColumn read GetCurrentCol;
     property InplaceEditor;
   published

@@ -1025,7 +1025,7 @@ begin
     Prj := TmstProject(GetObjectByType(Node.NodeType, Node.DatabaseId));
     if Assigned(Prj) then
     begin
-      if Prj.Edit() then
+      if Prj.Edit(True) then
         Prj.Save(FDb);
     end;
   end;

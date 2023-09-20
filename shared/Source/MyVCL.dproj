@@ -46,6 +46,14 @@
     <DelphiCompile Include="MyVCL.dpk">
       <MainSource>MainSource</MainSource>
     </DelphiCompile>
+    <DCCReference Include="$(SystemRoot)\system32\dbrtl.dcp" />
+    <DCCReference Include="$(SystemRoot)\system32\ibxpress.dcp" />
+    <DCCReference Include="$(SystemRoot)\system32\inet.dcp" />
+    <DCCReference Include="$(SystemRoot)\system32\rtl.dcp" />
+    <DCCReference Include="$(SystemRoot)\system32\vcl.dcp" />
+    <DCCReference Include="$(SystemRoot)\system32\vcldb.dcp" />
+    <DCCReference Include="$(SystemRoot)\system32\vcljpg.dcp" />
+    <DCCReference Include="$(SystemRoot)\system32\xmlrtl.dcp" />
     <DCCReference Include="ATImageBox.dcr" />
     <DCCReference Include="ATImageBox.pas" />
     <DCCReference Include="ATPrintPreview.dcr" />
@@ -55,12 +63,8 @@
     </DCCReference>
     <DCCReference Include="ATxPrintProc.pas" />
     <DCCReference Include="ATxUpEdit.pas" />
-    <DCCReference Include="dbrtl.dcp" />
-    <DCCReference Include="ibxpress.dcp" />
-    <DCCReference Include="inet.dcp" />
     <DCCReference Include="KMAlert.pas" />
     <DCCReference Include="PREVIEWLib_TLB.pas" />
-    <DCCReference Include="rtl.dcp" />
     <DCCReference Include="uClipboardSaver.pas" />
     <DCCReference Include="uDataSet.pas" />
     <DCCReference Include="uDBGrid.pas" />
@@ -68,9 +72,5 @@
     <DCCReference Include="uLegend.pas" />
     <DCCReference Include="uMyVCLReg.pas" />
     <DCCReference Include="uSettingsBase.pas" />
-    <DCCReference Include="vcl.dcp" />
-    <DCCReference Include="vcldb.dcp" />
-    <DCCReference Include="vcljpg.dcp" />
-    <DCCReference Include="xmlrtl.dcp" />
   </ItemGroup>
 </Project>

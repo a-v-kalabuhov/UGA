@@ -310,7 +310,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     //
-    function Edit(): Boolean;
+    function Edit(const aCanSave: Boolean): Boolean;
     function Load(aDb: IDb): Boolean;
     function Save(aDb: IDb): Boolean;
     //
@@ -579,12 +579,13 @@ begin
   inherited;
 end;
 
-function TmstProject.Edit: Boolean;
+function TmstProject.Edit(const aCanSave: Boolean): Boolean;
 var
   Frm: TmstEditProjectDialog;
 begin
   Frm := TmstEditProjectDialog.Create(Application);
   try
+    Frm.CanSave := aCanSave;
     Result := Frm.Execute(Self);
   finally
     Frm.Free;
@@ -640,10 +641,11 @@ begin
   DataSet := Conn.GetDataSet(SQL_LOAD_PLACES);
   Conn.SetParam(DataSet, SF_ID, DatabaseId);
   DataSet.Open;
-  if DataSet.IsEmpty then
-    Exit;
-  LoadPlaces(DataSet);
-  DataSet.Close;
+  if not DataSet.IsEmpty then
+  begin
+    LoadPlaces(DataSet);
+    DataSet.Close;
+  end;
   Result := True;
 end;
 
@@ -782,8 +784,8 @@ begin
       SaveLine(Conn, L, SaveLineState);
     end;
     //
-    ShowMessage('SavePlace: ' + sLineBreak +
-              '  Total=' + IntToStr(Places.Count));
+//    ShowMessage('SavePlace: ' + sLineBreak +
+//              '  Total=' + IntToStr(Places.Count));
     SavePlaceState.Ds1 := nil;
     SavePlaceState.Ds2 := nil;
     SavePlaceState.DsMain1 := nil;
@@ -2008,8 +2010,8 @@ class function TProjectUtils.PointTo2D(aPrj: TmstProject; aPt: TmstProjectPoint)
 begin
   if aPrj.CK36 then
   begin
-    uCK36.ToVRN(aPt.X, aPt.Y, Result.y, Result.x);
-//    uCK36.ToVRN(aPt.Y, aPt.X, Result.Y, Result.X);
+//    uCK36.ToVRN(aPt.X, aPt.Y, Result.y, Result.x);
+    uCK36.ToVRN(aPt.X, aPt.Y, Result.Y, Result.X);
   end
   else
   begin
