@@ -175,7 +175,7 @@ type
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function CurrentEntity: TKisEntity; override;
     function GetEntity(EntityID: Integer; EntityKind: TKisEntities = keDefault): TKisEntity; override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function EditEntity(Entity: TKisEntity): TKisEntity; override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
     procedure SaveEntity(Entity: TKisEntity); override;
@@ -2405,7 +2405,7 @@ begin
   Result := nil;
 end;
 
-procedure TKisOrderMngr.DeleteEntity(Entity: TKisEntity);
+function TKisOrderMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 var
   Conn: IKisConnection;
 begin
@@ -2414,7 +2414,10 @@ begin
     Conn := GetConnection(True, True);
     try
       if IsEntityInUse(Entity) then
-        inherited
+      begin
+        Result := False;
+        inherited DeleteEntity(Entity);
+      end
       else
       begin
         // проверка контрагента
@@ -2430,6 +2433,7 @@ begin
         end;   }
         // удаление заказа
         Conn.GetDataSet(Format(SQ_DELETE_ORDER, [Entity.ID])).Open;
+        Result := True;
       end;
       FreeConnection(Conn, True);
     except

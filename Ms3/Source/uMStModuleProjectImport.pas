@@ -50,6 +50,7 @@ type
     procedure LoadLinesFromLayer(Layer: TmstProjectLayer; EzLayer: TEzBaseLayer);
     procedure LoadPlacesFromLayer(Layer: TmstProjectLayer; EzLayer: TEzBaseLayer);
     procedure ChangeBlockNames();
+    procedure SetExchangeXY(const Value: Boolean);
   public
     function BeginImport(aDrawBox: TEzBaseDrawBox): Boolean;
     procedure DisplayImportDialog();
@@ -57,6 +58,7 @@ type
     //
     property DxfImport: TEzDxfImport read FDxfImport;
     property CK36: Boolean read FCK36;
+    property ExchangeXY: Boolean read FExchangeXY write SetExchangeXY;
     property Layers: TmstProjectLayers read FAllLayers;
     property MissingLayers: TStrings read FMissingLayers;
     /// <summary>
@@ -637,6 +639,11 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TmstProjectImportModule.SetExchangeXY(const Value: Boolean);
+begin
+  FExchangeXY := Value;
 end;
 
 end.

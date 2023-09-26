@@ -493,7 +493,7 @@ type
     function CreateEntity(EntityKind: TKisEntities): TKisEntity; override;
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function CurrentEntity: TKisEntity; override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function GetEntity(EntityID: Integer; EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
     procedure SaveEntity(Entity: TKisEntity); override;
@@ -1685,14 +1685,17 @@ begin
     Result.Modified := False;
 end;
 
-procedure TKisMapScansMngr.DeleteEntity(Entity: TKisEntity);
+function TKisMapScansMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 var
   Conn: IKisConnection;
   S: String;
 begin
   Conn := GetConnection(True, True);
   if IsEntityInUse(Entity) then
-    inherited
+  begin
+    Result := False;
+    inherited DeleteEntity(Entity);
+  end
   else
     try
       S := '';
@@ -1706,6 +1709,7 @@ begin
         S := SQ_DELETE_MAP_SCAN_HISTORY;
       //
       Conn.GetDataSet(Format(S, [Entity.ID])).Open;
+      Result := True;
       FreeConnection(Conn, True);
     except
       FreeConnection(Conn, False);

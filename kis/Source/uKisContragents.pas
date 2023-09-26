@@ -362,7 +362,7 @@ type
     procedure SaveEntity(Entity: TKisEntity); override;
     function DuplicateEntity(Entity: TKisEntity): TKisEntity; override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function CreateEntity(EntityKind: TKisEntities): TKisEntity; override;
     procedure EditCurrent; override;
   end;
@@ -1571,7 +1571,7 @@ begin
   Combo.OnChange := ChangeViewFilter;
 end;
 
-procedure TKisContragentMngr.DeleteEntity(Entity: TKisEntity);
+function TKisContragentMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 var
   Conn: IKisConnection;
 begin
@@ -1580,7 +1580,10 @@ begin
     if IsSupported(Entity) then
     begin
       if IsEntityInUse(Entity) then
-        inherited
+      begin
+        Result := False;
+        inherited DeleteEntity(Entity);
+      end
       else
       begin
         if Entity is TKisContragent then
@@ -1598,6 +1601,7 @@ begin
         else
           if Entity is TKisContragentAccount then
             DeleteAccount(TKisContragentAccount(Entity));
+        Result := True;
       end;
     end;
     FreeConnection(Conn, True);

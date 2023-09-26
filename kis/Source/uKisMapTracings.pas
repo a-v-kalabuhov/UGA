@@ -192,7 +192,7 @@ type
     function CreateEntity(EntityKind: TKisEntities): TKisEntity; override;
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function GetEntity(EntityID: Integer; EntityKind: TKisEntities = keDefault): TKisEntity; override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
     function CurrentEntity: TKisEntity; override;
     procedure SaveEntity(Entity: TKisEntity); override;
@@ -840,7 +840,7 @@ begin
   AppModule.Pool.Back(dsMapTracings.Transaction);
 end;
 
-procedure TKisMapTracingMngr.DeleteEntity(Entity: TKisEntity);
+function TKisMapTracingMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 var
   Conn: IKisConnection;
   S: String;
@@ -848,7 +848,10 @@ begin
   if not Assigned(Entity) then Exit;
   Conn := GetConnection(True, True);
   if IsEntityInUse(Entity) then
-    inherited
+  begin
+    Result := False;
+    inherited DeleteEntity(Entity);
+  end
   else
     try
       if Entity is TKisMapTracing then
@@ -857,7 +860,12 @@ begin
         if Entity is TKisMapTracingGiving then
           S := Format(SQ_DELETE_MAP_TRACING_GIVING, [Entity.ID]);
       if S <> '' then
+      begin
         Conn.GetDataSet(S).Open;
+        Result := True;
+      end
+      else
+        Result := False;
       FreeConnection(Conn, True);
     except
       FreeConnection(Conn, False);

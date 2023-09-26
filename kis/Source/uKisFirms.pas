@@ -134,7 +134,7 @@ type
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function EditEntity(Entity: TKisEntity): TKisEntity; override;
     procedure SaveEntity(Entity: TKisEntity); override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function CreateEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
   end;
@@ -320,16 +320,22 @@ begin
   end;
 end;
 
-procedure TKisFirmMngr.DeleteEntity(Entity: TKisEntity);
+function TKisFirmMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 var
   Conn: IKisConnection;
 begin
   Conn := GetConnection(True, True);
   try
     if IsEntityInUse(Entity) then
-      inherited
+    begin
+      Result := False;
+      inherited DeleteEntity(Entity);
+    end
     else
+    begin
       Conn.GetDataSet(Format(SQ_DELETE_FIRM, [Entity.ID])).Open;
+      Result := True;
+    end;
     FreeConnection(Conn, True);
   except
     FreeConnection(Conn, False);

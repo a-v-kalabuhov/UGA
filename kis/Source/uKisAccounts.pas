@@ -95,7 +95,7 @@ type
     function GetEntity(EntityID: Integer; EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function EditEntity(Entity: TKisEntity): TKisEntity; override;
     procedure SaveEntity(Entity: TKisEntity); override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
 {    function IsEntityStored(Entity: TKisEntity): Boolean; virtual; abstract; 
     function DuplicateEntity(Entity: TKisEntity): TKisEntity; virtual; abstract; }
@@ -138,9 +138,9 @@ begin
   Result.ID := GenEntityID;
 end;
 
-procedure TKisAccountsMngr.DeleteEntity(Entity: TKisEntity);
+function TKisAccountsMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 begin
-  inherited;
+  inherited DeleteEntity(Entity);
   Connection.GetDataSet(Format(SQ_DELETE_ACCOUNT, [Entity.ID])).Open;
 end;
 

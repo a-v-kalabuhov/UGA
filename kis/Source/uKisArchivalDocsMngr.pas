@@ -234,7 +234,7 @@ type
     function CreateEntity(EntityKind: TKisEntities): TKisEntity; override;
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function CurrentEntity: TKisEntity; override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function GetEntity(EntityID: Integer; EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
     procedure SaveEntity(Entity: TKisEntity); override;
@@ -1572,16 +1572,22 @@ begin
   Result := GetEntity(dsArchivalDocsID.AsInteger, keArchivalDoc);
 end;
 
-procedure TkisArchivalDocsMngr.DeleteEntity(Entity: TKisEntity);
+function TkisArchivalDocsMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 var
   Conn: IKisConnection;
 begin
   Conn := GetConnection(True, True);
   try
     if IsEntityInUse(Entity) then
-      inherited
+    begin
+      Result := False;
+      inherited DeleteEntity(Entity);
+    end
     else
+    begin
       Conn.GetDataSet(Format(SQ_DELETE_ARCHIVAL_DOCS, [Entity.ID])).Open;
+      Result := True;
+    end;
     FreeConnection(Conn, True);
   except
     FreeConnection(Conn, False);

@@ -252,7 +252,7 @@ type
     function GetEntity(EntityID: Integer; EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     procedure SaveEntity(Entity: TKisEntity); override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
     function CreateEntity(EntityKind: TKisEntities): TKisEntity; override;
     function CurrentEntity: TKisEntity; override;
@@ -1006,17 +1006,21 @@ begin
   Result.ID := Self.GenEntityID(EntityKind);
 end;
 
-procedure TkisOutcomingLetterMngr.DeleteEntity(Entity: TKisEntity);
+function TkisOutcomingLetterMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 var
   Conn: IKisConnection;
 begin
   Conn := nil;
   if IsEntityInUse(Entity) then
-    inherited
+  begin
+    Result := False;
+    inherited DeleteEntity(Entity);
+  end
   else
   try
     Conn := GetConnection(True, True);
     Conn.GetDataSet(Format(SQ_DELETE_OUTCOMING_LETTER, [Entity.ID])).Open;
+    Result := True;
     FreeCOnnection(Conn, True);
   except
     FreeConnection(Conn, False);

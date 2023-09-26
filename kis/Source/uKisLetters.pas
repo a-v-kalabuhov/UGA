@@ -665,7 +665,7 @@ type
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function EditEntity(Entity: TKisEntity): TKisEntity; override;
     procedure SaveEntity(Entity: TKisEntity); override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function CreateEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
     function IsLetterStored(const LetterId: Integer): Boolean;
@@ -4148,17 +4148,23 @@ begin
   UpdateFirm;
 end;
 
-procedure TKisLetterMngr.DeleteEntity(Entity: TKisEntity);
+function TKisLetterMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 var
   Conn: IKisConnection;
 begin
   Conn := GetConnection(True, True);
   try
     if IsEntityInUse(Entity) then
-      inherited
+    begin
+      Result := False;
+      inherited DeleteEntity(Entity);
+    end
     else
     with Conn.GetDataSet(Format(SQ_DELETE_LETTER, [Entity.ID])) do
+    begin
       Open;
+      Result := True;
+    end;
     FreeConnection(Conn, True);
   except
     FreeConnection(Conn, False);

@@ -119,7 +119,7 @@ type
     function CreateEntity(EntityKind: TKisEntities): TKisEntity; override;
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function CurrentEntity: TKisEntity; override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function GetEntity(EntityID: Integer; EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
     procedure SaveEntity(Entity: TKisEntity); override;
@@ -379,7 +379,7 @@ begin
   AppModule.Pool.Back(ibqGiveouts.Transaction);
 end;
 
-procedure TKisMapScanViewGiveOutMngr.DeleteEntity(Entity: TKisEntity);
+function TKisMapScanViewGiveOutMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 begin
 //  inherited;
   // нельзя удалять

@@ -147,7 +147,7 @@ type
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     procedure SaveEntity(Entity: TKisEntity); override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function CreateEntity(EntityKind: TKisEntities): TKisEntity; override;
     function CurrentEntity: TKisEntity; override;
   end;
@@ -468,17 +468,24 @@ begin
   Result.ID := GenEntityID();
 end;
 
-procedure TKisGeoPunktsMngr.DeleteEntity(Entity: TKisEntity);
+function TKisGeoPunktsMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 var
   Conn: IKisConnection;
 begin
   if not IsSupported(Entity) then
-    inherited;
+    inherited DeleteEntity(Entity);
   Conn := GetConnection(True, True);
   try
     if IsEntityInUse(Entity) then
-      inherited;
-    Conn.GetDataSet(Format(SQ_DELETE_GEOPUNKTS, [Entity.ID])).Open;
+    begin
+      Result := False;
+      inherited DeleteEntity(Entity);
+    end
+    else
+    begin
+      Conn.GetDataSet(Format(SQ_DELETE_GEOPUNKTS, [Entity.ID])).Open;
+      Result := True;
+    end;
     FreeConnection(Conn, True);
   except
     FreeConnection(Conn, False);

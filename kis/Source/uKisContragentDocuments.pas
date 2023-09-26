@@ -71,7 +71,7 @@ type
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     procedure SaveEntity(Entity: TKisEntity); override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function CreateEntity(EntityKind: TKisEntities): TKisEntity; override;
   end;
 
@@ -213,7 +213,7 @@ begin
   Result.ID := GenEntityID();
 end;
 
-procedure TKisContragentDocumentMngr.DeleteEntity(Entity: TKisEntity);
+function TKisContragentDocumentMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 var
   Conn: IKisConnection;
 begin
@@ -222,12 +222,16 @@ begin
   try
     Conn.GetDataSet(Format(SQ_DELETE_DOC, [Entity.ID])).Open;
     FreeConnection(Conn, True);
+    Result := True;
   except
     FreeConnection(Conn, False);
     raise;
   end
   else
-    inherited;
+  begin
+    Result := False;
+    inherited DeleteEntity(Entity);
+  end;
 end;
 
 function TKisContragentDocumentMngr.GenEntityID(EntityKind: TKisEntities = keDefault): Integer;

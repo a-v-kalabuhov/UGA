@@ -268,7 +268,7 @@ type
     function GetEntity(EntityID: Integer; EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     procedure SaveEntity(Entity: TKisEntity); override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
     function CreateEntity(EntityKind: TKisEntities): TKisEntity; override;
     function CurrentEntity: TKisEntity; override;
@@ -726,23 +726,28 @@ begin
   AppModule.Pool.Back(dsDecreeProjects.Transaction);
 end;
 
-procedure TkisDecreeProjectMngr.DeleteEntity(Entity: TKisEntity);
+function TkisDecreeProjectMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 var
   Conn: IKisConnection;
   Sql: String;
 begin
   if IsEntityInUse(Entity) then
-    inherited
+  begin
+    Result := False;
+    inherited DeleteEntity(Entity);
+  end
   else
   begin
     Conn := GetConnection(True, True);
     try
+      Sql := '';
       if Entity is TKisDecreeProject then
         Sql := SQ_DELETE_DECREE_PROJECT
       else
       if Entity is TKisTemporaryDecreeProject then
         Sql := SQ_DELETE_TMP_DECREE_PROJECT;
       Conn.GetDataSet(Format(Sql, [Entity.ID])).Open;
+      Result := True;
       FreeConnection(Conn, True);
     except
       FreeConnection(Conn, False);

@@ -91,9 +91,10 @@ type
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function GetEntity(EntityID: Integer; EntityKind: TKisEntities = keDefault): TKisEntity; override;
     procedure SaveEntity(Entity: TKisEntity); override;
-    procedure DeleteEntity(Entity: TKisEntity); override;
+    function DeleteEntity(Entity: TKisEntity): Boolean; override;
     function IsEntityInUse(Entity: TKisEntity): Boolean; override;
     function CurrentEntity: TKisEntity; override;
+    procedure Locate(AId: Integer; LocateFail: Boolean = False); override;
   end;
 
 implementation
@@ -369,6 +370,28 @@ begin
   Result := Assigned(Entity) and (Entity is TKisLicensedOrg);
 end;
 
+procedure TKisLicensedOrgMngr.Locate(AId: Integer; LocateFail: Boolean);
+var
+  Bkm: Pointer;
+begin
+  inherited;
+  if dsLicensedOrgs.Active and not dsLicensedOrgs.IsEmpty then
+  begin
+    dsLicensedOrgs.DisableControls;
+    try
+      Bkm := dsLicensedOrgs.GetBookmark;
+      try
+        if not dsLicensedOrgs.LocateNext(SF_ID, AId, []) then
+          dsLicensedOrgs.GotoBookmark(Bkm);
+      finally
+        dsLicensedOrgs.FreeBookmark(Bkm);
+      end;
+    finally
+      dsLicensedOrgs.EnableControls;
+    end;
+  end;
+end;
+
 procedure TKisLicensedOrgMngr.dsLicensedOrgsBeforeOpen(DataSet: TDataSet);
 begin
   inherited;
@@ -437,18 +460,46 @@ begin
     Result.ID := GenEntityID(EntityKind);
 end;
 
-procedure TKisLicensedOrgMngr.DeleteEntity(Entity: TKisEntity);
+function TKisLicensedOrgMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 var
   Conn: IKisConnection;
+  CanDelete: Boolean;
 begin
   Conn := nil;
-  if IsEntityInUse(Entity) then
-    inherited
+//  if IsEntityInUse(Entity) then
+//    inherited
+//  else
+//  try
+//    Conn := GetConnection(True, True);
+//    Conn.GetDataSet(Format(SQ_DELETE_LICENSED_ORG, [Entity.ID])).Open;
+//    FreeConnection(Conn, True);
+//  except
+//    FreeConnection(Conn, False);
+//    raise;
+//  end;
+  Conn := GetConnection(True, True);
+  try
+    try
+      Conn.GetDataSet(Format(SQ_DELETE_LICENSED_ORG, [Entity.ID])).Open;
+      CanDelete := True;
+    except
+      CanDelete := False;
+    end;
+  finally
+    FreeConnection(Conn, False);
+  end;
+  //
+  if not CanDelete {or IsEntityInUse(Entity)} then
+  begin
+    Result := False;
+    inherited DeleteEntity(Entity);
+  end
   else
   try
     Conn := GetConnection(True, True);
     Conn.GetDataSet(Format(SQ_DELETE_LICENSED_ORG, [Entity.ID])).Open;
     FreeConnection(Conn, True);
+    Result := True;
   except
     FreeConnection(Conn, False);
     raise;
@@ -576,3 +627,5 @@ begin
 end;
 
 end.
+
+

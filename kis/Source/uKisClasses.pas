@@ -332,7 +332,7 @@ type
     { Сохраняет экземпляр сущности в БД }
     procedure SaveEntity(Entity: TKisEntity); virtual; abstract;
     { Удаление экземпляра сущности из БД }
-    procedure DeleteEntity(Entity: TKisEntity); virtual;
+    function DeleteEntity(Entity: TKisEntity): Boolean; virtual;
     { Проверяет используется ли экземпляр в БД }
     function IsEntityInUse(Entity: TKisEntity): Boolean; virtual; abstract;
     { Проверяет есть ли сущность в БД }
@@ -929,7 +929,7 @@ begin
     MngrList.Add(Self);
 end;
 
-procedure TKisMngr.DeleteEntity(Entity: TKisEntity);
+function TKisMngr.DeleteEntity(Entity: TKisEntity): Boolean;
 begin
   raise ECannotDeleteEntity.CreateFmt(S_CANNOT_DELETE_ENTITY, [Entity.EntityName]);
 end;

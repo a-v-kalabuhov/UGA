@@ -2834,6 +2834,7 @@ var
   CanDelete: Boolean;
   DataSet: TDataSet;
   ID: Integer;
+  UpOrDown: Boolean;
 begin
   ID := -1;
   with KisObject(CurrentEntity) do
@@ -2848,10 +2849,18 @@ begin
         begin
           DataSet.DisableControls;
           try
+            UpOrDown := True;
             DataSet.Prior;
             if DataSet.Bof then
+            begin
               DataSet.MoveBy(2);
+              UpOrDown := False;
+            end;
             ID := DataSet.FieldByName(SF_ID).AsInteger;
+            if UpOrDown then
+              DataSet.Next
+            else
+              DataSet.Prior;
           finally
             DataSet.EnableControls;
           end;
@@ -2862,12 +2871,12 @@ begin
       CanDelete := True;
     if CanDelete then
     begin
-      DeleteEntity(AEntity);
-      if Assigned(FView) then
-      begin
-        Reopen;
-        Locate(ID);
-      end;
+      if DeleteEntity(AEntity) then
+        if Assigned(FView) then
+        begin
+          Reopen;
+          Locate(ID);
+        end;
     end;
   end;
 end;

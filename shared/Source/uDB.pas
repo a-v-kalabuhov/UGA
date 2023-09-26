@@ -50,8 +50,31 @@ begin
 end;
 
 function TDataSetHelper.LocateId(Id: Integer): Boolean;
+var
+  Bkm: Pointer;
 begin
-  Result := (Id > 0) and Self.Locate('ID', Id, []);
+  Result := (Id > 0);
+  if Result then
+  begin
+    Result := False;
+    if Self.Active and not Self.IsEmpty then
+    begin
+      Self.DisableControls;
+      try
+        Bkm := Self.GetBookmark;
+        try
+          if not Self.Locate('ID', Id, []) then
+            Self.GotoBookmark(Bkm)
+          else
+            Result := True;
+        finally
+          Self.FreeBookmark(Bkm);
+        end;
+      finally
+        Self.EnableControls;
+      end;
+    end;
+  end;
 end;
 
 procedure TDataSetHelper.Reopen;
