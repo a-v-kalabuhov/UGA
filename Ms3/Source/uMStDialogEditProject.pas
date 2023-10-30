@@ -9,7 +9,7 @@ uses
   EzCmdLine, EzCtrls, EzSystem, EzEntities, EzLib, EzBase,
   uDBGrid,
   uFileUtils, uCommonUtils, uCK36,
-  uMStModuleApp, uMStKernelIBX, uMStConsts;
+  uMStModuleApp, uMStKernelIBX, uMStConsts, ActnList;
 
 type
   TmstEditProjectDialog = class(TForm)
@@ -47,18 +47,24 @@ type
     ZoomOut: TSpeedButton;
     ZoomAll: TSpeedButton;
     lCoords: TLabel;
-    Label8: TLabel;
-    edDiam: TEdit;
-    Label9: TLabel;
-    edVoltage: TEdit;
-    Label10: TLabel;
-    mInfo: TMemo;
     chbCK36: TCheckBox;
     dsCoordsX: TFloatField;
     dsCoordsY: TFloatField;
     dsCoordsZ: TFloatField;
-    lHDiff: TLabel;
     dsCoordsDelta: TFloatField;
+    gbObjectSemantic: TGroupBox;
+    lSemDiam: TLabel;
+    edDiam: TEdit;
+    lSemVoltage: TLabel;
+    edVoltage: TEdit;
+    lHDiff: TLabel;
+    lSemInfo: TLabel;
+    mInfo: TMemo;
+    btnSemCopy: TButton;
+    btnSemPaste: TButton;
+    ActionList1: TActionList;
+    acSemCopy: TAction;
+    acSemPaste: TAction;
     procedure grdCoordsExit(Sender: TObject);
     procedure cbLayersChange(Sender: TObject);
     procedure ListBoxLinesClick(Sender: TObject);
@@ -88,6 +94,17 @@ type
     procedure DataSource1UpdateData(Sender: TObject);
     procedure dsCoordsAfterScroll(DataSet: TDataSet);
     procedure grdCoordsKeyPress(Sender: TObject; var Key: Char);
+    procedure acSemCopyUpdate(Sender: TObject);
+    procedure acSemCopyExecute(Sender: TObject);
+    procedure acSemPasteExecute(Sender: TObject);
+    procedure acSemPasteUpdate(Sender: TObject);
+    procedure acSemPasteHint(var HintStr: string; var CanShow: Boolean);
+  private
+    class var FSemanticBuffer: record
+      Diam: String;
+      Voltage: String;
+      Info: String;
+    end;
   private
     FTempProject: TmstProject;
     FOriginal: TmstProject;
@@ -129,6 +146,54 @@ const
   SQL_GET_ORG_NAME = 'SELECT NAME FROM LICENSED_ORGS WHERE ID=:ID';
 
 { TmstEditProjectDialog }
+
+procedure TmstEditProjectDialog.acSemCopyExecute(Sender: TObject);
+begin
+  FSemanticBuffer.Diam := edDiam.Text;
+  FSemanticBuffer.Voltage := edVoltage.Text;
+  FSemanticBuffer.Info := mInfo.Text;
+end;
+
+procedure TmstEditProjectDialog.acSemCopyUpdate(Sender: TObject);
+begin
+  acSemCopy.Enabled := (edDiam.Text <> '') or (edVoltage.Text <> '') or (mInfo.Lines.DelimitedText <> '');
+end;
+
+procedure TmstEditProjectDialog.acSemPasteExecute(Sender: TObject);
+begin
+  edDiam.Text := FSemanticBuffer.Diam;
+  edVoltage.Text := FSemanticBuffer.Voltage;
+  mInfo.Text := FSemanticBuffer.Info;
+end;
+
+procedure TmstEditProjectDialog.acSemPasteHint(var HintStr: string; var CanShow: Boolean);
+var
+  S: string;
+begin
+  S := 'Применить к объекту семантику из буфера';
+  if
+      (FSemanticBuffer.Diam <> '') or
+      (FSemanticBuffer.Voltage <> '') or
+      (FSemanticBuffer.Info <> '')
+  then
+  begin
+    S := S + sLineBreak + '=====' + sLineBreak;
+    S := S + 'Диаметр: ' + FSemanticBuffer.Diam + sLineBreak;
+    S := S + 'Напряжение: ' + FSemanticBuffer.Voltage + sLineBreak;
+    S := S + 'Инфо: ' + sLineBreak + FSemanticBuffer.Info;
+  end;
+  HintStr := S;
+end;
+
+procedure TmstEditProjectDialog.acSemPasteUpdate(Sender: TObject);
+begin
+  acSemPaste.Enabled := not edDiam.ReadOnly and edDiam.Enabled and edDiam.Visible and
+    (
+      (FSemanticBuffer.Diam <> '') or
+      (FSemanticBuffer.Voltage <> '') or
+      (FSemanticBuffer.Info <> '')
+    );
+end;
 
 procedure TmstEditProjectDialog.BlocksToGIS;
 var

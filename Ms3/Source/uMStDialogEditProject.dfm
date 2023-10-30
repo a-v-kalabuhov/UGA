@@ -45,8 +45,8 @@ object mstEditProjectDialog: TmstEditProjectDialog
     Caption = #1044#1072#1090#1072':'
   end
   object Label4: TLabel
-    Left = 8
-    Top = 119
+    Left = 16
+    Top = 123
     Width = 62
     Height = 13
     Anchors = [akLeft, akBottom]
@@ -86,7 +86,7 @@ object mstEditProjectDialog: TmstEditProjectDialog
   object SpeedButton1: TSpeedButton
     Tag = -1
     Left = 398
-    Top = 133
+    Top = 118
     Width = 23
     Height = 23
     Flat = True
@@ -106,7 +106,7 @@ object mstEditProjectDialog: TmstEditProjectDialog
   object BtnHand: TSpeedButton
     Tag = -1
     Left = 425
-    Top = 133
+    Top = 118
     Width = 22
     Height = 23
     Hint = #1055#1077#1088#1077#1090#1072#1089#1082#1080#1074#1072#1085#1080#1077' '#1088#1091#1082#1086#1081
@@ -127,7 +127,7 @@ object mstEditProjectDialog: TmstEditProjectDialog
   object ZoomWBtn: TSpeedButton
     Tag = -1
     Left = 453
-    Top = 133
+    Top = 118
     Width = 23
     Height = 23
     Hint = #1047#1091#1084
@@ -152,7 +152,7 @@ object mstEditProjectDialog: TmstEditProjectDialog
   object ZoomIn: TSpeedButton
     Tag = -1
     Left = 482
-    Top = 133
+    Top = 118
     Width = 22
     Height = 23
     Hint = #1059#1074#1077#1083#1080#1095#1080#1090#1100
@@ -177,7 +177,7 @@ object mstEditProjectDialog: TmstEditProjectDialog
   object ZoomOut: TSpeedButton
     Tag = -1
     Left = 510
-    Top = 133
+    Top = 118
     Width = 23
     Height = 23
     Hint = #1059#1084#1077#1085#1100#1096#1080#1090#1100
@@ -202,7 +202,7 @@ object mstEditProjectDialog: TmstEditProjectDialog
   object ZoomAll: TSpeedButton
     Tag = -1
     Left = 539
-    Top = 133
+    Top = 118
     Width = 23
     Height = 23
     Hint = 'Zoom extents'
@@ -242,41 +242,12 @@ object mstEditProjectDialog: TmstEditProjectDialog
   end
   object lCoords: TLabel
     Left = 1065
-    Top = 146
+    Top = 129
     Width = 36
     Height = 13
     Alignment = taRightJustify
     Caption = 'lCoords'
     Visible = False
-  end
-  object Label8: TLabel
-    Left = 72
-    Top = 536
-    Width = 48
-    Height = 13
-    Caption = #1044#1080#1072#1084#1077#1090#1088':'
-  end
-  object Label9: TLabel
-    Left = 224
-    Top = 535
-    Width = 67
-    Height = 13
-    Caption = #1053#1072#1087#1088#1103#1078#1077#1085#1080#1077':'
-  end
-  object Label10: TLabel
-    Left = 69
-    Top = 592
-    Width = 31
-    Height = 13
-    Caption = #1048#1085#1092#1086':'
-  end
-  object lHDiff: TLabel
-    Left = 329
-    Top = 592
-    Width = 31
-    Height = 13
-    Alignment = taRightJustify
-    Caption = #1059#1082#1083#1086#1085
   end
   object edAddress: TEdit
     Left = 84
@@ -307,11 +278,11 @@ object mstEditProjectDialog: TmstEditProjectDialog
   end
   object EzDrawBox1: TEzDrawBox
     Left = 390
-    Top = 162
+    Top = 147
     Width = 711
     Height = 559
     UseThread = False
-    TabOrder = 19
+    TabOrder = 16
     OnMouseMove = EzDrawBox1MouseMove
     GIS = EzGIS1
     Anchors = [akLeft, akRight, akBottom]
@@ -332,8 +303,8 @@ object mstEditProjectDialog: TmstEditProjectDialog
     OnAfterSelect = EzDrawBox1AfterSelect
   end
   object cbLayers: TComboBox
-    Left = 8
-    Top = 135
+    Left = 84
+    Top = 120
     Width = 286
     Height = 21
     Style = csDropDownList
@@ -344,7 +315,7 @@ object mstEditProjectDialog: TmstEditProjectDialog
   end
   object ListBoxLines: TListBox
     Left = 8
-    Top = 162
+    Top = 147
     Width = 55
     Height = 559
     Anchors = [akLeft, akBottom]
@@ -355,9 +326,9 @@ object mstEditProjectDialog: TmstEditProjectDialog
   end
   object grdCoords: TkaDBGrid
     Left = 70
-    Top = 162
+    Top = 147
     Width = 314
-    Height = 367
+    Height = 360
     Anchors = [akLeft, akBottom]
     DataSource = DataSource1
     TabOrder = 12
@@ -415,7 +386,7 @@ object mstEditProjectDialog: TmstEditProjectDialog
     Font.Style = []
     Color = clWhite
     Align = alBottom
-    TabOrder = 18
+    TabOrder = 15
     TabStop = False
     Visible = False
   end
@@ -425,7 +396,7 @@ object mstEditProjectDialog: TmstEditProjectDialog
     Width = 75
     Height = 25
     Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
-    TabOrder = 16
+    TabOrder = 13
     OnClick = btnOKClick
   end
   object btnCancel: TButton
@@ -436,7 +407,7 @@ object mstEditProjectDialog: TmstEditProjectDialog
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 17
+    TabOrder = 14
   end
   object chbConfirmed: TCheckBox
     Left = 403
@@ -500,38 +471,6 @@ object mstEditProjectDialog: TmstEditProjectDialog
     TabOrder = 9
     OnClick = btnExecutorClick
   end
-  object edDiam: TEdit
-    Left = 69
-    Top = 552
-    Width = 149
-    Height = 21
-    Enabled = False
-    MaxLength = 50
-    ParentColor = True
-    TabOrder = 13
-  end
-  object edVoltage: TEdit
-    Left = 224
-    Top = 552
-    Width = 160
-    Height = 21
-    Enabled = False
-    MaxLength = 50
-    ParentColor = True
-    TabOrder = 14
-  end
-  object mInfo: TMemo
-    Left = 69
-    Top = 608
-    Width = 315
-    Height = 113
-    Enabled = False
-    Lines.Strings = (
-      'mInfo')
-    ParentColor = True
-    ScrollBars = ssVertical
-    TabOrder = 15
-  end
   object chbCK36: TCheckBox
     Left = 327
     Top = 34
@@ -540,6 +479,95 @@ object mstEditProjectDialog: TmstEditProjectDialog
     Alignment = taLeftJustify
     Caption = #1052#1057#1050'36'
     TabOrder = 3
+  end
+  object gbObjectSemantic: TGroupBox
+    Left = 69
+    Top = 513
+    Width = 315
+    Height = 194
+    Caption = #1057#1077#1084#1072#1085#1090#1080#1082#1072' '#1086#1073#1098#1077#1082#1090#1072
+    TabOrder = 17
+    object lSemDiam: TLabel
+      Left = 7
+      Top = 23
+      Width = 48
+      Height = 13
+      Caption = #1044#1080#1072#1084#1077#1090#1088':'
+    end
+    object lSemVoltage: TLabel
+      Left = 158
+      Top = 23
+      Width = 47
+      Height = 13
+      Caption = #1053#1072#1087#1088#1103#1078'.:'
+    end
+    object lHDiff: TLabel
+      Left = 268
+      Top = 45
+      Width = 31
+      Height = 13
+      Alignment = taRightJustify
+      Caption = #1059#1082#1083#1086#1085
+    end
+    object lSemInfo: TLabel
+      Left = 7
+      Top = 46
+      Width = 31
+      Height = 14
+      Caption = #1048#1085#1092#1086':'
+    end
+    object edDiam: TEdit
+      Left = 60
+      Top = 20
+      Width = 92
+      Height = 21
+      Enabled = False
+      MaxLength = 50
+      ParentColor = True
+      TabOrder = 0
+    end
+    object edVoltage: TEdit
+      Left = 210
+      Top = 20
+      Width = 92
+      Height = 21
+      Enabled = False
+      MaxLength = 50
+      ParentColor = True
+      TabOrder = 1
+    end
+    object mInfo: TMemo
+      Left = 7
+      Top = 61
+      Width = 295
+      Height = 90
+      Enabled = False
+      Lines.Strings = (
+        'mInfo')
+      ParentColor = True
+      ScrollBars = ssVertical
+      TabOrder = 2
+    end
+    object btnSemCopy: TButton
+      Left = 15
+      Top = 157
+      Width = 75
+      Height = 25
+      Action = acSemCopy
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+    end
+    object btnSemPaste: TButton
+      Left = 96
+      Top = 157
+      Width = 75
+      Height = 25
+      Action = acSemPaste
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 4
+    end
   end
   object dsCoords: TRxMemoryData
     FieldDefs = <
@@ -592,5 +620,22 @@ object mstEditProjectDialog: TmstEditProjectDialog
     LayersSubdir = 'C:\Program Files\CodeGear\RAD Studio\5.0\bin\'
     OnBeforePaintEntity = EzGIS1BeforePaintEntity
     Left = 896
+  end
+  object ActionList1: TActionList
+    Left = 936
+    Top = 56
+    object acSemCopy: TAction
+      Caption = #1047#1072#1087#1086#1084#1085#1080#1090#1100
+      Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1089#1077#1084#1085#1072#1090#1080#1082#1091' '#1074' '#1073#1091#1092#1077#1088#1077
+      OnExecute = acSemCopyExecute
+      OnUpdate = acSemCopyUpdate
+    end
+    object acSemPaste: TAction
+      Caption = #1042#1089#1090#1072#1074#1080#1090#1100
+      Hint = #1055#1088#1080#1084#1077#1085#1080#1090#1100' '#1082' '#1086#1073#1098#1077#1082#1090#1091' '#13#10#1089#1077#1084#1072#1085#1090#1080#1082#1091' '#1080#1079' '#1073#1091#1092#1077#1088#1072
+      OnExecute = acSemPasteExecute
+      OnHint = acSemPasteHint
+      OnUpdate = acSemPasteUpdate
+    end
   end
 end

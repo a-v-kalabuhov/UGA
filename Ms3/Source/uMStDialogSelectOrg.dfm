@@ -109,7 +109,7 @@ object mstSelectOrgDialog: TmstSelectOrgDialog
   end
   object IBQuery1: TIBQuery
     Database = MStIBXMapMngr.dbKis
-    Transaction = IBTransaction1
+    Transaction = ibxSelectOrgTransaction
     SQL.Strings = (
       'SELECT * FROM LICENSED_ORGS'
       'ORDER BY NAME')
@@ -150,8 +150,9 @@ object mstSelectOrgDialog: TmstSelectOrgDialog
     Left = 488
     Top = 208
   end
-  object IBTransaction1: TIBTransaction
+  object ibxSelectOrgTransaction: TIBTransaction
     DefaultDatabase = MStIBXMapMngr.dbKis
+    AutoStopAction = saCommit
     Left = 440
     Top = 176
   end

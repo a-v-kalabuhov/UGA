@@ -16,7 +16,7 @@ type
     Button2: TButton;
     IBQuery1: TIBQuery;
     DataSource1: TDataSource;
-    IBTransaction1: TIBTransaction;
+    ibxSelectOrgTransaction: TIBTransaction;
     IBQuery1ID: TIntegerField;
     IBQuery1NAME: TIBStringField;
     IBQuery1ADDRESS: TIBStringField;
@@ -91,6 +91,8 @@ begin
     end;
   finally
     IBQuery1.Active := False;
+    if ibxSelectOrgTransaction.Active then
+      ibxSelectOrgTransaction.Commit;
   end;
 end;
 
