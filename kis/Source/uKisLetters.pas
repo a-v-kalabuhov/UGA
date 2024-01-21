@@ -2037,8 +2037,11 @@ procedure TKisLetter.PassingsBeforeDelete(DataSet: TDataSet);
 begin
   if DataSet.IsEmpty then
     Abort;
-  if MessageBox(EntityEditor.Handle, PChar(S_CONFIRM_DELETE_PASSING), PChar(S_CONFIRM),
-    MB_YESNO + MB_ICONQUESTION) <> ID_YES then
+  if MessageBox(EntityEditor.Handle,
+        PChar(S_CONFIRM_DELETE_PASSING),
+        PChar(S_CONFIRM),
+        MB_YESNO + MB_ICONQUESTION) <> ID_YES
+  then
     Abort;
 end;
 
@@ -2046,9 +2049,12 @@ procedure TKisLetter.VisasBeforeDelete(DataSet: TDataSet);
 begin
   if Visas.IsEmpty then
     Abort;
-  if MessageBox(EntityEditor.Handle, PChar(S_CONFIRM_DELETE_VISA), PChar(S_CONFIRM),
-    MB_YESNO + MB_ICONQUESTION) <> ID_YES then
-        Abort;
+  if MessageBox(EntityEditor.Handle,
+        PChar(S_CONFIRM_DELETE_VISA),
+        PChar(S_CONFIRM),
+        MB_YESNO + MB_ICONQUESTION) <> ID_YES
+  then
+    Abort;
 end;
 
 function TKisLetter.GetHasCandidate: Boolean;
@@ -2616,22 +2622,6 @@ begin
   Result := Format(Result, [IDList]);
 end;
 
-function TLetterPassingCtrlr.GetDeleteQueryText: String;
-var
-  IDList: String;
-  I: Integer;
-begin
-  Result := 'DELETE FROM LETTER_PASSINGS WHERE ID IN (%s)';
-  IDList := '';
-  for I := 0 to Pred(DeletedCount) do
-  begin
-    if I > 0 then
-      IDList := IDList + ',';
-    IDList := IDList + IntToStr(DeletedElements[I].ID);
-  end;
-  Result := Format(Result, [IDList]);
-end;
-
 function TLetterOfficeDocController.GetDeleteQueryText: String;
 var
   IDList: String;
@@ -3093,8 +3083,23 @@ begin
   end;
 end;
 
-function TLetterPassingCtrlr.GetFieldData(Index: Integer; Field: TField;
-  out Data): Boolean;
+function TLetterPassingCtrlr.GetDeleteQueryText: String;
+var
+  IDList: String;
+  I: Integer;
+begin
+  Result := 'DELETE FROM LETTER_PASSINGS WHERE ID IN (%s)';
+  IDList := '';
+  for I := 0 to Pred(DeletedCount) do
+  begin
+    if I > 0 then
+      IDList := IDList + ',';
+    IDList := IDList + IntToStr(DeletedElements[I].ID);
+  end;
+  Result := Format(Result, [IDList]);
+end;
+
+function TLetterPassingCtrlr.GetFieldData(Index: Integer; Field: TField; out Data): Boolean;
 var
   Ent: TKisLetterPassing;
 begin
@@ -3119,8 +3124,7 @@ begin
   end;
 end;
 
-procedure TLetterPassingCtrlr.SetFieldData(Index: Integer; Field: TField;
-  var Data);
+procedure TLetterPassingCtrlr.SetFieldData(Index: Integer; Field: TField; var Data);
 var
   Ent: TKisLetterPassing;
 begin
@@ -3505,8 +3509,7 @@ begin
   end;
 end;
 
-function TKisLetterMngr.GetEntity(EntityID: Integer;
-  EntityKind: TKisEntities = keDefault): TKisEntity;
+function TKisLetterMngr.GetEntity(EntityID: Integer; EntityKind: TKisEntities = keDefault): TKisEntity;
 var
   S: String;
   DataSet: TDataSet;

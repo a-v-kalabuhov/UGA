@@ -3,24 +3,25 @@ inherited KisMapHistoryEditor: TKisMapHistoryEditor
   Top = 166
   BorderStyle = bsSizeable
   Caption = 'KisMapHistoryEditor'
-  ClientHeight = 563
-  ClientWidth = 831
+  ClientHeight = 606
+  ClientWidth = 899
   Constraints.MinHeight = 597
   Constraints.MinWidth = 839
   Position = poDesktopCenter
   WindowState = wsMaximized
   OnResize = FormResize
   OnShow = FormShow
-  ExplicitWidth = 839
-  ExplicitHeight = 597
+  ExplicitWidth = 915
+  ExplicitHeight = 644
   PixelsPerInch = 96
   TextHeight = 13
   inherited HintWarnLabel: TLabel
     Left = 25
-    Top = 542
+    Top = 578
+    Margins.Bottom = 0
     Anchors = [akLeft, akBottom]
     ExplicitLeft = 25
-    ExplicitTop = 544
+    ExplicitTop = 578
   end
   object Label1: TLabel [1]
     Left = 8
@@ -40,7 +41,7 @@ inherited KisMapHistoryEditor: TKisMapHistoryEditor
   end
   object Label13: TLabel [3]
     Left = 8
-    Top = 50
+    Top = 92
     Width = 146
     Height = 13
     Caption = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100' '#1087#1086#1083#1077#1074#1099#1093' '#1088#1072#1073#1086#1090
@@ -48,7 +49,7 @@ inherited KisMapHistoryEditor: TKisMapHistoryEditor
   end
   object Label14: TLabel [4]
     Left = 8
-    Top = 93
+    Top = 135
     Width = 160
     Height = 13
     Caption = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100' '#1095#1077#1088#1090#1077#1078#1085#1099#1093' '#1088#1072#1073#1086#1090
@@ -56,7 +57,7 @@ inherited KisMapHistoryEditor: TKisMapHistoryEditor
   end
   object Label15: TLabel [5]
     Left = 8
-    Top = 134
+    Top = 176
     Width = 140
     Height = 13
     Caption = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077' '#1086#1088#1075#1072#1085#1080#1079#1072#1094#1080#1080
@@ -72,30 +73,46 @@ inherited KisMapHistoryEditor: TKisMapHistoryEditor
   end
   object Label7: TLabel [7]
     Left = 8
-    Top = 173
+    Top = 215
     Width = 31
     Height = 13
     Caption = #1040#1076#1088#1077#1089
     FocusControl = edMensMapping
   end
+  object lOrg: TLabel [8]
+    Left = 8
+    Top = 51
+    Width = 157
+    Height = 13
+    Caption = #1051#1080#1094#1077#1085#1079#1080#1088#1086#1074#1072#1085#1085#1072#1103' '#1086#1088#1075#1072#1085#1080#1079#1072#1094#1080#1103
+    FocusControl = edOrg
+  end
+  object lOrgId: TLabel [9]
+    Left = 592
+    Top = 578
+    Width = 30
+    Height = 13
+    Caption = 'lOrgId'
+    Visible = False
+  end
   inherited btnOk: TButton
-    Left = 514
-    Top = 530
-    Anchors = [akLeft, akBottom]
+    Left = 734
+    Top = 573
+    Anchors = [akRight, akBottom]
     Default = True
-    TabOrder = 8
-    ExplicitLeft = 514
-    ExplicitTop = 530
+    TabOrder = 10
+    ExplicitLeft = 734
+    ExplicitTop = 573
   end
   inherited btnCancel: TButton
-    Left = 595
-    Top = 530
-    Anchors = [akLeft, akBottom]
-    TabOrder = 9
-    ExplicitLeft = 595
-    ExplicitTop = 530
+    Left = 815
+    Top = 573
+    Anchors = [akRight, akBottom]
+    TabOrder = 11
+    ExplicitLeft = 815
+    ExplicitTop = 573
   end
-  object edOrderNumber: TEdit [10]
+  object edOrderNumber: TEdit [12]
     Left = 8
     Top = 24
     Width = 95
@@ -105,7 +122,7 @@ inherited KisMapHistoryEditor: TKisMapHistoryEditor
     TabOrder = 0
     Text = 'edOrderNumber'
   end
-  object edDateOfWorks: TEdit [11]
+  object edDateOfWorks: TEdit [13]
     Left = 117
     Top = 24
     Width = 101
@@ -114,13 +131,13 @@ inherited KisMapHistoryEditor: TKisMapHistoryEditor
     MaxLength = 10
     TabOrder = 1
   end
-  object gbArea: TGroupBox [12]
+  object gbArea: TGroupBox [14]
     Left = 8
-    Top = 216
+    Top = 258
     Width = 329
     Height = 310
     Caption = #1055#1083#1086#1097#1072#1076#1100' '#1089#1098#1077#1084#1082#1080
-    TabOrder = 6
+    TabOrder = 8
     object Label9: TLabel
       Left = 8
       Top = 137
@@ -244,37 +261,37 @@ inherited KisMapHistoryEditor: TKisMapHistoryEditor
       Text = 'edTacheomMapping'
     end
   end
-  object edWorksExecutor: TEdit [13]
+  object edWorksExecutor: TEdit [15]
     Left = 8
-    Top = 64
+    Top = 106
     Width = 329
     Height = 21
     Color = clInfoBk
     MaxLength = 300
-    TabOrder = 3
+    TabOrder = 5
     Text = 'edWorksExecutor'
   end
-  object edDraftWorksExecutor: TEdit [14]
-    Left = 8
-    Top = 107
-    Width = 329
-    Height = 21
-    Color = clInfoBk
-    MaxLength = 300
-    TabOrder = 4
-    Text = 'edDraftWorksExecutor'
-  end
-  object edChief: TEdit [15]
+  object edDraftWorksExecutor: TEdit [16]
     Left = 8
     Top = 149
     Width = 329
     Height = 21
     Color = clInfoBk
     MaxLength = 300
-    TabOrder = 5
+    TabOrder = 6
+    Text = 'edDraftWorksExecutor'
+  end
+  object edChief: TEdit [17]
+    Left = 8
+    Top = 191
+    Width = 329
+    Height = 21
+    Color = clInfoBk
+    MaxLength = 300
+    TabOrder = 7
     Text = 'edChief'
   end
-  object edDateOfAccept: TEdit [16]
+  object edDateOfAccept: TEdit [18]
     Left = 233
     Top = 24
     Width = 104
@@ -283,39 +300,57 @@ inherited KisMapHistoryEditor: TKisMapHistoryEditor
     MaxLength = 10
     TabOrder = 2
   end
-  object gbGraphics: TGroupBox [17]
+  object gbGraphics: TGroupBox [19]
     Left = 343
     Top = 8
-    Width = 484
-    Height = 516
+    Width = 552
+    Height = 560
     Anchors = [akLeft, akTop, akRight, akBottom]
     Caption = #1043#1088#1072#1085#1080#1094#1099' '#1074#1099#1087#1086#1083#1085#1077#1085#1085#1099#1093' '#1088#1072#1073#1086#1090
-    TabOrder = 7
+    TabOrder = 9
     object imgSurvey: TImage
-      Left = 8
+      Left = 9
       Top = 16
-      Width = 468
-      Height = 493
+      Width = 535
+      Height = 535
       Stretch = True
     end
   end
-  object edMensMapping: TEdit [18]
+  object edMensMapping: TEdit [20]
     Left = 8
-    Top = 188
+    Top = 230
     Width = 329
     Height = 21
     Color = clInfoBk
     MaxLength = 1000
-    TabOrder = 10
+    TabOrder = 12
     Text = 'edMensMapping'
   end
-  object btnSetMap: TButton [19]
+  object btnSetMap: TButton [21]
     Left = 343
-    Top = 530
+    Top = 573
     Width = 137
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1075#1088#1072#1085#1080#1094#1099
-    TabOrder = 11
+    TabOrder = 13
+  end
+  object edOrg: TEdit [22]
+    Left = 8
+    Top = 65
+    Width = 248
+    Height = 21
+    ReadOnly = True
+    TabOrder = 3
+    Text = 'edOrg'
+    OnChange = edOrgChange
+  end
+  object btnOrg: TButton [23]
+    Left = 262
+    Top = 63
+    Width = 75
+    Height = 25
+    Caption = #1042#1099#1073#1088#1072#1090#1100
+    TabOrder = 4
   end
 end

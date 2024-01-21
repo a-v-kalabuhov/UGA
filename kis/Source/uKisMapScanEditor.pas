@@ -53,7 +53,7 @@ type
     OpenPictureDialog1: TOpenPictureDialog;
     tabHistory: TTabSheet;
     Panel3: TPanel;
-    dbgHistoryList: TDBGrid;
+    dbgHistoryList: TkaDBGrid;
     btnAddHistory: TButton;
     btnDeleteHistory: TButton;
     btnEditHistory: TButton;
@@ -135,6 +135,8 @@ type
     procedure acFormularToWordExecute(Sender: TObject);
     procedure acViewMapHistoryExecute(Sender: TObject);
     procedure btnPrintMapClick(Sender: TObject);
+    procedure dbgHistoryListCellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor;
+      State: TGridDrawState; var FontStyle: TFontStyles);
   private
     FUpdatingSelfOptions: Boolean;
     FHistoryImageChanged: Boolean;
@@ -728,6 +730,25 @@ begin
   inherited;
   if dbgGivenMapList.DataSource.DataSet.State in [dsEdit, dsInsert] then
     dbgGivenMapList.DataSource.DataSet.Post;
+end;
+
+procedure TKisMapScanEditor.dbgHistoryListCellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor;
+  State: TGridDrawState; var FontStyle: TFontStyles);
+var
+  Ds: TDataSet;
+  Fld: TField;
+begin
+  inherited;
+  if not (gdSelected in State) and not (gdFixed in State) then
+  begin
+    Ds := dbgHistoryList.DataSource.DataSet;
+    Fld := Ds.FindField(SF_SRO_ID);
+    if Assigned(Fld) then
+    begin
+      if Fld.AsInteger > 0 then
+        Background := clMoneyGreen;
+    end;
+  end;
 end;
 
 procedure TKisMapScanEditor.dbgHistoryListDblClick(Sender: TObject);

@@ -67,6 +67,7 @@ type
     FGraphicsEditor: TKisMap500Graphics;
     FFiguresState: TkisFiguresState;
     FImage: TBitmap;
+    FLicensedOrgId: Integer;
     procedure SetOrderNumber(const Value: String);
     procedure SetDateOfWorks(const Value: String);
     procedure SetWorksExecutor(const Value: String);
@@ -88,6 +89,7 @@ type
     procedure UpdateEditorBySurveyImage;
     procedure UpdateGraphEditorByState;
     procedure CopyFigures(aFiguresList: TObjectList);
+    procedure SetLicensedOrgId(const Value: Integer);
   protected
     procedure SetID(const Value: Integer); override;
     function CreateEditor: TKisEntityEditor; override;
@@ -109,9 +111,9 @@ type
     procedure EndDrawing(Sender: TObject);
     procedure ClearBitmap(Sender: TObject);
     procedure Draw(Canvas: TCanvas; const aExtent: TRect);
-    procedure DrawCrosses(Canvas: TCanvas;
-      const Top, Left, Width, Height: Integer);
+    procedure DrawCrosses(Canvas: TCanvas; const Top, Left, Width, Height: Integer);
     procedure UpdateImage(Sender: TObject);
+    procedure UpdateOrgControls();
   public
     constructor Create(Mngr: TKisMngr); override;
     destructor Destroy; override;
@@ -142,6 +144,7 @@ type
     property Chief: String read FChief write SetChief;
     property DateOfAccept: String read FDateOfAccept write SetDateOfAccept;
     property GraphicsEditor: TKisMap500Graphics read FGraphicsEditor;
+    property LicensedOrgId: Integer read FLicensedOrgId write SetLicensedOrgId;
     //
     property Image: TBitmap read FImage write FImage;
   end;
@@ -390,15 +393,15 @@ begin
     end;
     if (Length(Trim(edWorksExecutor.Text)) = 0) then
     begin
-      MessageBox(Handle, 'Проверьте исполнителя полевых работ!', PChar(S_WARN), MB_OK + MB_ICONWARNING);
-      edWorksExecutor.SetFocus;
-      Exit;
+      //MessageBox(Handle, 'Проверьте исполнителя полевых работ!', PChar(S_WARN), MB_OK + MB_ICONWARNING);
+      //edWorksExecutor.SetFocus;
+      //Exit;
     end;
     if (Length(Trim(edDraftWorksExecutor.Text)) = 0) then
     begin
-      MessageBox(Handle, 'Проверьте исполнителя чертежных работ!', PChar(S_WARN), MB_OK + MB_ICONWARNING);
-      edDraftWorksExecutor.SetFocus;
-      Exit;
+      //MessageBox(Handle, 'Проверьте исполнителя чертежных работ!', PChar(S_WARN), MB_OK + MB_ICONWARNING);
+      //edDraftWorksExecutor.SetFocus;
+      //Exit;
     end;
     if (Length(Trim(edChief.Text)) = 0) then
     begin
@@ -433,9 +436,9 @@ begin
 }
     if (Length(Trim(edCurrentChangesMapping.Text)) = 0) then
     begin
-      MessageBox(Handle, 'Проверьте обследование и съемку текущих изменений!', PChar(S_WARN), MB_OK + MB_ICONWARNING);
-      edCurrentChangesMapping.SetFocus;
-      Exit;
+      //MessageBox(Handle, 'Проверьте обследование и съемку текущих изменений!', PChar(S_WARN), MB_OK + MB_ICONWARNING);
+      //edCurrentChangesMapping.SetFocus;
+      //Exit;
     end;
 {
     if (Length(Trim(edNewlyBuildingMapping.Text)) = 0) then begin
@@ -446,13 +449,13 @@ begin
 }    
     if (Length(Trim(edEnginNetMapping.Text)) = 0) then
     begin
-      MessageBox(Handle, 'Проверьте исполнительную съемку инженерных сетей!', PChar(S_WARN), MB_OK + MB_ICONWARNING);
-      edEnginNetMapping.SetFocus;
-      Exit;
+      //MessageBox(Handle, 'Проверьте исполнительную съемку инженерных сетей!', PChar(S_WARN), MB_OK + MB_ICONWARNING);
+      //edEnginNetMapping.SetFocus;
+      //Exit;
     end;
     if (Length(Trim(edTotalSum.Text)) = 0) then
     begin
-      MessageBox(Handle, 'Проверьте общую сумму!', PChar(S_WARN), MB_OK + MB_ICONWARNING);
+      MessageBox(Handle, 'Проверьте общую площадь!', PChar(S_WARN), MB_OK + MB_ICONWARNING);
       edTotalSum.SetFocus;
       Exit;
     end;
@@ -485,6 +488,7 @@ begin
     Self.FDraftWorksExecutor := FDraftWorksExecutor;
     Self.FChief := FChief;
     Self.FDateOfAccept := FDateOfAccept;
+    Self.FLicensedOrgId := FLicensedOrgId;
     Self.CopyFigures(FFigures);
   end;
 end;
@@ -643,6 +647,8 @@ begin
     if Assigned(FImage) then
       imgSurvey.Picture.Bitmap := FImage;
     btnSetMap.Enabled := not Assigned(FImage);
+    edOrg.Text := '';
+    OrgName := '';
   end;
 end;
 
@@ -685,6 +691,7 @@ begin
      btnSetMap.OnClick := EditMap;
      OnUpdateImage := UpdateImage;
      UpdateEditorBySurveyImage;
+     UpdateOrgControls();
   end;
 end;
 
@@ -992,6 +999,7 @@ constructor TKisMapHistoryElement.Create(Mngr: TKisMngr);
 begin
   inherited;
   FFigures := TObjectList.Create;
+  FLicensedOrgId := -1;
 end;
 
 destructor TKisMapHistoryElement.Destroy;
@@ -1030,6 +1038,16 @@ begin
   UpdateEditorBySurveyImage;
 end;
 
+procedure TKisMapHistoryElement.UpdateOrgControls;
+begin
+  with TKisMapHistoryEditor(EntityEditor) do
+  begin
+    edOrg.ReadOnly := True;
+    edOrg.Color := Color;
+    btnOrg.Enabled := not Self.ReadOnly and Assigned(btnOrg.OnClick);
+  end;
+end;
+
 procedure TKisMapHistoryElement.SetID(const Value: Integer);
 var
   I: Integer;
@@ -1037,6 +1055,15 @@ begin
   inherited;
   for I := 0 to Pred(FFigures.Count) do
     Figures[I].HistoryElementId := Value;
+end;
+
+procedure TKisMapHistoryElement.SetLicensedOrgId(const Value: Integer);
+begin
+  if FLicensedOrgId <> Value then
+  begin
+    FLicensedOrgId := Value;
+    Modified := True;
+  end;
 end;
 
 end.

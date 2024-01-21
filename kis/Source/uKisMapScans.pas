@@ -29,8 +29,9 @@ uses
   // Common
   uGC, uIBXUtils, uDataSet, uVCLUtils, uDBGrid, uGeoUtils, uFileUtils,
   // Project
-  uKisClasses, uKisSQLClasses, uKisEntityEditor, uKisUtils, uKisFileReport, uKisMapScanGeometry,
-  uKisGivenScanEditor, uKisMapHistoryClasses, uKisScanOrders, uKisTakeBackFiles, uMapScanFiles, uKisGivenScanEditor2;
+  uKisClasses, uKisSQLClasses, uKisEntityEditor, uKisUtils, uKisFileReport, uKisMapScanGeometry, 
+  uKisGivenScanEditor, uKisMapHistoryClasses, uKisScanOrders, uKisTakeBackFiles, uMapScanFiles,
+  uKisGivenScanEditor2, uKisMapHistoryEditor;
 
 type
   TKisMapScansMngr = class;
@@ -39,10 +40,17 @@ type
   private
     FScanId: Integer;
     FFileOpId: string;
+    FSRO_Id: Integer;
     procedure SetScanId(const Value: Integer);
     procedure SetFileOpId(const Value: string);
+  strict private
+    procedure SelectOrgButtonClick(Sender: TObject);
   protected
     function CreateFigureInstance: TKisMapHistoryFigure; override;
+    procedure LoadDataIntoEditor(AEditor: TKisEntityEditor); override;
+    procedure ReadDataFromEditor(AEditor: TKisEntityEditor); override;
+    procedure PrepareEditor(AEditor: TKisEntityEditor); override;
+    procedure UnprepareEditor(AEditor: TKisEntityEditor); override;
   public
     class function EntityName: String; override;
     procedure Copy(Source: TKisEntity); override;
@@ -50,6 +58,8 @@ type
     //
     property ScanId: Integer read FScanId write SetScanId;
     property FileOpId: string read FFileOpId write SetFileOpId;
+    //
+    property SRO_Id: Integer read FSRO_Id write FSRO_Id;
   end;
 
   TKisMapScanHistoryFigure = class(TKisMapHistoryFigure)
@@ -260,6 +270,8 @@ type
     procedure LoadDataIntoEditor(Editor: TKisEntityEditor); override;
     procedure ReadDataFromEditor(Editor: TKisEntityEditor); override;
     function CheckEditor(Editor: TKisEntityEditor): Boolean; override;
+    //
+    procedure LoadSRO();
   public
     constructor Create(Mngr: TKisMngr); override;
     destructor Destroy; override;
@@ -490,6 +502,7 @@ type
   public
     constructor Create(AOnwer: TComponent); override;
     destructor Destroy; override;
+    //
     function CreateEntity(EntityKind: TKisEntities): TKisEntity; override;
     function CreateNewEntity(EntityKind: TKisEntities = keDefault): TKisEntity; override;
     function CurrentEntity: TKisEntity; override;
@@ -641,6 +654,42 @@ resourcestring
   + '   :HIGH_RISE_MAPPING, :HORIZONTAL_MAPPING, :MENS_MAPPING, '
   + '   :NEWLY_BUILDING_MAPPING, :ORDER_NUMBER, :TACHEOMETRIC_MAPPING,'
   + '   :TOTAL_SUM, :WORKS_EXECUTOR, :FILE_OPERATION_ID)';
+  SQ_FIND_MAP_SCAN_HISTORY =
+    'SELECT ID FROM MAP_SCAN_HISTORY WHERE ID=:ID';
+  SQ_INSERT_MAP_SCAN_HISTORY =
+    'INSERT INTO MAP_SCAN_HISTORY '
+  + '  (ID, MAP_SCANS_ID, CHIEF, CURRENT_CHANGES_MAPPING, DATE_OF_ACCEPT, '
+  + '   DATE_OF_WORKS, DRAFT_WORKS_EXECUTOR, ENGIN_NET_MAPPING, '
+  + '   HIGH_RISE_MAPPING, HORIZONTAL_MAPPING, MENS_MAPPING, '
+  + '   NEWLY_BUILDING_MAPPING, ORDER_NUMBER, TACHEOMETRIC_MAPPING,'
+  + '   TOTAL_SUM, WORKS_EXECUTOR, FILE_OPERATION_ID, LICENSED_ORGS_ID, SRO_ID)'
+  + 'VALUES '
+  + '  (:ID, :MAP_SCANS_ID, :CHIEF, :CURRENT_CHANGES_MAPPING, :DATE_OF_ACCEPT, '
+  + '   :DATE_OF_WORKS, :DRAFT_WORKS_EXECUTOR, :ENGIN_NET_MAPPING, '
+  + '   :HIGH_RISE_MAPPING, :HORIZONTAL_MAPPING, :MENS_MAPPING, '
+  + '   :NEWLY_BUILDING_MAPPING, :ORDER_NUMBER, :TACHEOMETRIC_MAPPING,'
+  + '   :TOTAL_SUM, :WORKS_EXECUTOR, :FILE_OPERATION_ID, :LICENSED_ORGS_ID, :SRO_ID)';
+  SQ_UPDATE_MAP_SCAN_HISTORY =
+    'UPDATE MAP_SCAN_HISTORY SET'
+  + '  MAP_SCANS_ID=:MAP_SCANS_ID, '
+  + '  CHIEF=:CHIEF,'
+  + '  CURRENT_CHANGES_MAPPING=:CURRENT_CHANGES_MAPPING,'
+  + '  DATE_OF_ACCEPT=:DATE_OF_ACCEPT, '
+  + '  DATE_OF_WORKS=:DATE_OF_WORKS, '
+  + '  DRAFT_WORKS_EXECUTOR=:DRAFT_WORKS_EXECUTOR, '
+  + '  ENGIN_NET_MAPPING=:ENGIN_NET_MAPPING, '
+  + '  HIGH_RISE_MAPPING=:HIGH_RISE_MAPPING, '
+  + '  HORIZONTAL_MAPPING=:HORIZONTAL_MAPPING, '
+  + '  MENS_MAPPING=:MENS_MAPPING, '
+  + '  NEWLY_BUILDING_MAPPING=:NEWLY_BUILDING_MAPPING, '
+  + '  ORDER_NUMBER=:ORDER_NUMBER, '
+  + '  TACHEOMETRIC_MAPPING=:TACHEOMETRIC_MAPPING,'
+  + '  TOTAL_SUM=:TOTAL_SUM, '
+  + '  WORKS_EXECUTOR=:WORKS_EXECUTOR, '
+  + '  FILE_OPERATION_ID=:FILE_OPERATION_ID, '
+  + '  LICENSED_ORGS_ID=:LICENSED_ORGS_ID, '
+  + '  SRO_ID=:SRO_ID '
+  + 'WHERE ID=:ID';
   SQ_DELETE_MAP_SCAN_FIGURE =
     'DELETE FROM MAP_SCAN_FIGURES WHERE ID=:ID';
   SQ_INSERT_MAP_SCAN_FIGURE =
@@ -794,6 +843,8 @@ begin
   MyManager.LoadController(SQ_GET_MAP_SCAN_HISTORY_ID_LIST, ID, keMapScanHistoryElement, FMapHistoryCtrlr);
   FMapHistory.Close;
   FMapHistory.Open;
+  //
+  LoadSRO();
 end;
 
 procedure TKisMapScan.SetStartDate(const Value: String);
@@ -1094,6 +1145,65 @@ begin
   end;
 end;
 
+procedure TKisMapScan.LoadSRO;
+var
+  Mngr: TKisMngr;
+  LicMngr: TKisLicensedOrgMngr;
+  Ent1, Ent2: TKisEntity;
+  I: Integer;
+  Elmnt: TKisMapScanHistoryElement;
+  Org: TKisLicensedOrg;
+  WorksDate: TDateTime;
+  TmpEntList: TKisLicensedOrgTempList;
+  Per: TKisLicensedOrgSRO;
+begin
+  // надо загрузить лицензированную организацию
+  // по ней пробежать по всем СРО
+  // если даты подпадают, то ставим ID
+  //
+  Mngr := AppModule.Mngrs[kmLicensedOrgs];
+  if Assigned(Mngr) then
+  begin
+    LicMngr := Mngr as TKisLicensedOrgMngr;
+    TmpEntList := TKisLicensedOrgTempList.Create;
+    try
+      for I := 1 to FMapHistoryCtrlr.Count do
+      begin
+        Ent1 := FMapHistoryCtrlr.Elements[I];
+        if Ent1 is TKisMapScanHistoryElement then 
+        begin
+          Elmnt := TKisMapScanHistoryElement(Ent1);
+          if TryStrToDate(Elmnt.DateOfWorks, WorksDate) and (Elmnt.LicensedOrgId > 0) then
+          begin
+            Org := TmpEntList.Find(Elmnt.LicensedOrgId);
+            if Org = nil then
+            begin
+              Ent2 := LicMngr.GetEntity(Elmnt.LicensedOrgId, keLicensedOrg);
+              if Assigned(Ent2) then
+              begin
+                Org := Ent2 as TKisLicensedOrg;
+                TmpEntList.Add(Org);
+              end;
+            end;
+            if Org <> nil then
+            begin
+              Per := Org.FindSROPeriod(WorksDate);
+              if Assigned(Per) then
+                Elmnt.SRO_Id := Per.ID
+              else
+                Elmnt.SRO_Id := -1;
+            end;
+          end;
+        end;
+      end;
+      //
+    finally
+      TmpEntList.Free;
+    end;
+
+  end;
+end;
+
 procedure TKisMapScan.MapHistoryAfterDelete(DataSet: TDataSet);
 begin
   Modified := True;
@@ -1192,6 +1302,7 @@ begin
     Elmnt.OrderNumber := GiveOut.DefinitionNumber;
     Elmnt.MensMapping := GiveOut.Address;
     Elmnt.FileOpId := GiveOut.FileOperationId;
+    Elmnt.LicensedOrgId := GiveOut.LicensedOrgId;
   end;
   if not TKisVisualEntity(FMapHistoryCtrlr.Elements[0]).Edit then
     DataSet.Cancel
@@ -1380,6 +1491,7 @@ begin
   Elmnt.OrderNumber := aGiveOut.DefinitionNumber;
   Elmnt.MensMapping := aGiveOut.Address;
   Elmnt.FileOpId := aGiveOut.FileOperationId;
+  Elmnt.LicensedOrgId := aGiveOut.LicensedOrgId;
   FMapHistory.Post;
 end;
 
@@ -2169,13 +2281,16 @@ begin
   if AEditor is TKisGivenScanEditor then
     with AEditor as TKisGivenScanEditor do
     begin
-      if (Length(Trim(edDateOfGive.Text)) = 0) or not TryStrToDate(edDateOfGive.Text, GiveDate) or
-            ((GiveDate > Date) or (GiveDate < MIN_DOC_DATE)) then
-          begin
-            AppModule.Alert(S_CHECK_DATE_OF_GIVE);
-            edDateOfGive.SetFocus;
-            Exit;
-          end;
+      if (Length(Trim(edDateOfGive.Text)) = 0)
+         or not TryStrToDate(edDateOfGive.Text, GiveDate)
+         or ((GiveDate > Date) or (GiveDate < MIN_DOC_DATE))
+      then
+      begin
+        AppModule.Alert(S_CHECK_DATE_OF_GIVE);
+        edDateOfGive.SetFocus;
+        Exit;
+      end;
+      //
       if (GiveDate > Date) then
       begin
         MessageBox(AEditor.Handle, PChar('Дата выдачи больше сегодняшней!'), PChar(S_WARN), MB_OK + MB_ICONWARNING);
@@ -3496,8 +3611,7 @@ begin
   Ds.Close;
 end;
 
-procedure TKisMapScansMngr.LoadFigures(Conn: IKisConnection;
-  aHistory: TKisMapScanHistoryElement);
+procedure TKisMapScansMngr.LoadFigures(Conn: IKisConnection; aHistory: TKisMapScanHistoryElement);
 var
   Ds: TDataSet;
   aFigure: TKisMapScanHistoryFigure;
@@ -3634,32 +3748,55 @@ end;
 procedure TKisMapScansMngr.SaveHistory(aHistory: TKisMapScanHistoryElement);
 var
   Conn: IKisConnection;
-  Ds: TDataSet;
+  Ds, Ds2: TDataSet;
   I: Integer;
+  DoInsert: Boolean;
 begin
   Conn := GetConnection(True, True);
-  Ds := Conn.GetDataSet(SQ_SAVE_MAP_SCAN_HISTORY);
   try
+    DoInsert := False;
     if aHistory.ID < 1 then
+    begin
       aHistory.ID := Self.GenEntityID(keMapScanHistoryElement);
-    Conn.SetParam(Ds, SF_ID, aHistory.ID);
-    Conn.SetParam(Ds, SF_MAP_SCANS_ID, aHistory.HeadId);
-    Conn.SetParam(Ds, SF_CHIEF, aHistory.Chief);
-    Conn.SetParam(Ds, SF_CURRENT_CHANGES_MAPPING, aHistory.CurrentChangesMapping);
-    Conn.SetParam(Ds, SF_DATE_OF_ACCEPT, aHistory.DateOfAccept);
-    Conn.SetParam(Ds, SF_DATE_OF_WORKS, aHistory.DateOfWorks);
-    Conn.SetParam(Ds, SF_DRAFT_WORKS_EXECUTOR, aHistory.DraftWorksExecutor);
-    Conn.SetParam(Ds, SF_ENGIN_NET_MAPPING, aHistory.EnginNetMapping);
-    Conn.SetParam(Ds, SF_HIGH_RISE_MAPPING, aHistory.HighRiseMapping);
-    Conn.SetParam(Ds, SF_HORIZONTAL_MAPPING, aHistory.HorizontalMapping);
-    Conn.SetParam(Ds, SF_MENS_MAPPING, aHistory.MensMapping);
-    Conn.SetParam(Ds, SF_NEWLY_BUILDING_MAPPING, aHistory.NewlyBuildingMapping);
-    Conn.SetParam(Ds, SF_ORDER_NUMBER, aHistory.OrderNumber);
-    Conn.SetParam(Ds, SF_TACHEOMETRIC_MAPPING, aHistory.TacheometricMapping);
-    Conn.SetParam(Ds, SF_TOTAL_SUM, aHistory.TotalSum);
-    Conn.SetParam(Ds, SF_WORKS_EXECUTOR, aHistory.WorksExecutor);
-    Conn.SetParam(Ds, SF_FILE_OPERATION_ID, aHistory.FileOpId);
-    Ds.Open;
+      DoInsert := True;
+    end
+    else
+    begin
+      DS := Conn.GetDataSet(SQ_FIND_MAP_SCAN_HISTORY);
+      Conn.SetParam(Ds, SF_ID, aHistory.ID);
+      Ds.Open;
+      try
+        DoInsert := DS.IsEmpty;
+      finally
+        Ds.Close;
+      end;
+    end;
+    //
+    if DoInsert then
+      DS2 := Conn.GetDataSet(SQ_INSERT_MAP_SCAN_HISTORY)
+    else
+      DS2 := Conn.GetDataSet(SQ_UPDATE_MAP_SCAN_HISTORY);
+    Conn.SetParam(Ds2, SF_ID, aHistory.ID);
+    Conn.SetParam(Ds2, SF_MAP_SCANS_ID, aHistory.HeadId);
+    Conn.SetParam(Ds2, SF_CHIEF, aHistory.Chief);
+    Conn.SetParam(Ds2, SF_CURRENT_CHANGES_MAPPING, aHistory.CurrentChangesMapping);
+    Conn.SetParam(Ds2, SF_DATE_OF_ACCEPT, aHistory.DateOfAccept);
+    Conn.SetParam(Ds2, SF_DATE_OF_WORKS, aHistory.DateOfWorks);
+    Conn.SetParam(Ds2, SF_DRAFT_WORKS_EXECUTOR, aHistory.DraftWorksExecutor);
+    Conn.SetParam(Ds2, SF_ENGIN_NET_MAPPING, aHistory.EnginNetMapping);
+    Conn.SetParam(Ds2, SF_HIGH_RISE_MAPPING, aHistory.HighRiseMapping);
+    Conn.SetParam(Ds2, SF_HORIZONTAL_MAPPING, aHistory.HorizontalMapping);
+    Conn.SetParam(Ds2, SF_MENS_MAPPING, aHistory.MensMapping);
+    Conn.SetParam(Ds2, SF_NEWLY_BUILDING_MAPPING, aHistory.NewlyBuildingMapping);
+    Conn.SetParam(Ds2, SF_ORDER_NUMBER, aHistory.OrderNumber);
+    Conn.SetParam(Ds2, SF_TACHEOMETRIC_MAPPING, aHistory.TacheometricMapping);
+    Conn.SetParam(Ds2, SF_TOTAL_SUM, aHistory.TotalSum);
+    Conn.SetParam(Ds2, SF_WORKS_EXECUTOR, aHistory.WorksExecutor);
+    Conn.SetParam(Ds2, SF_FILE_OPERATION_ID, aHistory.FileOpId);
+    // LICENSED_ORGS_ID, SRO_ID
+    Conn.SetParam(Ds2, SF_LICENSED_ORGS_ID, aHistory.LicensedOrgId);
+    Conn.SetParam(Ds2, SF_SRO_ID, aHistory.SRO_Id);
+    DS2.Open;
     //
     for I := 0 to aHistory.FigureCount - 1 do
       SaveFigure(Conn, aHistory.Figures[I]);
@@ -4598,6 +4735,7 @@ begin
   inherited;
   FScanId := TKisMapScanHistoryElement(Source).FScanId;
   FFileOpId := TKisMapScanHistoryElement(Source).FFileOpId;
+  FSRO_Id := TKisMapScanHistoryElement(Source).FSRO_Id;
 end;
 
 function TKisMapScanHistoryElement.CreateFigureInstance: TKisMapHistoryFigure;
@@ -4615,6 +4753,81 @@ begin
   inherited;
   FScanId := DataSet.FieldByName(SF_MAP_SCANS_ID).AsInteger;
   FFileOpId := DataSet.FieldByName(SF_FILE_OPERATION_ID).AsString;
+  if DataSet.FindField(SF_LICENSED_ORGS_ID) = nil then
+    LicensedOrgId := -1
+  else
+    LicensedOrgId := DataSet.FieldByName(SF_LICENSED_ORGS_ID).AsInteger;
+  if DataSet.FindField(SF_SRO_ID) = nil then
+    FSRO_Id := -1
+  else
+    FSRO_Id := DataSet.FieldByName(SF_SRO_ID).AsInteger;
+end;
+
+procedure TKisMapScanHistoryElement.LoadDataIntoEditor(AEditor: TKisEntityEditor);
+var
+  Ed: TKisMapHistoryEditor;
+  V: Variant;
+  OrgName: String;
+begin
+  inherited LoadDataIntoEditor(AEditor);
+  Ed := AEditor as TKisMapHistoryEditor;
+  Ed.lOrgId.Caption := IntToStr(Self.LicensedOrgId);
+  //
+  OrgName := '';
+  if AppModule.GetFieldValue(nil, ST_LICENSED_ORGS, SF_ID, SF_NAME, Self.LicensedOrgId, V) then
+  begin
+    try
+      OrgName := VarToStr(V);
+    except
+    end;
+  end;
+  Ed.OrgName := OrgName;
+//  Ed.edOrg.Text := OrgName;
+end;
+
+procedure TKisMapScanHistoryElement.PrepareEditor(AEditor: TKisEntityEditor);
+var
+  OrgId: Integer;
+  Ed: TKisMapHistoryEditor;
+begin
+  Ed := TKisMapHistoryEditor(AEditor);
+  Ed.btnOrg.OnClick := SelectOrgButtonClick;
+  inherited PrepareEditor(AEditor);
+end;
+
+procedure TKisMapScanHistoryElement.ReadDataFromEditor(AEditor: TKisEntityEditor);
+var
+  OrgId: Integer;
+  Ed: TKisMapHistoryEditor;
+begin
+  inherited ReadDataFromEditor(AEditor);
+  OrgId := -1;
+  Ed := TKisMapHistoryEditor(AEditor);
+  if TryStrToInt(Ed.lOrgId.Caption, OrgId) then
+    Self.LicensedOrgId := OrgId;
+end;
+
+procedure TKisMapScanHistoryElement.SelectOrgButtonClick(Sender: TObject);
+var
+  Ed: TKisMapHistoryEditor;
+  Org: TKisLicensedOrg;
+  Mngr: TKisSQLMngr;
+begin
+  if not Assigned(EntityEditor) then
+    Exit;
+  Ed := TKisMapHistoryEditor(EntityEditor);
+  Mngr := AppModule.SQLMngrs[kmLicensedOrgs];
+  if not Assigned(Mngr) then
+    Exit;
+  Org := Mngr.SelectEntity(True, nil, True, Self.LicensedOrgId) as TKisLicensedOrg;
+  if Assigned(Org) then
+  begin
+    Org.Forget;
+    Ed.OrgName := Org.Name;
+    Ed.edOrg.Text := Org.Name;
+    Ed.lOrgId.Caption := IntToStr(Org.ID);
+    Self.LicensedOrgId := Org.ID;
+  end;
 end;
 
 procedure TKisMapScanHistoryElement.SetFileOpId(const Value: string);
@@ -4633,6 +4846,15 @@ begin
     FScanId := Value;
     Modified := True;
   end;
+end;
+
+procedure TKisMapScanHistoryElement.UnprepareEditor(AEditor: TKisEntityEditor);
+var
+  Ed: TKisMapHistoryEditor;
+begin
+  Ed := TKisMapHistoryEditor(AEditor);
+  Ed.btnOrg.OnClick := nil;
+  inherited UnprepareEditor(AEditor);
 end;
 
 { TMapScanHistoryCtrlr }
@@ -4758,6 +4980,18 @@ begin
     Size := 50;
     Name := SF_FILE_OPERATION_ID;
   end;
+  with FieldDefsRef.AddFieldDef do
+  begin
+    DataType := ftInteger;
+    FieldNo := 18;
+    Name := SF_LICENSED_ORGS_ID;
+  end;
+  with FieldDefsRef.AddFieldDef do
+  begin
+    DataType := ftInteger;
+    FieldNo := 19;
+    Name := SF_SRO_ID;
+  end;
 end;
 
 function TMapScanHistoryCtrlr.GetDeleteQueryText: String;
@@ -4776,8 +5010,7 @@ begin
   Result := Format(Result, [IDList]);
 end;
 
-function TMapScanHistoryCtrlr.GetFieldData(Index: Integer; Field: TField;
-  out Data): Boolean;
+function TMapScanHistoryCtrlr.GetFieldData(Index: Integer; Field: TField; out Data): Boolean;
 var
   Ent: TKisMapScanHistoryElement;
 begin
@@ -4813,6 +5046,8 @@ begin
     15 : GetString(Ent.TotalSum, Data);
     16 : GetString(Ent.WorksExecutor, Data);
     17 : GetString(Ent.FileOpId, Data);
+    18 : GetInteger(Ent.LicensedOrgId, Data);
+    19 : GetInteger(Ent.SRO_Id, Data);
     else
       raise EDatabaseError.CreateFmt(S_FIELD_NOT_FOUND, [Field.FieldName]);
     end;
@@ -4846,6 +5081,8 @@ begin
     15 : Ent.TotalSum := SetString(Data);
     16 : Ent.WorksExecutor := SetString(Data);
     17 : Ent.FileOpId := SetString(Data);
+    18 : Ent.LicensedOrgId := SetInteger(Data);
+    19 : Ent.SRO_Id := SetInteger(Data);
     end;
   except
   end;

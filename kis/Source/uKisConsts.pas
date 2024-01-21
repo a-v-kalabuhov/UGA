@@ -544,6 +544,8 @@ const
   SF_SHORT_NAME = 'SHORT_' + SF_NAME;
   SF_SIGNATURE = 'SIGNATURE';
   SF_SQUARES = 'SQUARES';
+  SF_SRO_ID = 'SRO_ID';
+  SF_SRO_NAME = 'SRO_NAME';
   SF_START_DATE = 'START_DATE';
   SF_STATE_ID = 'STATE_' + SF_ID;
   SF_STATE_NAME = 'STATE_' + SF_NAME;
@@ -729,6 +731,7 @@ const
   S_CONFIRM_DELETE_SUPPLEMENT = 'Удалить документ-приложение?';
   S_CONFIRM_DELETE_EXECUTOR = 'Удалить исполнителя из списка?';
   S_CONFIRM_DELETE_VISA = 'Удалить визу?';
+  S_CONFIRM_DELETE_SRO_PERIOD = 'Удалить СРО?';
   S_CONFIRM_SAFE_ORDER_ALL = 'Перед печатью необходимо сохранить изменения в базе данных.'#13#10'Сохранить изменения?';
   S_DO_YOU_SURE = 'Вы уверены?';
   S_DOCS_MISSED = 'Нет ни одного документа';
@@ -951,6 +954,8 @@ const
   S_CHECK_SHELVE_DATE = S_CHECK + 'дату сдачи в архив!';
   S_CHECK_SHORTNAME = S_CHECK + 'краткое наименование!';
   S_CHECK_SIGNATURE = S_CHECK + 'Подпись!';
+  S_CHECK_SRO_END_DATE = S_CHECK + 'дату окончания периода!';
+  S_CHECK_SRO_START_DATE = S_CHECK + 'дату начала периода!';
   S_CHECK_STREET = S_CHECK + 'наименование улицы!';
   S_CHECK_TERM = S_CHECK + 'срок!';
   S_CHECK_TERM_OF_GIVE = S_CHECK + 'срок, на который выдан планшет!';

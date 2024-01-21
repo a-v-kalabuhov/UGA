@@ -51,6 +51,7 @@
     <DCCReference Include="uCommonClasses.pas" />
     <DCCReference Include="uCommonUtils.pas" />
     <DCCReference Include="uDataSet.pas" />
+    <DCCReference Include="uDateTimeUtils.pas" />
     <DCCReference Include="uDB.pas" />
     <DCCReference Include="uDBGrid.pas" />
     <DCCReference Include="uDebug.pas" />

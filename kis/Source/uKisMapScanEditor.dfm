@@ -134,10 +134,6 @@ inherited KisMapScanEditor: TKisMapScanEditor
     TabOrder = 7
     object tabHistor: TTabSheet
       Caption = #1048#1089#1090#1086#1088#1080#1103
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         1068
         398)
@@ -307,10 +303,6 @@ inherited KisMapScanEditor: TKisMapScanEditor
       Caption = #1060#1086#1088#1084#1091#1083#1103#1088
       ImageIndex = -1
       OnShow = tabHistoryShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -344,7 +336,7 @@ inherited KisMapScanEditor: TKisMapScanEditor
             F0DD0FFFFFF078870DDD0FFFFFFF0000DDDD0FFFFFFFFFF0DDDD0FFFFFFF0000
             DDDD0FFFFFFF080DDDDD0FFFFFFF00DDDDDD000000000DDDDDDD}
         end
-        object dbgHistoryList: TDBGrid
+        object dbgHistoryList: TkaDBGrid
           Left = 2
           Top = 2
           Width = 698
@@ -361,6 +353,7 @@ inherited KisMapScanEditor: TKisMapScanEditor
           TitleFont.Style = []
           OnDblClick = dbgHistoryListDblClick
           OnExit = dbgHistoryListExit
+          OnCellColors = dbgHistoryListCellColors
           Columns = <
             item
               Expanded = False
@@ -557,10 +550,6 @@ inherited KisMapScanEditor: TKisMapScanEditor
     object TabSheet2: TTabSheet
       Caption = #1060#1086#1088#1084#1091#1083#1103#1088' - '#1089#1090#1072#1088#1099#1081
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         1068
         398)

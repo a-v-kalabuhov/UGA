@@ -43,13 +43,20 @@ type
     Label7: TLabel;
     edMensMapping: TEdit;
     btnSetMap: TButton;
+    lOrg: TLabel;
+    edOrg: TEdit;
+    btnOrg: TButton;
+    lOrgId: TLabel;
     procedure FormShow(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure edOrgChange(Sender: TObject);
   private
     FOnUpdateImage: TNotifyEvent;
+    FOrgName: string;
     procedure SetOnUpdateImage(const Value: TNotifyEvent);
   published
   public
+    property OrgName: string read FOrgName write FOrgName;
     property OnUpdateImage: TNotifyEvent read FOnUpdateImage write SetOnUpdateImage;
   end;
 
@@ -57,6 +64,13 @@ type
 implementation
 
 {$R *.dfm}
+
+procedure TKisMapHistoryEditor.edOrgChange(Sender: TObject);
+begin
+  inherited;
+//  if edOrg.Text = '' then
+//    edOrg.Text := '';
+end;
 
 procedure TKisMapHistoryEditor.FormResize(Sender: TObject);
 var
@@ -82,6 +96,7 @@ begin
   inherited;
   if Trim(edDateOfAccept.Text) = '' then
     edDateOfAccept.Text := DateToStr(Now);
+  edOrg.Text := FOrgName;
 end;
 
 procedure TKisMapHistoryEditor.SetOnUpdateImage(const Value: TNotifyEvent);

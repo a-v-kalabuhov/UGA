@@ -145,6 +145,7 @@ type
       keDecreeAddress,
       keDecreeVisa,
       keLicensedOrg,
+      keLicensedOrgSROPeriod,
       keArchivalDoc,
       keArchDocMove,
       keMap500,
@@ -826,8 +827,7 @@ begin
   AEnt.Head := FHeadEntity;
 end;
 
-function TKisEntityController.EqualsTo(
-  aController: TKisEntityController): Boolean;
+function TKisEntityController.EqualsTo(aController: TKisEntityController): Boolean;
 var
   I: Integer;
 begin
@@ -844,8 +844,7 @@ begin
 
 end;
 
-function TKisEntityController.GetDeletedElements(
-  Index: Integer): TKisEntity;
+function TKisEntityController.GetDeletedElements(Index: Integer): TKisEntity;
 begin
   Result := FDeletedList[Index] as TKisEntity; 
 end;

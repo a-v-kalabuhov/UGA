@@ -193,7 +193,8 @@ uses
   uKisDlgSelectAreaLayer in 'Source\uKisDlgSelectAreaLayer.pas' {KisSelectAleaLayerDialog},
   uEzAutoCADImport in '..\EzShared\uEzAutoCADImport.pas' {EzAutoCADImport: TDataModule},
   uKisTakeBackFileCompareEditor in 'Source\uKisTakeBackFileCompareEditor.pas',
-  uKisScanTakeBackImageViewForm in 'Source\uKisScanTakeBackImageViewForm.pas' {KisScanTakeBackImageViewForm};
+  uKisScanTakeBackImageViewForm in 'Source\uKisScanTakeBackImageViewForm.pas' {KisScanTakeBackImageViewForm},
+  uKisLicnsedOrgSROPeriodEditor in 'Source\uKisLicnsedOrgSROPeriodEditor.pas' {KisLicensedOrgSROPeriodEditor};
 
 {$R *.RES}
 {$SetPEFlags IMAGE_FILE_LARGE_ADDRESS_AWARE}

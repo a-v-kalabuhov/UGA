@@ -42,7 +42,8 @@ uses
   uMStFTPConnection in 'uMStFTPConnection.pas' {MStFTPConnection: TDataModule},
   uDwgFile in 'uDwgFile.pas',
   sgcadimage in 'CadDll\sgcadimage.pas',
-  sgConsts in 'CadDll\sgConsts.pas';
+  sgConsts in 'CadDll\sgConsts.pas',
+  uDateTimeUtils in 'uDateTimeUtils.pas';
 
 begin
   

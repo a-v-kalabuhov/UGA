@@ -1360,19 +1360,28 @@ end;
 procedure TKisSQLMngr.EditCurrent;
 var
   Conn: IKisConnection;
+  Ent: TKisEntity;
 begin
   Conn := GetConnection(True, True);
   try
     if not Assigned(DefaultTransaction) then
       raise Exception.CreateFmt(S_DEFAULT_TRANSACTION_MISSED, [Self.ClassName]);
-    with KisObject(CurrentEntity) do
-      if Assigned(AEntity) then
-      if AEntity is TKisVisualEntity then
-      begin
-        AEntity.Modified := False;
-        if TKisVisualEntity(AEntity).Edit and AEntity.Modified then
-          SaveEntity(AEntity);
-      end;
+    Ent := CurrentEntity();
+    Ent.Forget();
+    if Ent is TKisVisualEntity then
+    begin
+      Ent.Modified := False;
+      if TKisVisualEntity(Ent).Edit and Ent.Modified then
+        SaveEntity(Ent);
+    end;
+//    with KisObject(CurrentEntity) do
+//      if Assigned(AEntity) then
+//      if AEntity is TKisVisualEntity then
+//      begin
+//        AEntity.Modified := False;
+//        if TKisVisualEntity(AEntity).Edit and AEntity.Modified then
+//          SaveEntity(AEntity);
+//      end;
     FreeConnection(Conn, True);
   except
     FreeConnection(Conn, False);
@@ -1641,7 +1650,7 @@ begin
     begin
       Tmp := GetEntity(DS.FieldByName(SF_ID).AsInteger, EntKind);
       if Assigned(Tmp) then
-         aCtrlr.DirectAppend(Tmp);
+        aCtrlr.DirectAppend(Tmp);
       DS.Next;
     end;
      DS.Close;
