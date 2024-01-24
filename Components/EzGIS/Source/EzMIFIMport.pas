@@ -1752,7 +1752,7 @@ End;
 Function TEzMIFExport.WriteMid( RecNo: Integer ): Boolean;
 Var
   i: integer;
-  s, t: String;
+  s, t, s2: String;
   f: Double;
   year, month, day: word;
 Begin
@@ -1768,7 +1768,8 @@ Begin
   For i := 2 To FLayer.DBTable.FieldCount Do
   Begin
     Case FLayer.DBTable.FieldType( i ) Of
-      'L': If FLayer.DBTable.LogicGetN( i ) Then
+      'L':
+        If FLayer.DBTable.LogicGetN( i ) Then
           t := 'T'
         Else
           t := 'F';
@@ -1777,13 +1778,17 @@ Begin
           If FLayer.DBTable.FieldDec( i ) > 0 Then
           Begin
             f := FLayer.DBTable.FloatGetN( i );
-            t := FloatToStrF( f, fffixed, FLayer.DBTable.FieldLen( i ),
-              FLayer.DBTable.FieldDec( i ) );
+            t := FloatToStrF( f, fffixed, FLayer.DBTable.FieldLen( i ), FLayer.DBTable.FieldDec( i ) );
           End
           Else
             t := IntToStr( FLayer.DBTable.IntegerGetN( i ) );
         End;
-      'C': t := '"' + FLayer.DBTable.StringGetN( i ) + '"';
+      'C':
+        begin
+          s2 := FLayer.DBTable.StringGetN( i );
+          s2 := StringReplace(s2, '"', '""', [rfReplaceAll]);
+          t := '"' + s2 + '"';
+        end;
       'D':
         Begin
           If FLayer.DBTable.DateGetN( i ) <> 0 Then

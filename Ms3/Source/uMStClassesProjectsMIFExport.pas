@@ -32,6 +32,7 @@ type
     procedure FinishWrite();
     procedure WriteEntity(Ent: TEzEntity; Prj: TmstProject; Line: TmstProjectLine);
     procedure WriteFields(Prj: TmstProject; Line: TmstProjectLine);
+    function DecorataFieldValue(const FieldValue: string): string;
     procedure WriteHeader();
     procedure WMid(const S: String);
     procedure WMif(const S: String);
@@ -103,6 +104,11 @@ end;
 constructor TmstProjectMIFExport.Create;
 begin
   FProjectIds := TIntegerList.Create;
+end;
+
+function TmstProjectMIFExport.DecorataFieldValue(const FieldValue: string): string;
+begin
+  Result := '"' + StringReplace(FieldValue, '"', '""', [rfReplaceAll]) + '"';
 end;
 
 destructor TmstProjectMIFExport.Destroy;
@@ -184,12 +190,16 @@ begin
 end;
 
 procedure TmstProjectMIFExport.Save(GIS: TEzBaseGIS; const aFileName: string);
+var
+  C: Char;
 begin
   if not GIS.Active then
     Exit;
   FGis := GIS;
   FFileName := aFileName;
   StartWrite();
+  C := SysUtils.DecimalSeparator;
+  SysUtils.DecimalSeparator := '.';
   try
     // пробегаем по слоям
     ProcessLayer(SL_PROJECT_OPEN);
@@ -199,6 +209,7 @@ begin
     // для каждого слоя линий надо будет заполнять таблицу данных
     // експортируем
   finally
+    SysUtils.DecimalSeparator := C;
     FinishWrite();
   end;
 end;
@@ -386,23 +397,23 @@ begin
   if Assigned(Prj) then
   begin
     S := S + IntToStr(Prj.DatabaseId) + ',';
-    S := S + '"' + Prj.Address + '",';
-    S := S + '"' + Prj.DocNumber + '",';
-    S := S + '"' + DateToStr(Prj.DocDate) + '",';
-    S := S + '"' + Copy(GetLicOrgName(Prj.CustomerOrgId), 1, 255) + '",';
-    S := S + '"' + Copy(GetLicOrgName(Prj.ExecutorOrgId), 1, 255) + '",';
-    S := S + StrUtils.IfThen(Prj.Confirmed, 'T', 'F') + '",';
-    S := S + '"' + IfThen(Prj.Confirmed, DateToStr(Prj.ConfirmDate), '') + '",';
+    S := S + DecorataFieldValue(Prj.Address) + ',';
+    S := S + DecorataFieldValue(Prj.DocNumber) + ',';
+    S := S + DecorataFieldValue(DateToStr(Prj.DocDate)) + ',';
+    S := S + DecorataFieldValue(Copy(GetLicOrgName(Prj.CustomerOrgId), 1, 255)) + ',';
+    S := S + DecorataFieldValue(Copy(GetLicOrgName(Prj.ExecutorOrgId), 1, 255)) + ',';
+    S := S + StrUtils.IfThen(Prj.Confirmed, 'T', 'F') + ',';
+    S := S + DecorataFieldValue(IfThen(Prj.Confirmed, DateToStr(Prj.ConfirmDate), '')) + ',';
   end
   else
     S := S + '0,"","","","","",F,"",';
   if Assigned(Line) then
   begin
     S := S + IntToStr(Line.DatabaseId) + ',';
-    S := S + '"' + Copy(Line.Info, 1, 255) + '",';
-    S := S + '"' + Line.Diameter + '",';
-    S := S + '"' + Line.Voltage + '",';
-    S := S + '"' + IfThen(Assigned(Line.Layer), Line.Layer.Name, '') + '"';
+    S := S + DecorataFieldValue(Copy(Line.Info, 1, 255)) + ',';
+    S := S + DecorataFieldValue(Line.Diameter) + ',';
+    S := S + DecorataFieldValue(Line.Voltage) + ',';
+    S := S + DecorataFieldValue(IfThen(Assigned(Line.Layer), Line.Layer.Name, ''));
   end
   else
     S := S + '0,"","","",""';
