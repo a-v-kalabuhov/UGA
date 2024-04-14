@@ -741,9 +741,9 @@ begin
   end
   else
   begin
-//    if not Go2.HasChangesInMap() then
-//      ResultFile := OriginalFile
-//    else
+    if not Go1.HasChangesInMap() then
+      ResultFile := OriginalFile
+    else
       // планшет был возвращён и выдан снова, результатом будет бекап планшета во второй заявке
       ResultFile := TMapScanStorage.GetFileName(AppModule, FNomenclature, sfnArchive, Go2.FileOperationId);
   end;
