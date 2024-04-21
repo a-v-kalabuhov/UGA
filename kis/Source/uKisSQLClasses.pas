@@ -216,6 +216,7 @@ type
 {$ENDREGION}
     function GetDataSet(const SQLText: String): TDataSet;
     function GetParam(DataSet: TDataSet; const ParamName: String): TParam;
+    function Select(const SQLText: String; const PKValue: Variant; const PKName: string = 'ID'): TDataSet;
     procedure Commit(StayActive: Boolean);
     procedure Rollback(StayActive: Boolean);
     procedure SetParam(DataSet: TDataSet; const ParamName: String; const Value: Variant);
@@ -336,6 +337,7 @@ type
       destructor Destroy; override;
       // Создает ДатаСет, при уничтожении он тоже уничтожается
       function GetDataSet(const SQLText: String): TDataSet;
+      function Select(const SQLText: String; const PKValue: Variant; const PKName: string = 'ID'): TDataSet;
       function  GetParam(DataSet: TDataSet; const ParamName: String): TParam;
       procedure SetParam(DataSet: TDataSet; const ParamName: String; const Value: Variant);
       procedure SetBlobParam(DataSet: TDataSet; const ParamName: String; Stream: TStream);
@@ -3398,6 +3400,22 @@ begin
       FTransaction.RollBackRetaining
     else
       FTransaction.RollBack;
+end;
+
+function TKisSQLMngr.TKisIBConnection.Select(const SQLText: String; const PKValue: Variant;
+  const PKName: string): TDataSet;
+var
+  Q: TIBQuery;
+begin
+  Q := TIBQuery.Create(Self);
+  Q.Transaction := FTransaction;
+  Q.SQL.Text := SQLText;
+  Q.BufferChunks := 10;
+  FDataSets.Add(TKisDataSet.Create(Result));
+//    FreeNotification(Result);
+  Q.BeforeOpen := OpenDataSet;
+  Q.ParamByName(PKName).Value := PKValue;
+  Result := Q;
 end;
 
 procedure TKisSQLMngr.TKisIBConnection.SetBlobParam(DataSet: TDataSet;

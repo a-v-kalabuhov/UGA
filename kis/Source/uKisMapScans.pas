@@ -617,6 +617,15 @@ resourcestring
     'SELECT ID FROM ORDERS_ALL WHERE OFFICES_ID=%d AND ORDER_NUMBER=''%s''';
   SQ_FIND_OFFICE_ID =
     'SELECT OFFICES_ID FROM PEOPLE WHERE ID=%d';
+  SQ_FIND_MAP_SCAN =
+    'SELECT ID FROM MAP_SCANS WHERE ID=:ID';
+  SQ_INSERT_MAP_SCAN =
+    'INSERT INTO MAP_SCANS '
+  + '(ID, NOMENCLATURE, START_DATE, IS_SECRET, HISTORY_FILE) '
+  + 'VALUES (:ID,:NOMENCLATURE,:START_DATE,:IS_SECRET,:HISTORY_FILE)';
+  SQ_UPDATE_MAP_SCAN =
+    'UPDATE MAP_SCANS SET NOMENCLATURE = :NOMENCLATURE, START_DATE = :START_DATE, IS_SECRET = :IS_SECRET, '
+  + 'HISTORY_FILE = :HISTORY_FILE WHERE ID = :ID';
   SQ_FIND_SCAN_BY_MD5 =
     'SELECT ID, NOMENCLATURE FROM MAP_SCANS WHERE ACTUAL_MD5=''%s''';
   SQ_GET_ACTIVE_SCAN_ORDERS =
@@ -3751,6 +3760,7 @@ var
   Ds, Ds2: TDataSet;
   I: Integer;
   DoInsert: Boolean;
+  V: Variant;
 begin
   Conn := GetConnection(True, True);
   try
@@ -3794,7 +3804,11 @@ begin
     Conn.SetParam(Ds2, SF_WORKS_EXECUTOR, aHistory.WorksExecutor);
     Conn.SetParam(Ds2, SF_FILE_OPERATION_ID, aHistory.FileOpId);
     // LICENSED_ORGS_ID, SRO_ID
-    Conn.SetParam(Ds2, SF_LICENSED_ORGS_ID, aHistory.LicensedOrgId);
+    if aHistory.LicensedOrgId = 0 then
+      V := Null
+    else
+      V := aHistory.LicensedOrgId;
+    Conn.SetParam(Ds2, SF_LICENSED_ORGS_ID, V);
     Conn.SetParam(Ds2, SF_SRO_ID, aHistory.SRO_Id);
     DS2.Open;
     //
@@ -3809,15 +3823,38 @@ procedure TKisMapScansMngr.SaveMapScan(MapScan: TKisMapScan);
 var
   I: Integer;
   Conn: IKisConnection;
-  DataSet: TDataSet;
+  DataSet, DS: TDataSet;
+  DoInsert: Boolean;
 begin
   Conn := GetConnection(True, True);
   try
     UploadHistoryFile(MapScan);
     //
-    DataSet := Conn.GetDataSet(SQ_SAVE_MAP_SCAN);
+    DoInsert := False;
     if MapScan.ID < 1 then
+    begin
       MapScan.ID := Self.GenEntityID(keMapScan);
+      DoInsert := True;
+    end
+    else
+    begin
+      DS := Conn.Select(SQ_FIND_MAP_SCAN, MapScan.ID);
+      Ds.Open;
+      try
+        DoInsert := DS.IsEmpty;
+      finally
+        Ds.Close;
+      end;
+    end;
+    //
+    if DoInsert then
+      DataSet := Conn.GetDataSet(SQ_INSERT_MAP_SCAN)
+    else
+      DataSet := Conn.GetDataSet(SQ_UPDATE_MAP_SCAN);
+    //
+//    DataSet := Conn.GetDataSet(SQ_SAVE_MAP_SCAN);
+//    if MapScan.ID < 1 then
+//      MapScan.ID := Self.GenEntityID(keMapScan);
     Conn.SetParam(DataSet, SF_ID, MapScan.ID);
     Conn.SetParam(DataSet, SF_NOMENCLATURE, MapScan.Nomenclature);
     Conn.SetParam(DataSet, SF_START_DATE, MapScan.StartDate);
