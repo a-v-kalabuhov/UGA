@@ -156,6 +156,7 @@ type
     procedure PrepareCadastralBlock(Layer: TEzBaseLayer; Entity: TEzEntity;
       const Clip: TEzRect; var EntList: TEzEntityList);
     function IntLoadMapImage(aMap: TmstMap): Boolean;  // MapId = Entity.ID
+    procedure LoadLayersVisibility();
   protected
     function GetLotLayer(const LotCategoryId: Integer): TEzBaseLayer;
     procedure LoadLotFromDataSets(ALot: TmstLot; MainDataSet, ContoursDataSet, PointsDataSet: TDataSet);
@@ -207,7 +208,7 @@ type
     function GetSelectedLot: TmstLot;
     function GetLots(aLot: TmstLot): ILots;
     function GetOrders(): IOrders;
-    procedure ConnectLayerToGIS(aLayer: TmstLayer);
+    procedure ConnectLayerToGIS(aLayer: TmstLayer; UseLayerVisibility: Boolean);
 
     function GetStats: IStats;
 
@@ -221,6 +222,7 @@ type
       const PropertyName: String; DataType: Integer; UseComponentName: Boolean = False): Variant;
     procedure SaveAppParam(AOwner, Component: TComponent; const PropertyName: String;
       const Value: Variant; UseComponentName: Boolean = False);
+    procedure SaveLayersVisibility();
     //
     procedure DisplayLayersDialog();
     procedure RepaintViewports;
@@ -348,8 +350,9 @@ var
 begin
   GIS.Active := True;
   // Подключение слоев
+  LoadLayersVisibility();
   for I := 0 to Pred(FLayers.Count) do
-    ConnectLayerToGIS(FLayers[I]);
+    ConnectLayerToGIS(FLayers[I], True);
   //
   for I := 0 to FMapMngr.LotCategoriesCount - 1 do
   begin
@@ -757,7 +760,7 @@ procedure TMStClientAppModule.InitLayers;
 begin
   DownLoadLayers;
   ProgressInit(5);
-  ConnectLayersToGIS;
+  ConnectLayersToGIS();
   FLayers.OnDeleteLayer := OnDeleteLayer;
   FLayers.OnSelectLayer := OnSelectLayer;
 end;
@@ -777,7 +780,8 @@ begin
     mstClientMainForm.GIS := Self.GIS;
     FStack.View := mstClientMainForm.TreeView;
     FStack.ObjectView := mstClientMainForm.ListView;
-    FLayers.LayerControl := mstClientMainForm.LayersListBox;
+//    FLayers.LayerControl := mstClientMainForm.LayersListBox;
+    FLayers.LayerControl := mstClientMainForm.vstLayers;
     GIS.Save;
     //
     mstClientMainForm.LoadWatermark(FMapMngr);
@@ -953,6 +957,45 @@ begin
   finally
     LayerMaps.FinishBatchInsert;
     mstClientMainForm.DrawBox.EndUpdate;
+  end;
+end;
+
+procedure TMStClientAppModule.LoadLayersVisibility;
+var
+  IniFileName: string;
+  Ini: TIniFile;
+  LayerNames: TStringList;
+  I: Integer;
+  L: TmstLayer;
+  LayerVisible: Boolean;
+begin
+  IniFileName := TPath.Finish(ExtractFilePath(ParamStr(0)), 'ms2.ini');
+  if not FileExists(IniFileName) then
+    IniFileName := 'ms2.ini';
+  Ini := TIniFile.Create(IniFileName);
+  try
+    LayerNames := TStringList.Create;
+    LayerNames.Forget;
+    Ini.ReadSection('Layers', LayerNames);
+    if LayerNames.Count > 0 then
+    begin
+      for I := 0 to FLayers.Count - 1 do
+      begin
+        FLayers.Items[I].Visible := False;
+      end;
+      // теперь надо найти слой и его пометить как видимый, а остальные как невидимые
+      for I := 0 to LayerNames.Count - 1 do
+      begin
+        L := FLayers.FindLayerByName(LayerNames[I]);
+        if L <> nil then
+        begin
+          LayerVisible := Ini.ReadBool('Layers', LayerNames[I], False);
+          L.Visible := LayerVisible;
+        end;
+      end;
+    end;
+  finally
+    Ini.Free;
   end;
 end;
 
@@ -1798,10 +1841,11 @@ begin
     Result := nil;
 end;
 
-procedure TMStClientAppModule.ConnectLayerToGIS(aLayer: TmstLayer);
+procedure TMStClientAppModule.ConnectLayerToGIS(aLayer: TmstLayer; UseLayerVisibility: Boolean);
 var
-  J: Integer;
+  I, J: Integer;
   Layer: TEzBaseLayer;
+  LayerVisible: Boolean;
 begin
   case aLayer.LayerType of
   ID_LT_FILE :
@@ -1826,7 +1870,14 @@ begin
     end;
   end;
   Layer.Open;
-  Layer.LayerInfo.Visible := aLayer.Visible;
+  if UseLayerVisibility then
+    LayerVisible := aLayer.Visible
+  else
+    LayerVisible := True;
+  Layer.LayerInfo.Visible := LayerVisible;
+  //
+  for I := 0 to aLayer.ChildCount - 1 do
+    ConnectLayerToGIS(aLayer.Child[I], UseLayerVisibility);
 end;
 
 procedure TMStClientAppModule.OnDeleteLayer(Sender: TObject; aLayer: TmstLayer);
@@ -2205,6 +2256,27 @@ begin
   end;
 end;
 
+procedure TMStClientAppModule.SaveLayersVisibility;
+var
+  IniFileName: string;
+  Ini: TIniFile;
+  I: Integer;
+begin
+  IniFileName := TPath.Finish(ExtractFilePath(ParamStr(0)), 'ms2.ini');
+  if not FileExists(IniFileName) then
+    IniFileName := 'ms2.ini';
+  Ini := TIniFile.Create(IniFileName);
+  try
+    for I := 0 to FLayers.Count - 1 do
+    begin
+      Ini.WriteBool('Layers', FLayers.Items[I].Name, FLayers.Items[I].Visible);
+    end;
+    Ini.UpdateFile();
+  finally
+    Ini.Free;
+  end;
+end;
+
 type
   THackComponent = class(TComponent)
   end;
@@ -2312,13 +2384,12 @@ begin
       SW_MAXIMIZE:
         WinState := wsMaximized;
     end;
-    if (WinState = wsMinimized) and ((Form = Application.MainForm)
-       or (Application.MainForm = nil) ) then
+    if (WinState = wsMinimized) and ((Form = Application.MainForm) or (Application.MainForm = nil) ) then
     begin
       PostMessage(Application.Handle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
       Exit;
     end;
-      WindowState := WinState;
+    WindowState := WinState;
     Update;
   end;
 end;

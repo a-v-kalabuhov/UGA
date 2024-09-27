@@ -51,6 +51,7 @@ object mstZoneWidthDialog: TmstZoneWidthDialog
     Height = 25
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
+    ModalResult = 2
     TabOrder = 1
   end
   object Edit1: TEdit

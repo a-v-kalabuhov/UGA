@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cadsofttools version="2">
+  <!-- Saves using XML export parametrs -->
+
+  <!-- Saves as a raster image-->      
+  <save>
+      <ExportParams FileName="%SGDRAWINGSPATH%\ImageJPG" Format=".jpg">
+         <Width>1024</Width>
+         <Height>-1</Height>
+         <Proportional>True</Proportional>
+         <BitPerPixel>24</BitPerPixel>
+         <!-- Set quality in percent for JPG -->
+         <Quality>100</Quality>
+         <MeasureInPixels>True</MeasureInPixels>
+         <!-- Set transparent for GIF -->
+         <Transparent>False</Transparent>
+         <!-- Set dpi for JPG: always 2 parameters -->        
+         <DPUX>96</DPUX>
+         <DPUY>96</DPUY>
+        <!-- Compression for TIFF: LZW, Deflate, JPEG, CCITT3, CCITT4, CCITT6, Rle, Auto, None -->
+        <Compression>LZW</Compression>
+      </ExportParams>
+  </save>
+
+  <!-- Saves as PDF-->
+  <save>
+      <ExportParams FileName="%SGDRAWINGSPATH%\ImagePDF" Format=".pdf">
+		  <!-- Page size is set in the following ways:
+             a) by specifying a standard <PageSize> (e.g. A4)
+			 b) by specifying <PageWidth> and <PageHeight>
+			 c) by using plot settings <UseExtentsFromPlotSettings>
+			 d) by calculating the overall dimensions <SizeAsExtents> of the drawing taking
+			    into account the scale factor <MMInCad>  -->
+		  <PageSize>A4</PageSize>
+		  <Orientation>1</Orientation><!-- 0: landscape; 1: portrait -->
+          <Margin>5</Margin><!-- page margins in millimeters -->
+          <Author>Author</Author>
+          <DrawMode>1</DrawMode><!-- 0: Color; 1: Black&White; -->
+          <BackgroundColor>$000000</BackgroundColor>
+          <DefaultColor>$0000FF</DefaultColor>
+          <Quality>0.5</Quality><!-- Value in range 0.5-0.01;  0.5: lowest quality; 0.01: highest quality; -->
+          <!-- Select layouts for export: 0: Model; 1:AllPaperSpaces; 2:LayoutByName; 3:AllLayouts+Model; 4:CurrentLayout;  -->
+          <LayoutExportMode>2</LayoutExportMode>
+          <!-- Used if layouts export mode is 'LayoutByName' -->
+          <LayoutNameExportMode>Model</LayoutNameExportMode>
+		  <NullWidth>0.3</NullWidth>
+		  <SaveLineWeight>1</SaveLineWeight>
+		  <LineWeightScale>1</LineWeightScale>
+      </ExportParams>
+  </save>
+                                     
+  <!-- Saves as PNG -->
+  <save>
+      <ExportParams FileName="%SGDRAWINGSPATH%\ImagePNG" Format=".png">
+         <Width>1024</Width>
+         <Height>-1</Height>
+         <Proportional>True</Proportional>
+         <BitPerPixel>24</BitPerPixel>
+         <MeasureInPixels>True</MeasureInPixels>
+      </ExportParams>
+  </save>
+
+  <!-- When saving to DXF and DWG, the format version is inidicated in the Version parameter in the following way:
+       AC1015 = AutoCAD2000;
+       AC1018 = AutoCAD2004;
+       AC1021 = AutoCAD2007; -->
+
+  <!-- Saves as DXF -->
+  <save>
+      <ExportParams FileName="%SGDRAWINGSPATH%\ImageDXF" Format=".dxf">
+        <Version>AutoCAD2004</Version>
+        <IsConvertImageToOLE>True</IsConvertImageToOLE>
+      </ExportParams>
+  </save>
+
+  <!-- Saves as DWG -->
+  <save>
+      <ExportParams FileName="%SGDRAWINGSPATH%\ImageDWG" Format=".dwg">
+        <Version>AutoCAD2000</Version>
+        <IsConvertImageToOLE>True</IsConvertImageToOLE>
+      </ExportParams>
+  </save>
+
+  <!-- Saves as GCode -->
+  <save>
+      <ExportParams FileName="%SGDRAWINGSPATH%\ImageGCode" Format=".nc">
+         <!--MachineType:
+             0: milling machine;
+             1: cutting machine; -->
+         <MachineTypeID>0</MachineTypeID>	  
+		 <!--PassesDirectionID:
+		     0:
+			 1: -->
+		 <PassesDirectionID>0</PassesDirectionID>
+         <Precision>2</Precision>
+         <FeedOnZ>2000</FeedOnZ>
+         <FeedMillOnXY>100</FeedMillOnXY>
+         <FeedCutOnXY>0</FeedCutOnXY>  		 
+         <SpindleSpeed>2000</SpindleSpeed>
+         <DepthOnZ>-2</DepthOnZ>
+         <DepthPass>2</DepthPass>	
+         <NumbOfPasses>1</NumbOfPasses>	
+         <DepartureOnZ>5</DepartureOnZ>
+         <!--WorkpieceZeroPointID:
+             0: origin;
+             1: top left;
+             2: top right;
+             3: bottom left;
+             4: bottom right; -->
+         <WorkpieceZeroPointID>0</WorkpieceZeroPointID>
+         <ZeroPointOffset>50,10</ZeroPointOffset>
+         <LaserOnCommand>M3</LaserOnCommand>
+         <LaserOffCommand>M5</LaserOffCommand>
+         <UseLaserPower>False</UseLaserPower>		 
+         <LaserPower>128</LaserPower>		 		 
+         <Delay>500</Delay>
+		 <!--UnitsID:
+		     0: Millimetre; 
+			 1: Centimetre;
+			 2: Metre; 
+			 3: Inch; -->
+         <MachineUnitsID>0</MachineUnitsID>		 		 			 
+         <DrawingUnitsID>0</DrawingUnitsID>		 		 
+         <AddLabelOfProgam>False</AddLabelOfProgam>		 
+         <LabelOfProgram>001</LabelOfProgram>
+         <AddNumbering>False</AddNumbering>
+         <ShowComments>True</ShowComments>
+         <ShowPercent>True</ShowPercent>		 
+         <StartNumber>5</StartNumber>		 
+         <StepOfNumbering>5</StepOfNumbering>	
+
+      </ExportParams>
+  </save>
+
+</cadsofttools>

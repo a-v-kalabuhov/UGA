@@ -45,16 +45,16 @@
     <DCC_UNSAFE_TYPE>True</DCC_UNSAFE_TYPE>
     <DCC_UNSAFE_CODE>True</DCC_UNSAFE_CODE>
     <DCC_UNSAFE_CAST>True</DCC_UNSAFE_CAST>
-    <DCC_UnitSearchPath>C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;C:\Projects\kis\kis\Dcu;C:\Projects\kis\shared\Dcu;C:\Projects\kis\shared\Res</DCC_UnitSearchPath>
-    <DCC_ResourcePath>C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;C:\Projects\kis\kis\Dcu;C:\Projects\kis\shared\Dcu;C:\Projects\kis\shared\Res</DCC_ResourcePath>
-    <DCC_ObjPath>C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;C:\Projects\kis\kis\Dcu;C:\Projects\kis\shared\Dcu;C:\Projects\kis\shared\Res</DCC_ObjPath>
-    <DCC_IncludePath>C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\Components\jvcl\dcu;C:\Projects\kis\kis\Dcu;C:\Projects\kis\shared\Dcu;C:\Projects\kis\shared\Res</DCC_IncludePath>
+    <DCC_UnitSearchPath>C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\kis\kis\Dcu;C:\Projects\kis\shared\Dcu;C:\Projects\kis\shared\Res</DCC_UnitSearchPath>
+    <DCC_ResourcePath>C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\kis\kis\Dcu;C:\Projects\kis\shared\Dcu;C:\Projects\kis\shared\Res</DCC_ResourcePath>
+    <DCC_ObjPath>C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\kis\kis\Dcu;C:\Projects\kis\shared\Dcu;C:\Projects\kis\shared\Res</DCC_ObjPath>
+    <DCC_IncludePath>C:\Projects\kis\Components\EzGIS\bin\Debug\Dcu;C:\Projects\kis\Components\EzGIS\Res;C:\Projects\kis\Components\ECWCompress\bin\Debug\Dcu;C:\Projects\kis\kis\Dcu;C:\Projects\kis\shared\Dcu;C:\Projects\kis\shared\Res</DCC_IncludePath>
   </PropertyGroup>
   <ProjectExtensions>
     <Borland.Personality>Delphi.Personality</Borland.Personality>
     <Borland.ProjectType>VCLApplication</Borland.ProjectType>
     <BorlandProject>
-<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters><Parameters Name="RunParams">-nosplash</Parameters><Parameters Name="DebugSourceDirs">C:\Projects\kis\Components\EzGIS\Source\</Parameters></Parameters><Language><Language Name="RootDir">C:\Program Files\Borland\Delphi6\Bin\</Language></Language><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">True</VersionInfo><VersionInfo Name="MajorVer">3</VersionInfo><VersionInfo Name="MinorVer">1</VersionInfo><VersionInfo Name="Release">34</VersionInfo><VersionInfo Name="Build">135</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1049</VersionInfo><VersionInfo Name="CodePage">1251</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">МП УГА</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Планшетохранилище</VersionInfoKeys><VersionInfoKeys Name="FileVersion">3.1.34.135</VersionInfoKeys><VersionInfoKeys Name="InternalName"></VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename">Ms3.exe</VersionInfoKeys><VersionInfoKeys Name="ProductName">Планшетохранилище</VersionInfoKeys><VersionInfoKeys Name="ProductVersion">3.0</VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">Ms3.dpr</Source></Source><Excluded_Packages>
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters><Parameters Name="RunParams">-nosplash</Parameters><Parameters Name="DebugSourceDirs">C:\Projects\kis\Components\EzGIS\Source\</Parameters></Parameters><Language><Language Name="RootDir">C:\Program Files\Borland\Delphi6\Bin\</Language></Language><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">True</VersionInfo><VersionInfo Name="MajorVer">3</VersionInfo><VersionInfo Name="MinorVer">1</VersionInfo><VersionInfo Name="Release">37</VersionInfo><VersionInfo Name="Build">165</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1049</VersionInfo><VersionInfo Name="CodePage">1251</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">МП УГА</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Планшетохранилище</VersionInfoKeys><VersionInfoKeys Name="FileVersion">3.1.37.165</VersionInfoKeys><VersionInfoKeys Name="InternalName"></VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename">Ms3.exe</VersionInfoKeys><VersionInfoKeys Name="ProductName">Планшетохранилище</VersionInfoKeys><VersionInfoKeys Name="ProductVersion">3.0</VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">Ms3.dpr</Source></Source><Excluded_Packages>
       <Excluded_Packages Name="$(BDS)\bin\dcloffice2k100.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
       <Excluded_Packages Name="$(BDS)\bin\dclofficexp100.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
     </Excluded_Packages></Delphi.Personality><ModelSupport>False</ModelSupport></BorlandProject></BorlandProject>
@@ -69,6 +69,7 @@
     <DCCReference Include="Source\Gdip\GdipClass.pas" />
     <DCCReference Include="Source\Gdip\GdipUtils.pas" />
     <DCCReference Include="Source\uMStClassesLots.pas" />
+    <DCCReference Include="Source\uMStClassesMasterPlan.pas" />
     <DCCReference Include="Source\uMStClassesOrderArraySort.pas" />
     <DCCReference Include="Source\uMStClassesProjects.pas" />
     <DCCReference Include="Source\uMStClassesProjectsBrowser.pas" />
@@ -210,6 +211,10 @@
     </DCCReference>
     <DCCReference Include="Source\uMStModuleMapMngrIBX.pas">
       <Form>MStIBXMapMngr</Form>
+      <DesignClass>TDataModule</DesignClass>
+    </DCCReference>
+    <DCCReference Include="Source\uMStModuleMasterPlan.pas">
+      <Form>mstMasterPlanModule</Form>
       <DesignClass>TDataModule</DesignClass>
     </DCCReference>
     <DCCReference Include="Source\uMStModuleOrders.pas">

@@ -11,7 +11,8 @@ uses
   // Common
   uCommonUtils,  
   //
-  uMStConsts, uMStKernelTypes, uMStKernelSemantic, uMStKernelStackConsts;
+  uMStConsts, uMStKernelTypes, uMStKernelSemantic, uMStKernelStackConsts,
+  VirtualTrees;
 
 const
   ID_NONE = 0;
@@ -146,6 +147,8 @@ type
     FVisible: Boolean;
     FHidden: Boolean;
     FId: Integer;
+    FParent: TmstLayer;
+    FChildLayers: TObjectList; 
     procedure SetName(const Value: String);
     procedure SetCaption(const Value: String);
     procedure SetPosition(const Value: SmallInt);
@@ -153,7 +156,13 @@ type
     procedure SetVisible(const Value: Boolean);
     procedure SetHidden(const Value: Boolean);
     procedure SetId(const Value: Integer);
+    procedure SetParent(const Value: TmstLayer);
+    function GetChild(Index: Integer): TmstLayer;
+    function GetChildCount: Integer;
   public
+    constructor Create;
+    destructor Destroy; override;
+    //
     property Id: Integer read FId write SetId;
     property Name: String read FName write SetName;
     property Caption: String read FCaption write SetCaption;
@@ -166,6 +175,11 @@ type
     property LayerType: SmallInt read FLayerType write SetLayerType;
     property Visible: Boolean read FVisible write SetVisible;
     property Hidden: Boolean read FHidden write SetHidden;
+    property Parent: TmstLayer read FParent write SetParent;
+    property ChildCount: Integer read GetChildCount;
+    property Child[Index: Integer]: TmstLayer read GetChild;
+    function AddChild(): TmstLayer;
+    procedure AppendChild(aLayer: TmstLayer);
   end;
 
   TmstLayerEvent = procedure (Sender: TObject; Layer: TmstLayer) of object;
@@ -177,20 +191,36 @@ type
     FOnLayerChanged: TmstLayerEvent;
     FOnDeleteLayer: TmstLayerEvent;
     FOnSelectLayer: TmstLayerEvent;
+    FUpdateCount: Integer;
     procedure SetLayerControl(const Value: TControl);
     // Обновляет внешний вид контрола при изменении состояния слоев
-    procedure UpdateControl;
-    procedure UpdateCheckListBox;
     // Назначает обработчики событий для контрола
     procedure CaptureControl;
-    procedure CaptureCheckListBox;
-    procedure CaptureClick;
+    procedure FreeControl;
+    procedure UpdateControl;
     //
+    procedure CaptureVST;
+    procedure FreeVST;
+    procedure UpdateVST;
+    procedure VSTAddLayer(VST: TVirtualStringTree; aLayer: TmstLayer);
+    function VSTFindNode(VST: TVirtualStringTree; aLayer: TmstLayer; Node: PVirtualNode): PVirtualNode;
+    procedure VSTGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
+      TextType: TVSTTextType; var CellText: UnicodeString);
+    procedure VStChecked(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure VSTAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure ReadStateFromVST;
+    procedure ReadLayerStateFromVST(VST: TVirtualStringTree; aLayer: TmstLayer);
+    //
+    procedure CaptureCheckListBox;
+    procedure FreeCheckListBox;
+    procedure UpdateCheckListBox;
     procedure LayerControlClick(Sender: TObject);
     procedure LayerClick(Sender: TObject);
     procedure ReadStateFromCheckBox;
-    procedure FreeControl;
-    procedure FreeCheckListBox;
+    //
+    procedure BeginUpdate();
+    procedure EndUpdate();
+    function InUpdate(): Boolean;
   protected
     function GetItem(Index: Integer): TmstLayer;
     procedure SetItem(Index: Integer; ALayer: TmstLayer);
@@ -198,12 +228,15 @@ type
   public
     destructor Destroy; override;
     function AddLayer: TmstLayer;
+    function GetById(const aId: Integer): TmstLayer;
     function GetByName(const AName: String; CaseSensetive: Boolean): TmstLayer;
     function IndexOfName(const aName: String): Integer;
     function FirstByPosition: TmstLayer;
     function LastByPosition: TmstLayer;
     function NextByPosition(FromLayer: TmstLayer): TmstLayer;
     function GetMaxPosition(): Integer;
+    function FindLayerByName(const aLayerName: string): TmstLayer;
+    procedure Connect(aLayer: TmstLayer; ParentLayerId: Integer);
 
     property Items[Index: Integer]: TmstLayer read GetItem write SetItem; default;
     property LayerControl: TControl read FLayerControl write SetLayerControl;
@@ -387,6 +420,12 @@ uses
   uMStKernelConsts, uMStKernelClassesPropertiesViewers,
   uMStClassesProjects;
 
+type
+  PVSTLayer = ^TVSTLayer;
+  TVSTLayer = record
+    Layer: TmstLayer;
+  end;
+
 { TmstMap }
 
 constructor TmstMap.Create;
@@ -532,6 +571,41 @@ end;
 
 { TmstLayer }
 
+function TmstLayer.AddChild: TmstLayer;
+begin
+  Result := TmstLayer.Create;
+  Result.Parent := Self;
+  FChildLayers.Add(Result);
+end;
+
+procedure TmstLayer.AppendChild(aLayer: TmstLayer);
+begin
+  aLayer.Parent := Self;
+  FChildLayers.Add(aLayer);
+end;
+
+constructor TmstLayer.Create;
+begin
+  inherited;
+  FChildLayers := TObjectList.Create;
+end;
+
+destructor TmstLayer.Destroy;
+begin
+  FChildLayers.Free;
+  inherited;
+end;
+
+function TmstLayer.GetChild(Index: Integer): TmstLayer;
+begin
+  Result := TmstLayer(FChildLayers[Index]);
+end;
+
+function TmstLayer.GetChildCount: Integer;
+begin
+  Result := FChildLayers.Count;
+end;
+
 procedure TmstLayer.SetCaption(const Value: String);
 begin
   FCaption := Value;
@@ -557,6 +631,11 @@ begin
   FName := Value;
 end;
 
+procedure TmstLayer.SetParent(const Value: TmstLayer);
+begin
+  FParent := Value;
+end;
+
 procedure TmstLayer.SetPosition(const Value: SmallInt);
 begin
   FPosition := Value;
@@ -575,13 +654,14 @@ begin
   Self.Add(Result); 
 end;
 
+procedure TmstLayerList.BeginUpdate;
+begin
+  Inc(FUpdateCount);
+end;
+
 procedure TmstLayerList.CaptureCheckListBox;
 begin
   TCheckListBox(FLayerControl).OnClickCheck := Self.LayerControlClick;
-end;
-
-procedure TmstLayerList.CaptureClick;
-begin
   TCheckListBox(FLayerControl).OnClick := Self.LayerClick;
 end;
 
@@ -589,9 +669,44 @@ procedure TmstLayerList.CaptureControl;
 begin
   if FLayerControl is TCheckListBox then
   begin
-    CaptureCheckListBox;
-    CaptureClick;
+    CaptureCheckListBox();
+  end
+  else
+  if FLayerControl is TVirtualStringTree then
+  begin
+    CaptureVST();
   end;
+end;
+
+procedure TmstLayerList.CaptureVST;
+var
+  VST: TVirtualStringTree;
+begin
+  VST := TVirtualStringTree(FLayerControl);
+  VST.NodeDataSize := SizeOf(TVSTLayer);
+  VST.OnGetText := VSTGetText;
+  VST.OnChecked := VSTChecked;
+  VST.OnAddToSelection := VSTAddToSelection;
+end;
+
+procedure TmstLayerList.Connect(aLayer: TmstLayer; ParentLayerId: Integer);
+var
+  aParent: TmstLayer;
+  OldOwnObjects: Boolean;
+begin
+  aParent := GetById(ParentLayerId);
+  if Assigned(aParent) and (aParent <> aLayer) then
+  begin
+    OldOwnObjects := Self.OwnsObjects;
+    try
+      Self.OwnsObjects := False;
+      //
+      Self.Extract(aLayer);
+      aParent.AppendChild(aLayer);
+    finally
+      Self.OwnsObjects := OldOwnObjects;
+    end;
+  end; 
 end;
 
 destructor TmstLayerList.Destroy;
@@ -599,6 +714,28 @@ begin
   if Assigned(FLayerControl) then
     FreeControl;
   inherited;
+end;
+
+procedure TmstLayerList.EndUpdate;
+begin
+  Dec(FUpdateCount);
+  if FUpdateCount < 0 then
+    FUpdateCount := 0;
+end;
+
+function TmstLayerList.FindLayerByName(const aLayerName: string): TmstLayer;
+var
+  I: Integer;
+begin
+  for I := 0 to Count - 1 do
+  begin
+    if Items[I].Name = aLayerName then
+    begin
+      Result := Items[I];
+      Exit;
+    end;
+  end;
+  Result := nil;
 end;
 
 function TmstLayerList.FirstByPosition: TmstLayer;
@@ -624,8 +761,34 @@ end;
 procedure TmstLayerList.FreeControl;
 begin
   if FLayerControl is TCheckListBox then
-    FreeCheckListBox;
+    FreeCheckListBox()
+  else
+  if FLayerControl is TVirtualStringTree then
+    FreeVST();
   FLayerControl := nil;
+end;
+
+procedure TmstLayerList.FreeVST;
+var
+  VST: TVirtualStringTree;
+begin
+  VST := TVirtualStringTree(FLayerControl);
+  VST.OnGetText := nil;
+  VST.OnChecked := nil;
+  VST.OnAddToSelection := nil;
+end;
+
+function TmstLayerList.GetById(const aId: Integer): TmstLayer;
+var
+  I: Integer;
+begin
+  for I := 0 to Count - 1 do
+    if aId = Items[I].Id then
+    begin
+      Result := Items[I];
+      Exit;
+    end;
+  Result := nil;
 end;
 
 function TmstLayerList.GetByName(const AName: String; CaseSensetive: Boolean): TmstLayer;
@@ -682,6 +845,11 @@ begin
   Result := -1;
 end;
 
+function TmstLayerList.InUpdate: Boolean;
+begin
+  Result := FUpdateCount > 0;
+end;
+
 function TmstLayerList.LastByPosition: TmstLayer;
 var
   I, Pos, LayerIndex: Integer;
@@ -700,15 +868,25 @@ end;
 procedure TmstLayerList.LayerClick(Sender: TObject);
 begin
   if Assigned(FLayerControl) then
-  if FLayerControl is TCheckListBox then
-    ReadStateFromCheckBox;
+  begin
+    if FLayerControl is TCheckListBox then
+      ReadStateFromCheckBox()
+    else
+    if FLayerControl is TVirtualStringTree then
+      ReadStateFromVST();
+  end;
 end;
 
 procedure TmstLayerList.LayerControlClick(Sender: TObject);
 begin
   if Assigned(FLayerControl) then
-  if FLayerControl is TCheckListBox then
-    ReadStateFromCheckBox;
+  begin
+    if FLayerControl is TCheckListBox then
+      ReadStateFromCheckBox()
+    else
+    if FLayerControl is TVirtualStringTree then
+      ReadStateFromVST();
+  end;
 end;
 
 function TmstLayerList.NextByPosition(FromLayer: TmstLayer): TmstLayer;
@@ -734,6 +912,30 @@ begin
   UpdateControl;
 end;
 
+procedure TmstLayerList.ReadLayerStateFromVST(VST: TVirtualStringTree; aLayer: TmstLayer);
+var
+  N: PVirtualNode;
+  NodeChecked: Boolean;
+  NodeSelected: Boolean;
+begin
+  // ищем слой в дереве
+  N := VSTFindNode(VST, aLayer, nil);
+  if Assigned(N) then
+  begin
+    NodeChecked := VST.CheckState[N] = csCheckedNormal;
+    if aLayer.Visible <> NodeChecked then
+    begin
+      aLayer.Visible := NodeChecked;
+      if Assigned(FOnLayerChanged) then
+        FOnLayerChanged(Self, aLayer);
+    end;
+    NodeSelected := VST.Selected[N];
+    if NodeSelected then
+      if Assigned(FOnSelectLayer) then
+        FOnSelectLayer(Self, aLayer);
+  end;
+end;
+
 procedure TmstLayerList.ReadStateFromCheckBox;
 var
   I, J: Integer;
@@ -755,6 +957,27 @@ begin
           if Assigned(FOnSelectLayer) then
             FOnSelectLayer(Self, Self[I]);
       end;
+    end;
+  finally
+    FReading := False; 
+  end;
+end;
+
+procedure TmstLayerList.ReadStateFromVST;
+var
+  I, J: Integer;
+  VST: TVirtualStringTree;
+  Layer: TmstLayer;
+begin
+  FReading := True;
+  try
+    VST := TVirtualStringTree(FLayerControl);
+    for I := 0 to Pred(Self.Count) do
+    begin
+      Layer := Self[I];
+      ReadLayerStateFromVST(VST, Layer);
+      for J := 0 to Layer.ChildCount - 1 do
+        ReadLayerStateFromVST(VST, Layer.Child[J]);
     end;
   finally
     FReading := False; 
@@ -809,8 +1032,130 @@ begin
   if Assigned(FLayerControl) then
   begin
     if FLayerControl is TCheckListBox then
-      UpdateCheckListBox;
+      UpdateCheckListBox()
+    else
+    if FLayerControl is TVirtualStringTree then
+      UpdateVST();
   end;
+end;
+
+procedure TmstLayerList.UpdateVST;
+var
+  Layer: TmstLayer;
+  VST: TVirtualStringTree;
+  I: Integer;
+begin
+  VST := FLayerControl as TVirtualStringTree;
+  BeginUpdate;
+  try
+    VST.Clear();
+    if Self.Count > 0 then
+      for I := 0 to Pred(Self.Count) do
+      begin
+        Layer := Self[I];
+        VSTAddLayer(VST, Layer);
+      end;
+  finally
+    EndUpdate;
+  end;
+end;
+
+procedure TmstLayerList.VSTAddLayer(VST: TVirtualStringTree; aLayer: TmstLayer);
+var
+  I: Integer;
+  SubLayer: TmstLayer;
+  N: PVirtualNode;
+  ParentN: PVirtualNode;
+  P: PVSTLayer;
+begin
+  ParentN := nil;//VST.RootNode;
+  if aLayer.Parent <> nil then
+  begin
+    ParentN := VSTFindNode(VST, aLayer.Parent, nil);
+//    if ParentN = nil then
+//      ParentN := VST.RootNode;
+  end;
+  //
+  N := VST.AddChild(ParentN);
+  P := VST.GetNodeData(N);
+  P.Layer := aLayer;
+  N.CheckType := ctCheckBox;
+  if aLayer.Visible then
+    VST.CheckState[N] := csCheckedNormal
+  else
+    VST.CheckState[N] := csUncheckedNormal;
+  //
+  for I := 0 to aLayer.ChildCount - 1 do
+  begin
+    VSTAddLayer(VST, aLayer.Child[I]);
+  end;
+end;
+
+procedure TmstLayerList.VSTAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
+var
+  P: PVSTLayer;
+  R: TVSTLayer;
+begin
+  if InUpdate then
+    Exit;
+  P := Sender.GetNodeData(Node);
+  if Assigned(FOnSelectLayer) then
+    FOnSelectLayer(Self, P.Layer);
+end;
+
+procedure TmstLayerList.VStChecked(Sender: TBaseVirtualTree; Node: PVirtualNode);
+var
+  P: PVSTLayer;
+  L: TmstLayer;
+  R: TVSTLayer;
+begin
+  if InUpdate then
+    Exit;
+  P := Sender.GetNodeData(Node);
+  L := P.Layer;
+  L.Visible := Sender.CheckState[Node] = csCheckedNormal;
+  if Assigned(FOnLayerChanged) then
+    FOnLayerChanged(Self, L);
+end;
+
+function TmstLayerList.VSTFindNode(VST: TVirtualStringTree; aLayer: TmstLayer; Node: PVirtualNode): PVirtualNode;
+var
+  N: PVirtualNode;
+  P: PVSTLayer;
+//  R: TVSTLayer;
+begin
+  Result := nil;
+  if Node = nil then
+    Node := VST.RootNode;
+  N := Node.FirstChild;
+  while Assigned(N) do
+  begin
+    P := VST.GetNodeData(N);
+    if P.Layer = aLayer then
+    begin
+      Result := N;
+      Exit;
+    end;
+    //
+    if N.ChildCount > 0 then
+    begin
+      Result := VSTFindNode(VST, aLayer, N);
+      if Result <> nil then
+        Exit;
+    end;
+    N := N.NextSibling;
+  end;
+end;
+
+procedure TmstLayerList.VSTGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
+  TextType: TVSTTextType; var CellText: UnicodeString);
+var
+  P: PVSTLayer;
+  L: TmstLayer;
+begin
+  P := Sender.GetNodeData(Node);
+  L := P.Layer;
+  CellText := L.Caption;
 end;
 
 { TmstStreet }

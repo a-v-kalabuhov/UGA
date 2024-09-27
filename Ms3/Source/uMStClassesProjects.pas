@@ -173,6 +173,7 @@ type
     function Add(): TmstProjectLine;
     function ByDbId(const DbId: Integer): TmstProjectLine;
     procedure CopyFrom(Source: TmstProjectLines);
+    procedure DeleteLine(const DbId: Integer);
     property Items[Index: Integer]: TmstProjectLine read GetItems write SetItems; default;
   end;
 
@@ -252,6 +253,7 @@ type
     constructor Create(aOwner: TmstProject);
     function Add(): TmstProjectPlace;
     procedure CopyFrom(Source: TmstProjectPlaces);
+    procedure DeletePlace(const DbId: Integer);
     property Items[Index: Integer]: TmstProjectPlace read GetItems write SetItems; default;
   end;
 
@@ -386,6 +388,7 @@ type
     //
     class procedure ClearProjectLayers();
     class procedure RemoveProjectFromLayer(const ProjectId: Integer);
+    class procedure RemoveProjectLineFromLayer(const ProjectId, LineId: Integer);
     //
     class function AddLineZoneToGIS(aLine: TmstProjectLine; aZoneWidth: Double): Boolean;
     class function RemoveLineZone(aLine: TmstProjectLine): Boolean;
@@ -403,6 +406,13 @@ type
     class function EntityIsCurrent(const Layer: TEzBaseLayer; const Recno: Integer): Boolean;
     class procedure SetCurrentProjectLine(aProjectId, aLineId: Integer);
   end;
+
+  IProjectSaver = interface
+    ['{F3F9E055-E791-4370-A5B1-724ABF56EB54}']
+    procedure Save(aProject: TmstProject);
+  end;
+
+  TGetProjectSaver = procedure (Sender: TObject; out aSaver: IProjectSaver) of object;
 
 implementation
 
@@ -1598,6 +1608,18 @@ begin
   FOwner := aOwner;
 end;
 
+procedure TmstProjectPlaces.DeletePlace(const DbId: Integer);
+var
+  I: Integer;
+begin
+  for I := 0 to Count - 1 do
+    if Items[I].DatabaseId = DbId then
+    begin
+      Delete(I);
+      Exit;
+    end;
+end;
+
 function TmstProjectPlaces.GetItems(Index: Integer): TmstProjectPlace;
 begin
   Result := TmstProjectPlace(inherited Items[Index]);
@@ -1648,6 +1670,18 @@ constructor TmstProjectLines.Create(aOwner: TmstProject);
 begin
   inherited Create;
   FOwner := aOwner;
+end;
+
+procedure TmstProjectLines.DeleteLine(const DbId: Integer);
+var
+  I: Integer;
+begin
+  for I := 0 to Count - 1 do
+    if Items[I].DatabaseId = DbId then
+    begin
+      Delete(I);
+      Exit;
+    end;
 end;
 
 function TmstProjectLines.GetItems(Index: Integer): TmstProjectLine;
@@ -2029,26 +2063,44 @@ begin
 end;
 
 var
-  RemoveProjectFromLayerProjectId: Integer;
-  ProjectIdFieldNo: Integer;
+  RemoveProjectFromLayerProjectId: Integer = -1;
+  RemoveProjectLineFromLayerProjectId: Integer = -1;
+  ProjectIdFieldNo: Integer = -1;
+  ProjectLineIdFieldNo: Integer = -1;
 
 function CheckProjectId(Layer: TEzBaseLayer; const Recno: Integer): Boolean;
 var
-  PrjId: Integer;
+  PrjId, LineId: Integer;
+  DoDelete: Boolean;
 begin
   Result := False;
   try
     if RemoveProjectFromLayerProjectId > 0 then
     begin
+      Layer.DBTable.RecNo := Recno;
+      if Layer.RecIsDeleted then
+        Exit;
+      //
       if ProjectIdFieldNo < 0 then
         ProjectIdFieldNo := Layer.DBTable.FieldNo(SLF_PROJECT_ID);
-      if ProjectIdFieldNo > 0 then
-        if not Layer.RecIsDeleted then
+      DoDelete := ProjectIdFieldNo > 0;
+      if DoDelete then
+      begin
+        if ProjectLineIdFieldNo > 0 then
         begin
-          Layer.DBTable.RecNo := Recno;
-          PrjId := Layer.DBTable.IntegerGetN(ProjectIdFieldNo);
-          Result := PrjId = RemoveProjectFromLayerProjectId;
+          if ProjectLineIdFieldNo < 0 then
+            ProjectLineIdFieldNo := Layer.DBTable.FieldNo(SLF_LINE_ID);
         end;
+        PrjId := Layer.DBTable.IntegerGetN(ProjectIdFieldNo);
+        Result := PrjId = RemoveProjectFromLayerProjectId;
+        if Result then
+          if RemoveProjectLineFromLayerProjectId > 0 then
+          if ProjectLineIdFieldNo > 0 then
+          begin
+            LineId := Layer.DBTable.IntegerGetN(ProjectLineIdFieldNo);
+            Result := LineId = RemoveProjectLineFromLayerProjectId;
+          end;
+      end;
     end;
   except
     Result := False;
@@ -2077,20 +2129,50 @@ end;
 class procedure TProjectUtils.RemoveProjectFromLayer(const ProjectId: Integer);
 begin
   RemoveProjectFromLayerProjectId := ProjectId;
+  RemoveProjectLineFromLayerProjectId := -1;
   try
     ProjectIdFieldNo := -1;
+    ProjectLineIdFieldNo := -1;
     try
       ClearLayer(SL_PROJECT_CLOSED, CheckProjectId);
     finally
       ProjectIdFieldNo := -1;
+      ProjectLineIdFieldNo := -1;
     end;
     try
       ClearLayer(SL_PROJECT_OPEN, CheckProjectId);
     finally
       ProjectIdFieldNo := -1;
+      ProjectLineIdFieldNo := -1;
     end;
   finally
     RemoveProjectFromLayerProjectId := -1;
+    RemoveProjectLineFromLayerProjectId := -1;
+  end;
+end;
+
+class procedure TProjectUtils.RemoveProjectLineFromLayer(const ProjectId, LineId: Integer);
+begin
+  RemoveProjectFromLayerProjectId := ProjectId;
+  RemoveProjectLineFromLayerProjectId := LineId;
+  try
+    ProjectIdFieldNo := -1;
+    ProjectLineIdFieldNo := -1;
+    try
+      ClearLayer(SL_PROJECT_CLOSED, CheckProjectId);
+    finally
+      ProjectIdFieldNo := -1;
+      ProjectLineIdFieldNo := -1;
+    end;
+    try
+      ClearLayer(SL_PROJECT_OPEN, CheckProjectId);
+    finally
+      ProjectIdFieldNo := -1;
+      ProjectLineIdFieldNo := -1;
+    end;
+  finally
+    RemoveProjectFromLayerProjectId := -1;
+    RemoveProjectLineFromLayerProjectId := -1;
   end;
 end;
 

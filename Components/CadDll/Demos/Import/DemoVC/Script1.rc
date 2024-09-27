@@ -1,0 +1,251 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+#include "Windows.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Russian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+#ifdef _WIN32
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+CURSOR1                 CURSOR                  "cursor1.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG2 DIALOG  0, 0, 186, 95
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,129,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,129,24,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_DIALOG2, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    ID_DRAWINGSTYLE_DASHDOTS "DashDots Drawing Mode\nDashDots"
+    ID_DRAWINGSTYLE_WINAPI  "Win API Drawing Mode\\ Win API"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_DRAWINGSTYLE_SOLIDLINES "Solid Lines Drawing Mode\nSolid Lines"
+END
+
+#endif    // Russian resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG1 DIALOG  0, 0, 182, 66
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Layer's name"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,45,39,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,97,39,50,14
+    LTEXT           "Layer's name",-1,13,17,42,8
+    EDITTEXT        IDC_EDIT1,62,14,104,14,ES_AUTOHSCROLL
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 175
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 59
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.K.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+MENU1 MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Load...",                    ID_FILE_LOAD
+        MENUITEM "&Save As...",                 ID_FILE_SAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_FILE_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Doublebuffered",             ID_VIEW_DBLBUF, CHECKED
+    END
+    POPUP "&Scale"
+    BEGIN
+        MENUITEM "0.1%",                        ID_SCALE_1
+        MENUITEM "0.25%",                       ID_SCALE_2
+        MENUITEM "0.5%",                        ID_SCALE_3
+        MENUITEM "1%",                          ID_SCALE_4
+        MENUITEM "2%",                          ID_SCALE_5
+        MENUITEM "3%",                          ID_SCALE_6
+        MENUITEM "5%",                          ID_SCALE_7
+        MENUITEM "10%",                         ID_SCALE_8
+        MENUITEM "25%",                         ID_SCALE_9
+        MENUITEM "40%",                         ID_SCALE_10
+        MENUITEM "100%",                        ID_SCALE_11
+        MENUITEM "250%",                        ID_SCALE_12
+        MENUITEM "500%",                        ID_SCALE_13
+        MENUITEM "1000%",                       ID_SCALE_14
+        MENUITEM "2500%",                       ID_SCALE_15
+        MENUITEM "5000%",                       ID_SCALE_16
+        MENUITEM "10000%",                      ID_SCALE_17
+        MENUITEM SEPARATOR
+        MENUITEM "Fit to Window",               ID_FITWINDOW
+    END
+    POPUP "&Options"
+    BEGIN
+        POPUP "Arcs As Curves/Poly"
+        BEGIN
+            MENUITEM "As PolyLine",                 ID_GETARCSASPOLY, CHECKED
+            MENUITEM "As Curves",                   ID_GETARCSASCURVES
+        END
+        POPUP "&Circle"
+        BEGIN
+            MENUITEM "Draw As Arc",                 ID_CIRCLE_DRAWASARC
+            POPUP "Draw As Poly", CHECKED
+            BEGIN
+                MENUITEM "DashDots",                    ID_CIRCLE_DRAWASPOLY_DASHDOTS, CHECKED
+                MENUITEM "WinAPI",                      ID_CIRCLE_DRAWASPOLY_WINAPI
+                MENUITEM "Solid Lines",                 ID_CIRCLE_DRAWASPOLY_SOLIDLINES
+            END
+        END
+        POPUP "&Drawing Mode"
+        BEGIN
+            MENUITEM "DashDots",                    ID_DRAWINGSTYLE_DASHDOTS, CHECKED
+            MENUITEM "Win API",                     ID_DRAWINGSTYLE_WINAPI
+            MENUITEM "Solid Lines",                 ID_DRAWINGSTYLE_SOLIDLINES
+        END
+        POPUP "Layers"
+        BEGIN
+            MENUITEM "Get entities count on layer", ID_LAYERS_GETLAYERSLIST
+        END
+        MENUITEM "Texts As Curves",             42027
+    END
+END
+
+#endif    // English (U.K.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

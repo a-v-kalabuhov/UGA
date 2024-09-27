@@ -84,7 +84,9 @@ uses
   uMStDialogBufferZoneWidth in 'Source\uMStDialogBufferZoneWidth.pas' {mstZoneWidthDialog},
   uMStClassesProjectsMIFExport in 'Source\uMStClassesProjectsMIFExport.pas',
   uMStGISEzActions in 'Source\uMStGISEzActions.pas',
-  uMStGISEzActionsMeasure in 'Source\uMStGISEzActionsMeasure.pas';
+  uMStGISEzActionsMeasure in 'Source\uMStGISEzActionsMeasure.pas',
+  uMStClassesMasterPlan in 'Source\uMStClassesMasterPlan.pas',
+  uMStModuleMasterPlan in 'Source\uMStModuleMasterPlan.pas' {mstMasterPlanModule: TDataModule};
 
 {$R *.RES}
 
@@ -95,8 +97,8 @@ begin
   Application.Title := 'Планшетохранилище 3.1';
   try
     Application.CreateForm(TmstClientAppModule, mstClientAppModule);
-  Application.CreateForm(TmstPrintModule, mstPrintModule);
-  Application.CreateForm(TmstClientMainForm, mstClientMainForm);
+    Application.CreateForm(TmstPrintModule, mstPrintModule);
+    Application.CreateForm(TmstClientMainForm, mstClientMainForm);
   except
     on E: Exception do
     begin

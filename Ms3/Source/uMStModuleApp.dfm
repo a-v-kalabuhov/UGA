@@ -6,7 +6,7 @@ object MStClientAppModule: TMStClientAppModule
   Width = 215
   object GIS: TEzGIS
     Active = False
-    LayersSubdir = 'C:\Program Files\Borland\Delphi7\Bin\'
+    LayersSubdir = 'C:\temp\mst3\layers\'
     OnBeforePaintEntity = GISBeforePaintEntity
     OnAfterPaintEntity = GISAfterPaintEntity
     OnCurrentLayerChange = GISCurrentLayerChange

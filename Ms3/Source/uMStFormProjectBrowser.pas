@@ -14,7 +14,7 @@ uses
   uMStKernelClasses, uMStModuleApp, uMStConsts, uMStKernelSemantic, uMStKernelIBX,
   uMStModuleMapMngrIBX,
   uMStClassesProjects, uMStClassesProjectsBrowser,
-  uMStDialogProjectsBrowserFilter, ActnList, IBUpdateSQL;
+  uMStDialogProjectsBrowserFilter, ActnList, IBUpdateSQL, Menus, IBSQL;
 
 type
   TMStProjectBrowserForm = class(TForm)
@@ -44,6 +44,11 @@ type
     ActionList1: TActionList;
     btnProperties: TSpeedButton;
     IBUpdateSQL1: TIBUpdateSQL;
+    sbtnDeleteProject: TSpeedButton;
+    PopupMenuDelete: TPopupMenu;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    IBSQL1: TIBSQL;
     procedure chbTransparencyClick(Sender: TObject);
     procedure trackAlphaChange(Sender: TObject);
     procedure btnDisplayClick(Sender: TObject);
@@ -67,6 +72,9 @@ type
     procedure IBQuery1AfterScroll(DataSet: TDataSet);
     procedure IBQuery1AfterClose(DataSet: TDataSet);
     procedure btnPropertiesClick(Sender: TObject);
+    procedure sbtnDeleteProjectClick(Sender: TObject);
+    procedure N1Click(Sender: TObject);
+    procedure N2Click(Sender: TObject);
   private
     FDrawBox: TEzBaseDrawBox;
     FFilter: TmstProjectsBrowserFilter;
@@ -81,9 +89,12 @@ type
     procedure DisplayPrj(Prj: TmstProject);
     function PrepareSql(): string;
     function GetProjectAndLoadToGIS(PrjId: Integer): TmstProject;
+    function IntLocate(const PrjId, LineId: Integer; const DisableUI: Boolean): Boolean;
+    procedure DeleteProject();
   public
     procedure Browse();
     function Locate(const PrjId, LineId: Integer): Boolean;
+    procedure RefreshData(PrjId: Integer = -1; LineId: Integer = -1);
     //
     property DrawBox: TEzBaseDrawBox read FDrawBox write SetDrawBox;
   end;
@@ -111,7 +122,7 @@ const
     '    LEFT JOIN' +
     '    LICENSED_ORGS ORGS1 ON (PRJS.EXECUTOR_ORGS_ID = ORGS1.ID)' +
     '    LEFT JOIN' +
-    '    LICENSED_ORGS ORGS2 ON (PRJS.CUSTOMER_ORGS_ID = ORGS2.ID)';
+    '    LICENSED_ORGS ORGS2 ON (PRJS.CUSTOMER_ORGS_ID = ORGS2.ID) ';
 
 {$R *.dfm}
 
@@ -126,6 +137,53 @@ end;
 procedure TMStProjectBrowserForm.ClearFilter;
 begin
   FFilter.Clear();
+end;
+
+procedure TMStProjectBrowserForm.DeleteProject;
+var
+  S1: string;
+  Answer, I, PrjId, Id2: Integer;
+  WasLoaded: Boolean;
+begin
+  S1 := 'Проект будет удалён без возможности восстановления.' + sLineBreak +
+        'Адрес проекта: ' + IBQuery1.FieldByName(SF_ADDRESS).AsString + sLineBreak + sLineBreak +
+        'Удалить проект?';
+  Answer := MessageBox(Self.Handle, PChar(S1), 'Внимание!', MB_YESNO + MB_ICONQUESTION);
+  if Answer = mrYes then
+  begin
+    IBQuery1.DisableControls;
+    try
+      I := IBQuery1.RecNo;
+      PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+      WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId);
+      if WasLoaded then
+      begin
+        TProjectUtils.RemoveProjectFromLayer(PrjId);
+        mstClientAppModule.RemoveLoadedProject(PrjId);
+        DrawBox.RegenDrawing;
+      end;
+      //
+      IBQuery1.First;
+      while not IBQuery1.Eof do
+      begin
+        try
+          Id2 := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+          if Id2 = PrjId then
+            IBQuery1.Delete
+          else
+            IBQuery1.Next;
+        finally
+        end;
+      end;
+      IBQuery1.FetchAll;
+      if IBQuery1.RecordCount < I then
+        IBQuery1.Last
+      else
+        IBQuery1.RecNo := I;
+    finally
+      IBQuery1.EnableControls;
+    end;
+  end;
 end;
 
 procedure TMStProjectBrowserForm.DisplayLine;
@@ -205,6 +263,40 @@ begin
   end;
 end;
 
+function TMStProjectBrowserForm.IntLocate(const PrjId, LineId: Integer; const DisableUI: Boolean): Boolean;
+var
+  I: Integer;
+begin
+  Result := IBQuery1.Active;
+  if Result then
+  begin
+    if DisableUI then
+      IBQuery1.DisableControls;
+    try
+      I := IBQuery1.RecNo;
+      IBQuery1.First;
+      while not IBQuery1.Eof do
+      begin
+        if (IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger = PrjId) then
+        if (LineId < 0)
+           or
+           (IBQuery1.FieldByName(SF_LINE_ID).AsInteger = LineId)
+        then
+        begin
+          Result := True;
+          Exit;
+        end;
+        IBQuery1.Next;
+      end;
+      IBQuery1.RecNo := I;
+    finally
+      if DisableUI then
+        IBQuery1.EnableControls;
+    end;
+    Result := False;
+  end;
+end;
+
 procedure TMStProjectBrowserForm.kaDBGrid1CellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor;
   State: TGridDrawState; var FontStyle: TFontStyles);
 var
@@ -233,31 +325,50 @@ begin
 end;
 
 function TMStProjectBrowserForm.Locate(const PrjId, LineId: Integer): Boolean;
-var
-  I: Integer;
 begin
-  Result := IBQuery1.Active;
-  if Result then
+  Result := IntLocate(PrjId, LineId, True);
+end;
+
+procedure TMStProjectBrowserForm.N1Click(Sender: TObject);
+begin
+  DeleteProject();
+end;
+
+procedure TMStProjectBrowserForm.N2Click(Sender: TObject);
+var
+  S1: string;
+  Answer, I, PrjId, Id2, LineId: Integer;
+  WasLoaded: Boolean;
+  Prj: TmstProject;
+begin
+//  S1 := 'Проект будет удалён без возможности восстановления.' + sLineBreak +
+//        'Адрес проекта: ' + IBQuery1.FieldByName(SF_ADDRESS).AsString + sLineBreak + sLineBreak +
+//        'Удалить проект?';
+//  Answer := MessageBox(Self.Handle, PChar(S1), 'Внимание!', MB_YESNO + MB_ICONQUESTION);
+//  if Answer = mrYes then
+  if IBQuery1.Active then
   begin
-    IBQuery1.DisableControls;
-    try
-      I := IBQuery1.RecNo;
-      IBQuery1.First;
-      while not IBQuery1.Eof do
-      begin
-        if IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger = PrjId then
-        if IBQuery1.FieldByName(SF_LINE_ID).AsInteger = LineId then
-        begin
-          Result := True;
-          Exit;
-        end;
-        IBQuery1.Next;
-      end;
-      IBQuery1.RecNo := I;
-    finally
-      IBQuery1.EnableControls;
+    I := IBQuery1.RecNo;
+    PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+    LineId := IBQuery1.FieldByName(SF_LINE_ID).AsInteger;
+    Prj := mstClientAppModule.GetProject(PrjId, True);
+    if Prj = nil then
+      Exit;
+    if Prj.Lines.Count = 1 then
+    begin
+      DeleteProject();
+      Exit;
     end;
-    Result := False;
+    // удаляем линию из проекта
+    IBQuery1.Delete;
+    Prj.Lines.DeleteLine(LineId);
+    Prj.Places.DeletePlace(LineId);
+    WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId);
+    if WasLoaded then
+    begin
+      TProjectUtils.RemoveProjectLineFromLayer(PrjId, LineId);
+      DrawBox.RegenDrawing;
+    end;
   end;
 end;
 
@@ -343,6 +454,39 @@ begin
               #39  + FormatDateTime(S_DATESTR_FORMAT, FFilter.DocDateEnd) + #39 + ') ';
     Result := Result + Where;
   end;
+  Result := Result + ' ORDER BY PRJS.ADDRESS, PRJS.ID, LINES.ID';
+end;
+
+procedure TMStProjectBrowserForm.RefreshData;
+var
+  SelPrjId, SelLineId: Integer;
+  B: Boolean;
+begin
+  // если запрос открыт, то запоминаем ID
+  if IBQuery1.Active then
+  begin
+    SelPrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+    SelLineId := IBQuery1.FieldByName(SF_LINE_ID).AsInteger;
+  end
+  else
+  begin
+    SelPrjId := -1;
+    SelLineId := -1;
+  end;
+  //
+  IBQuery1.DisableControls;
+  try
+    ApplyFilter();
+    B := (PrjId > 0);
+    if B then
+    begin
+      B := IntLocate(PrjId, LineId, False);
+    end;
+    if not B then
+      IntLocate(SelPrjId, SelLineId, False);
+  finally
+    IBQuery1.EnableControls;
+  end;
 end;
 
 procedure TMStProjectBrowserForm.ReleaseDataSet;
@@ -350,6 +494,18 @@ begin
   IBQuery1.Active := False;
   if IBTransaction1.Active then
     IBTransaction1.Commit;
+end;
+
+procedure TMStProjectBrowserForm.sbtnDeleteProjectClick(Sender: TObject);
+var
+  Pt: TPoint;
+begin
+  if not IBQuery1.Active then
+    Exit;
+    Pt.X := 0;
+    Pt.Y := sbtnDeleteProject.Height;
+  Pt := sbtnDeleteProject.ClientToScreen(Pt);
+  PopupMenuDelete.Popup(Pt.X, Pt.Y);
 end;
 
 procedure TMStProjectBrowserForm.SetDrawBox(const Value: TEzBaseDrawBox);

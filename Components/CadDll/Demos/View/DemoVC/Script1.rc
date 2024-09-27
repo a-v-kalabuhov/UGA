@@ -1,0 +1,285 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resrc1.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "resource.h"
+#include "Windows.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Russian (Russia) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resrc1.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""resource.h""\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Russian (Russia) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_LAYERS DIALOGEX 0, 0, 135, 141
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Layers"
+FONT 10, "", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,42,120,50,14
+    CONTROL         "ListLayers",IDC_LISTLAYERS,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_VSCROLL | WS_TABSTOP,7,7,120,108
+END
+
+IDD_PROPERTIES DIALOGEX 0, 0, 173, 129
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Properties"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,108,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,116,108,50,14
+    LTEXT           "Null line width:",IDS_NULLLINEWIDTH,9,26,50,10
+    EDITTEXT        IDE_NULLLINEWIDTH,61,23,63,15,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDSPN_NULLLINEWIDTH,"msctls_updown32",UDS_ARROWKEYS,124,23,11,14
+    LTEXT           "pixels",IDS_PIXELS,148,25,18,10
+    CONTROL         "Nearest point mode",IDC_NEARESTPOINTMODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,44,78,10
+    GROUPBOX        "Border",IDG_BORDER,7,55,159,46
+    CONTROL         "Global",IDR_GLOBAL,"Button",BS_AUTORADIOBUTTON,26,68,35,10
+    CONTROL         "Ratio",IDR_RATIO,"Button",BS_AUTORADIOBUTTON,107,68,33,10
+    EDITTEXT        IDE_BORDERSIZE,14,82,108,13,ES_AUTOHSCROLL
+    LTEXT           "%",IDL_BORDERUNITS,129,86,30,8
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 194, 83
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About..."
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,71,62,50,14
+    CTEXT           "Demo C++ for CAD DLL",IDS_DEMOCADIMAGEDLL,7,7,181,8,NOT WS_GROUP
+    CONTROL         "info@cadsofttools.com",IDCC_MAILTO_SG,"HyperLink",0xb,42,33,146,8
+    CONTROL         "www.cadsofttools.com",IDCC_HOMEPAGE_SG,"HyperLink",0xb,42,20,146,8
+    CONTROL         "support@cadsofttools.com",IDCC_MAILTO_SG_SUPPORT,
+                    "HyperLink",0xb,42,47,146,8
+    LTEXT           "Website:",IDC_WEBSITE_SG,7,20,30,8
+    LTEXT           "E-mail:",IDC_EMAIL_SG,7,33,22,8
+    LTEXT           "Support:",IDC_SUPPORT_SG,7,47,29,8
+END
+
+IDD_PROGRESS DIALOGEX 0, 0, 187, 68
+STYLE DS_ABSALIGN | DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Load file..."
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Stop loading",IDB_CANCEL_PROGRESS,67,47,50,14
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,7,26,173,15
+END
+
+IDD_PICTURE DIALOGEX 0, 0, 338, 194
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Draw DIB"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_LAYERS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 127
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 134
+    END
+
+    IDD_PROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 166
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 122
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 188
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 76
+    END
+
+    IDD_PROGRESS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 61
+    END
+
+    IDD_PICTURE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 331
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 187
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+MENU1 MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Load...",                    ID_FILE_LOAD
+        MENUITEM "Load file from memory",       ID_FILE_LOADFILEFROMMEMORY
+        MENUITEM SEPARATOR
+        MENUITEM "Print...",                    ID_FILE_PRINT
+        MENUITEM SEPARATOR
+        MENUITEM "Save to BMP",                 ID_FILE_SAVEAS_BMP
+        MENUITEM "Save to metafile...",         ID_FILE_SAVEAS_EMF
+        MENUITEM "S&ave as...",                 ID_FILE_SAVEAS
+    END
+    POPUP "&Scale"
+    BEGIN
+        MENUITEM "Fit to window",               ID_SCALE_1
+    END
+    POPUP "View"
+    BEGIN
+        MENUITEM "Normal",                      ID_VIEW_NORMAL, CHECKED
+        MENUITEM "Black white",                 ID_VIEW_BLACKWHITE
+        MENUITEM "Grayscale",                   ID_VIEW_GRAYSCALE
+        MENUITEM "SetDefaultColor",             ID_SETDEFAULTCOLOR
+        MENUITEM SEPARATOR
+        MENUITEM "Draw DIB",                    IDM_VIEW_PICTUREFROMDIB
+    END
+    POPUP "Colors"
+    BEGIN
+        MENUITEM "White (default)",             IDM_COLORS_WHITE
+        MENUITEM "Light yellow",                IDM_COLORS_LYELLOW
+        MENUITEM "Gray",                        IDM_COLORS_GRAY
+        MENUITEM "Black",                       IDM_COLORS_BLACK
+    END
+    POPUP "Orbit 3D"
+    BEGIN
+        MENUITEM "up X",                        IDM_ORBITUPX
+        MENUITEM "down X",                      IDM_ORBITDOWNX
+        MENUITEM "up Y",                        IDM_ORBITUPY
+        MENUITEM "down Y",                      IDM_ORBITDOWNY
+        MENUITEM "up Z",                        IDM_ORBITUPZ
+        MENUITEM "down Z",                      IDM_ORBITDOWNZ
+        MENUITEM "Rotate 180 CCW",              IDM_ROTATE
+    END
+    POPUP "Options"
+    BEGIN
+        MENUITEM "Show layers",                 IDM_OPTIONSLAYERS
+        MENUITEM "Show lineweight",             IDM_OPTIONSSHOWLINEWEIGHT
+        MENUITEM "On/Off drawing box",          IDM_OPTIONSDRAWINGBOX
+        MENUITEM "Properties",                  IDM_OPTIONSPROPERTIES
+    END
+    POPUP "Help"
+    BEGIN
+        MENUITEM "About...",                    ID_HELP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+HAND                    CURSOR                  "curhand.cur"
+TARGET                  CURSOR                  "curtarget.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BMORBITUPZ          BITMAP                  "bm_orbituZ.bmp"
+IDB_BMORBITUPY          BITMAP                  "bm_orbituY.bmp"
+IDB_BMORBITUPX          BITMAP                  "bm_orbituX.bmp"
+IDB_BMORBITDOWNZ        BITMAP                  "bm_orbitdZ.bmp"
+IDB_BMORBITDOWNY        BITMAP                  "bm_orbitdY.bmp"
+IDB_BMORBITDOWNX        BITMAP                  "bm_orbitdX.bmp"
+IDB_BMOPTIONSLAYERS     BITMAP                  "bm_layers.bmp"
+IDB_BMDRAWINGBOX        BITMAP                  "bm_drawingBox.bmp"
+IDB_BMROTATE            BITMAP                  "bm_rotate.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON                ICON                    "icon.ico"
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

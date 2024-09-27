@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<cadsofttools version="2">
+<!-- Description: Instruction GET returns the full structure of the drawing if no parameters are given as a result. 
+ If handle parameter is provided, the instruction returns properties of the entity specified by this handle. -->
+  <get/>
+</cadsofttools>

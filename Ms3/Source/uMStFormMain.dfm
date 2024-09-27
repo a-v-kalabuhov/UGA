@@ -25,6 +25,14 @@ object mstClientMainForm: TmstClientMainForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
+  object Splitter3: TSplitter
+    Left = 850
+    Top = 0
+    Width = 5
+    Height = 637
+    Align = alRight
+    ExplicitLeft = 876
+  end
   object StatusBar: TStatusBar
     Left = 0
     Top = 637
@@ -44,7 +52,7 @@ object mstClientMainForm: TmstClientMainForm
   object pnMain: TPanel
     Left = 0
     Top = 0
-    Width = 879
+    Width = 850
     Height = 637
     Align = alClient
     Caption = 'pnMain'
@@ -52,16 +60,14 @@ object mstClientMainForm: TmstClientMainForm
     object Splitter1: TSplitter
       Left = 251
       Top = 52
+      Width = 6
       Height = 560
       OnMoved = Splitter1Moved
-      ExplicitLeft = 193
-      ExplicitTop = 27
-      ExplicitHeight = 576
     end
     object ToolBar1: TToolBar
       Left = 1
       Top = 1
-      Width = 877
+      Width = 848
       Height = 26
       AutoSize = True
       ButtonWidth = 24
@@ -204,7 +210,7 @@ object mstClientMainForm: TmstClientMainForm
     object CmdLine: TEzCmdLine
       Left = 1
       Top = 612
-      Width = 877
+      Width = 848
       Height = 24
       DrawBoxList = <
         item
@@ -237,12 +243,10 @@ object mstClientMainForm: TmstClientMainForm
         Left = 1
         Top = 323
         Width = 248
-        Height = 3
+        Height = 5
         Cursor = crVSplit
         Align = alTop
         OnMoved = Splitter1Moved
-        ExplicitTop = 191
-        ExplicitWidth = 190
       end
       object TreeView: TTreeView
         Left = 1
@@ -271,9 +275,9 @@ object mstClientMainForm: TmstClientMainForm
       end
       object ListView: TListView
         Left = 1
-        Top = 351
+        Top = 353
         Width = 248
-        Height = 208
+        Height = 206
         Align = alClient
         BevelEdges = []
         BorderStyle = bsNone
@@ -345,7 +349,7 @@ object mstClientMainForm: TmstClientMainForm
       end
       object ToolBar3: TToolBar
         Left = 1
-        Top = 326
+        Top = 328
         Width = 248
         Height = 25
         Caption = 'ToolBar3'
@@ -395,9 +399,9 @@ object mstClientMainForm: TmstClientMainForm
       end
     end
     object pnCenter: TPanel
-      Left = 254
+      Left = 257
       Top = 52
-      Width = 624
+      Width = 592
       Height = 560
       Align = alClient
       Caption = 'pnCenter'
@@ -405,7 +409,7 @@ object mstClientMainForm: TmstClientMainForm
       object DrawBox: TEzDrawBox
         Left = 1
         Top = 52
-        Width = 622
+        Width = 590
         Height = 507
         BorderStyle = bsNone
         UseThread = False
@@ -442,7 +446,7 @@ object mstClientMainForm: TmstClientMainForm
       object tbReport: TToolBar
         Left = 1
         Top = 26
-        Width = 622
+        Width = 590
         Height = 26
         Color = cl3DLight
         EdgeBorders = [ebTop, ebBottom]
@@ -608,7 +612,7 @@ object mstClientMainForm: TmstClientMainForm
       object tbSnaps: TToolBar
         Left = 1
         Top = 1
-        Width = 622
+        Width = 590
         Height = 25
         Color = clMenu
         Customizable = True
@@ -704,7 +708,7 @@ object mstClientMainForm: TmstClientMainForm
       AlignWithMargins = True
       Left = 1
       Top = 27
-      Width = 877
+      Width = 848
       Height = 22
       Margins.Left = 0
       Margins.Top = 0
@@ -795,21 +799,42 @@ object mstClientMainForm: TmstClientMainForm
     end
   end
   object pnRight: TPanel
-    Left = 879
+    Left = 855
     Top = 0
-    Width = 176
+    Width = 200
     Height = 637
     Align = alRight
     TabOrder = 2
     object LayersListBox: TCheckListBox
       Left = 1
       Top = 1
-      Width = 174
-      Height = 635
-      Align = alClient
+      Width = 198
+      Height = 232
+      Align = alTop
       Color = clInfoBk
       ItemHeight = 13
       TabOrder = 0
+      Visible = False
+    end
+    object vstLayers: TVirtualStringTree
+      Left = 1
+      Top = 233
+      Width = 198
+      Height = 403
+      Align = alClient
+      CheckImageKind = ckSystemFlat
+      Color = clInfoBk
+      Header.AutoSizeIndex = 0
+      Header.Font.Charset = DEFAULT_CHARSET
+      Header.Font.Color = clWindowText
+      Header.Font.Height = -11
+      Header.Font.Name = 'Tahoma'
+      Header.Font.Style = []
+      Header.MainColumn = -1
+      NodeDataSize = 4
+      TabOrder = 1
+      TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+      Columns = <>
     end
   end
   object MainMenu: TMainMenu
@@ -919,6 +944,23 @@ object mstClientMainForm: TmstClientMainForm
       end
       object midmif1: TMenuItem
         Action = acProjectExport
+      end
+    end
+    object N51: TMenuItem
+      Caption = #1057#1074#1086#1076#1085#1099#1081' '#1087#1083#1072#1085
+      object N52: TMenuItem
+        Caption = #1055#1088#1080#1085#1103#1090#1100' '#1080#1079' '#1092#1072#1081#1083#1072
+        object DXF3: TMenuItem
+          Caption = 'DXF...'
+          OnClick = DXF3Click
+        end
+        object XLS1: TMenuItem
+          Caption = 'XLS...'
+        end
+      end
+      object N53: TMenuItem
+        Caption = #1053#1072#1074#1080#1075#1072#1090#1086#1088'...'
+        OnClick = N53Click
       end
     end
     object imMaps: TMenuItem
@@ -1454,7 +1496,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 80
     Top = 256
     Bitmap = {
-      494C0101540078018C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010154007801B00110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000006001000001002000000000000060
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4431,7 +4473,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 460
     Top = 224
     Bitmap = {
-      494C010112001300840110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010112001300A80110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

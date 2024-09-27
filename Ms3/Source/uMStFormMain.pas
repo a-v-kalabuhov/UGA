@@ -23,8 +23,11 @@ uses
   uMStImport, uMstImportFactory,
   uMStClassesWatermarkDraw, uMstClassesLots, uMStClassesProjects, uMStClassesProjectsSearch, uMStClassesProjectsMIFExport,
   uMstDialogFactory,
-  uMStModuleMapMngrIBX, uMStModuleProjectImport,
-  uMStFormLayerBrowser;
+  uMStModuleMapMngrIBX, uMStModuleProjectImport, uMstModuleMasterPlan,
+  uMStFormLayerBrowser, VirtualTrees;
+
+const
+  WM_RESTORE_PANELS = WM_USER + 100;
 
 type
   TAllotmentPoint = record
@@ -311,6 +314,13 @@ type
     acProjectExport: TAction;
     midmif1: TMenuItem;
     SaveDialog2: TSaveDialog;
+    vstLayers: TVirtualStringTree;
+    Splitter3: TSplitter;
+    N51: TMenuItem;
+    N52: TMenuItem;
+    DXF3: TMenuItem;
+    XLS1: TMenuItem;
+    N53: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -470,6 +480,8 @@ type
     procedure acProjectAdd2Execute(Sender: TObject);
     procedure acProjectExportUpdate(Sender: TObject);
     procedure acProjectExportExecute(Sender: TObject);
+    procedure DXF3Click(Sender: TObject);
+    procedure N53Click(Sender: TObject);
   private
     Points: TAllotmentPoints;
     FCursorState: TCursorState;
@@ -488,6 +500,8 @@ type
     FDragText: Boolean;
     FWatermark: TWatermark;
     FImport: TmstProjectImportModule;
+    FMasterPlan: TmstMasterPlanModule;
+    FRestored: Boolean;
     // X и Y - координаты на карте
     procedure PreparePopupMenuItems(const X, Y: Double; AMenu: TMenu);
     procedure LoadImage(Sender: TObject);
@@ -519,6 +533,13 @@ type
     procedure LocateProjectLine(const ClickPoint: TEzPoint);
     function GetProjectToExport(Sender: TObject; const ProjectId: Integer): TmstProject;
     procedure LoadSessionOptions();
+    procedure RestorePanelsWidth();
+    function GetMP: TmstMasterPlanModule;
+    procedure GetProjectImportLayer(Sender: TObject; out Layer: TEzBaseLayer);
+    procedure DoProjectImportExecuted(Sender: TObject; Cancelled: Boolean; aProject: TmstProject);
+  private
+    procedure WmRestorePanels(var Message: TMessage); message WM_RESTORE_PANELS;
+    procedure WMPaint(var Msg: TWMPaint); message WM_PAINT;
   private
     FNetTypesUpdate: Boolean;
     procedure NetTypeMenuClick(Sender: TObject);
@@ -1073,6 +1094,14 @@ begin
   StatusBar.Panels[2].Text := 'Масштаб 1 : ' + Format('%.2f', [Scale * 1000]);
 end;
 
+procedure TmstClientMainForm.DXF3Click(Sender: TObject);
+var
+  MP: TmstMasterPlanModule;
+begin
+  MP := GetMP();
+  MP.ImportDXF(Self.DrawBox);
+end;
+
 procedure TmstClientMainForm.edtFastFindLotEnter(Sender: TObject);
 begin
   edtFastFindLot.SelectAll;
@@ -1158,11 +1187,16 @@ begin
   if CanClose then
     Finalize(Points);
   mstClientAppModule.WriteFormPosition(Application, Self);
+  mstClientAppModule.SetOption('MainForm', 'LeftPanelWidth', IntToStr(pnLeft.Width));
+  mstClientAppModule.SetOption('MainForm', 'RightPanelWidth', IntToStr(pnRight.Width));
   mstClientAppModule.SetOption('Session', 'Map500Search', edtFastFindMap.Text);
+  //
+  mstClientAppModule.SaveLayersVisibility();
 end;
 
 procedure TmstClientMainForm.FormCreate(Sender: TObject);
 begin
+  FRestored := False;
   FSelector := TmstGUISelector.Create;
   mstClientAppModule.ReadFormPosition(Application, Self);
   CmdLine.AccuSnap.Enabled := False;
@@ -1214,6 +1248,13 @@ begin
   UpdateButtonSize(B);
 end;
 
+function TmstClientMainForm.GetMP: TmstMasterPlanModule;
+begin
+  if FMasterPlan = nil then
+    FMasterPlan := TmstMasterPlanModule.Create(Self);
+  Result := FMasterPlan;
+end;
+
 function TmstClientMainForm.GetPrintPermission(Maps: TStringList; Order: IOrder): TmstPrintPermission;
 var
   ExtraMaps: TStrings;
@@ -1250,6 +1291,23 @@ begin
     finally
       ExtraMaps.Free;
     end;
+  end;
+end;
+
+procedure TmstClientMainForm.GetProjectImportLayer(Sender: TObject; out Layer: TEzBaseLayer);
+var
+  Fields: TStringList;
+begin
+  Fields := TStringList.Create;
+  try
+    Fields.Add('UID;N;11;0');
+    Fields.Add('LAYER_ID;N;11;0');
+    //
+    Layer := DrawBox.GIS.Layers.LayerByName(SL_PROJECT_IMPORT);
+    if Layer = nil then
+      Layer := DrawBox.GIS.Layers.CreateNew(SL_PROJECT_IMPORT, Fields);
+  finally
+    Fields.Free;
   end;
 end;
 
@@ -1509,7 +1567,7 @@ begin
   N361.Checked := not N361.Checked;
 end;
 
-procedure TmstClientMainForm.ReleaseImage(Sender: TObject);     // +
+procedure TmstClientMainForm.ReleaseImage(Sender: TObject);
 var
   MapFileName: string;
 begin
@@ -1523,6 +1581,30 @@ begin
   finally
     Screen.Cursor := crDefault;
   end;
+end;
+
+procedure TmstClientMainForm.RestorePanelsWidth;
+var
+  S: string;
+  Wr, Wl, D: Integer;
+begin
+  if FRestored then
+    Exit;
+  S := mstClientAppModule.GetOption('MainForm', 'LeftPanelWidth', '250');
+  if not TryStrToInt(S, Wl) then
+    Wl := 250;
+  S := mstClientAppModule.GetOption('MainForm', 'RightPanelWidth', '200');
+  if not TryStrToInt(S, Wr) then
+    Wr := 200;
+  D := ClientWidth;
+  while (Wr + Wl) > D do
+  begin
+    Wr := Wr div 2;
+    Wl := Wl div 2;
+  end;
+  pnLeft.Width := Wl;
+  pnRight.Width := Wr;
+  FRestored := True;
 end;
 
 function TmstClientMainForm.SelectOrder(Maps: TStringList): IOrder;
@@ -1836,18 +1918,17 @@ begin
 end;
 
 procedure TmstClientMainForm.acShowMapHistoryExecute(Sender: TObject);
-{var
-  S: String;}
+var
+  Map: TmstMap;
 begin
   if Sender is TMenuItem then
     with Sender as TMenuItem do
     begin
-      raise Exception.Create('Check TmstClientMainForm.acShowMapHistoryExecute inplementation');
-{    S := MStClientAppModule.ImageNomenclature[Tag];
-    if S <> '' then
-      if mstMapMngr.UpdateMapHistory(S) then
-        ShowMapHistory('Планшет ' + S);
-}
+      raise Exception.Create('Check TmstClientMainForm.acShowMapHistoryExecute implementation');
+//    Map := mstClientAppModule.Maps.GetByMapEntityId(Tag);
+//    if Map <> nil then
+//      if mstMapMngr.UpdateMapHistory(Map.MapName) then
+//        ShowMapHistory('Планшет ' + Map.MapName));
     end;
 end;
 
@@ -1990,7 +2071,7 @@ procedure TmstClientMainForm.acProjectAdd2Execute(Sender: TObject);
 begin
   FImport := TmstProjectImportModule.Create(Self);
   // выбрать файл
-  if not FImport.BeginImport(DrawBox) then
+  if not FImport.BeginImport(DrawBox, GetProjectImportLayer, DoProjectImportExecuted) then
     Exit;
   FImport.DisplayImportDialog();
 end;
@@ -2099,6 +2180,18 @@ begin
       Msg.HotKey := 0;
 end;
 
+procedure TmstClientMainForm.WMPaint(var Msg: TWMPaint);
+begin
+  inherited;
+  if not FRestored then
+    SendMessage(Handle, WM_RESTORE_PANELS, 0, 0);
+end;
+
+procedure TmstClientMainForm.WmRestorePanels(var Message: TMessage);
+begin
+  RestorePanelsWidth();
+end;
+
 procedure TmstClientMainForm.SetGIS(const Value: TEzBaseGIS);
 begin
   FGIS := Value;
@@ -2111,6 +2204,9 @@ var
   Layer: TEzBaseLayer;
   Recno, NumPoint: Integer;
   MenuItem: TMenuItem;
+  List: TStringList;
+  I: Integer;
+  Map: TmstMap;
 begin
   Layer := nil;
   Recno := -1;
@@ -2123,39 +2219,53 @@ begin
   MenuItem.Tag := REG_LOTS;
   MenuItem.OnClick := LoadLotsClick;
   //
+  if mstClientAppModule.User.CanManageProjects then
+  begin
+    MenuItem := TMenuItem.Create(Self);
+    AMenu.Items.Add(MenuItem);
+    MenuItem.Caption := 'Загрузить проекты';
+    MenuItem.Tag := Recno;
+    MenuItem.OnClick := LoadProjectsClick;
+  end;
+  //
   if GIS.Layers.LayerByName('M500').LayerInfo.Visible then
   begin
+    List := TStringList.Create;
+    List.Forget;
     // Щелкнули на планшет
-    if DrawBox.PickEntity(X, Y, 0, 'M500', Layer, Recno, NumPoint, nil) then
+    if DrawBox.PickEntity(X, Y, 0, 'M500', Layer, Recno, NumPoint, List) then
     begin
       MenuItem := TMenuItem.Create(Self);
       AMenu.Items.Add(MenuItem);
-      MenuItem.Tag := Recno;
-      with mstClientAppModule.Maps.GetByMapEntityId(Recno) do
-        if ImageLoaded then
+      MenuItem.Caption := '-';
+      //
+      for I := 0 to List.Count - 1 do
+      begin
+        Recno := Integer(List.Objects[I]);
+        MenuItem := TMenuItem.Create(Self);
+        AMenu.Items.Add(MenuItem);
+        MenuItem.Tag := Recno;
+        Map := mstClientAppModule.Maps.GetByMapEntityId(Recno);
+        if Map.ImageLoaded then
         begin
-          MenuItem.Caption := 'Выгрузить планшет ' + MapName;
+          MenuItem.Caption := 'Выгрузить планшет ' + Map.MapName;
           MenuItem.OnClick := ReleaseImage;
         end
         else
         begin
-          MenuItem.Caption := 'Загрузить планшет ' + MapName;
+          MenuItem.Caption := 'Загрузить планшет ' + Map.MapName;
           MenuItem.OnClick := LoadImage;
         end;
 
-      MenuItem := TMenuItem.Create(Self);
-      AMenu.Items.Add(MenuItem);
-      MenuItem.Tag := Recno;
-      MenuItem.Caption := 'Показать историю планшета';
-      MenuItem.OnClick := acShowMapHistoryExecute;
-      //
-      if mstClientAppModule.User.CanManageProjects then
-      begin
-        MenuItem := TMenuItem.Create(Self);
-        AMenu.Items.Add(MenuItem);
-        MenuItem.Caption := 'Загрузить проекты';
-        MenuItem.Tag := Recno;
-        MenuItem.OnClick := LoadProjectsClick;
+//        MenuItem := TMenuItem.Create(Self);
+//        AMenu.Items.Add(MenuItem);
+//        MenuItem.Tag := Recno;
+//        MenuItem.Caption := 'Показать историю планшета ' + Map.MapName;
+//        MenuItem.OnClick := acShowMapHistoryExecute;
+//        //
+//        MenuItem := TMenuItem.Create(Self);
+//        AMenu.Items.Add(MenuItem);
+//        MenuItem.Caption := '-';
       end;
     end;
   end;
@@ -2190,6 +2300,14 @@ begin
   N44.Checked := not N44.Checked;
   UpdateButtonSize(N44.Checked);
   mstClientAppModule.SaveAppParam(Application, Self, 'MainFormBigButtons', N44.Checked);
+end;
+
+procedure TmstClientMainForm.N53Click(Sender: TObject);
+var
+  MP: TmstMasterPlanModule;
+begin
+  MP := GetMP();
+  MP.DisplayNavigator(Self.DrawBox);
 end;
 
 procedure TmstClientMainForm.N7Click(Sender: TObject);
@@ -2743,6 +2861,34 @@ begin
     end;
   end;
   DrawBox.Selection.Clear;
+end;
+
+procedure TmstClientMainForm.DoProjectImportExecuted(Sender: TObject; Cancelled: Boolean; aProject: TmstProject);
+var
+  View: TEzRect;
+begin
+  try
+    if not Cancelled then
+    begin
+      // если сохранили, то сохранеям в БД и показываем в слое проектов
+      aProject.Save(mstClientAppModule.MapMngr as IDb);
+      TProjectUtils.AddProjectToGIS(aProject);
+      mstClientAppModule.AddLoadedProject(aProject.DatabaseId);
+      //
+      View := Rect2D(aProject.MinX, aProject.MinY, aProject.MaxX, aProject.MaxY);
+      if aProject.CK36 then
+        Rect2DToVrn(View, False);
+      DrawBox.SetViewTo(View.ymin, View.xmin, View.ymax, View.xmax);
+      // если открыт список проектов, то надо его обновить
+      if mstProjectBrowserForm <> nil then
+      begin
+        mstProjectBrowserForm.RefreshData(aProject.DatabaseId);
+      end;
+    end;
+  finally
+    DrawBox.GIS.Layers.Delete(SL_PROJECT_IMPORT, True);
+    DrawBox.RegenDrawing;
+  end;
 end;
 
 procedure TmstClientMainForm.acReportAddTextExecute(Sender: TObject);

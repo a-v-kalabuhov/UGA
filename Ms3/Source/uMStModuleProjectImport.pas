@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, EzBaseGIS, EzCtrls, Dialogs, Forms, Controls, ComObj, DB,
-  JvComponentBase, JvCreateProcess,
+  JvComponentBase, 
   EzDxfImport, EzLib, EzEntities, EzSystem,
   uFileUtils, uCommonUtils, uGC, uCK36, uAutoCAD,
   uMStConsts, uMStKernelTypes, uMStKernelIBX, uMStKernelGISUtils,
@@ -13,6 +13,9 @@ uses
   uMStDialogDxfImport;
 
 type
+  TGetImportLayerEvent = procedure (Sender: TObject; out ImportLayer: TEzBaseLayer) of object;
+  TOnImportExecuted = procedure (Sender: TObject; Cancelled: Boolean; aProject: TmstProject) of object;
+
   TmstProjectImportModule = class(TDataModule)
     OpenDialog2: TOpenDialog;
     procedure DataModuleDestroy(Sender: TObject);
@@ -26,13 +29,18 @@ type
     procedure CheckImportCoordinates();
     procedure CheckMissingLayers();
     procedure ConvertEntityCoords(Ent: TEzEntity);
-    procedure CopyProjectToLayer();
     function LoadDXF2(const aFileName: string): Boolean;
     function ReadFile2(aFileName: string): Boolean;
     procedure ReadLayerList();
     procedure ReadProject2();
     procedure OnImportXYChanged(Sender: TObject; Value: Boolean);
     procedure OnImportMSK36Changed(Sender: TObject; Value: Boolean);
+  private
+    FOnGetImportLayer: TGetImportLayerEvent;
+    procedure DoGetImportLayer(out ImportLayer: TEzBaseLayer);
+  private
+    FOnImportExecuted: TOnImportExecuted;
+    procedure DoImportExecuted(Cancelled: Boolean);
   private
     FDxfImport: TEzDxfImport;
     FCK36: Boolean;
@@ -52,7 +60,7 @@ type
     procedure ChangeBlockNames();
     procedure SetExchangeXY(const Value: Boolean);
   public
-    function BeginImport(aDrawBox: TEzBaseDrawBox): Boolean;
+    function BeginImport(aDrawBox: TEzBaseDrawBox; OnGetImportLayer: TGetImportLayerEvent; OnImportExecuted: TOnImportExecuted): Boolean;
     procedure DisplayImportDialog();
     procedure EndImport(Cancel: Boolean);
     //
@@ -92,7 +100,6 @@ uses
 
 function TmstProjectImportModule.AddImportToGIS: Boolean;
 var
-  Fields: TStringList;
   L, ImportLayer: TEzBaseLayer;
   I, Rn, Rc, LayerId: Integer;
   Ent: TEzEntity;
@@ -104,14 +111,9 @@ begin
   Result := Rc > 0;
   if Result then
   begin
-    // Добавляем слой
-    Fields := TStringList.Create;
-    Fields.Forget();
-    Fields.Add('UID;N;11;0');
-    Fields.Add('LAYER_ID;N;11;0');
-    ImportLayer := FDrawBox.GIS.Layers.LayerByName(SL_PROJECT_IMPORT);
-    if ImportLayer = nil then    
-      ImportLayer := FDrawBox.GIS.Layers.CreateNew(SL_PROJECT_IMPORT, Fields);
+    // Получаем слой
+    //
+    DoGetImportLayer(ImportLayer);
     //
     // в этот слой скидываем объекты
     // для каждого объекта должно быть ID слоя проекта в таблице
@@ -150,7 +152,8 @@ begin
   end;
 end;
 
-function TmstProjectImportModule.BeginImport(aDrawBox: TEzBaseDrawBox): Boolean;
+function TmstProjectImportModule.BeginImport(aDrawBox: TEzBaseDrawBox;
+  OnGetImportLayer: TGetImportLayerEvent; OnImportExecuted: TOnImportExecuted): Boolean;
 begin
   Result := False;
   FDrawBox := nil;
@@ -160,6 +163,8 @@ begin
   // читаем файл
   FProjectName := ChangeFileExt(ExtractFileName(OpenDialog2.Files[0]), '');
   FDrawBox := aDrawBox;
+  FOnGetImportLayer := OnGetImportLayer;
+  FOnImportExecuted := OnImportExecuted;
   Result := ReadFile2(OpenDialog2.Files[0]);
 end;
 
@@ -279,11 +284,6 @@ begin
   end;
 end;
 
-procedure TmstProjectImportModule.CopyProjectToLayer;
-begin
-  TProjectUtils.AddProjectToGIS(FProject);
-end;
-
 procedure TmstProjectImportModule.DataModuleCreate(Sender: TObject);
 begin
   FAllLayers := TmstProjectLayers.Create;
@@ -305,31 +305,34 @@ begin
   mstDxfImportOptionsDialog.OnXYChanged := Self.OnImportXYChanged;
 end;
 
-procedure TmstProjectImportModule.EndImport(Cancel: Boolean);
-var
-  View: TEzRect;
+procedure TmstProjectImportModule.DoGetImportLayer(out ImportLayer: TEzBaseLayer);
 begin
-  if not Cancel then
-  begin
-    // прочитать проект из слоя
-    ReadProject2();
-    // открыть окно редактирования
-    if FProject.Edit(True) then
+  ImportLayer := nil;
+  if Assigned(FOnGetImportLayer) then
+    FOnGetImportLayer(Self, ImportLayer);
+end;
+
+procedure TmstProjectImportModule.DoImportExecuted(Cancelled: Boolean);
+begin
+  if Assigned(FOnImportExecuted) then
+    FOnImportExecuted(Self, Cancelled, FProject);
+end;
+
+procedure TmstProjectImportModule.EndImport(Cancel: Boolean);
+begin
+  try
+    FProject := nil;
+    if not Cancel then
     begin
-      // если сохранили, то сохранеям в БД и показываем в слое проектов
-      FProject.Save(mstClientAppModule.MapMngr as IDb);
-      CopyProjectToLayer();
-      mstClientAppModule.AddLoadedProject(FProject.DatabaseId);
-      //
-      View := Rect2D(FProject.MinX, FProject.MinY, FProject.MaxX, FProject.MaxY);
-      if FProject.CK36 then
-        Rect2DToVrn(View, False);
-      FDrawBox.SetViewTo(View.ymin, View.xmin, View.ymax, View.xmax);
+      // прочитать проект из слоя
+      ReadProject2();
+      // открыть окно редактирования
+      Cancel := not FProject.Edit(True);
     end;
+    DoImportExecuted(Cancel);
+  finally
+    FreeAndNil(FDxfImport);
   end;
-  FreeAndNil(FDxfImport);
-  FDrawBox.GIS.Layers.Delete(SL_PROJECT_IMPORT, True);
-  FDrawBox.RegenDrawing;
 end;
 
 procedure TmstProjectImportModule.OnImportMSK36Changed(Sender: TObject; Value: Boolean);

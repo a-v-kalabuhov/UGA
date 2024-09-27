@@ -513,7 +513,7 @@ object mstEditProjectDialog: TmstEditProjectDialog
       Left = 7
       Top = 46
       Width = 31
-      Height = 14
+      Height = 13
       Caption = #1048#1085#1092#1086':'
     end
     object edDiam: TEdit

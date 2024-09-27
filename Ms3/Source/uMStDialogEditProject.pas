@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs, ExtCtrls, Buttons,
-  uMStClassesProjects, StdCtrls, Mask, JvExMask, JvToolEdit, EzBaseGIS, EzBasicCtrls, DB, Grids, DBGrids,
+  uMStClassesProjects, StdCtrls, Mask, JvExMask, EzBaseGIS, EzBasicCtrls, DB, Grids, DBGrids,
   RxMemDS,
   EzCmdLine, EzCtrls, EzSystem, EzEntities, EzLib, EzBase,
   uDBGrid,

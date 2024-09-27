@@ -1006,6 +1006,8 @@ var
 begin
   TreeView := TTreeView(FView);
   Node := TmstTreeNode(TreeView.Selected);
+  if Node = nil then
+    Exit;
   if Node.NodeType in mstLotNodeTypes then
   begin
     aLot := TmstLot(GetObjectByType(Node.NodeType, Node.DatabaseId));

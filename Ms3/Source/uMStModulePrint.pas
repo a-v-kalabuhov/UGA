@@ -311,7 +311,7 @@ begin
     Visible := True;
   end;
   mstClientAppModule.Layers.Add(Layer);
-  mstClientAppModule.ConnectLayerToGIS(Layer);
+  mstClientAppModule.ConnectLayerToGIS(Layer, True);
   //
   Layer := TmstLayer.Create;
   with Layer do
@@ -322,7 +322,7 @@ begin
     Visible := True;
   end;
   mstClientAppModule.Layers.Add(Layer);
-  mstClientAppModule.ConnectLayerToGIS(Layer);
+  mstClientAppModule.ConnectLayerToGIS(Layer, True);
   //
   Layer := TmstLayer.Create;
   with Layer do
@@ -335,7 +335,7 @@ begin
     Position := 0;
   end;
   mstClientAppModule.Layers.Add(Layer);
-  mstClientAppModule.ConnectLayerToGIS(Layer);
+  mstClientAppModule.ConnectLayerToGIS(Layer, True);
 end;
 
 function TmstPrintModule.PrepareMemDataSet: TDataSet;

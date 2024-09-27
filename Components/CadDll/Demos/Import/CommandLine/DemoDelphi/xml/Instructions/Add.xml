@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<cadsofttools version="2">
+  <!-- Description: Instruction ADD adds entities and Drawing Structure Data to the current drawing. There are many examples of adding particular classes with ADD instruction which are described in Classes examples. -->  
+  <add>               
+  <!-- The following line adds a text. -->
+    <cstText Text="CADSoftTools" Point="0.5, 0.5" Height="1"/>  
+  <!-- The following line adds a line. -->
+    <cstLine point="0,0,0" Point1="10,0,0"/>  
+</add>                          
+  <FitToSize/>        
+  </cadsofttools>                               
