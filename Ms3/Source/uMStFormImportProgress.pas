@@ -52,7 +52,7 @@ end;
 procedure TMStImportProgressForm.UpdateProgress(const Processed, Errors: Integer);
 var
   I: Integer;
-  Part: Double;
+  //Part: Double;
   Elapsed: TDateTime;
   Estimated: TDateTime;
 begin
@@ -64,7 +64,7 @@ begin
   begin
     Elapsed := Now() - fStartTime;
     lElapsed.Caption := 'Прошло: ' + TimeToStr(Elapsed);
-    Part := I / ProgressBar1.Max;
+    //Part := I / ProgressBar1.Max;
     Estimated := Elapsed / I * (ProgressBar1.Max - I);
     lEstimated.Caption := 'Осталось: ' + TimeToStr(Estimated);
     lElapsed.Visible := True;

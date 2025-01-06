@@ -309,7 +309,7 @@ object mstEditProjectDialog: TmstEditProjectDialog
     Height = 21
     Style = csDropDownList
     Anchors = [akLeft, akBottom]
-    ItemHeight = 13
+    ItemHeight = 0
     TabOrder = 10
     OnChange = cbLayersChange
   end

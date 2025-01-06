@@ -44,11 +44,11 @@ var
   Count, Current: Integer;
   Title: string;
   Sql: string;
-  Added: Boolean;
+//  Added: Boolean;
 begin
   inherited;
   Title := 'Проекты';
-  Added := False;
+//  Added := False;
   // Выбираем отводы из БД KIS
   FConnection := FDb.GetConnection(cmReadOnly, dmKis);
   Sql := FSqlSource.GetSqlTextOrCrash(FConnection, SQL_GET_PROJECTS_COUNT);
@@ -104,7 +104,7 @@ begin
         begin
           TProjectUtils.AddProjectToGIS(Prj);
           mstClientAppModule.AddLoadedProject(Prj.DatabaseId);
-          Added := True;
+//          Added := True;
         end;
       except
         on E: Exception do
@@ -140,7 +140,7 @@ begin
         begin
           TProjectUtils.AddProjectToGIS(Prj);
           mstClientAppModule.AddLoadedProject(Prj.DatabaseId);
-          Added := True;
+//          Added := True;
         end;
       except
         on E: Exception do

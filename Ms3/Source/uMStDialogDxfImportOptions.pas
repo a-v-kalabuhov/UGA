@@ -20,7 +20,7 @@ type
     Label7: TLabel;
     CheckBox1: TCheckBox;
     CheckBox2: TCheckBox;
-    Label8: TLabel;
+    lMissingLayers: TLabel;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button1Click(Sender: TObject);
@@ -85,7 +85,7 @@ begin
   Label2.Caption := IntToStr(Import.RecordCount);
   Label4.Caption := IntToStr(Import.RecordToImport);
   Label6.Caption := IntToStr(Import.LinesCount);
-  Label8.Caption := IntToStr(Import.MissingLayers.Count);
+  lMissingLayers.Caption := IntToStr(Import.MissingLayers.Count);
   ListBox1.Items.Assign(Import.MissingLayers);
   CheckBox1.Checked := Import.CK36;
   CheckBox2.Checked := Import.ExchangeXY;
@@ -105,7 +105,7 @@ begin
   Label2.Font.Style := Label2.Font.Style + [fsBold];
   Label4.Font.Style := Label4.Font.Style + [fsBold];
   Label6.Font.Style := Label6.Font.Style + [fsBold];
-  Label8.Font.Style := Label8.Font.Style + [fsBold];
+  lMissingLayers.Font.Style := lMissingLayers.Font.Style + [fsBold];
 end;
 
 procedure TMStDxfImportOptionsDialog.SetOnCK36Changed(const Value: TChangedEvent);
@@ -119,3 +119,4 @@ begin
 end;
 
 end.
+

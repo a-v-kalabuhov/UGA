@@ -20,7 +20,7 @@ uses
   // Project
   uMStKernelTypes, uMStKernelClasses, uMStKernelClassesSelection, uMStKernelInterfaces, uMStKernelStack,
   uMStKernelStackConsts, uMStKernelIBX, uMStConsts,
-  uMStImport, uMstImportFactory,
+  uMStImport, uMstImportFactory, uMStClassesProjectsEz,
   uMStClassesWatermarkDraw, uMstClassesLots, uMStClassesProjects, uMStClassesProjectsSearch, uMStClassesProjectsMIFExport,
   uMstDialogFactory,
   uMStModuleMapMngrIBX, uMStModuleProjectImport, uMstModuleMasterPlan,
@@ -321,6 +321,8 @@ type
     DXF3: TMenuItem;
     XLS1: TMenuItem;
     N53: TMenuItem;
+    N54: TMenuItem;
+    acMPClassSettings: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -482,6 +484,8 @@ type
     procedure acProjectExportExecute(Sender: TObject);
     procedure DXF3Click(Sender: TObject);
     procedure N53Click(Sender: TObject);
+    procedure XLS1Click(Sender: TObject);
+    procedure acMPClassSettingsExecute(Sender: TObject);
   private
     Points: TAllotmentPoints;
     FCursorState: TCursorState;
@@ -537,6 +541,12 @@ type
     function GetMP: TmstMasterPlanModule;
     procedure GetProjectImportLayer(Sender: TObject; out Layer: TEzBaseLayer);
     procedure DoProjectImportExecuted(Sender: TObject; Cancelled: Boolean; aProject: TmstProject);
+    function DoCreateProject(): TmstProject;
+    function DoCreateProjReader(): IEzProjectReader;
+    //
+    procedure CloseProjectsBrowser();
+    procedure CloseMPBrowser();
+    procedure DisplayMPClassSettings();
   private
     procedure WmRestorePanels(var Message: TMessage); message WM_RESTORE_PANELS;
     procedure WMPaint(var Msg: TWMPaint); message WM_PAINT;
@@ -571,7 +581,7 @@ uses
   uMStDialogAddress, uMStDialogNomenclature, uMStDialogPoint, uMStDialogScale,
   uMStModulePrint, uMStDialogPointSize, uMStFormMapImages, uMStGISEzActions,
   uMStFormRichTextEditor, uMStFormPrintStats, uMStFormLoadLotProgress,
-  uMstFormOrderList, uMStFormProjectBrowser;
+  uMstFormOrderList, uMStFormProjectBrowser, uMStFormMPBrowser, uMStFormMPClassSettings;
 
 var
   dWX, dWY: Double;
@@ -938,7 +948,8 @@ begin
     begin
       if Command = 'MOVE' then
         mstPrintModule.UpdatePrintArea
-      else if Command = 'EDITTEXT' then
+      else
+      if Command = 'EDITTEXT' then
       begin
         Layer := Gis.Layers.LayerByName(SL_REPORT);
         Layer.Recno := DrawBox.Selection[0].SelList[0];
@@ -1918,8 +1929,8 @@ begin
 end;
 
 procedure TmstClientMainForm.acShowMapHistoryExecute(Sender: TObject);
-var
-  Map: TmstMap;
+//var
+//  Map: TmstMap;
 begin
   if Sender is TMenuItem then
     with Sender as TMenuItem do
@@ -1993,6 +2004,16 @@ end;
 procedure TmstClientMainForm.acMapPrintStatsUpdate(Sender: TObject);
 begin
   acMapPrintStats.Enabled := mstClientAppModule.User.IsAdministrator;
+end;
+
+procedure TmstClientMainForm.acMPClassSettingsExecute(Sender: TObject);
+begin
+  // показываем окно для работы с классификатором
+  // если открыто окно проектов, то закрываем его
+  CloseProjectsBrowser();
+  CloseMPBrowser();
+  //
+  DisplayMPClassSettings();
 end;
 
 procedure TmstClientMainForm.acPrintPrepareExecute(Sender: TObject);
@@ -2071,7 +2092,13 @@ procedure TmstClientMainForm.acProjectAdd2Execute(Sender: TObject);
 begin
   FImport := TmstProjectImportModule.Create(Self);
   // выбрать файл
-  if not FImport.BeginImport(DrawBox, GetProjectImportLayer, DoProjectImportExecuted) then
+  if not FImport.BeginImport(DrawBox,
+                             GetProjectImportLayer,
+                             DoProjectImportExecuted,
+                             DoCreateProject,
+                             DoCreateProjReader
+                            )
+  then
     Exit;
   FImport.DisplayImportDialog();
 end;
@@ -2190,6 +2217,11 @@ end;
 procedure TmstClientMainForm.WmRestorePanels(var Message: TMessage);
 begin
   RestorePanelsWidth();
+end;
+
+procedure TmstClientMainForm.XLS1Click(Sender: TObject);
+begin
+  ;
 end;
 
 procedure TmstClientMainForm.SetGIS(const Value: TEzBaseGIS);
@@ -2863,6 +2895,23 @@ begin
   DrawBox.Selection.Clear;
 end;
 
+procedure TmstClientMainForm.DisplayMPClassSettings;
+begin
+  // создаём окно и показываем
+  mstMPClassSettingsForm := TmstMPClassSettingsForm.Create(Self);
+  mstMPClassSettingsForm.Display();
+end;
+
+function TmstClientMainForm.DoCreateProjReader: IEzProjectReader;
+begin
+  Result := TEzProjectReaderFactory.NewReader(False);
+end;
+
+function TmstClientMainForm.DoCreateProject: TmstProject;
+begin
+  Result := TmstProject.Create;
+end;
+
 procedure TmstClientMainForm.DoProjectImportExecuted(Sender: TObject; Cancelled: Boolean; aProject: TmstProject);
 var
   View: TEzRect;
@@ -2903,15 +2952,18 @@ begin
   begin
     TTheDefaultAction(CmdLine.CurrentAction).SelectDenied := True;
   end
-  else if CmdLine.CurrentAction is TAddTextAction then
+  else
+  if CmdLine.CurrentAction is TAddTextAction then
   begin
     TAddTextAction(CmdLine.CurrentAction).Scale := mstPrintModule.ReportScale;
   end
-  else if CmdLine.CurrentAction is TEditTextAction then
+  else
+  if CmdLine.CurrentAction is TEditTextAction then
   begin
     TEditTextAction(CmdLine.CurrentAction).Scale := mstPrintModule.ReportScale;
   end
-  else if CmdLine.CurrentAction is TReshapeEntityAction then
+  else
+  if CmdLine.CurrentAction is TReshapeEntityAction then
   begin
     TReshapeEntityAction(CmdLine.CurrentAction).CurrentLayer := Gis.Layers.LayerByName(SL_REPORT);
     TReshapeEntityAction(CmdLine.CurrentAction).CurrentRecno := mstPrintModule.PrintAreaId;
@@ -3035,6 +3087,20 @@ begin
             CmdLine.AccuSnap.OsnapSetting := TEzOSNAPSetting(tbSnaps.Buttons[I].Tag);
             Exit;
           end;
+end;
+
+procedure TmstClientMainForm.CloseMPBrowser;
+begin
+  if mstMPBrowserForm = nil then
+    Exit;
+  mstMPBrowserForm.Close();
+end;
+
+procedure TmstClientMainForm.CloseProjectsBrowser;
+begin
+  if mstProjectBrowserForm = nil then
+    Exit;
+  mstProjectBrowserForm.Close();
 end;
 
 procedure TmstClientMainForm.acReloadMapsExecute(Sender: TObject);

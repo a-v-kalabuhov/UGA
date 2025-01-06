@@ -528,8 +528,13 @@ end;
 { TmstMPOrgs }
 
 procedure TmstMPOrgs.Add(aId: Integer; aName: string);
+var
+  Org: TmstMPOrganisation;
 begin
-
+  Org := TmstMPOrganisation.Create;
+  Org.Name := aName;
+  Org.Id := aId;
+  FList.Add(Org);
 end;
 
 constructor TmstMPOrgs.Create;
@@ -544,8 +549,20 @@ begin
 end;
 
 function TmstMPOrgs.GetById(aId: Integer): TmstMPOrganisation;
+var
+  I: Integer;
+  Org: TmstMPOrganisation;
 begin
-
+  for I := 0 to FList.Count - 1 do
+  begin
+    Org := TmstMPOrganisation(FList[I]);
+    if Org.Id = aId then
+    begin
+      Result := Org;
+      Exit;
+    end;
+  end;
+  Result := nil;
 end;
 
 end.

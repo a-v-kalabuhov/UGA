@@ -6,13 +6,13 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, ComCtrls, Dialogs, ExtCtrls,
   Buttons, StdCtrls, Grids, DBGrids, DB, DBCtrls, ValEdit, IBCustomDataSet, IBQuery, IBDatabase, SHellApi,
   //
-  EzBaseGIS, EzTable, 
+  EzBaseGIS, EzTable, EzLib, 
   uDBGrid,
   //
   uFileUtils, uGC,
   //
   uMStKernelClasses, uMStModuleApp, uMStConsts, uMStKernelSemantic, uMStKernelIBX,
-  uMStModuleMapMngrIBX,
+  uMStModuleMapMngrIBX, uMStKernelClassesQueryIndex,
   uMStClassesProjects, uMStClassesProjectsBrowser,
   uMStDialogProjectsBrowserFilter, ActnList, IBUpdateSQL, Menus, IBSQL;
 
@@ -30,7 +30,7 @@ type
     tabData: TTabSheet;
     Panel2: TPanel;
     kaDBGrid1: TkaDBGrid;
-    IBQuery1: TIBQuery;
+    ibqProjects: TIBQuery;
     IBTransaction1: TIBTransaction;
     btnFilterStart: TSpeedButton;
     btnFilterClear: TSpeedButton;
@@ -69,16 +69,18 @@ type
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure IBQuery1AfterScroll(DataSet: TDataSet);
-    procedure IBQuery1AfterClose(DataSet: TDataSet);
+    procedure ibqProjectsAfterScroll(DataSet: TDataSet);
+    procedure ibqProjectsAfterClose(DataSet: TDataSet);
     procedure btnPropertiesClick(Sender: TObject);
     procedure sbtnDeleteProjectClick(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
+    procedure ibqProjectsAfterDelete(DataSet: TDataSet);
   private
     FDrawBox: TEzBaseDrawBox;
     FFilter: TmstProjectsBrowserFilter;
     FHighlightEnabled: Boolean;
+    FRowIndex: TQueryRowIndex;
     procedure SetDrawBox(const Value: TEzBaseDrawBox);
     procedure PrepareDataSet();
     procedure ReleaseDataSet();
@@ -91,6 +93,7 @@ type
     function GetProjectAndLoadToGIS(PrjId: Integer): TmstProject;
     function IntLocate(const PrjId, LineId: Integer; const DisableUI: Boolean): Boolean;
     procedure DeleteProject();
+    procedure RebuildIndex();
   public
     procedure Browse();
     function Locate(const PrjId, LineId: Integer): Boolean;
@@ -142,19 +145,20 @@ end;
 procedure TMStProjectBrowserForm.DeleteProject;
 var
   S1: string;
-  Answer, I, PrjId, Id2: Integer;
+  Answer, I, PrjId, Id2, RowNo: Integer;
   WasLoaded: Boolean;
+  Rows: TIntegerList;
 begin
   S1 := 'ѕроект будет удалЄн без возможности восстановлени€.' + sLineBreak +
-        'јдрес проекта: ' + IBQuery1.FieldByName(SF_ADDRESS).AsString + sLineBreak + sLineBreak +
+        'јдрес проекта: ' + ibqProjects.FieldByName(SF_ADDRESS).AsString + sLineBreak + sLineBreak +
         '”далить проект?';
   Answer := MessageBox(Self.Handle, PChar(S1), '¬нимание!', MB_YESNO + MB_ICONQUESTION);
   if Answer = mrYes then
   begin
-    IBQuery1.DisableControls;
+    ibqProjects.DisableControls;
     try
-      I := IBQuery1.RecNo;
-      PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+      RowNo := ibqProjects.RecNo;
+      PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
       WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId);
       if WasLoaded then
       begin
@@ -163,25 +167,40 @@ begin
         DrawBox.RegenDrawing;
       end;
       //
-      IBQuery1.First;
-      while not IBQuery1.Eof do
+      Rows := FRowIndex.Get(PrjId);
+      if Rows = nil then
+        Exit;
+      if Rows.Count = 0 then
+        Exit;
+      //
+      for I := Rows.Count - 1 downto 0 do
       begin
-        try
-          Id2 := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
-          if Id2 = PrjId then
-            IBQuery1.Delete
-          else
-            IBQuery1.Next;
-        finally
-        end;
+        ibqProjects.RecNo := Rows[I];
+        Id2 := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+        if Id2 = PrjId then
+          ibqProjects.Delete;
       end;
-      IBQuery1.FetchAll;
-      if IBQuery1.RecordCount < I then
-        IBQuery1.Last
+      FRowIndex.Delete(PrjId);
+//
+//      ibqProjects.First;
+//      while not ibqProjects.Eof do
+//      begin
+//        try
+//          Id2 := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+//          if Id2 = PrjId then
+//            ibqProjects.Delete
+//          else
+//            ibqProjects.Next;
+//        finally
+//        end;
+//      end;
+      ibqProjects.FetchAll;
+      if ibqProjects.RecordCount < RowNo then
+        ibqProjects.Last
       else
-        IBQuery1.RecNo := I;
+        ibqProjects.RecNo := RowNo;
     finally
-      IBQuery1.EnableControls;
+      ibqProjects.EnableControls;
     end;
   end;
 end;
@@ -208,6 +227,8 @@ end;
 
 procedure TMStProjectBrowserForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  mstProjectBrowserForm := nil;
+  Action := caFree;
   TProjectsSettings.SetCurrentProjectLine(-1, -1);
   mstClientAppModule.WriteFormPosition(Application, Self);
   mstClientAppModule.WriteGridProperties(Self, kaDBGrid1);
@@ -216,6 +237,7 @@ end;
 procedure TMStProjectBrowserForm.FormCreate(Sender: TObject);
 begin
   FFilter := TmstProjectsBrowserFilter.Create;
+  FRowIndex := TQueryRowIndex.Create;
   FHighlightEnabled := True;
   mstClientAppModule.ReadFormPosition(Application, Self);
   mstClientAppModule.ReadGridProperties(Self, kaDBGrid1);
@@ -224,6 +246,7 @@ end;
 procedure TMStProjectBrowserForm.FormDestroy(Sender: TObject);
 begin
   FFilter.Free;
+  FRowIndex.Free;
 end;
 
 function TMStProjectBrowserForm.GetProjectAndLoadToGIS(PrjId: Integer): TmstProject;
@@ -239,12 +262,17 @@ begin
   end;
 end;
 
-procedure TMStProjectBrowserForm.IBQuery1AfterClose(DataSet: TDataSet);
+procedure TMStProjectBrowserForm.ibqProjectsAfterClose(DataSet: TDataSet);
 begin
   TProjectsSettings.SetCurrentProjectLine(-1, -1);
 end;
 
-procedure TMStProjectBrowserForm.IBQuery1AfterScroll(DataSet: TDataSet);
+procedure TMStProjectBrowserForm.ibqProjectsAfterDelete(DataSet: TDataSet);
+begin
+  ;
+end;
+
+procedure TMStProjectBrowserForm.ibqProjectsAfterScroll(DataSet: TDataSet);
 var
   OldPrjId, PrjId: Integer;
   LineId: Integer;
@@ -252,8 +280,8 @@ var
 begin
   if FHighlightEnabled then
   begin
-    PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
-    LineId := IBQuery1.FieldByName(SF_LINE_ID).AsInteger;
+    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+    LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
     OldPrjId := TProjectsSettings.FProjectId;
     TProjectsSettings.SetCurrentProjectLine(PrjId, LineId);
     OldLoaded := mstClientAppModule.IsProjectLoaded(OldPrjId);
@@ -265,33 +293,103 @@ end;
 
 function TMStProjectBrowserForm.IntLocate(const PrjId, LineId: Integer; const DisableUI: Boolean): Boolean;
 var
+  CurrRow: Integer;
+  Rows: TIntegerList;
+  RowNo: Integer;
   I: Integer;
 begin
-  Result := IBQuery1.Active;
+  Result := ibqProjects.Active;
   if Result then
   begin
     if DisableUI then
-      IBQuery1.DisableControls;
+      ibqProjects.DisableControls;
     try
-      I := IBQuery1.RecNo;
-      IBQuery1.First;
-      while not IBQuery1.Eof do
+      CurrRow := ibqProjects.RecNo;
+      Rows := FRowIndex.Get(PrjId);
+      if Rows = nil then
       begin
-        if (IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger = PrjId) then
-        if (LineId < 0)
-           or
-           (IBQuery1.FieldByName(SF_LINE_ID).AsInteger = LineId)
-        then
+        Result := False;
+        ibqProjects.RecNo := CurrRow;
+        Exit;
+      end;
+      if Rows.Count = 0 then
+      begin
+        Result := False;
+        ibqProjects.RecNo := CurrRow;
+        Exit;
+      end;
+      //
+      if LineId < 0 then
+      begin
+        RowNo := Rows[0];
+        ibqProjects.RecNo := RowNo;
+        if ibqProjects.RecNo = RowNo then
+        begin
+          Result := True;
+          Exit;
+        end
+        else
+        begin
+          Result := False;
+          ibqProjects.RecNo := CurrRow;
+          Exit;
+        end;
+      end;
+      //
+      for I := 0 to Rows.Count - 1 do
+      begin
+        ibqProjects.RecNo := Rows[I];
+        if (ibqProjects.FieldByName(SF_LINE_ID).AsInteger = LineId) then
         begin
           Result := True;
           Exit;
         end;
-        IBQuery1.Next;
       end;
-      IBQuery1.RecNo := I;
+      //
+      Result := False;
+      ibqProjects.RecNo := CurrRow;
+      Exit;
+      //
+      ibqProjects.First;
+      if ibqProjects.Locate(SF_PROJECT_ID, PrjId, []) then
+      begin
+        if (LineId < 0) then
+        begin
+          Result := True;
+          Exit;
+        end;
+        while not ibqProjects.Eof do
+        begin
+          if (ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger <> PrjId) then
+          begin
+            Result := False;
+            Exit;
+          end;
+          if (ibqProjects.FieldByName(SF_LINE_ID).AsInteger = LineId) then
+          begin
+            Result := True;
+            Exit;
+          end;
+          ibqProjects.Next;
+        end;
+      end;
+//      while not ibqProjects.Eof do
+//      begin
+//        if (ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger = PrjId) then
+//        if (LineId < 0)
+//           or
+//           (ibqProjects.FieldByName(SF_LINE_ID).AsInteger = LineId)
+//        then
+//        begin
+//          Result := True;
+//          Exit;
+//        end;
+//        ibqProjects.Next;
+//      end;
+      ibqProjects.RecNo := CurrRow;
     finally
       if DisableUI then
-        IBQuery1.EnableControls;
+        ibqProjects.EnableControls;
     end;
     Result := False;
   end;
@@ -303,7 +401,7 @@ var
   PrjId: Integer;
   Loaded: Boolean;
 begin
-  PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+  PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
   Loaded := mstClientAppModule.IsProjectLoaded(PrjId);
   if Loaded then
   begin
@@ -316,7 +414,7 @@ end;
 procedure TMStProjectBrowserForm.kaDBGrid1GetLogicalValue(Sender: TObject; Column: TColumn; var Value: Boolean);
 begin
   if Column.FieldName = SF_CONFIRMED then
-    Value := IBQuery1.FieldByName(SF_CONFIRMED).AsInteger = 1;
+    Value := ibqProjects.FieldByName(SF_CONFIRMED).AsInteger = 1;
 end;
 
 procedure TMStProjectBrowserForm.kaDBGrid1LogicalColumn(Sender: TObject; Column: TColumn; var Value: Boolean);
@@ -336,8 +434,11 @@ end;
 
 procedure TMStProjectBrowserForm.N2Click(Sender: TObject);
 var
-  S1: string;
-  Answer, I, PrjId, Id2, LineId: Integer;
+//  S1: string;
+//  Answer: Integer;
+//  I,
+  PrjId, LineId: Integer;
+//  Id2: Integer;
   WasLoaded: Boolean;
   Prj: TmstProject;
 begin
@@ -346,28 +447,29 @@ begin
 //        '”далить проект?';
 //  Answer := MessageBox(Self.Handle, PChar(S1), '¬нимание!', MB_YESNO + MB_ICONQUESTION);
 //  if Answer = mrYes then
-  if IBQuery1.Active then
+  if ibqProjects.Active then
   begin
-    I := IBQuery1.RecNo;
-    PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
-    LineId := IBQuery1.FieldByName(SF_LINE_ID).AsInteger;
+//    I := ibqProjects.RecNo;
+    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+    LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
     Prj := mstClientAppModule.GetProject(PrjId, True);
     if Prj = nil then
       Exit;
     if Prj.Lines.Count = 1 then
+      DeleteProject()
+    else
     begin
-      DeleteProject();
-      Exit;
-    end;
-    // удал€ем линию из проекта
-    IBQuery1.Delete;
-    Prj.Lines.DeleteLine(LineId);
-    Prj.Places.DeletePlace(LineId);
-    WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId);
-    if WasLoaded then
-    begin
-      TProjectUtils.RemoveProjectLineFromLayer(PrjId, LineId);
-      DrawBox.RegenDrawing;
+      // удал€ем линию из проекта
+      ibqProjects.Delete;
+      FRowIndex.DeleteValue(PrjId, LineId);
+      Prj.Lines.DeleteLine(LineId);
+      Prj.Places.DeletePlace(LineId);
+      WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId);
+      if WasLoaded then
+      begin
+        TProjectUtils.RemoveProjectLineFromLayer(PrjId, LineId);
+        DrawBox.RegenDrawing;
+      end;
     end;
   end;
 end;
@@ -457,16 +559,34 @@ begin
   Result := Result + ' ORDER BY PRJS.ADDRESS, PRJS.ID, LINES.ID';
 end;
 
+procedure TMStProjectBrowserForm.RebuildIndex;
+var
+  PrjId: Integer;
+begin
+  FRowIndex.Clear();
+  if ibqProjects.Active then
+  begin
+    ibqProjects.First;
+    while not ibqProjects.Eof do
+    begin
+      PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+      FRowIndex.Add(PrjId, ibqProjects.RecNo);
+      ibqProjects.Next;
+    end;
+  end;
+  FRowIndex.Sort();
+end;
+
 procedure TMStProjectBrowserForm.RefreshData;
 var
   SelPrjId, SelLineId: Integer;
   B: Boolean;
 begin
   // если запрос открыт, то запоминаем ID
-  if IBQuery1.Active then
+  if ibqProjects.Active then
   begin
-    SelPrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
-    SelLineId := IBQuery1.FieldByName(SF_LINE_ID).AsInteger;
+    SelPrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+    SelLineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
   end
   else
   begin
@@ -474,7 +594,7 @@ begin
     SelLineId := -1;
   end;
   //
-  IBQuery1.DisableControls;
+  ibqProjects.DisableControls;
   try
     ApplyFilter();
     B := (PrjId > 0);
@@ -485,13 +605,13 @@ begin
     if not B then
       IntLocate(SelPrjId, SelLineId, False);
   finally
-    IBQuery1.EnableControls;
+    ibqProjects.EnableControls;
   end;
 end;
 
 procedure TMStProjectBrowserForm.ReleaseDataSet;
 begin
-  IBQuery1.Active := False;
+  ibqProjects.Active := False;
   if IBTransaction1.Active then
     IBTransaction1.Commit;
 end;
@@ -500,7 +620,7 @@ procedure TMStProjectBrowserForm.sbtnDeleteProjectClick(Sender: TObject);
 var
   Pt: TPoint;
 begin
-  if not IBQuery1.Active then
+  if not ibqProjects.Active then
     Exit;
     Pt.X := 0;
     Pt.Y := sbtnDeleteProject.Height;
@@ -536,9 +656,9 @@ procedure TMStProjectBrowserForm.SpeedButton1Click(Sender: TObject);
 var
   PrjId: Integer;
 begin
-  if IBQuery1.Active then
+  if ibqProjects.Active then
   begin
-    PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
     if mstClientAppModule.IsProjectLoaded(PrjId) then
     begin
       TProjectUtils.RemoveProjectFromLayer(PrjId);
@@ -563,17 +683,17 @@ var
   Prj: TmstProject;
   Line: TmstProjectLine;
 begin
-  if IBQuery1.Active then
+  if ibqProjects.Active then
   begin
     // текущий проект
-    PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
     if mstClientAppModule.IsProjectLoaded(PrjId) then
     begin
       Prj := mstClientAppModule.GetProject(PrjId, False);
       if Assigned(Prj) then
       begin
         // текуща€ лини€
-        LineId := IBQuery1.FieldByName(SF_LINE_ID).AsInteger;
+        LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
         Line := Prj.Lines.ByDbId(LineId);
         if Assigned(Line) then
         begin
@@ -599,19 +719,22 @@ begin
   // формируем текст запроса
   Sql := PrepareSql();
   // если запрос открыт, то запоминаем ID
-  if IBQuery1.Active then
-    Id := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger
+  if ibqProjects.Active then
+    Id := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger
   else
     Id := -1;
   // закрываем запрос
-  IBQuery1.Active := False;
+  ibqProjects.Active := False;
   // назначаем текст
-  IBQuery1.SQL.Text := Sql;
+  ibqProjects.SQL.Text := Sql;
   // открываем запрос
-  IBQuery1.Active := True;
+  ibqProjects.Active := True;
   // если ID запомнено, то пытаемс€ найти ID
+  ibqProjects.FetchAll;
+  RebuildIndex();
   if Id >= 0 then
-    IBQuery1.Locate(SF_PROJECT_ID, Id, []);
+    Locate(Id, 0);
+//    ibqProjects.Locate(SF_PROJECT_ID, Id, []);
 end;
 
 procedure TMStProjectBrowserForm.Browse;
@@ -640,11 +763,11 @@ var
   CoordsFile: string;
 begin
   // получаем текущую линию
-    PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
     Prj := mstClientAppModule.GetProject(PrjId, True);
     if Assigned(Prj) then
     begin
-      LineId := IBQuery1.FieldByName(SF_LINE_ID).AsInteger;
+      LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
       Line := Prj.Lines.ByDbId(LineId);
       if Assigned(Line) then
       begin
@@ -684,13 +807,13 @@ var
   PrjId, LineId: Integer;
   Prj: TmstProject;
 begin
-  if IBQuery1.Active then
+  if ibqProjects.Active then
   begin
-    PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
     Prj := GetProjectAndLoadToGIS(PrjId);
     if Assigned(Prj) then
     begin
-      LineId := IBQuery1.FieldByName(SF_LINE_ID).AsInteger;
+      LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
       DisplayLine(Prj, LineId);
       kaDBGrid1.Refresh;
     end;
@@ -707,16 +830,16 @@ var
   PrjId: Integer;
   L: TEzBaseLayer;
 begin
-  if IBQuery1.Active then
+  if ibqProjects.Active = True then
   begin
     FHighlightEnabled := False;
     try
-      IBQuery1.First;
-      while not IBQuery1.Eof do
+      ibqProjects.First;
+      while not ibqProjects.Eof do
       begin
-        PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+        PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
         GetProjectAndLoadToGIS(PrjId);
-        IBQuery1.Next;
+        ibqProjects.Next;
       end;
       kaDBGrid1.Refresh;
       //
@@ -738,9 +861,9 @@ var
   PrjId: Integer;
   Prj: TmstProject;
 begin
-  if IBQuery1.Active then
+  if ibqProjects.Active then
   begin
-    PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
     Prj := GetProjectAndLoadToGIS(PrjId);
     if Assigned(Prj) then
     begin
@@ -756,9 +879,9 @@ var
   PrjId: Integer;
   Prj: TmstProject;
 begin
-  if not IBQuery1.Active then
+  if not ibqProjects.Active then
     Exit;
-  PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+  PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
   Prj := GetProjectAndLoadToGIS(PrjId);
   if not Assigned(Prj) then
   begin
@@ -771,7 +894,7 @@ begin
     if Prj.Edit(True) then
     begin
       Prj.Save(mstClientAppModule.MapMngr as IDb);
-      IBQuery1.Refresh;
+      ibqProjects.Refresh;
     end;
   end;
 
@@ -784,15 +907,15 @@ var
   Line: TmstProjectLine;
   W: Double;
 begin
-  if IBQuery1.Active then
+  if ibqProjects.Active then
   begin
     // текущий проект
-    PrjId := IBQuery1.FieldByName(SF_PROJECT_ID).AsInteger;
+    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
     Prj := GetProjectAndLoadToGIS(PrjId);
     if Assigned(Prj) then
     begin
       // текуща€ лини€
-      LineId := IBQuery1.FieldByName(SF_LINE_ID).AsInteger;
+      LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
       Line := Prj.Lines.ByDbId(LineId);
       if Assigned(Line) then
       begin

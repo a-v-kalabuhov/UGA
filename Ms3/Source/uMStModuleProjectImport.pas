@@ -8,7 +8,7 @@ uses
   EzDxfImport, EzLib, EzEntities, EzSystem,
   uFileUtils, uCommonUtils, uGC, uCK36, uAutoCAD,
   uMStConsts, uMStKernelTypes, uMStKernelIBX, uMStKernelGISUtils,
-  uMStClassesProjects,
+  uMStClassesProjects, uMStClassesProjectsEz, 
   uMStModuleApp,
   uMStDialogDxfImport;
 
@@ -42,6 +42,9 @@ type
     FOnImportExecuted: TOnImportExecuted;
     procedure DoImportExecuted(Cancelled: Boolean);
   private
+    FCreateProjectFunc: TCreateProjectFunc;
+    FGetProjectReaderFunc: TGetProjectReaderFunc;
+  private
     FDxfImport: TEzDxfImport;
     FCK36: Boolean;
     // Меняем местами X и Y
@@ -52,15 +55,15 @@ type
     FLinesCount: Integer;
     FAllLayers: TmstProjectLayers;
     FProjectName: string;
-    procedure ReadProjectLayers();
-    procedure ReadProjectLines();
-    procedure ReadProjectPlaces();
-    procedure LoadLinesFromLayer(Layer: TmstProjectLayer; EzLayer: TEzBaseLayer);
-    procedure LoadPlacesFromLayer(Layer: TmstProjectLayer; EzLayer: TEzBaseLayer);
+    FImportFileName: string;
+    function GetProjectLayers(): TmstProjectLayers;
+    procedure ReadProjectLayers(aLayers: TmstProjectLayers);
     procedure ChangeBlockNames();
     procedure SetExchangeXY(const Value: Boolean);
   public
-    function BeginImport(aDrawBox: TEzBaseDrawBox; OnGetImportLayer: TGetImportLayerEvent; OnImportExecuted: TOnImportExecuted): Boolean;
+    function BeginImport(aDrawBox: TEzBaseDrawBox; OnGetImportLayer: TGetImportLayerEvent;
+      OnImportExecuted: TOnImportExecuted; OnCreateProject: TCreateProjectFunc;
+      OnGetProjectReader: TGetProjectReaderFunc): Boolean;
     procedure DisplayImportDialog();
     procedure EndImport(Cancel: Boolean);
     //
@@ -153,7 +156,8 @@ begin
 end;
 
 function TmstProjectImportModule.BeginImport(aDrawBox: TEzBaseDrawBox;
-  OnGetImportLayer: TGetImportLayerEvent; OnImportExecuted: TOnImportExecuted): Boolean;
+  OnGetImportLayer: TGetImportLayerEvent; OnImportExecuted: TOnImportExecuted;
+  OnCreateProject: TCreateProjectFunc; OnGetProjectReader: TGetProjectReaderFunc): Boolean;
 begin
   Result := False;
   FDrawBox := nil;
@@ -161,10 +165,13 @@ begin
     Exit;
   FreeAndNil(FProject);
   // читаем файл
+  FImportFileName := OpenDialog2.Files[0];
   FProjectName := ChangeFileExt(ExtractFileName(OpenDialog2.Files[0]), '');
   FDrawBox := aDrawBox;
   FOnGetImportLayer := OnGetImportLayer;
   FOnImportExecuted := OnImportExecuted;
+  FCreateProjectFunc := OnCreateProject;
+  FGetProjectReaderFunc := OnGetProjectReader;
   Result := ReadFile2(OpenDialog2.Files[0]);
 end;
 
@@ -263,10 +270,8 @@ end;
 procedure TmstProjectImportModule.ConvertEntityCoords(Ent: TEzEntity);
 var
   I: Integer;
-  Pt: TEzPoint;
   PtGeo: TEzPoint;
   PtEz: TEzPoint;
-  X, Y: Double;
 begin
   for I := 0 to Ent.Points.Count - 1 do
   begin
@@ -327,11 +332,28 @@ begin
       // прочитать проект из слоя
       ReadProject2();
       // открыть окно редактирования
+      FProject.Caption := ExtractFileName(FImportFileName) + ' - ' + ExtractFilePath(FImportFileName);
       Cancel := not FProject.Edit(True);
     end;
     DoImportExecuted(Cancel);
   finally
     FreeAndNil(FDxfImport);
+  end;
+end;
+
+function TmstProjectImportModule.GetProjectLayers: TmstProjectLayers;
+var
+  aDb: IDb;
+  Loader: TmstProjectLayerListLoader;
+begin
+  Result := TmstProjectLayers.Create;
+  //
+  Loader := TmstProjectLayerListLoader.Create;
+  try
+    aDb :=  mstClientAppModule.MapMngr as IDb;
+    Loader.Load(aDb, Result);
+  finally
+    Loader.Free;
   end;
 end;
 
@@ -431,101 +453,6 @@ begin
   Result := AddImportToGIS();
 end;
 
-procedure TmstProjectImportModule.LoadLinesFromLayer(Layer: TmstProjectLayer; EzLayer: TEzBaseLayer);
-var
-  Ent: TEzEntity;
-  Line: TmstProjectLine;
-  I: Integer;
-  Pt, PtGeo: TEzPoint;
-begin
-  EzLayer.First;
-  while not EzLayer.Eof do
-  begin
-    Ent := EzLayer.RecLoadEntity();
-    if (Ent is TEzClosedEntity) then
-    begin
-      Line := FProject.Lines.Add;
-      Line.Layer := Layer;
-      for I := 0 to Ent.Points.Count - 1 do
-      begin
-        Pt := Ent.Points[I];
-        if FExchangeXY then
-        begin
-          PtGeo:= PT;
-        end
-        else
-        begin
-          PtGeo.x := Pt.y;
-          PtGeo.y := Pt.x;
-        end;
-        Line.Points.Add(PtGeo.x, PtGeo.y);
-      end;
-    end
-    else
-    if (Ent is TEzOpenedEntity) then
-    begin
-      Line := FProject.Lines.Add;
-      Line.Layer := Layer;
-      for I := 0 to Ent.Points.Count - 1 do
-      begin
-        Pt := Ent.Points[I];
-        if FExchangeXY then
-        begin
-          PtGeo:= Pt;
-        end
-        else
-        begin
-          PtGeo.x := Pt.y;
-          PtGeo.y := Pt.x;
-        end;
-        Line.Points.Add(PtGeo.x, PtGeo.y);
-      end;
-    end
-    else
-    begin
-      EzLayer.Recno := EzLayer.Recno - 1;
-      EzLayer.Next;
-    end;
-    EzLayer.Next;
-  end;
-end;
-
-procedure TmstProjectImportModule.LoadPlacesFromLayer(Layer: TmstprojectLayer; EzLayer: TEzBaseLayer);
-var
-  Ent: TEzEntity;
-  Place: TmstProjectPlace;
-begin
-  EzLayer.First;
-  while not EzLayer.Eof do
-  begin
-    Ent := EzLayer.RecLoadEntity();
-    if (Ent is TEzPlace) then
-    begin
-//      Place := FProject.Places.Add();
-//      Place.Layer := Layer;
-//      Place.X := Ent.Points[0].y;
-//      Place.Y := Ent.Points[0].x;
-//      I := TEzPlace(Ent).SymbolTool.Index;
-//      Symbol := Ez_Symbols.Items[I];
-//      Block := FProject.Blocks.ByName(Symbol.Name);
-//      if Block = nil then
-//      begin
-//        Block := AddBlock(Symbol);
-//        Place.Block := Block;
-//      end;
-//      Ent.SaveToStream(Place.EzData);
-    end
-    else
-    begin
-      Place := FProject.Places.Add();
-      Place.Layer := Layer;
-      Ent.SaveToStream(Place.EzData);
-      Place.EzId := Integer(Ent.EntityID);
-    end;
-    EzLayer.Next;
-  end;
-end;
-
 function TmstProjectImportModule.ReadFile2(aFileName: string): Boolean;
 var
   Ext: string;
@@ -568,79 +495,36 @@ begin
 end;
 
 procedure TmstProjectImportModule.ReadProject2;
+var
+  TmpLayers: TmstProjectLayers;
+  PrjReader: IEzProjectReader;
 begin
-  FProject := TmstProject.Create();
+  FProject := FCreateProjectFunc(); //TmstProject.Create();
   FProject.CK36 := FCK36;
   FProject.Address := FProjectName;
-  ReadProjectLayers();
-  ReadProjectLines();
-  ReadProjectPlaces();
-  ChangeBlockNames();
+  //
+  TmpLayers := GetProjectLayers();
+  try
+    ReadProjectLayers(TmpLayers);
+  finally
+    TmpLayers.Free;
+  end;
+  //
+  PrjReader := FGetProjectReaderFunc();
+  PrjReader.SetExchangeXY(FExchangeXY);
+  PrjReader.Read(FProject, TmpLayers, FDxfImport.CAD);
 end;
 
 procedure TmstProjectImportModule.ReadProjectLayers;
 var
-  aDb: IDb;
   EzLayer: TEzBaseLayer;
-  Loader: TmstProjectLayerListLoader;
-  TmpLayers: TmstProjectLayers;
   I: Integer;
 begin
-  aDb :=  mstClientAppModule.MapMngr as IDb;
-  TmpLayers := TmstProjectLayers.Create;
-  TmpLayers.Forget;
-  Loader := TmstProjectLayerListLoader.Create;
-  try
-    Loader.Load(aDb, TmpLayers);
-  finally
-    Loader.Free;
-  end;
-  //
-  for I := 0 to TmpLayers.Count - 1 do
+  for I := 0 to aLayers.Count - 1 do
   begin
-    EzLayer := FDxfImport.CAD.Layers.LayerByName(TmpLayers[I].Name);
+    EzLayer := FDxfImport.CAD.Layers.LayerByName(aLayers[I].Name);
     if Assigned(EzLayer) and (EzLayer.RecordCount > 0) then
-      FProject.Layers.Add(TmpLayers[I]);
-  end;
-end;
-
-procedure TmstProjectImportModule.ReadProjectLines;
-var
-  I: Integer;
-  L: TmstProjectLayer;
-  EzLayer: TEzBaseLayer;
-begin
-  for I := 0 to Pred(FProject.Layers.Count) do
-  begin
-    L := FProject.Layers[I];
-    if L.IsLineLayer then
-    begin
-      EzLayer := FDxfImport.CAD.Layers.LayerByName(L.Name);
-      if Assigned(EzLayer) then
-      begin
-        LoadLinesFromLayer(L, EzLayer);
-      end;
-    end;
-  end;
-end;
-
-procedure TmstProjectImportModule.ReadProjectPlaces;
-var
-  I: Integer;
-  L: TmstProjectLayer;
-  EzLayer: TEzBaseLayer;
-begin
-  for I := 0 to Pred(FProject.Layers.Count) do
-  begin
-    L := FProject.Layers[I];
-    if not L.IsLineLayer then
-    begin
-      EzLayer := FDxfImport.CAD.Layers.LayerByName(L.Name);
-      if Assigned(EzLayer) then
-      begin
-        LoadPlacesFromLayer(L, EzLayer);
-      end;
-    end;
+      FProject.Layers.Add(aLayers[I]);
   end;
 end;
 

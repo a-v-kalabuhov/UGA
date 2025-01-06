@@ -33,9 +33,12 @@ type
     procedure ExecDataSet(DataSet: TDataSet);
     function  GetDataSet(const aSQL: String): TDataSet;
     function  GetRecordCount(const aSQL: String; const Fetch: Boolean): Integer;
+    procedure SetNullableParam(DataSet: TDataSet; const ParamName: String; const ParamValue: Variant;
+      const NullValue: Variant);
     procedure SetParam(DataSet: TDataSet; const ParamName: String; const ParamValue: Variant);
     procedure SetBlobParam(DataSet: TDataSet; const ParamName: String; Stream: TStream);
     procedure Commit();
+    procedure Rollback();
   public
     constructor Create;
     destructor Destroy; override;
@@ -286,7 +289,6 @@ var
   Conn: IIBXConnection;
   DataSet: TDataSet;
   Layer: TmstLayer;
-  Ids: TIntegerList;
   ParentId: Integer;
   LayerId: Integer;
 begin
@@ -586,9 +588,8 @@ end;
 
 procedure TMStIBXMapMngr.LoadProjectPlanLayers(aLayerList: TmstLayerList);
 var
-  LLayer, Layer, LastLayer: TmstLayer;
-  I, LayerId: Integer;
-  Category: TmstLotCategory;
+  LLayer, LastLayer: TmstLayer;
+  LayerId: Integer;
   Position: Integer;
 begin
   LoadLotCategories();
@@ -1036,7 +1037,7 @@ begin
     if FLotCategories.Count > 0 then
     begin
       LLayer := aLayerList.AddLayer();
-      LLayer.Name := Category.GetLayerName();
+      LLayer.Name := SL_LOTS + GetUniqueString();
       LLayer.Caption := 'Отводы';
       LLayer.Position := Position;
       Inc(Position);
@@ -1595,7 +1596,7 @@ function TIBXConnection.GetRecordCount(const aSQL: String; const Fetch: Boolean)
 var
   Query: TIBQuery;
 begin
-  Result := -1;
+//  Result := -1;
   Query := TIBQuery.Create(nil);
   try
     Query.Transaction := FTransaction;
@@ -1609,6 +1610,17 @@ begin
   end;
 end;
 
+procedure TIBXConnection.Rollback;
+begin
+  if Assigned(FTransaction) then
+  begin
+    if FTransaction.Active then
+    begin
+      FTransaction.RollbackRetaining();
+    end;
+  end;
+end;
+
 procedure TIBXConnection.SetBlobParam(DataSet: TDataSet; const ParamName: String; Stream: TStream);
 begin
   if not Assigned(FDataSets) then
@@ -1618,6 +1630,20 @@ begin
     Stream.Position := 0;
     TIBQuery(DataSet).ParamByName(ParamName).LoadFromStream(Stream, ftBlob);
   end;
+end;
+
+procedure TIBXConnection.SetNullableParam(DataSet: TDataSet; const ParamName: String;
+  const ParamValue, NullValue: Variant);
+var
+  R: TVariantRelationship;
+  V: Variant;
+begin
+  R := VarCompareValue(ParamValue, NullValue);
+  if R = vrEqual then
+    V := Null
+  else
+    V := ParamValue;
+  SetParam(DataSet, ParamName, V);
 end;
 
 procedure TIBXConnection.SetParam(DataSet: TDataSet;

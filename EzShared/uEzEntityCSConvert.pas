@@ -23,6 +23,7 @@ var
 begin
   for I := 0 to Ent.Points.Count - 1 do
     Ent.Points[I] := Point2D(Ent.Points[I].y, Ent.Points[I].x);
+  Ent.UpdateExtension;
 end;
 
 class procedure TEzCSConverter.EntityToVrn(Ent: TEzEntity);

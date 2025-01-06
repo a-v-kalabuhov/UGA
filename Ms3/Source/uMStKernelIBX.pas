@@ -14,9 +14,11 @@ type
     procedure ExecDataSet(DataSet: TDataSet);
     function  GetDataSet(const SQL: String): TDataSet;
     function  GetRecordCount(const SQL: String; const Fetch: Boolean): Integer;
+    procedure SetNullableParam(DataSet: TDataSet; const ParamName: String; const ParamValue: Variant; const NullValue: Variant);
     procedure SetParam(DataSet: TDataSet; const ParamName: String; const ParamValue: Variant);
     procedure SetBlobParam(DataSet: TDataSet; const ParamName: String; Stream: TStream);
     procedure Commit();
+    procedure Rollback();
   end;
 
   ISqlSource = interface

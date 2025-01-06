@@ -3209,8 +3209,7 @@ begin
   //end ed
 end;
 
-procedure TKisMap500Mngr.GridGetLogicalValue(Sender: TObject; Column: TColumn;
-  var Value: Boolean);
+procedure TKisMap500Mngr.GridGetLogicalValue(Sender: TObject; Column: TColumn; var Value: Boolean);
 begin
   Value := Boolean(Column.Field.AsInteger);
 end;

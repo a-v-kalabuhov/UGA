@@ -59,7 +59,7 @@ object MStLayerBrowserForm: TMStLayerBrowserForm
       Height = 21
       Style = csDropDownList
       Enabled = False
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 1
     end
     object DBNavigator1: TDBNavigator

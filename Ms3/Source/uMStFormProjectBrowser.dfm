@@ -4,7 +4,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   BorderStyle = bsSizeToolWin
   Caption = #1057#1087#1080#1089#1086#1082' '#1087#1088#1086#1077#1082#1090#1086#1074
   ClientHeight = 488
-  ClientWidth = 944
+  ClientWidth = 745
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,16 +21,16 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 944
+    Width = 745
     Height = 29
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
-      944
+      745
       29)
     object btnClose: TSpeedButton
-      Left = 829
+      Left = 630
       Top = 3
       Width = 110
       Height = 23
@@ -96,16 +96,16 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   object Panel3: TPanel
     Left = 0
     Top = 452
-    Width = 944
+    Width = 745
     Height = 36
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      944
+      745
       36)
     object btnCoords: TSpeedButton
-      Left = 817
+      Left = 618
       Top = 6
       Width = 122
       Height = 23
@@ -115,7 +115,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
       ExplicitLeft = 920
     end
     object btnZone: TSpeedButton
-      Left = 585
+      Left = 386
       Top = 6
       Width = 110
       Height = 23
@@ -125,7 +125,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
       ExplicitLeft = 688
     end
     object SpeedButton3: TSpeedButton
-      Left = 701
+      Left = 502
       Top = 6
       Width = 110
       Height = 23
@@ -135,7 +135,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
       ExplicitLeft = 804
     end
     object btnDisplay: TSpeedButton
-      Left = 469
+      Left = 270
       Top = 6
       Width = 110
       Height = 23
@@ -168,22 +168,23 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   object PageControl1: TPageControl
     Left = 0
     Top = 29
-    Width = 944
+    Width = 745
     Height = 423
     ActivePage = tabData
     Align = alClient
+    Constraints.MinWidth = 745
     TabOrder = 2
     object tabData: TTabSheet
       Caption = #1055#1088#1086#1077#1082#1090#1099
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 936
+        Width = 737
         Height = 33
         Align = alTop
         TabOrder = 0
         DesignSize = (
-          936
+          737
           33)
         object btnFilterStart: TSpeedButton
           Left = 4
@@ -255,7 +256,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
           OnClick = btnPropertiesClick
         end
         object sbtnDeleteProject: TSpeedButton
-          Left = 834
+          Left = 635
           Top = 1
           Width = 94
           Height = 26
@@ -305,15 +306,17 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
             0E0E0E0E0E02100E0E0E0E10020E0E0E0E0E0E0E0E0E02100E0E0E0E0E0E0E0E
             0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E}
           OnClick = sbtnDeleteProjectClick
+          ExplicitLeft = 834
         end
       end
       object kaDBGrid1: TkaDBGrid
         Left = 0
         Top = 33
-        Width = 936
+        Width = 737
         Height = 362
         Align = alClient
         DataSource = DataSource1
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
         TabOrder = 1
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
@@ -418,15 +421,16 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
     end
   end
   object DataSource1: TDataSource
-    DataSet = IBQuery1
+    DataSet = ibqProjects
     Left = 504
     Top = 144
   end
-  object IBQuery1: TIBQuery
+  object ibqProjects: TIBQuery
     Database = MStIBXMapMngr.dbKis
     Transaction = IBTransaction1
-    AfterClose = IBQuery1AfterClose
-    AfterScroll = IBQuery1AfterScroll
+    AfterClose = ibqProjectsAfterClose
+    AfterDelete = ibqProjectsAfterDelete
+    AfterScroll = ibqProjectsAfterScroll
     SQL.Strings = (
       'SELECT '
       
@@ -448,7 +452,8 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
       '    LEFT JOIN'
       '    LICENSED_ORGS ORGS1 ON (PRJS.EXECUTOR_ORGS_ID = ORGS1.ID)'
       '    LEFT JOIN'
-      '    LICENSED_ORGS ORGS2 ON (PRJS.CUSTOMER_ORGS_ID = ORGS2.ID)')
+      '    LICENSED_ORGS ORGS2 ON (PRJS.CUSTOMER_ORGS_ID = ORGS2.ID)'
+      'ORDER BY PRJS.ID')
     UpdateObject = IBUpdateSQL1
     Left = 584
     Top = 144

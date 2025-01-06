@@ -280,6 +280,7 @@ type
     FMaxY: Double;
     FMinX: Double;
     FMinY: Double;
+    FCaption: string;
     procedure SetAddress(const Value: string);
     procedure SetConfirmed(const Value: Boolean);
     procedure SetCustomerOrgId(const Value: Integer);
@@ -297,12 +298,12 @@ type
     procedure SetMinX(const Value: Double);
     procedure SetMinY(const Value: Double);
     procedure LoadMainData(DataSet: TDataSet);
+    procedure SetCaption(const Value: string);
   protected
     procedure AssignTo(Target: TPersistent); override;
     function GetObjectId: Integer; override;
     function GetText: String; override;
     //
-    procedure CalcExtent();
     procedure LoadLines(DataSet: TDataSet);
     procedure SaveLine(Conn: IIBXConnection; aLine: TmstProjectLine; var aState: TSaveLineState);
     procedure SaveLinePoint(Conn: IIBXConnection; aLine: TmstProjectLine; aPt: TmstProjectPoint; var aState: TSaveLineState);
@@ -312,9 +313,11 @@ type
     constructor Create; override;
     destructor Destroy; override;
     //
-    function Edit(const aCanSave: Boolean): Boolean;
+    function Edit(const aCanSave: Boolean): Boolean; virtual;
     function Load(aDb: IDb): Boolean;
     function Save(aDb: IDb): Boolean;
+    //
+    procedure CalcExtent(); virtual;
     //
     property Blocks: TmstProjectBlocks read FBlocks write SetBlocks;
     property Layers: TmstProjectLayers read FLayers write SetLayers;
@@ -334,6 +337,8 @@ type
     property MinY: Double read FMinY write SetMinY;
     property MaxX: Double read FMaxX write SetMaxX;
     property MaxY: Double read FMaxY write SetMaxY;
+    //
+    property Caption: string read FCaption write SetCaption;
   end;
 
   TmstProjectLayerListLoader = class
@@ -409,10 +414,11 @@ type
 
   IProjectSaver = interface
     ['{F3F9E055-E791-4370-A5B1-724ABF56EB54}']
-    procedure Save(aProject: TmstProject);
+    procedure Save(aDb: IDb; aProject: TmstProject);
   end;
 
   TGetProjectSaver = procedure (Sender: TObject; out aSaver: IProjectSaver) of object;
+  TCreateProjectFunc = function (): TmstProject of object;
 
 implementation
 
@@ -535,6 +541,8 @@ begin
   Tgt.FMaxY := FMaxY;
   Tgt.FMinX := FMinX;
   Tgt.FMinY := FMinY;
+  //
+  Tgt.FCaption := FCaption;
 end;
 
 procedure TmstProject.CalcExtent;
@@ -595,6 +603,10 @@ var
 begin
   Frm := TmstEditProjectDialog.Create(Application);
   try
+    if Self.Caption <> '' then
+      Frm.Caption := Self.Caption
+    else
+      Frm.Caption := Self.Address;
     Frm.CanSave := aCanSave;
     Result := Frm.Execute(Self);
   finally
@@ -918,14 +930,14 @@ var
   B2: Boolean;
   Ds1, Ds2, DsMain: TDataSet;
   LayerId: Integer;
-  Id1, Id2: Integer;
+//  Id1, Id2: Integer;
 begin
 //  ShowMessage('SavePlace: ' + sLineBreak +
 //              'Start' + sLineBreak +
 //              '  ID=' + IntToStr(Id1) + sLineBreak +
 //              '  EzId=' + IntToStr(aPlace.EzId));
-  B2 := False;
-  Id1 := aPlace.DatabaseId;
+//  B2 := False;
+//  Id1 := aPlace.DatabaseId;
   if aPlace.DatabaseId < 1 then
   begin
     if aState.Ds1 = nil then
@@ -948,7 +960,7 @@ begin
     B2 := Ds2.Fields[0].AsInteger = 0;
     Ds2.Close;
   end;
-  Id2 := aPlace.DatabaseId;
+//  Id2 := aPlace.DatabaseId;
 //  ShowMessage('Place: ' + sLineBreak +
 //              '  ID=' + IntToStr(Id1) + sLineBreak +
 //              '  NewId=' + IntToStr(Id2) + sLineBreak +
@@ -985,6 +997,11 @@ end;
 procedure TmstProject.SetBlocks(const Value: TmstProjectBlocks);
 begin
   FBlocks := Value;
+end;
+
+procedure TmstProject.SetCaption(const Value: string);
+begin
+  FCaption := Value;
 end;
 
 procedure TmstProject.SetCK36(const Value: Boolean);

@@ -87,6 +87,7 @@ var
   I: Integer;
   TheSql: ISQL;
 begin
+  Result := False;
   if not Assigned(Grid) then
     Exit;
   with TFindForm.Create(Application) do

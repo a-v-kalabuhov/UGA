@@ -3,13 +3,13 @@ unit uMStDialogEditProject;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs, ExtCtrls, Buttons,
-  uMStClassesProjects, StdCtrls, Mask, JvExMask, EzBaseGIS, EzBasicCtrls, DB, Grids, DBGrids,
-  RxMemDS,
-  EzCmdLine, EzCtrls, EzSystem, EzEntities, EzLib, EzBase,
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs, ExtCtrls, 
+  StdCtrls, Mask, DB, Grids, DBGrids, ActnList, Buttons,
+  RxMemDS, JvExMask,
+  EzBaseGIS, EzBasicCtrls, EzCmdLine, EzCtrls, EzSystem, EzEntities, EzLib, EzBase,
   uDBGrid,
   uFileUtils, uCommonUtils, uCK36,
-  uMStModuleApp, uMStKernelIBX, uMStConsts, ActnList;
+  uMStModuleApp, uMStKernelIBX, uMStConsts, uMStClassesProjects;
 
 type
   TmstEditProjectDialog = class(TForm)
@@ -731,7 +731,9 @@ end;
 procedure TmstEditProjectDialog.PrepareGIS;
 var
   Path: string;
+  GisFileName: string;
   I: Integer;
+  Ticks: Cardinal;
 begin
   // создаём новую папку
   // заполняем поля гис
@@ -739,15 +741,19 @@ begin
   Path := TPath.Combine(mstClientAppModule.SessionDir, GetUniqueString());
   ForceDirectories(Path);
   EzGIS1.LayersSubdir := Path;
-  EzGIS1.CreateNew(TPath.Finish(Path, 'import.ezm'));
+  GisFileName := 'import';
+  Ticks := GetTickCount();
+  GisFileName := GisFileName + IntToStr(Ticks) + '.ezm';
+  EzGIS1.CreateNew(TPath.Finish(Path, GisFileName));
   // добавляем слои
   for I := 0 to FTempProject.Layers.Count - 1 do
   begin
     EzGIS1.CreateLayer(FTempProject.Layers[I].Name, ltMemory);
   end;
   EzGIS1.Active := True;
-  //
+  // переносим блоки из проекта в ГИС
   BlocksToGIS();
+  // переносим объекты из проекта в ГИС
   LinesToGIS();
   PlacesToGIS();
   //

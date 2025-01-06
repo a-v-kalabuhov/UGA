@@ -24,6 +24,7 @@ const
   ID_ACTUAL_LOT1 = 6;
   ID_LOT_CATEGORIZED = 7;
   ID_PROJECT = 8;
+  ID_PROJECT_MP = 9;
   S_GUEST = 'GUEST';
 
 type
@@ -1063,7 +1064,7 @@ end;
 procedure TmstLayerList.VSTAddLayer(VST: TVirtualStringTree; aLayer: TmstLayer);
 var
   I: Integer;
-  SubLayer: TmstLayer;
+//  SubLayer: TmstLayer;
   N: PVirtualNode;
   ParentN: PVirtualNode;
   P: PVSTLayer;
@@ -1076,25 +1077,29 @@ begin
 //      ParentN := VST.RootNode;
   end;
   //
-  N := VST.AddChild(ParentN);
-  P := VST.GetNodeData(N);
-  P.Layer := aLayer;
-  N.CheckType := ctCheckBox;
-  if aLayer.Visible then
-    VST.CheckState[N] := csCheckedNormal
-  else
-    VST.CheckState[N] := csUncheckedNormal;
-  //
-  for I := 0 to aLayer.ChildCount - 1 do
-  begin
-    VSTAddLayer(VST, aLayer.Child[I]);
+  VST.BeginUpdate;
+  try
+    N := VST.AddChild(ParentN);
+    P := VST.GetNodeData(N);
+    P.Layer := aLayer;
+    N.CheckType := ctCheckBox;
+    if aLayer.Visible then
+      VST.CheckState[N] := csCheckedNormal
+    else
+      VST.CheckState[N] := csUncheckedNormal;
+    //
+    for I := 0 to aLayer.ChildCount - 1 do
+    begin
+      VSTAddLayer(VST, aLayer.Child[I]);
+    end;
+  finally
+    VST.EndUpdate;
   end;
 end;
 
 procedure TmstLayerList.VSTAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
 var
   P: PVSTLayer;
-  R: TVSTLayer;
 begin
   if InUpdate then
     Exit;
@@ -1107,7 +1112,6 @@ procedure TmstLayerList.VStChecked(Sender: TBaseVirtualTree; Node: PVirtualNode)
 var
   P: PVSTLayer;
   L: TmstLayer;
-  R: TVSTLayer;
 begin
   if InUpdate then
     Exit;
@@ -1153,9 +1157,13 @@ var
   P: PVSTLayer;
   L: TmstLayer;
 begin
-  P := Sender.GetNodeData(Node);
-  L := P.Layer;
-  CellText := L.Caption;
+  try
+    P := Sender.GetNodeData(Node);
+    L := P.Layer;
+    CellText := L.Caption;
+  except
+    CellText := 'Слой не найден!';
+  end;
 end;
 
 { TmstStreet }

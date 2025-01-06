@@ -8,8 +8,9 @@ uses
   EzBaseGIS, EzLib,
   uGC,
   uMStConsts,
-  uMStClassesProjects, uMStKernelGISUtils, uMStClassesMasterPlan,
-  uMStModuleProjectImport;
+  uMStClassesProjects, uMStClassesProjectsMP, uMStKernelGISUtils, uMStClassesMasterPlan, uMStKernelIBX,
+  uMStModuleProjectImport, uMStModuleApp, uMStClassesProjectsEz,
+  uMStFormMPBrowser;
 
 type
   TmstMasterPlanModule = class(TDataModule)
@@ -22,10 +23,13 @@ type
     FImportLayerName: string;
     procedure GetImportLayer(Sender: TObject; out Layer: TEzBaseLayer);
     procedure DoImportExecuted(Sender: TObject; Cancelled: Boolean; aProject: TmstProject);
+    function DoCreateProject(): TmstProject;
+    function DoCreatePrjReader(): IEzProjectReader;
     procedure DoGetProjectSaver(out Saver: IProjectSaver);
   private
     FItems: TmstMasterPlanList;
     FOrgs: TmstMPOrgs;
+    FBrowserForm: TmstMPBrowserForm;
     /// <summary>
     /// Загружает данные по сводному плану в память    
     /// </summary>
@@ -84,11 +88,27 @@ procedure TmstMasterPlanModule.DisplayNavigator;
 begin
   if FItems.Count = 0 then
     LoadMasterPlanFromDB();
+  // если окно не открыто, то открываем и назначаем слой
+  if FBrowserForm = nil then
+    FBrowserForm := TmstMPBrowserForm.Create(Self);
+  // если окно открыто, то назначаем в него слой
+  FBrowserForm.DrawBox := aDrawBox;
+  FBrowserForm.Browse();
+end;
+
+function TmstMasterPlanModule.DoCreatePrjReader(): IEzProjectReader;
+begin
+  Result := TEzProjectReaderFactory.NewReader(True);
+end;
+
+function TmstMasterPlanModule.DoCreateProject: TmstProject;
+begin
+  Result := TmstProjectMP.Create;
 end;
 
 procedure TmstMasterPlanModule.DoGetProjectSaver(out Saver: IProjectSaver);
 begin
-  raise Exception.Create('TmstMasterPlanModule.DoGetProjectSaver');
+  Saver := TmstMPProjectSaver.Create as IProjectSaver;
 end;
 
 procedure TmstMasterPlanModule.DoImportExecuted(Sender: TObject; Cancelled: Boolean; aProject: TmstProject);
@@ -101,7 +121,7 @@ begin
     begin
       // если сохранили, то сохранеям в БД и показываем в слое проектов
       DoGetProjectSaver(Saver);
-      Saver.Save(aProject);
+      Saver.Save(mstClientAppModule.MapMngr as IDb, aProject);
       //
       View := Rect2D(aProject.MinX, aProject.MinY, aProject.MaxX, aProject.MaxY);
       if aProject.CK36 then
@@ -137,7 +157,13 @@ begin
   FDrawBox := aDrawBox;
   FImport := TmstProjectImportModule.Create(Self);
   // выбрать файл
-  if not FImport.BeginImport(aDrawBox, GetImportLayer, DoImportExecuted) then
+  if not FImport.BeginImport(aDrawBox,
+                             GetImportLayer,
+                             DoImportExecuted,
+                             DoCreateProject,
+                             DoCreatePrjReader
+                             )
+  then
     Exit;
   FImport.DisplayImportDialog();
 end;
@@ -146,7 +172,7 @@ procedure TmstMasterPlanModule.LoadMasterPlanFromDB;
 var
   MP: TmstMasterPlan;
   Adapter: TmstMPObjectAdapter;
-  MpId: Integer;
+//  MpId: Integer;
 begin
   Adapter := TmstMPObjectAdapter.Create(IBQuery1);
   Adapter.Forget;

@@ -130,6 +130,7 @@ end;
 
 function TmstLayerField.TryParse(const FldValue: string; out TypedVal: Variant): Boolean;
 begin
+  Result := False;
   try
     case DataType of
       mstDataUnknown:
@@ -161,7 +162,6 @@ begin
     end;
   except
     TypedVal := FldValue;
-    Result := False;
   end;
 end;
 

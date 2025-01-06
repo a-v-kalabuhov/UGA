@@ -1250,7 +1250,7 @@ var
   N: TNomenclature;
   FileLoaded: Boolean;
 begin
-  Result := False;
+//  Result := False;
   TmpMapOld := aMap;
   TmpMapNew := aMap;
   // проверяем по каким правилам сформирована номенклатура - по старым или по новым

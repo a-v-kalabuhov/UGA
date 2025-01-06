@@ -71,7 +71,7 @@ object MStDxfImportOptionsDialog: TMStDxfImportOptionsDialog
     Alignment = taRightJustify
     Caption = #1041#1091#1076#1077#1090' '#1080#1084#1087#1086#1088#1090#1080#1088#1086#1074#1072#1085#1086' '#1086#1089#1077#1074#1099#1093' '#1083#1080#1085#1080#1081':'
   end
-  object Label8: TLabel
+  object lMissingLayers: TLabel
     Left = 70
     Top = 112
     Width = 31
@@ -92,6 +92,7 @@ object MStDxfImportOptionsDialog: TMStDxfImportOptionsDialog
     Width = 75
     Height = 25
     Caption = #1048#1084#1087#1086#1088#1090
+    Default = True
     TabOrder = 1
     OnClick = Button1Click
   end

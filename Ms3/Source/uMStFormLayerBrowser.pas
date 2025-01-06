@@ -126,6 +126,7 @@ begin
   begin
     EzTable1.DisableControls;
     try
+      Found := False;
       Rn := EzTable1.RecNo;
       EzTable1.First;
       while not EzTable1.Eof do

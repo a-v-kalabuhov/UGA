@@ -4,7 +4,7 @@ object MStIBXMapMngr: TMStIBXMapMngr
   Height = 150
   Width = 215
   object dbKis: TIBDatabase
-    DatabaseName = 'localhost:C:\Projects\\kis\environment\db\UGA.FDB'
+    DatabaseName = 'localhost:C:\Projects\kis\Environment\db\UGA.FDB'
     Params.Strings = (
       'user_name=SYSDBA')
     BeforeConnect = dbKisBeforeConnect

@@ -128,7 +128,7 @@ begin
     else
       Background := clInfoBk;
     FontColor := clBlack;
- end;
+  end;
 end;
 
 procedure TAddressesForm.FormClose(Sender: TObject;
