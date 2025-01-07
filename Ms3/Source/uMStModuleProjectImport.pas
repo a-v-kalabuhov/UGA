@@ -151,7 +151,7 @@ begin
         L.Next;
       end;
     end;
-    FDrawBox.ZoomToLayerRef(SL_PROJECT_IMPORT);
+    FDrawBox.ZoomToLayerRef(ImportLayer.Name);
   end;
 end;
 
@@ -364,7 +364,7 @@ var
   I: Integer;
   Pt, NewPt: TEzPoint;
 begin
-  L := FDrawBox.GIS.Layers.LayerByName(SL_PROJECT_IMPORT);
+  DoGetImportLayer(L);
   if Assigned(L) then
   begin
     L.First;
@@ -404,7 +404,7 @@ var
   Pt: TEzPoint;
 begin
   FExchangeXY := Value;
-  L := FDrawBox.GIS.Layers.LayerByName(SL_PROJECT_IMPORT);
+  DoGetImportLayer(L);
   if Assigned(L) then
   begin
     L.First;
@@ -501,6 +501,7 @@ var
 begin
   FProject := FCreateProjectFunc(); //TmstProject.Create();
   FProject.CK36 := FCK36;
+  FProject.ExchangeXY := FExchangeXY;
   FProject.Address := FProjectName;
   //
   TmpLayers := GetProjectLayers();

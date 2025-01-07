@@ -30,6 +30,9 @@ type
 
 implementation
 
+uses
+  uMStClassesProjectsUtils;
+
 const
   SQL_GET_PROJECTS_COUNT = 'SQL_GET_PROJECTS_COUNT';
   SQL_GET_PROJECTS = 'SQL_GET_PROJECTS';

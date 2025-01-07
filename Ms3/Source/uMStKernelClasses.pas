@@ -347,6 +347,23 @@ type
     property Name: String read FName write SetName;
   end;
 
+  TmstMPLayer = class
+  private
+    FName: String;
+    FGroupId: Integer;
+    FId: Integer;
+    FIsGroup: Integer;
+    procedure SetGroupId(const Value: Integer);
+    procedure SetId(const Value: Integer);
+    procedure SetIsGroup(const Value: Integer);
+    procedure SetName(const Value: String);
+  public
+    property Id: Integer read FId write SetId;
+    property Name: String read FName write SetName;
+    property IsGroup: Integer read FIsGroup write SetIsGroup;
+    property GroupId: Integer read FGroupId write SetGroupId;
+  end;
+
   TmstAddress = class(TmstObject)
   private
     FStreetDatabaseId: Integer;
@@ -1622,6 +1639,28 @@ end;
 procedure TmstObjectSemantic.SetFieldValues(const Value: TmstObjectFieldValues);
 begin
   FFieldValues := Value;
+end;
+
+{ TmstMPLayer }
+
+procedure TmstMPLayer.SetGroupId(const Value: Integer);
+begin
+  FGroupId := Value;
+end;
+
+procedure TmstMPLayer.SetId(const Value: Integer);
+begin
+  FId := Value;
+end;
+
+procedure TmstMPLayer.SetIsGroup(const Value: Integer);
+begin
+  FIsGroup := Value;
+end;
+
+procedure TmstMPLayer.SetName(const Value: String);
+begin
+  FName := Value;
 end;
 
 initialization

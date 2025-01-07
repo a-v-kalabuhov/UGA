@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs,   ComCtrls, ExtCtrls, ActnList, EzBaseGIS, EzCtrls, DB, StdCtrls,
+  Dialogs, ComCtrls, ExtCtrls, ActnList, EzBaseGIS, EzCtrls, DB, StdCtrls,
   RxMemDS,
   //
   EzEntities, EzSystem, EzCmdLine, EzBasicCtrls, EzLib, EzBase,
@@ -153,7 +153,7 @@ implementation
 
 uses
   uFileUtils, uCommonUtils,
-  uMStClassesProjects,
+  uMStClassesProjects, uMStClassesMPStatuses, uMStClassesProjectsUtils,
   uMStModuleApp,
   uMstDialogEditMPObjSemantics;
 
@@ -431,7 +431,7 @@ begin
   Obj2 := TmstProjectMPObject(Item2);
   Result := AnsiCompareStr(Obj1.Layer.Name, Obj1.Layer.Name);
   if Result = 0 then
-    Result := Obj1.EntityId - Obj2.EntityId;
+    Result := Obj1.EzLayerRecno - Obj2.EzLayerRecno;
 end;
 
 procedure TmstEditProjectMPDialog.FillNavDataSet;
@@ -472,7 +472,7 @@ begin
           mdNav.FieldByName('TOP').AsString := MPObj.Top;
           mdNav.FieldByName('BOTTOM').AsString := MPObj.Bottom;
           mdNav.FieldByName('FLOOR').AsString := MPObj.Floor;
-          mdNav.FieldByName('ENT_ID').AsInteger := MPObj.EntityId;
+          mdNav.FieldByName('ENT_ID').AsInteger := MPObj.EzLayerRecno;
           mdNav.FieldByName('LAYER_NAME').AsString := MPObj.Layer.Name;
           mdNav.Post;
         end;
@@ -580,17 +580,12 @@ begin
   // грузим список статусов в комбо
   cbStatusList.Clear;
   K := 0;
-  for I := 1 to MaxInt - 1 do
+  for I := TmstMPStatuses.MinId to TmstMPStatuses.MaxId do
   begin
-    S := TmstProjectMP.StatusName(I);
-    if S = 'ошибка' then
-      Break
-    else
-    begin
-      J := cbStatusList.Items.AddObject(S, Pointer(I));
-      if I = FTempProject.Status then
-        K := J;
-    end;
+    S := TmstMPStatuses.StatusName(I);
+    J := cbStatusList.Items.AddObject(S, Pointer(I));
+    if I = FTempProject.Status then
+      K := J;
   end;
   cbStatusList.ItemIndex := K;
 end;
@@ -673,7 +668,7 @@ end;
 
 procedure TmstEditProjectMPDialog.mdNavCalcFields(DataSet: TDataSet);
 begin
-  mdNavNET_STATE_NAME.AsString := TmstProjectMP.StatusName(mdNavNET_STATE_ID.AsInteger);
+  mdNavNET_STATE_NAME.AsString := TmstMPStatuses.StatusName(mdNavNET_STATE_ID.AsInteger);
 end;
 
 procedure TmstEditProjectMPDialog.NeedToFillField(aControl: TEdit; const aFieldName: string);
@@ -749,9 +744,9 @@ procedure TmstEditProjectMPDialog.ProjectToGIS;
 var
   I: Integer;
   Layer: TEzBaseLayer;
-  Ent: TEzEntity;
-  EntClass: TEzEntityClass;
-  EntityID: TEzEntityID;
+//  Ent: TEzEntity;
+//  EntClass: TEzEntityClass;
+//  EntityID: TEzEntityID;
   MPObj: TmstProjectMPObject;
 begin
   for I := 0 to FTempProject.Objects.Count - 1 do
@@ -760,18 +755,20 @@ begin
     Layer := EzGIS1.Layers.LayerByName(MPObj.Layer.Name);
     if Assigned(Layer) then
     begin
-      EntityID := TEzEntityID(MPObj.EzId);
-      EntClass := GetClassFromID(EntityID);
-      Ent := EntClass.Create(0, True);
-      try
-        MPObj.EzData.Position := 0;
-        Ent.LoadFromStream(MPObj.EzData);
-        if FTempProject.CK36 then
-          TEzCSConverter.EntityToVrn(Ent);
-        MPObj.EntityId := Layer.AddEntity(Ent);
-      finally
-        FreeAndNil(Ent);
-      end;
+      TProjectUtils.AddMpObjToLayer(Layer, MPObj);
+//      EntityID := TEzEntityID(MPObj.EzId);
+//      EntClass := GetClassFromID(EntityID);
+//      Ent := EntClass.Create(0, True);
+//      try
+//        MPObj.EzData.Position := 0;
+//        Ent.LoadFromStream(MPObj.EzData);
+//        if FTempProject.CK36 then
+//          TEzCSConverter.EntityToVrn(Ent);
+//        MPObj.EzLayerName := Layer.Name;
+//        MPObj.EzLayerRecno := Layer.AddEntity(Ent);
+//      finally
+//        FreeAndNil(Ent);
+//      end;
     end;
   end;
 end;

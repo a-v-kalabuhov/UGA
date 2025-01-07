@@ -7,6 +7,7 @@ uses
   IBCustomDataSet, IBUpdateSQL, DB, IBQuery, IBDatabase,
   EzBaseGIS, EzLib,
   uGC,
+  uEzEntityCSConvert,
   uMStConsts,
   uMStClassesProjects, uMStClassesProjectsMP, uMStKernelGISUtils, uMStClassesMasterPlan, uMStKernelIBX,
   uMStModuleProjectImport, uMStModuleApp, uMStClassesProjectsEz,
@@ -43,6 +44,9 @@ type
   end;
 
 implementation
+
+uses
+  uMStClassesProjectsUtils;
 
 type
   TmstMPObjectAdapter = class
@@ -123,13 +127,16 @@ begin
       DoGetProjectSaver(Saver);
       Saver.Save(mstClientAppModule.MapMngr as IDb, aProject);
       //
+      TProjectUtils.AddProjectToGIS(aProject);
+      //mstClientAppModule.AddLoadedProjectMP(aProject.DatabaseId);
       View := Rect2D(aProject.MinX, aProject.MinY, aProject.MaxX, aProject.MaxY);
       if aProject.CK36 then
-        Rect2DToVrn(View, False);
+        TEzCSConverter.Rect2DToVrn(View, False);
       FDrawBox.SetViewTo(View.ymin, View.xmin, View.ymax, View.xmax);
     end;
   finally
     FDrawBox.GIS.Layers.Delete(FImportLayerName, True);
+    FImportLayerName := '';
     FDrawBox.RegenDrawing;
   end;
 end;
@@ -138,17 +145,23 @@ procedure TmstMasterPlanModule.GetImportLayer(Sender: TObject; out Layer: TEzBas
 var
   Fields: TStringList;
 begin
-  Fields := TStringList.Create;
-  try
-    Fields.Add('UID;N;11;0');
-    Fields.Add('LAYER_ID;N;11;0');
-    //
-    FImportLayerName := 'TEMP_LAYER_' + IntToStr(GetTickCount());
+  Layer := nil;
+  if FImportLayerName <> '' then
     Layer := FDrawBox.GIS.Layers.LayerByName(FImportLayerName);
-    if Layer = nil then
-      Layer := FDrawBox.GIS.Layers.CreateNew(FImportLayerName, Fields);
-  finally
-    Fields.Free;
+  if Layer = nil then
+  begin
+    Fields := TStringList.Create;
+    try
+      Fields.Add('UID;N;11;0');
+      Fields.Add('LAYER_ID;N;11;0');
+      //
+      FImportLayerName := 'TEMP_LAYER_' + IntToStr(GetTickCount());
+      Layer := FDrawBox.GIS.Layers.LayerByName(FImportLayerName);
+      if Layer = nil then
+        Layer := FDrawBox.GIS.Layers.CreateNew(FImportLayerName, Fields);
+    finally
+      Fields.Free;
+    end;
   end;
 end;
 

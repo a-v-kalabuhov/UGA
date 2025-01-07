@@ -36,6 +36,10 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
     TabOrder = 0
     object tsSemantics: TTabSheet
       Caption = #1044#1072#1085#1085#1099#1077' '#1087#1088#1086#1077#1082#1090#1072
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 103
         Top = 78
@@ -228,7 +232,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Width = 145
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
       end
       object edDrawer: TEdit
@@ -295,6 +299,10 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
     object tsMap: TTabSheet
       Caption = #1050#1072#1088#1090#1072
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Splitter1: TSplitter
         Left = 0
         Top = 423
@@ -410,7 +418,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
             Width = 285
             Height = 21
             Style = csDropDownList
-            ItemHeight = 13
+            ItemHeight = 0
             TabOrder = 0
             OnChange = cbLayersChange
           end

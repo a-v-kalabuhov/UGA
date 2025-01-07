@@ -16,7 +16,7 @@ uses
   EzCmdLine, EzBaseGIS, EzBasicCtrls, EzCtrls, EzEntities, EzDxfImport, EzBase, EzActions, EzActionLaunch,
   EzSystem, EzTable, EzLib, 
   // shared
-  uGeoUtils, uGeoTypes, uCK36,
+  uGeoUtils, uGeoTypes, uCK36, uEzEntityCSConvert,
   // Project
   uMStKernelTypes, uMStKernelClasses, uMStKernelClassesSelection, uMStKernelInterfaces, uMStKernelStack,
   uMStKernelStackConsts, uMStKernelIBX, uMStConsts,
@@ -577,7 +577,7 @@ uses
   // Common
   uCommonUtils, uGC, uVCLUtils,
   // Project
-  uMStModuleApp, uMStKernelGISUtils, uMStKernelConsts, uMStKernelClassesSearch,
+  uMStModuleApp, uMStKernelGISUtils, uMStKernelConsts, uMStKernelClassesSearch, uMStClassesProjectsUtils,
   uMStDialogAddress, uMStDialogNomenclature, uMStDialogPoint, uMStDialogScale,
   uMStModulePrint, uMStDialogPointSize, uMStFormMapImages, uMStGISEzActions,
   uMStFormRichTextEditor, uMStFormPrintStats, uMStFormLoadLotProgress,
@@ -2922,11 +2922,11 @@ begin
       // если сохранили, то сохранеям в БД и показываем в слое проектов
       aProject.Save(mstClientAppModule.MapMngr as IDb);
       TProjectUtils.AddProjectToGIS(aProject);
-      mstClientAppModule.AddLoadedProject(aProject.DatabaseId);
+//      mstClientAppModule.AddLoadedProject(aProject.DatabaseId);
       //
       View := Rect2D(aProject.MinX, aProject.MinY, aProject.MaxX, aProject.MaxY);
       if aProject.CK36 then
-        Rect2DToVrn(View, False);
+        TEzCSConverter.Rect2DToVrn(View, False);
       DrawBox.SetViewTo(View.ymin, View.xmin, View.ymax, View.xmax);
       // если открыт список проектов, то надо его обновить
       if mstProjectBrowserForm <> nil then

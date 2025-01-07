@@ -248,11 +248,9 @@ end;
 procedure TEzProjectReaderMP.ReadObjectsFromLayer(aLayer: TmstProjectLayer; EzLayer: TEzBaseLayer);
 var
   Ent: TEzEntity;
-  Line: TmstProjectLine;
-  I: Integer;
-  Pt, PtGeo: TEzPoint;
   MPPrj: TmstProjectMP;
   MPObj: TmstProjectMPObject;
+  Xmin, Xmax, Ymin, Ymax: Double;
 begin
   MPPrj := TmstProjectMP(FProject);
   //
@@ -260,24 +258,32 @@ begin
   while not EzLayer.Eof do
   begin
     Ent := EzLayer.RecLoadEntity();
-    if FExchangeXY then
-      TEzCSConverter.ExchangeXY(Ent);
-    //
-    MPObj := MPPrj.Objects.Add();
-    MPObj.Layer := aLayer;
-    Ent.SaveToStream(MPObj.EzData);
-    MPObj.EzId := Integer(Ent.EntityID);
-    //
-    MPObj.MinX := Ent.FBox.ymin;
-    MPObj.MinY := Ent.FBox.xmin;
-    MPObj.MaxX := Ent.FBox.ymax;
-    MPObj.MaxY := Ent.FBox.xmax;
-    //
-    MPObj.IsLine := Ent is TEzOpenedEntity;
+    try
+      MPObj := MPPrj.Objects.Add();
+      MPObj.Layer := aLayer;
+      Ent.SaveToStream(MPObj.EzData);
+      MPObj.EzId := Integer(Ent.EntityID);
+      MPObj.EzLayerName := EzLayer.Name;
+      MPObj.EzLayerName := EzLayer.Name;
+      MPObj.IsLine := Ent is TEzOpenedEntity;
+      // мин и макс в свойствах объекта и проекте должен быть в геодезических координатах 
+      if FExchangeXY then
+        TEzCSConverter.ExchangeXY(Ent);
+      YMin := Ent.FBox.ymin;
+      XMin := Ent.FBox.xmin;
+      YMax := Ent.FBox.ymax;
+      XMax := Ent.FBox.xmax;
+      MPObj.MinX := Ymin;
+      MPObj.MinY := Xmin;
+      MPObj.MaxX := Ymax;
+      MPObj.MaxY := Xmax;
+    finally
+      Ent.Free;
+    end;
     //
     EzLayer.Next;
   end;
-  
+ 
 //    if (Ent is TEzClosedEntity) then
 //    begin
 //      Line := FProject.Lines.Add;

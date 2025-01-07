@@ -107,7 +107,8 @@ var
 
 implementation
 
-uses uMStDialogBufferZoneWidth;
+uses
+  uMStDialogBufferZoneWidth, uMStClassesProjectsUtils;
 
 const
   SQL_SELECT_PROJECT_LINES =

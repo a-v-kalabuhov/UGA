@@ -51,6 +51,9 @@ implementation
 
 {$R *.dfm}
 
+uses
+  uMStClassesMPStatuses;
+
 { TmstEditMPObjSemanticsDialog }
 
 procedure TmstEditMPObjSemanticsDialog.Execute(aProject: TmstProjectMP; aDataSet: TDataSet);
@@ -70,18 +73,13 @@ var
 begin
   mdNetStates.Active := False;
   mdNetStates.Active := True;
-  for I := 1 to MaxInt - 1 do
+  for I := TmstMPStatuses.MinId to TmstMPStatuses.MaxId do
   begin
-    S := TmstProjectMP.StatusName(I);
-    if S = 'ошибка' then
-      Break
-    else
-    begin
-      mdNetStates.Insert;
-      mdNetStatesID.AsInteger := I;
-      mdNetStatesNAME.AsString := S;
-      mdNetStates.Post;
-    end;
+    S := TmstMPStatuses.StatusName(I);
+    mdNetStates.Insert;
+    mdNetStatesID.AsInteger := I;
+    mdNetStatesNAME.AsString := S;
+    mdNetStates.Post;
   end;
 end;
 

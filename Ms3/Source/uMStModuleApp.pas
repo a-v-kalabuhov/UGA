@@ -229,6 +229,7 @@ type
     //
     function FindProject(const aId: Integer): TmstProject;
     procedure AddLoadedProject(const aId: Integer);
+    procedure AddLoadedProjectMP(const aId: Integer); virtual; abstract;
     procedure ClearLoadedProjects();
     function HasLoadedProjects(): Boolean;
     function IsProjectLoaded(const aId: Integer): Boolean;
@@ -265,7 +266,7 @@ implementation
 
 uses
   uMStConsts,
-  uMStKernelGISUtils, uMStKernelConsts, uMStKernelClassesOptions,
+  uMStKernelGISUtils, uMStKernelConsts, uMStKernelClassesOptions, uMStClassesProjectsUtils,
   uMStFormMain, uMStFormLayers, uMStFormSplash,
   uMStModulePrint;
 

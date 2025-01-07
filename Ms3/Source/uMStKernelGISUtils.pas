@@ -72,15 +72,6 @@ type
   function Rect2DWidth(const aRect: TEzRect): Double;
   function PickSingleEntity(aLayer: TEzBaseLayer; aDrawBox: TEzBaseDrawBox; const WorldPt: TEzPoint; AppertureSizeInPixels: Byte): Integer;
 
-  /// <summary>
-  ///   XY = True - Х направлен вверх
-  ///   XY = False - Х направлен вправо, а Y вверх
-  /// </summary>
-  procedure Point2DToCK36(var aPoint: TEzPoint; XY: Boolean = True);
-  procedure Point2DToVrn(var aPoint: TEzPoint; XY: Boolean = True);
-  procedure Rect2DToCK36(var aRect: TEzRect; XY: Boolean = True);
-  procedure Rect2DToVrn(var aRect: TEzRect; XY: Boolean = True);
-
 type
   TEzRectList = class
   private
@@ -107,72 +98,6 @@ uses
 const
   NumberChars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
   LatinNumberChars = ['I', 'V', 'X', 'M'];
-
-procedure Point2DToCK36(var aPoint: TEzPoint; XY: Boolean = True);
-var
-  Xmest, Ymest, Xck36, Yck36: Double;
-begin
-  if XY then
-  begin
-    Xmest := aPoint.y;
-    Ymest := aPoint.x;
-  end
-  else
-  begin
-    Xmest := aPoint.x;
-    Ymest := aPoint.y;
-  end;
-  uCK36.ToCK36(Xmest, Ymest, Xck36, Yck36);
-  if XY then
-  begin
-    aPoint.x := Yck36;
-    aPoint.y := Xck36;
-  end
-  else
-  begin
-    aPoint.x := Xck36;
-    aPoint.y := Yck36;
-  end;
-end;
-
-procedure Point2DToVrn(var aPoint: TEzPoint; XY: Boolean = True);
-var
-  Xmest, Ymest, Xck36, Yck36: Double;
-begin
-  if XY then
-  begin
-    Xck36 := aPoint.y;
-    Yck36 := aPoint.x;
-  end
-  else
-  begin
-    Xck36 := aPoint.x;
-    Yck36 := aPoint.y;
-  end;
-  uCK36.ToVRN(Xck36, Yck36, Xmest, Ymest);
-  if XY then
-  begin
-    aPoint.x := Ymest;
-    aPoint.y := Xmest;
-  end
-  else
-  begin
-    aPoint.x := Xmest;
-    aPoint.y := Ymest;
-  end;
-end;
-
-procedure Rect2DToCK36(var aRect: TEzRect; XY: Boolean = True);
-begin
-  Point2DToCK36(aRect.Emin, XY);
-  Point2DToCK36(aRect.Emax, XY);
-end;
-
-procedure Rect2DToVrn(var aRect: TEzRect; XY: Boolean = True);
-begin
-  Point2DToVrn(aRect.Emin, XY);
-  Point2DToVrn(aRect.Emax, XY);
-end;
 
 function IEntity(Entity: TEzEntity): IAutoEntity;
 begin

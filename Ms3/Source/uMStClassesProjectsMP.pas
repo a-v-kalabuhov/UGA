@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, Contnrs, Forms, DB, Math, Graphics, Dialogs,
   EzLib, EzBaseGIS, EzEntities, EzBase,
-  uCommonUtils, uCK36, uGC,
+  uCommonUtils, uCK36, uGC, uEzEntityCSConvert,
   uEzBufferZone,
   uMStKernelClasses, uMStKernelIBX, uMStConsts, uMStClassesProjects;
 
@@ -43,9 +43,10 @@ type
     FMinX: Double;
     FMinY: Double;
     FProject: TmstProjectMP;
-    FEntityId: Integer;
+    FEzLayerRecno: Integer;
     FLayer: TmstProjectLayer;
     FGuid: string;
+    FEzLayerName: string;
     procedure SetClassId(const Value: Integer);
     procedure SetAddress(const Value: string);
     procedure SetArchived(const Value: Boolean);
@@ -73,7 +74,9 @@ type
     procedure SetMaxY(const Value: Double);
     procedure SetMinX(const Value: Double);
     procedure SetMinY(const Value: Double);
-    procedure SetEntityId(const Value: Integer);
+    procedure SetEzLayerRecno(const Value: Integer);
+    function GetClassId: Integer;
+    procedure SetEzLayerName(const Value: string);
   protected
     function GetObjectId: Integer; override;
     function GetText: String; override;
@@ -89,7 +92,7 @@ type
     property Address: string read FAddress write SetAddress;
     property Archived: Boolean read FArchived write SetArchived;
     property Bottom: string read FBottom write SetBottom;
-    property ClassId: Integer read FClassId write SetClassId;
+    property ClassId: Integer read GetClassId write SetClassId;
     property Confirmed: Boolean read FConfirmed write SetConfirmed;
     property Diameter: Integer read FDiameter write SetDiameter;
     property Dismantled: Boolean read FDismantled write SetDismantled;
@@ -108,15 +111,19 @@ type
     property Top: string read FTop write SetTop;
     property Underground: Boolean read FUnderground write SetUnderground;
     property Voltage: Integer read FVoltage write SetVoltage;
-    // используются местная СК: Х - вверх, Y - вправо
+    // используются местная СК: Х - вверх, Y - вправо (геодезические кооринаты)
     property MinX: Double read FMinX write SetMinX;
+    // используются местная СК: Х - вверх, Y - вправо (геодезические кооринаты)
     property MinY: Double read FMinY write SetMinY;
+    // используются местная СК: Х - вверх, Y - вправо (геодезические кооринаты)
     property MaxX: Double read FMaxX write SetMaxX;
+    // используются местная СК: Х - вверх, Y - вправо (геодезические кооринаты)
     property MaxY: Double read FMaxY write SetMaxY;
     //
     property EzData: TStream read FEzData;
     property EzId: Integer read FEzId write SetEzId;
-    property EntityId: Integer read FEntityId write SetEntityId;
+    property EzLayerRecno: Integer read FEzLayerRecno write SetEzLayerRecno;
+    property EzLayerName: string read FEzLayerName write SetEzLayerName;
   end;
 
   TmstProjectObjects = class(TObjectList)
@@ -169,7 +176,6 @@ type
     property RequestNumber: string read FRequestNumber write SetRequestNumber;
     property Status: Integer read FStatus write SetStatus;
     //
-    class function StatusName(const aStatus: Integer): string;
     //
     property Objects: TmstProjectObjects read FObjects write SetObjects;
   end;
@@ -407,7 +413,7 @@ procedure TmstMPProjectSaver.SaveObj(Conn: IIBXConnection; aPrj: TmstProjectMP; 
 var
   B2: Boolean;
   Ds1, Ds2, DsMain: TDataSet;
-//  LayerId: Integer;
+  Xmin, Xmax, Ymin, Ymax: Double;
 begin
   if aObj.DatabaseId < 1 then
   begin
@@ -447,7 +453,7 @@ begin
   // 
   Conn.SetParam(DsMain, SF_ID, aObj.DatabaseId);
   Conn.SetParam(DsMain, SF_MASTER_PLAN_ID, aPrj.DatabaseId);
-  Conn.SetParam(DsMain, SF_MASTER_PLAN_CLASS_ID, aObj.ClassId);
+  Conn.SetNullableParam(DsMain, SF_MASTER_PLAN_CLASS_ID, aObj.ClassId, 0);
   Conn.SetParam(DsMain, SF_STATUS, aObj.Status);
   Conn.SetParam(DsMain, SF_DISMANTLED, IfThen(aObj.Dismantled, 1, 0));
   Conn.SetParam(DsMain, SF_ARCHIVED, IfThen(aObj.Archived, 1, 0));
@@ -471,15 +477,22 @@ begin
   Conn.SetParam(DsMain, SF_ROTATION, aObj.Rotation);
   Conn.SetBlobParam(DsMain, SF_EZDATA, aObj.EzData);
   Conn.SetParam(DsMain, SF_EZ_ID, aObj.EzId);
-  Conn.SetParam(DsMain, SF_MINX, aObj.MinX);
-  Conn.SetParam(DsMain, SF_MINY, aObj.MinY);
-  Conn.SetParam(DsMain, SF_MAXX, aObj.MaxX);
-  Conn.SetParam(DsMain, SF_MAXY, aObj.MaxY);
-//  if Assigned(aObj.Layer) then
-//    LayerId := aObj.Layer.DatabaseId
-//  else
-//    LayerId := -1;
-//  Conn.SetParam(DsMain, SF_PROJECT_LAYERS_ID, LayerId);
+  //
+  XMin := aObj.MinX;
+  YMin := aObj.MinY;
+  XMax := aObj.MaxX;
+  YMax := aObj.MaxY;
+  if aPrj.CK36 then
+  begin
+    TEzCSConverter.XY2DToVrn(Xmin, Ymin, False);
+    TEzCSConverter.XY2DToVrn(Xmax, Ymax, False);
+  end;
+  //
+  Conn.SetParam(DsMain, SF_MINX, Xmin);
+  Conn.SetParam(DsMain, SF_MINY, Ymin);
+  Conn.SetParam(DsMain, SF_MAXX, Xmax);
+  Conn.SetParam(DsMain, SF_MAXY, Ymax);
+  //
   Conn.ExecDataSet(DsMain);
 end;
 
@@ -618,18 +631,6 @@ begin
   FStatus := Value;
 end;
 
-class function TmstProjectMP.StatusName(const aStatus: Integer): string;
-begin
-  case aStatus of
-  1 : Result := 'проектные';
-  2 : Result := 'проектные демонтируемые объекты';
-  3 : Result := 'проектные выдана справка';
-  4 : Result := 'нанесенные';
-  else
-      Result := 'ошибка';
-  end;
-end;
-
 { TmstProjectMPObject }
 
 procedure TmstProjectMPObject.AssignTo(Target: TPersistent);
@@ -669,7 +670,8 @@ begin
     Tgt.FMaxY := FMaxY;
     Tgt.FMinX := FMinX;
     Tgt.FMinY := FMinY;
-    Tgt.FEntityId := Self.FEntityId;
+    Tgt.FEzLayerRecno := Self.FEzLayerRecno;
+    Tgt.FEzLayerName := FEzLayerName;
     //
     Tgt.FEzData.Size := 0;
     Self.FEzData.Position := 0;
@@ -699,6 +701,14 @@ destructor TmstProjectMPObject.Destroy;
 begin
   FreeAndNil(FEzData);
   inherited;
+end;
+
+function TmstProjectMPObject.GetClassId: Integer;
+begin
+  if FLayer <> nil then
+    Result := FLayer.DatabaseId
+  else
+    Result := FClassId;
 end;
 
 function TmstProjectMPObject.GetObjectId: Integer;
@@ -761,9 +771,9 @@ begin
   FDrawDate := Value;
 end;
 
-procedure TmstProjectMPObject.SetEntityId(const Value: Integer);
+procedure TmstProjectMPObject.SetEzLayerRecno(const Value: Integer);
 begin
-  FEntityId := Value;
+  FEzLayerRecno := Value;
 end;
 
 procedure TmstProjectMPObject.SetEzId(const Value: Integer);
@@ -779,6 +789,11 @@ end;
 procedure TmstProjectMPObject.SetIsLine(const Value: Boolean);
 begin
   FIsLine := Value;
+end;
+
+procedure TmstProjectMPObject.SetEzLayerName(const Value: string);
+begin
+  FEzLayerName := Value;
 end;
 
 procedure TmstProjectMPObject.SetMaterial(const Value: string);
