@@ -96,7 +96,9 @@ uses
   uMStClassesProjectsEz in 'Source\uMStClassesProjectsEz.pas',
   uMstDialogEditMPObjSemantics in 'Source\uMstDialogEditMPObjSemantics.pas' {mstEditMPObjSemanticsDialog},
   uMStClassesProjectsUtils in 'Source\uMStClassesProjectsUtils.pas',
-  uMStClassesMPStatuses in 'Source\uMStClassesMPStatuses.pas';
+  uMStClassesMPStatuses in 'Source\uMStClassesMPStatuses.pas',
+  uMStClassesProjectsBrowserMP in 'Source\uMStClassesProjectsBrowserMP.pas',
+  uMStDialogMPBrowserFilter in 'Source\uMStDialogMPBrowserFilter.pas' {mstMPBrowserFilterDialog};
 
 {$R *.RES}
 
@@ -107,9 +109,8 @@ begin
   Application.Title := 'Планшетохранилище 3.1';
   try
     Application.CreateForm(TmstClientAppModule, mstClientAppModule);
-  Application.CreateForm(TmstPrintModule, mstPrintModule);
-  Application.CreateForm(TmstClientMainForm, mstClientMainForm);
-  Application.CreateForm(TmstMPBrowserForm, mstMPBrowserForm);
+    Application.CreateForm(TmstPrintModule, mstPrintModule);
+    Application.CreateForm(TmstClientMainForm, mstClientMainForm);
   except
     on E: Exception do
     begin

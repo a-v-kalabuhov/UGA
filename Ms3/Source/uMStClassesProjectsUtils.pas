@@ -30,8 +30,8 @@ type
     class function LineToEntity(aPrj: TmstProject; aProjLine: TmstProjectLine; Poly: Boolean): TEzOpenedEntity;
     class procedure ShowProjectLayer(aPrj: TmstProject);
     //
-    class procedure ClearProjectLayers();
-    class procedure RemoveProjectFromLayer(const ProjectId: Integer);
+    class procedure ClearProjectLayers(MasterPlan: Boolean);
+    class procedure RemoveProjectFromLayer(const ProjectId: Integer; MasterPlan: Boolean);
     class procedure RemoveProjectLineFromLayer(const ProjectId, LineId: Integer);
     //
     class function AddLineZoneToGIS(aLine: TmstProjectLine; aZoneWidth: Double): Boolean;
@@ -382,8 +382,15 @@ end;
 
 class procedure TProjectUtils.ClearProjectLayers;
 begin
-  ClearLayer(SL_PROJECT_CLOSED, nil);
-  ClearLayer(SL_PROJECT_OPEN, nil);
+  if MasterPlan then
+  begin
+    ClearLayer(SL_PROJECT_CLOSED, nil);
+    ClearLayer(SL_PROJECT_OPEN, nil);
+  end
+  else
+  begin
+    raise Exception.Create('MasterPlan');
+  end;
 end;
 
 class procedure TProjectUtils.FindProjectInGIS(Prj: TmstProject; LineId: Integer; out Layer: TEzBaseLayer; out RecNo: Integer);
@@ -558,7 +565,7 @@ begin
   end;
 end;
 
-class procedure TProjectUtils.RemoveProjectFromLayer(const ProjectId: Integer);
+class procedure TProjectUtils.RemoveProjectFromLayer(const ProjectId: Integer; MasterPlan: Boolean);
 begin
   RemoveProjectFromLayerProjectId := ProjectId;
   RemoveProjectLineFromLayerProjectId := -1;

@@ -35,7 +35,7 @@ type
   end;
 
   TMStEzProjectLoaderFactory = class
-    class function CreateLoader(): IEzProjectLoader;
+    class function CreateLoader(MasterPlan: Boolean): IEzProjectLoader;
   end;
 
   TmstLotListEz = class(TmstLotList)
@@ -148,9 +148,12 @@ end;
 
 { TMStEzProjectLoaderFactory }
 
-class function TMStEzProjectLoaderFactory.CreateLoader: IEzProjectLoader;
+class function TMStEzProjectLoaderFactory.CreateLoader(MasterPlan: Boolean): IEzProjectLoader;
 begin
-  Result := TMStProjectRectLoader.Create as IEzProjectLoader;
+  if MasterPlan then
+    Result := TMStMPRectLoader.Create as IEzProjectLoader
+  else
+    Result := TMStProjectRectLoader.Create as IEzProjectLoader;
 end;
 
 end.

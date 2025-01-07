@@ -58,6 +58,7 @@ type
     FStreets: TmstStreetList;
     FLotRegistry: TmstLotRegistry;
     FPrjRegistry: TmstProjectList;
+    FMPRegistry: TmstProjectList;
 //    FLots: TmstLotList;
 //    FAnnulledLots: TmstLotList;
 //    FActualLots: TmstLotList;
@@ -74,6 +75,7 @@ type
     FMode: TmstAppMode;
     FUser: TmstUser;
     FLoadedProjects: TIntegerList;
+    FLoadedMPPrjs: TIntegerList;
     FNetTypes: TmstProjectNetTypes;
     // GUI инициализации
     procedure StartInit;
@@ -167,7 +169,7 @@ type
     // Работа с отводами
     procedure FindLots(DrawBox: TEzDrawBox; const X, Y: Double);
     procedure FindMap(const Nomenclature: String; OnMapFound: TNotifyEvent);
-    procedure FindProjects(DrawBox: TEzDrawBox; const X, Y: Double);
+    procedure FindProjects(DrawBox: TEzDrawBox; const X, Y: Double; MasterPlan: Boolean);
     procedure HideLot(const aCategoryId, DatabaseId: Integer);
     function GetLotList(const aCategoryId: Integer): TmstLotList;
     //
@@ -178,9 +180,9 @@ type
     procedure LoadLots(const aLeft, aTop, aRight, aBottom: Double; CallBack: TProgressEvent2);
     procedure LoadLotsByField(const FieldName, Text: String; OnLotLoaded: TNotifyEvent);
     //
-    function GetProject(PrjId: Integer; LoadIsNotExtsts: Boolean): TmstProject;
-    procedure LoadProjects(const aLeft, aTop, aRight, aBottom: Double; CallBack: TProgressEvent2);
-    procedure LoadProjectsByField(const FieldName, Text: String; OnPrjLoaded: TNotifyEvent);
+    function GetProject(PrjId: Integer; LoadIsNotExtsts: Boolean; MasterPlan: Boolean): TmstProject;
+    procedure LoadProjects(const aLeft, aTop, aRight, aBottom: Double; MasterPlan: Boolean; CallBack: TProgressEvent2);
+    procedure LoadProjectsByField(const FieldName, Text: String; MasterPlan: Boolean; OnPrjLoaded: TNotifyEvent);
     // Загрузка изображения планшета
     function LoadMapImage(MapEntityId: Integer): Boolean;  // MapId = Entity.ID
     // Поиск адреса и установке его на экране
@@ -188,7 +190,7 @@ type
     // Поиск участка и установке его на экране
     procedure LocateContour(const aCategoryId, aLotDbId, aContourDbId: Integer);
     procedure LocateLot(const aCategoryId, aDbId: Integer);
-    procedure LocateProject(const DbId: Integer);
+    procedure LocateProject(const DbId: Integer; MasterPlan: Boolean);
     procedure LogError(E: Exception; Info: TStrings); overload;
     procedure LogError(E: Exception; const Info: string); overload;
     // Обновление информации по планшетам
@@ -227,13 +229,12 @@ type
     procedure DisplayLayersDialog();
     procedure RepaintViewports;
     //
-    function FindProject(const aId: Integer): TmstProject;
-    procedure AddLoadedProject(const aId: Integer);
-    procedure AddLoadedProjectMP(const aId: Integer); virtual; abstract;
-    procedure ClearLoadedProjects();
-    function HasLoadedProjects(): Boolean;
-    function IsProjectLoaded(const aId: Integer): Boolean;
-    procedure RemoveLoadedProject(const aId: Integer);
+    function FindProject(const aId: Integer; MasterPlan: Boolean): TmstProject;
+    procedure AddLoadedProject(const aId: Integer; MasterPlan: Boolean);
+    procedure ClearLoadedProjects(MasterPlan: Boolean);
+    function HasLoadedProjects(MasterPlan: Boolean): Boolean;
+    function IsProjectLoaded(const aId: Integer; MasterPlan: Boolean): Boolean;
+    procedure RemoveLoadedProject(const aId: Integer; MasterPlan: Boolean);
     //
     property MainWorkDir: String read FMainWorkDir;
     property SessionDir: String read FSessionDir;
@@ -419,6 +420,7 @@ begin
     NCSecwShutdown;
     FNetTypes.Free;
     FLoadedProjects.Free;
+    FLoadedMPPrjs.Free;
     FUser.Free;
     FreeAndNil(FStack);
     FreeAndNil(FAddresses);
@@ -427,6 +429,7 @@ begin
     FreeAndNil(FLayers);
     FreeAndNil(FLotRegistry);
     FreeAndNil(FMapMngr);
+    FreeAndNil(FMPRegistry);
   finally
     ClearTempFolder;
   end;
@@ -561,20 +564,25 @@ begin
   Result := FMapMngr.GetOrders;
 end;
 
-function TMStClientAppModule.GetProject(PrjId: Integer; LoadIsNotExtsts: Boolean): TmstProject;
+function TMStClientAppModule.GetProject(PrjId: Integer; LoadIsNotExtsts: Boolean; MasterPlan: Boolean): TmstProject;
 var
   Tmp: TmstObject;
+  Reg: TmstProjectList;
 begin
   Result := nil;
-  Tmp := FPrjRegistry.GetByDatabaseId(PrjId);
+  if MasterPlan then
+    Reg := FMPRegistry
+  else
+    Reg := FPrjRegistry;
+  Tmp := Reg.GetByDatabaseId(PrjId);
   if Assigned(Tmp) then
     Result := TmstProject(Tmp);
   if (Result = nil) and LoadIsNotExtsts then
   begin
     try
-      Result := MapMngr.GetProjectById(PrjId);
+      Result := MapMngr.GetProjectById(PrjId, MasterPlan);
       if Assigned(Result) then
-        FPrjRegistry.Add(Result);
+        Reg.Add(Result);
     except
       Result := nil;
     end;
@@ -732,6 +740,11 @@ begin
   if not Assigned(FPrjRegistry) then
   begin
     FPrjRegistry := TmstProjectList.Create;
+  end;
+
+  if not Assigned(FMPRegistry) then
+  begin
+    FMPRegistry := TmstProjectList.Create;
   end;
 
   if not Assigned(FStack) then
@@ -1043,39 +1056,56 @@ begin
   end;
 end;
 
-procedure TMStClientAppModule.LoadProjects(const aLeft, aTop, aRight, aBottom: Double; CallBack: TProgressEvent2);
+procedure TMStClientAppModule.LoadProjects(const aLeft, aTop, aRight, aBottom: Double; MasterPlan: Boolean; CallBack: TProgressEvent2);
 var
   R: TEzRect;
+  Reg: TmstProjectList;
 begin
+  if MasterPlan then
+    Reg := FMPRegistry
+  else
+    Reg := FPrjRegistry;
   R := Rect2D(ABottom, ALeft, ATop, ARight);
   R := ReorderRect2D(R);
-  FMapMngr.LoadProjects(R, FPrjRegistry, CallBack);
+  FMapMngr.LoadProjects(R, Reg, MasterPlan, CallBack);
 end;
 
-procedure TMStClientAppModule.LoadProjectsByField(const FieldName, Text: String; OnPrjLoaded: TNotifyEvent);
+procedure TMStClientAppModule.LoadProjectsByField(const FieldName, Text: String; MasterPlan: Boolean; OnPrjLoaded: TNotifyEvent);
 var
   IdList: TList;
   I: Integer;
   Id: Integer;
   Prj: TmstProject;
   Added: Boolean;
+  Reg: TmstProjectList;
+  Lst: TIntegerList;
 begin
-  IdList := FMapMngr.GetProjectIdsByField(FieldName, Text);
+  if MasterPlan then
+  begin
+    Reg := FMPRegistry;
+    Lst := FLoadedMPPrjs;
+  end
+  else
+  begin
+    Reg := FPrjRegistry;
+    Lst := FLoadedProjects;
+  end;
+  IdList := FMapMngr.GetProjectIdsByField(FieldName, Text, MasterPlan);
   try
     Added := False;
     for I := 0 to Pred(IdList.Count) do
     begin
       // Перебираем все Id
       Id := Integer(IdList[I]);
-      Prj := TmstProject(FPrjRegistry.GetByDatabaseId(Id));
+      Prj := TmstProject(Reg.GetByDatabaseId(Id));
       if not Assigned(Prj) then
       begin
-        Prj := FMapMngr.GetProjectById(Id);
+        Prj := FMapMngr.GetProjectById(Id, MasterPlan);
         if Assigned(Prj) then
         begin
-          FPrjRegistry.Add(Prj);
+          Reg.Add(Prj);
           AddProjectToLayer(Prj);
-          FLoadedProjects.Add(Prj.DatabaseId);
+          Lst.Add(Prj.DatabaseId);
           Added := True;
         end;
       end;
@@ -1085,7 +1115,7 @@ begin
     end;
     //
     if Added then
-      FLoadedProjects.Sort;
+      Lst.Sort;
   finally
     FreeAndNil(IdList);
   end;
@@ -1122,14 +1152,19 @@ begin
   FMaps := TmpMaps;
 end;
 
-procedure TMStClientAppModule.RemoveLoadedProject(const aId: Integer);
+procedure TMStClientAppModule.RemoveLoadedProject(const aId: Integer; MasterPlan: Boolean);
 var
   Idx: Integer;
+  Lst: TIntegerList;
 begin
-  if FLoadedProjects.Find(aId, Idx) then
+  if MasterPlan then
+    Lst := FLoadedProjects
+  else
+    Lst := FLoadedMPPrjs;
+  if Lst.Find(aId, Idx) then
   begin
-    FLoadedProjects.Delete(Idx);
-//    FLoadedProjects.Sort;
+    Lst.Delete(Idx);
+//    Lst.Sort;
   end;
 end;
 
@@ -1291,11 +1326,17 @@ begin
   Result := FileLoaded;
 end;
 
-function TMStClientAppModule.IsProjectLoaded(const aId: Integer): Boolean;
+function TMStClientAppModule.IsProjectLoaded(const aId: Integer; MasterPlan: Boolean): Boolean;
 var
   Idx: Integer;
+var
+  Lst: TIntegerList;
 begin
-  Result := FLoadedProjects.Find(aId, Idx);
+  if MasterPlan then
+    Lst := FLoadedProjects
+  else
+    Lst := FLoadedMPPrjs;
+  Result := Lst.Find(aId, Idx);
 end;
 
 procedure TMStClientAppModule.LocateLot(const aCategoryId, aDbId: Integer);
@@ -1311,11 +1352,16 @@ begin
   end;
 end;
 
-procedure TMStClientAppModule.LocateProject(const DbId: Integer);
+procedure TMStClientAppModule.LocateProject(const DbId: Integer; MasterPlan: Boolean);
 var
   Prj: TmstProject;
+  Reg: TmstProjectList;
 begin
-  Prj := FPrjRegistry.GetByDatabaseId(DbId) as TmstProject;
+  if MasterPlan then
+    Reg := FMPRegistry
+  else
+    Reg := FPrjRegistry;
+  Prj := Reg.GetByDatabaseId(DbId) as TmstProject;
   if Assigned(Prj) then
   begin
     mstClientMainForm.DrawBox.ZoomWindow(TProjectUtils.Window(Prj));
@@ -1460,14 +1506,19 @@ begin
   end;
 end;
 
-procedure TMStClientAppModule.AddLoadedProject(const aId: Integer);
+procedure TMStClientAppModule.AddLoadedProject(const aId: Integer; MasterPlan: Boolean);
 var
   Idx: Integer;
+  Lst: TIntegerList;
 begin
-  if not FLoadedProjects.Find(aId, Idx) then
+  if MasterPlan then
+    Lst := FLoadedProjects
+  else
+    Lst := FLoadedMPPrjs;
+  if not Lst.Find(aId, Idx) then
   begin
-    FLoadedProjects.Add(aId);
-    FLoadedProjects.Sort;
+    Lst.Add(aId);
+    Lst.Sort;
   end;
 end;
 
@@ -1500,14 +1551,19 @@ begin
     end;
 end;
 
-function TMStClientAppModule.FindProject(const aId: Integer): TmstProject;
+function TMStClientAppModule.FindProject(const aId: Integer; MasterPlan: Boolean): TmstProject;
 var
   I: Integer;
   aPrj: TmstProject;
+  Reg: TmstProjectList;
 begin
-  for I := 0 to FPrjRegistry.Count - 1 do
+  if MasterPlan then
+    Reg := FMPRegistry
+  else
+    Reg := FPrjRegistry;
+  for I := 0 to Reg.Count - 1 do
   begin
-    aPrj := TmstProject(FPrjRegistry[I]);
+    aPrj := TmstProject(Reg[I]);
     if aPrj.DatabaseId = aId then
     begin
       Result := aPrj;
@@ -1517,26 +1573,37 @@ begin
   Result := nil;
 end;
 
-procedure TMStClientAppModule.FindProjects(DrawBox: TEzDrawBox; const X, Y: Double);
+procedure TMStClientAppModule.FindProjects(DrawBox: TEzDrawBox; const X, Y: Double; MasterPlan: Boolean);
 var
   Prj: TmstProject;
   PrjExtent: TEzRect;
   Pt: TEzPoint;
   I: Integer;
+  Reg: TmstProjectList;
 begin
+  if MasterPlan then
+    Reg := FMPRegistry
+  else
+    Reg := FPrjRegistry;
   Pt := Point2D(X, Y);
-  for I := 0 to FPrjRegistry.Count - 1 do
+  for I := 0 to Reg.Count - 1 do
   begin
-    Prj := FPrjRegistry[I] as TmstProject;
+    Prj := Reg[I] as TmstProject;
     PrjExtent := TProjectUtils.Window(Prj);
     if IsPointInBox2D(Pt, PrjExtent) then
       FStack.AddObject(Prj);
   end;
 end;
 
-function TMStClientAppModule.HasLoadedProjects: Boolean;
+function TMStClientAppModule.HasLoadedProjects(MasterPlan: Boolean): Boolean;
+var
+  Lst: TIntegerList;
 begin
-  Result := FLoadedProjects.Count > 0;
+  if MasterPlan then
+    Lst := FLoadedProjects
+  else
+    Lst := FLoadedMPPrjs;
+  Result := Lst.Count > 0;
 end;
 
 procedure TMStClientAppModule.HideLot(const aCategoryId, DatabaseId: Integer);
@@ -1772,6 +1839,7 @@ var
   aLabel: TEzTrueTypeText;
 begin
   FLoadedProjects := TIntegerList.Create;
+  FLoadedMPPrjs := TIntegerList.Create;
   FNetTypes := TmstProjectNetTypes.Create;
   // создаем симовл для точки выбранного отвода
   aSymbol := TEzSymbol.Create(Ez_Symbols);
@@ -2068,9 +2136,15 @@ begin
   end;
 end;
 
-procedure TMStClientAppModule.ClearLoadedProjects;
+procedure TMStClientAppModule.ClearLoadedProjects(MasterPlan: Boolean);
+var
+  Lst: TIntegerList;
 begin
-  FLoadedProjects.Clear;
+  if MasterPlan then
+    Lst := FLoadedProjects
+  else
+    Lst := FLoadedMPPrjs;
+  Lst.Clear;
 end;
 
 function TMStClientAppModule.ClearMapImagesTo399(mLog: TMemo{var Message: String}): Boolean;

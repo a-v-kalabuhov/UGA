@@ -512,7 +512,7 @@ type
     procedure ReleaseImage(Sender: TObject);
     procedure LoadLotsClick(Sender: TObject); overload;
     procedure LoadLots(const ALeft, ATop, ARight, ABottom: Double); overload;
-    procedure LoadProjects(const ALeft, ATop, ARight, ABottom: Double);
+    procedure LoadProjects(const ALeft, ATop, ARight, ABottom: Double; MasterPlan: Boolean);
     procedure LoadProjectsClick(Sender: TObject);
     procedure SetCursorState(const Value: TCursorState);
     procedure ShowCoord(Vector: TEzVector);
@@ -1324,7 +1324,7 @@ end;
 
 function TmstClientMainForm.GetProjectToExport(Sender: TObject; const ProjectId: Integer): TmstProject;
 begin
-  Result := mstClientAppModule.GetProject(ProjectId, True);
+  Result := mstClientAppModule.GetProject(ProjectId, True, False);
 end;
 
 procedure TmstClientMainForm.GISBeforeClose(Sender: TObject);
@@ -1363,7 +1363,8 @@ begin
       mstClientAppModule.Stack.Clear;
     mstClientAppModule.Stack.BeginUpdate;
     mstClientAppModule.FindLots(DrawBox, WX, WY);
-    mstClientAppModule.FindProjects(DrawBox, WX, WY);
+    mstClientAppModule.FindProjects(DrawBox, WX, WY, False);
+    mstClientAppModule.FindProjects(DrawBox, WX, WY, True);
   finally
     mstClientAppModule.Stack.EndUpdate;
     mstClientAppModule.Stack.UpdateView;
@@ -1449,7 +1450,7 @@ begin
   end;
 end;
 
-procedure TmstClientMainForm.LoadProjects(const ALeft, ATop, ARight, ABottom: Double);
+procedure TmstClientMainForm.LoadProjects(const ALeft, ATop, ARight, ABottom: Double; MasterPlan: Boolean);
 var
   Frm: TmstLoadLotProgressForm;
 begin
@@ -1457,7 +1458,7 @@ begin
   Enabled := False;
   try
     Frm.Show;
-    mstClientAppModule.LoadProjects(ALeft, ATop, ARight, ABottom, Frm.OnProgress2);
+    mstClientAppModule.LoadProjects(ALeft, ATop, ARight, ABottom, MasterPlan, Frm.OnProgress2);
   finally
     Enabled := True;
     Frm.Free;
@@ -1479,7 +1480,7 @@ begin
         Exit;
       if TGeoUtils.MapTopLeft(TmpMap.MapName, aTop, aLeft) then
       begin
-        LoadProjects(aLeft, aTop, aLeft + 250, aTop - 250);
+        LoadProjects(aLeft, aTop, aLeft + 250, aTop - 250, False);
       end;
     end;
 end;
@@ -2131,7 +2132,7 @@ end;
 
 procedure TmstClientMainForm.acProjectExportUpdate(Sender: TObject);
 begin
-  acProjectExport.Enabled := mstClientAppModule.HasLoadedProjects();
+  acProjectExport.Enabled := mstClientAppModule.HasLoadedProjects(False);
 end;
 
 procedure TmstClientMainForm.acProjectFindByAddressExecute(Sender: TObject);

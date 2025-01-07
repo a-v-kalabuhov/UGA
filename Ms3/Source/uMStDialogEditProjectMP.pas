@@ -380,12 +380,10 @@ begin
 end;
 
 procedure TmstEditProjectMPDialog.EditCurrentObjectSemantic;
-var
-  Frm: TmstEditMPObjSemanticsDialog;
 begin
   if not mdNav.Active then
     Exit;
-  mdNav.Edit;
+  mdNav.Edit();
 end;
 
 procedure TmstEditProjectMPDialog.edOwnerKeyPress(Sender: TObject; var Key: Char);

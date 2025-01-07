@@ -137,6 +137,7 @@ type
     procedure CopyFrom(Source: TmstProjectObjects);
     procedure DeleteObj(const DbId: Integer);
     function GetByGuid(const aGuid: string): TmstProjectMPObject;
+    function GetByDbId(const aId: Integer): TmstProjectMPObject;
     //
     property Items[Index: Integer]: TmstProjectMPObject read GetItems write SetItems; default;
     property Owner: TmstProjectMP read FOwner;
@@ -168,6 +169,7 @@ type
     //
     function Edit(const aCanSave: Boolean): Boolean; override;
     procedure CalcExtent(); override;
+    function IsMP(): Boolean; override;
     //
     property DrawDate: TDateTime read FDrawDate write SetDrawDate;
     property DrawOrgId: Integer read FDrawOrgId write SetDrawOrgId;
@@ -201,12 +203,12 @@ const
       'INSERT INTO MASTER_PLAN ' +
       '( ID,  ADDRESS,  DOC_NUMBER,  DOC_DATE,  CUSTOMER_ORGS_ID,  EXECUTOR_ORGS_ID, ' +
       ' DRAW_ORGS_ID, DRAW_DATE, OWNER_ORG_ID, ' +
-      ' MINX,  MINY,  MAXX,  MAXY,  CK36, ' +
+      ' MINX,  MINY,  MAXX,  MAXY,  CK36,  EXCHANGE_XY, ' +
       ' NAME,  REQUEST_NUMBER,  STATUS) ' +
       'VALUES ' +
       '(:ID, :ADDRESS, :DOC_NUMBER, :DOC_DATE, :CUSTOMER_ORGS_ID, :EXECUTOR_ORGS_ID, ' +
       ':DRAW_ORGS_ID,:DRAW_DATE,:OWNER_ORG_ID, ' +
-      ':MINX, :MINY, :MAXX, :MAXY, :CK36, ' +
+      ':MINX, :MINY, :MAXX, :MAXY, :CK36, :EXCHANGE_XY, ' +
       ':NAME, :REQUEST_NUMBER, :STATUS) ';
   SQL_UPDATE_MP =
       'UPDATE MASTER_PLAN SET ' +
@@ -224,6 +226,7 @@ const
       '   MAXX = :MAXX, ' +
       '   MAXY = :MAXY, ' +
       '   CK36 = :CK36, ' +
+      '   EXCHANGE_XY = :EXCHANGE_XY, ' +
       '   NAME = :NAME, ' +
       '   REQUEST_NUMBER = :REQUEST_NUMBER ' +
       'WHERE (ID = :ID)';
@@ -382,6 +385,8 @@ begin
     Conn.SetParam(DsMain, SF_MAXX, Prj.MaxX);
     Conn.SetParam(DsMain, SF_MAXY, Prj.MaxY);
     Conn.SetParam(DsMain, SF_CK36, IfThen(Prj.Ck36, 1, 0));
+    Conn.SetParam(DsMain, SF_EXCHANGE_XY, IfThen(Prj.ExchangeXY, 1, 0));
+
     Conn.SetParam(DsMain, SF_NAME, Prj.Name); // :NAME
     Conn.SetParam(DsMain, SF_REQUEST_NUMBER, Prj.RequestNumber); // :REQUEST_NUMBER
     Conn.SetParam(DsMain, SF_STATUS, Prj.Status); // :STATUS
@@ -594,6 +599,11 @@ begin
   if DocDate > 0 then
     Result := Result + ' от ' + DateToStr(DocDate);
   Result := Result + ' ; ' + Address;
+end;
+
+function TmstProjectMP.IsMP: Boolean;
+begin
+  Result := True;
 end;
 
 procedure TmstProjectMP.SetDrawDate(const Value: TDateTime);
@@ -905,6 +915,19 @@ begin
       Delete(I);
       Exit;
     end;
+end;
+
+function TmstProjectObjects.GetByDbId(const aId: Integer): TmstProjectMPObject;
+var
+  I: Integer;
+begin
+  for I := 0 to Count - 1 do
+    if Items[I].DatabaseId = aId then
+    begin
+      Result := Items[I];
+      Exit;
+    end;
+  Result := nil;
 end;
 
 function TmstProjectObjects.GetByGuid(const aGuid: string): TmstProjectMPObject;

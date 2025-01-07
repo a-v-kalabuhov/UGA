@@ -324,6 +324,7 @@ type
     function Save(aDb: IDb): Boolean;
     //
     procedure CalcExtent(); virtual;
+    function IsMP(): Boolean; virtual;
     //
     property Blocks: TmstProjectBlocks read FBlocks write SetBlocks;
     property Layers: TmstProjectLayers read FLayers write SetLayers;
@@ -606,6 +607,11 @@ begin
   if DocDate > 0 then
     Result := Result + ' от ' + DateToStr(DocDate);
   Result := Result + ' ; ' + Address;
+end;
+
+function TmstProject.IsMP: Boolean;
+begin
+  Result := False;
 end;
 
 function TmstProject.Load(aDb: IDb): Boolean;

@@ -1673,6 +1673,7 @@ initialization
   mstRegistry.RegisterObjectClass(TmstStreet, TmstStreetList, ID_STREET, 'Улицы');
   mstRegistry.RegisterObjectClass(TmstAddress, TmstAddressList, ID_ADDRESS, 'Адреса');
   mstRegistry.RegisterObjectClass(TmstProject, TmstObjectList, ID_PROJECT, 'Проекты');
+  mstRegistry.RegisterObjectClass(TmstProject, TmstObjectList, ID_PROJECT_MP, 'Сводный план');
 
 finalization
   FreeAndNil(mstRegistry);

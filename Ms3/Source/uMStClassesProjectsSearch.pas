@@ -27,7 +27,7 @@ begin
   inherited;
   FStack := aStack;
   with mstClientAppModule do
-    LoadProjectsByField(SF_ADDRESS, SearchText, OnProjectLoaded);
+    LoadProjectsByField(SF_ADDRESS, SearchText, False, OnProjectLoaded);
 end;
 
 procedure TmstProjectAddressSearchData.OnProjectLoaded(Sender: TObject);

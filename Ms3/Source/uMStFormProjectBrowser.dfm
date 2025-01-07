@@ -3,8 +3,8 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   Top = 0
   BorderStyle = bsSizeToolWin
   Caption = #1057#1087#1080#1089#1086#1082' '#1087#1088#1086#1077#1082#1090#1086#1074
-  ClientHeight = 488
-  ClientWidth = 745
+  ClientHeight = 442
+  ClientWidth = 869
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,16 +21,17 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 745
+    Width = 869
     Height = 29
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 745
     DesignSize = (
-      745
+      869
       29)
     object btnClose: TSpeedButton
-      Left = 630
+      Left = 754
       Top = 3
       Width = 110
       Height = 23
@@ -95,17 +96,19 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   end
   object Panel3: TPanel
     Left = 0
-    Top = 452
-    Width = 745
+    Top = 406
+    Width = 869
     Height = 36
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 452
+    ExplicitWidth = 745
     DesignSize = (
-      745
+      869
       36)
     object btnCoords: TSpeedButton
-      Left = 618
+      Left = 742
       Top = 6
       Width = 122
       Height = 23
@@ -115,7 +118,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
       ExplicitLeft = 920
     end
     object btnZone: TSpeedButton
-      Left = 386
+      Left = 510
       Top = 6
       Width = 110
       Height = 23
@@ -125,7 +128,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
       ExplicitLeft = 688
     end
     object SpeedButton3: TSpeedButton
-      Left = 502
+      Left = 626
       Top = 6
       Width = 110
       Height = 23
@@ -135,7 +138,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
       ExplicitLeft = 804
     end
     object btnDisplay: TSpeedButton
-      Left = 270
+      Left = 394
       Top = 6
       Width = 110
       Height = 23
@@ -168,27 +171,30 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
   object PageControl1: TPageControl
     Left = 0
     Top = 29
-    Width = 745
-    Height = 423
+    Width = 869
+    Height = 377
     ActivePage = tabData
     Align = alClient
     Constraints.MinWidth = 745
     TabOrder = 2
+    ExplicitWidth = 745
+    ExplicitHeight = 423
     object tabData: TTabSheet
       Caption = #1055#1088#1086#1077#1082#1090#1099
       ExplicitLeft = 0
       ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 737
+      ExplicitHeight = 395
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 737
+        Width = 861
         Height = 33
         Align = alTop
         TabOrder = 0
+        ExplicitWidth = 737
         DesignSize = (
-          737
+          861
           33)
         object btnFilterStart: TSpeedButton
           Left = 4
@@ -260,7 +266,7 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
           OnClick = btnPropertiesClick
         end
         object sbtnDeleteProject: TSpeedButton
-          Left = 635
+          Left = 759
           Top = 1
           Width = 94
           Height = 26
@@ -316,8 +322,8 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
       object kaDBGrid1: TkaDBGrid
         Left = 0
         Top = 33
-        Width = 737
-        Height = 362
+        Width = 861
+        Height = 316
         Align = alClient
         DataSource = DataSource1
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]

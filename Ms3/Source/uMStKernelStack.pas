@@ -46,6 +46,7 @@ type
     FStreets: TmstObjectList;
     FAddresse_s: TmstObjectList;
     FProjects: TmstObjectList;
+    FMPPrjs: TmstObjectList;
     FView: TControl;
     FUpdating: Boolean;
     FDetailedView: TControl;
@@ -178,6 +179,8 @@ begin
       FAddresse_s.Add(AObject);
     ID_PROJECT :
       FProjects.Add(AObject);
+    ID_PROJECT_MP :
+      FMPPrjs.Add(AObject);
     else
       NeedUpdate := False;
     end;
@@ -217,6 +220,7 @@ begin
   FStreets := TmstObjectList.Create(False);
   FAddresse_s := TmstObjectList.Create(False);
   FProjects := TmstObjectList.Create(False);
+  FMPPrjs := TmstObjectList.Create(False);
   FView := nil;
   FObjectView := nil;
   FDetailedView := nil;
@@ -239,6 +243,7 @@ end;
 
 destructor TmstObjectStack.Destroy;
 begin
+  FreeAndNil(FMPPrjs);
   FreeAndNil(FProjects);
   FreeAndNil(FAddresse_s);
   FreeAndNil(FStreets);
@@ -321,6 +326,8 @@ begin
       Result := FAddresse_s.GetByDatabaseId(DbId);
     ID_NODETYPE_PRJ :
       Result := FProjects.GetByDatabaseId(DbId);
+    ID_NODETYPE_MP_PRJ :
+      Result := FMPPrjs.GetByDatabaseId(DbId);
   else
     Result := nil;
   end;
@@ -346,6 +353,8 @@ begin
     List := FAddresse_s;
   ID_PROJECT :
     List := FProjects;
+  ID_PROJECT_MP :
+    List := FMPPrjs;
   end;
   Result := Assigned(List) and (List.IndexOfDatabaseId(AObject.DatabaseId) >= 0);
 end;
@@ -512,6 +521,8 @@ begin
     List := FAddresse_s;
   ID_PROJECT :
     List := FProjects;
+  ID_PROJECT_MP :
+    List := FMPPrjs;
   end;
   if Assigned(List) then
   begin
@@ -578,6 +589,20 @@ begin
           UpdateObjectView(Tmp);
         end;
       ID_NODETYPE_PRJ :
+        begin
+          ClearObjectView;
+          ClearDetailedView;
+          OldSelected := FSelectedLot;
+          FSelectedLot.Id := -1;
+          FSelectedLot.CategoryId := 0;
+          FSelectedLot.ContourId := -1;
+          FSelectedLot.DatabaseId := -1;
+          DoSelectionChange(OldSelected, FSelectedLot);
+          //
+          Tmp := GetObjectByType(ObjectTypeId, DatabaseId);
+          UpdateObjectView(Tmp);
+        end;
+      ID_NODETYPE_MP_PRJ :
         begin
           ClearObjectView;
           ClearDetailedView;
@@ -667,6 +692,7 @@ begin
   FStreets.Clear;
   FAddresse_s.Clear;
   FProjects.Clear;
+  FMPPrjs.Clear;
 end;
 
 procedure TmstObjectStack.LocateHandler(Sender: TObject);
@@ -698,8 +724,8 @@ begin
     if Node.NodeType = ID_NODETYPE_ADDRESS then
       FAppModule.LocateAddress(DbId)
     else
-    if Node.NodeType = ID_NODETYPE_PRJ then
-      FAppModule.LocateProject(DbId);
+    if Node.NodeType in [ID_NODETYPE_PRJ, ID_NODETYPE_MP_PRJ] then
+      FAppModule.LocateProject(DbId, Node.NodeType = ID_NODETYPE_MP_PRJ);
   end;
 end;
 
@@ -1022,7 +1048,7 @@ begin
     end;
   end
   else
-  if Node.NodeType = ID_NODETYPE_PRJ then
+  if Node.NodeType in [ID_NODETYPE_PRJ, ID_NODETYPE_MP_PRJ] then
   begin
     Prj := TmstProject(GetObjectByType(Node.NodeType, Node.DatabaseId));
     if Assigned(Prj) then
@@ -1089,7 +1115,10 @@ begin
   with TmstTreeNode(FData.Items.AddChild(ToNode, aProject.AsText)) do
   begin
     DatabaseId := aProject.DatabaseId;
-    NodeType := ID_NODETYPE_PRJ;
+    if aProject.IsMP() then
+      NodeType := ID_NODETYPE_MP_PRJ
+    else
+      NodeType := ID_NODETYPE_PRJ;
     ImageIndex := IMAGE_PROJECT;
     SelectedIndex := ImageIndex;
   end;
@@ -1171,6 +1200,13 @@ begin
       TmstTreeNode(PrjRoot).NodeType := ID_NODETYPE_PRJ_ROOT;
       for I := 0 to Pred(AStack.FProjects.Count) do
         AddProject(PrjRoot, TmstProject(AStack.FProjects[I]));
+    end;
+    if AStack.FMPPrjs.Count > 0 then
+    begin
+      PrjRoot := FData.Items.AddChildObject(nil, mstRegistry.GetNameById(ID_PROJECT_MP), Pointer(ID_PROJECT_MP));
+      TmstTreeNode(PrjRoot).NodeType := ID_NODETYPE_MP_ROOT;
+      for I := 0 to Pred(AStack.FMPPrjs.Count) do
+        AddProject(PrjRoot, TmstProject(AStack.FMPPrjs[I]));
     end;
   finally
     FData.Items.EndUpdate;

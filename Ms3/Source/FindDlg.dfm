@@ -39,7 +39,7 @@ object FindForm: TFindForm
     Width = 294
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
+    ItemHeight = 0
     Sorted = True
     TabOrder = 1
     OnClick = cbColumnsClick

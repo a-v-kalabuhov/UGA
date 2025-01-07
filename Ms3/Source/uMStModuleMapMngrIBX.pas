@@ -17,7 +17,7 @@ uses
   uMStKernelClasses, uMStKernelConsts, uMStKernelInterfaces, uMStKernelIBX, uMStKernelIBXLotLoader,
   uMStImportEzClasses,
   uMStDialogLogin,
-  uMStClassesLots, uMStClassesProjects,
+  uMStClassesLots, uMStClassesProjects, uMStClassesProjectsMP,
   uMStModuleStats, uMStModuleGlobalParameters, uMStFTPConnection, uMStModuleOrders, uMStModuleLotData;
 
 type
@@ -95,8 +95,8 @@ type
     function  GetLots(aLot: TmstLot): ILots;
     function  GetLotIdsByField(const FieldName, Value: String): TList;
     //
-    function  GetProjectById(const aId: Integer): TmstProject;
-    function  GetProjectIdsByField(const FieldName, Value: String): TList;
+    function  GetProjectById(const aId: Integer; MasterPlan: Boolean): TmstProject;
+    function  GetProjectIdsByField(const FieldName, Value: String; MasterPlan: Boolean): TList;
     function  GetMapImage(aMapList: TmstMapList; aMap: TmstMap; const Directory: String): Boolean;
     function  GetOrders(): IOrders;
     function  GetParameters(): IParameters;
@@ -107,7 +107,7 @@ type
     procedure LoadLots(const Rect: TEzRect; LotList: TmstLotList;
       Layer: TEzBaseLayer; LotCategory: Integer; CallBack: TProgressEvent2);
     procedure LoadMaps(aMapList: TmstMapList);
-    procedure LoadProjects(const Rect: TEzRect; aList: TmstObjectList; CallBack: TProgressEvent2);
+    procedure LoadProjects(const Rect: TEzRect; aList: TmstObjectList; MasterPlan: Boolean; CallBack: TProgressEvent2);
     procedure LoadRedLines(Layer: TEzBaseLayer);
     procedure LoadStreets(aStreetList: TmstStreetList); 
     function  Logon(aUser: TmstUser): Boolean;
@@ -663,12 +663,11 @@ procedure TMStIBXMapMngr.LoadProjectPlanSubLayers(aLayer: TmstLayer;
 var
   SubLayer: TmstLayer;
 //  Layer, ElLayer: TmstLayer;
-  LayerId, ElLayerId: Integer;
+//  LayerId, ElLayerId: Integer;
   I: Integer;
   MpL: TmstMPLayer;
   Added: TList;
 begin
-  LayerId := aLayerId;
   SubLayer := aLayer.AddChild();
   SubLayer.Id := TProjectUtils.GetMPLayerCode(aStatusId, 0);
   SubLayer.Name := TProjectUtils.GetMPLayerName(aStatusId, 0);
@@ -812,14 +811,14 @@ begin
 //  Inc(Position);
 end;
 
-procedure TMStIBXMapMngr.LoadProjects(const Rect: TEzRect; aList: TmstObjectList; CallBack: TProgressEvent2);
+procedure TMStIBXMapMngr.LoadProjects(const Rect: TEzRect; aList: TmstObjectList; MasterPlan: Boolean; CallBack: TProgressEvent2);
 var
   Loader: IEzProjectLoader;
 begin
   inherited;
   if Assigned(aList) then
   begin
-    Loader := TMStEzProjectLoaderFactory.CreateLoader();
+    Loader := TMStEzProjectLoaderFactory.CreateLoader(MasterPlan);
     Loader.SetDb(Self as IDb);
     Loader.SetList(aList);
     Loader.SetRect(Rect);
@@ -910,11 +909,13 @@ begin
   Result := M as IParameters;
 end;
 
-function TMStIBXMapMngr.GetProjectIdsByField(const FieldName, Value: String): TList;
+function TMStIBXMapMngr.GetProjectIdsByField(const FieldName, Value: String; MasterPlan: Boolean): TList;
 var
   Conn: IIBXConnection;
   DataSet: TDataSet;
 begin
+  if MasterPlan then
+    raise Exception.Create('MasterPlan');
   Result := TList.Create;
   Conn := GetConnection(cmReadOnly, dmKis);
   DataSet := Conn.GetDataSet('SELECT ID FROM PROJECTS WHERE UPPER(' + FieldName + ') LIKE :VALUE');
@@ -928,9 +929,12 @@ begin
   DataSet.Close;
 end;
 
-function TMStIBXMapMngr.GetProjectById(const aId: Integer): TmstProject;
+function TMStIBXMapMngr.GetProjectById(const aId: Integer; MasterPlan: Boolean): TmstProject;
 begin
-  Result := TmstProject.Create;
+  if MasterPlan then
+    Result := TmstProject.Create
+  else
+    Result := TmstProjectMP.Create;
   Result.DatabaseId := aId;
   if not Result.Load(Self as IDb) then
     FreeAndNil(Result);
@@ -1274,9 +1278,7 @@ procedure TMStIBXMapMngr.AddMPLayer(aLayer: TmstMPLayer; aParentLayer: TmstLayer
   var Position: Integer);
 var
   Layer: TmstLayer;
-  //ElLayer: TmstLayer;
-  LayerId, ElLayerId: Integer;
-  I, J: Integer;
+  I: Integer;
   MpL: TmstMPLayer;
 begin
   if AddedLayers.IndexOf(aLayer)>= 0 then

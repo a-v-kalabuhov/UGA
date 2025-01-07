@@ -5,6 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, ComCtrls, Dialogs, ExtCtrls,
   Buttons, StdCtrls, Grids, DBGrids, DB, DBCtrls, ValEdit, IBCustomDataSet, IBQuery, IBDatabase, SHellApi,
+  ActnList, IBUpdateSQL, Menus, IBSQL,
   //
   EzBaseGIS, EzTable, EzLib, 
   uDBGrid,
@@ -12,9 +13,8 @@ uses
   uFileUtils, uGC,
   //
   uMStKernelClasses, uMStModuleApp, uMStConsts, uMStKernelSemantic, uMStKernelIBX,
-  uMStModuleMapMngrIBX, uMStKernelClassesQueryIndex,
-  uMStClassesProjects, uMStClassesProjectsBrowser,
-  uMStDialogProjectsBrowserFilter, ActnList, IBUpdateSQL, Menus, IBSQL;
+  uMStModuleMapMngrIBX, uMStKernelClassesQueryIndex, uMStClassesProjects, uMStClassesProjectsBrowser,
+  uMStDialogProjectsBrowserFilter;
 
 type
   TMStProjectBrowserForm = class(TForm)
@@ -160,11 +160,11 @@ begin
     try
       RowNo := ibqProjects.RecNo;
       PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
-      WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId);
+      WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId, False);
       if WasLoaded then
       begin
-        TProjectUtils.RemoveProjectFromLayer(PrjId);
-        mstClientAppModule.RemoveLoadedProject(PrjId);
+        TProjectUtils.RemoveProjectFromLayer(PrjId, False);
+        mstClientAppModule.RemoveLoadedProject(PrjId, False);
         DrawBox.RegenDrawing;
       end;
       //
@@ -254,12 +254,12 @@ function TMStProjectBrowserForm.GetProjectAndLoadToGIS(PrjId: Integer): TmstProj
 var
   Loaded: Boolean;
 begin
-  Loaded := mstClientAppModule.IsProjectLoaded(PrjId);
-  Result := mstClientAppModule.GetProject(PrjId, True);
+  Loaded := mstClientAppModule.IsProjectLoaded(PrjId, False);
+  Result := mstClientAppModule.GetProject(PrjId, True, False);
   if Assigned(Result) and not Loaded then
   begin
     TProjectUtils.AddProjectToGIS(Result);
-    mstClientAppModule.AddLoadedProject(PrjId);
+    mstClientAppModule.AddLoadedProject(PrjId, False);
   end;
 end;
 
@@ -285,8 +285,8 @@ begin
     LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
     OldPrjId := TProjectsSettings.FProjectId;
     TProjectsSettings.SetCurrentProjectLine(PrjId, LineId);
-    OldLoaded := mstClientAppModule.IsProjectLoaded(OldPrjId);
-    NewLoaded := mstClientAppModule.IsProjectLoaded(PrjId);
+    OldLoaded := mstClientAppModule.IsProjectLoaded(OldPrjId, False);
+    NewLoaded := mstClientAppModule.IsProjectLoaded(PrjId, False);
     if OldLoaded or NewLoaded then
       FDrawBox.RegenDrawing;
   end;
@@ -403,7 +403,7 @@ var
   Loaded: Boolean;
 begin
   PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
-  Loaded := mstClientAppModule.IsProjectLoaded(PrjId);
+  Loaded := mstClientAppModule.IsProjectLoaded(PrjId, False);
   if Loaded then
   begin
     FontColor := clGreen;
@@ -453,7 +453,7 @@ begin
 //    I := ibqProjects.RecNo;
     PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
     LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
-    Prj := mstClientAppModule.GetProject(PrjId, True);
+    Prj := mstClientAppModule.GetProject(PrjId, True, False);
     if Prj = nil then
       Exit;
     if Prj.Lines.Count = 1 then
@@ -465,7 +465,7 @@ begin
       FRowIndex.DeleteValue(PrjId, LineId);
       Prj.Lines.DeleteLine(LineId);
       Prj.Places.DeletePlace(LineId);
-      WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId);
+      WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId, False);
       if WasLoaded then
       begin
         TProjectUtils.RemoveProjectLineFromLayer(PrjId, LineId);
@@ -660,10 +660,10 @@ begin
   if ibqProjects.Active then
   begin
     PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
-    if mstClientAppModule.IsProjectLoaded(PrjId) then
+    if mstClientAppModule.IsProjectLoaded(PrjId, False) then
     begin
-      TProjectUtils.RemoveProjectFromLayer(PrjId);
-      mstClientAppModule.RemoveLoadedProject(PrjId);
+      TProjectUtils.RemoveProjectFromLayer(PrjId, False);
+      mstClientAppModule.RemoveLoadedProject(PrjId, False);
       DrawBox.RegenDrawing;
       kaDbGrid1.Refresh;
     end;
@@ -672,8 +672,8 @@ end;
 
 procedure TMStProjectBrowserForm.SpeedButton2Click(Sender: TObject);
 begin
-  TProjectUtils.ClearProjectLayers();
-  mstClientAppModule.ClearLoadedProjects();
+  TProjectUtils.ClearProjectLayers(False);
+  mstClientAppModule.ClearLoadedProjects(False);
   DrawBox.RegenDrawing;
   kaDbGrid1.Refresh;
 end;
@@ -688,9 +688,9 @@ begin
   begin
     // текущий проект
     PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
-    if mstClientAppModule.IsProjectLoaded(PrjId) then
+    if mstClientAppModule.IsProjectLoaded(PrjId, False) then
     begin
-      Prj := mstClientAppModule.GetProject(PrjId, False);
+      Prj := mstClientAppModule.GetProject(PrjId, False, False);
       if Assigned(Prj) then
       begin
         // текущая линия
@@ -765,7 +765,7 @@ var
 begin
   // получаем текущую линию
     PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
-    Prj := mstClientAppModule.GetProject(PrjId, True);
+    Prj := mstClientAppModule.GetProject(PrjId, True, False);
     if Assigned(Prj) then
     begin
       LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
