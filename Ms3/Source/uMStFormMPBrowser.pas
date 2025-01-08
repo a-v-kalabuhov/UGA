@@ -5,10 +5,12 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs,
   EzBaseGIS, IBSQL, Menus, IBCustomDataSet, IBUpdateSQL, ActnList, IBDatabase, DB, IBQuery, Grids, DBGrids, uDBGrid,
-  ComCtrls, StdCtrls, DBCtrls, Buttons, ExtCtrls,
+  ComCtrls, StdCtrls, DBCtrls, Buttons, ExtCtrls, ShellAPI,
   //
   EzLib,
   //
+  uGC, uFileUtils,
+  uMStKernelIBX,
   uMStClassesProjectsMP,
   uMStKernelClassesQueryIndex, uMStClassesProjectsUtils, uMStClassesProjectsBrowserMP,
   //
@@ -20,13 +22,13 @@ type
     btnClose: TSpeedButton;
     btnLoadToLayer: TSpeedButton;
     btnLoadAll: TSpeedButton;
-    SpeedButton1: TSpeedButton;
-    SpeedButton2: TSpeedButton;
+    btnRemovePrjFromMap: TSpeedButton;
+    btnRemoveAllPrjsFromMap: TSpeedButton;
     DBNavigator1: TDBNavigator;
     Panel3: TPanel;
     btnCoords: TSpeedButton;
     btnZone: TSpeedButton;
-    SpeedButton3: TSpeedButton;
+    btnRemoveZone: TSpeedButton;
     btnDisplay: TSpeedButton;
     chbTransparency: TCheckBox;
     trackAlpha: TTrackBar;
@@ -44,17 +46,31 @@ type
     ActionList1: TActionList;
     IBUpdateSQL1: TIBUpdateSQL;
     PopupMenuDelete: TPopupMenu;
-    N1: TMenuItem;
-    N2: TMenuItem;
+    miDeleteProject: TMenuItem;
+    miDeleteObject: TMenuItem;
     IBSQL1: TIBSQL;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure chbTransparencyClick(Sender: TObject);
     procedure trackAlphaChange(Sender: TObject);
     procedure btnDisplayClick(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
     procedure btnFilterStartClick(Sender: TObject);
     procedure btnFilterClearClick(Sender: TObject);
-    procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure kaDBGrid1CellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor;
+      State: TGridDrawState; var FontStyle: TFontStyles);
+    procedure btnLoadToLayerClick(Sender: TObject);
+    procedure btnLoadAllClick(Sender: TObject);
+    procedure btnCoordsClick(Sender: TObject);
+    procedure btnRemoveAllPrjsFromMapClick(Sender: TObject);
+    procedure btnRemovePrjFromMapClick(Sender: TObject);
+    procedure ibqProjectsAfterScroll(DataSet: TDataSet);
+    procedure ibqProjectsAfterClose(DataSet: TDataSet);
+    procedure btnPropertiesClick(Sender: TObject);
+    procedure sbtnDeleteProjectClick(Sender: TObject);
+    procedure miDeleteProjectClick(Sender: TObject);
+    procedure miDeleteObjectClick(Sender: TObject);
   private
     FDrawBox: TEzBaseDrawBox;
     procedure PrepareDataSet();
@@ -73,6 +89,7 @@ type
     function IntLocate(const PrjId, ObjId: Integer; const DisableUI: Boolean): Boolean;
     function GetProjectAndLoadToGIS(PrjId: Integer): TmstProjectMP;
     procedure DisplayObj(Prj: TmstProjectMP; ObjId: Integer);
+    procedure DisplayPrj(Prj: TmstProjectMP);
   public
     procedure Browse();
     function Locate(const PrjId, ObjId: Integer): Boolean;
@@ -86,7 +103,8 @@ var
 implementation
 
 uses
-  uMStConsts, uMStDialogMPBrowserFilter;
+  uMStConsts, uMStClassesProjects,
+  uMStDialogMPBrowserFilter;
 
 {$R *.dfm}
 
@@ -137,6 +155,55 @@ begin
   Close;
 end;
 
+procedure TmstMPBrowserForm.btnCoordsClick(Sender: TObject);
+var
+  PrjId, ObjId: Integer;
+  Prj: TmstProjectMP;
+  MpObj: TmstProjectMPObject;
+  Coords: TStringList;
+  I: Integer;
+  TmpFile: string;
+  CoordsFile: string;
+  Ent: TEzEntity;
+begin
+  // получаем текущую линию
+  PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+  Prj := mstClientAppModule.GetProject(PrjId, True, True) as TmstProjectMP;
+  if Assigned(Prj) then
+  begin
+    ObjId := ibqProjects.FieldByName(SF_OBJ_ID).AsInteger;
+    MpObj := Prj.Objects.GetByDbId(ObjId);
+    if Assigned(MpObj) then
+    begin
+      // составляем список координат
+      Coords := TStringList.Create;
+      try
+        Ent := TProjectUtils.GetMpObjEntity(MpObj);
+        try
+          for I := 0 to Ent.Points.Count - 1 do
+          begin
+            Coords.Add(IntToStr(Succ(I)) + ';' +
+                       FormatFloat('#0.00', Ent.Points[I].X) + ';' +
+                       FormatFloat('#0.00', Ent.Points[I].Y));
+          end;
+        finally
+          FreeAndNil(Ent);
+        end;
+
+        // пишем его в файл
+        TmpFile := TFileUtils.CreateTempFile(mstClientAppModule.SessionDir);
+        CoordsFile := ChangeFileExt(TmpFile, '.txt');
+        TFileUtils.RenameFile(TmpFile, CoordsFile);
+        Coords.SaveToFile(CoordsFile);
+      finally
+        Coords.Free;
+      end;
+      // открываем файл
+      ShellExecute(Handle, 'open', PChar(CoordsFile), nil, nil, SW_SHOWNORMAL);
+    end;
+  end;
+end;
+
 procedure TmstMPBrowserForm.btnDisplayClick(Sender: TObject);
 var
   PrjId, ObjId: Integer;
@@ -164,6 +231,86 @@ end;
 procedure TmstMPBrowserForm.btnFilterStartClick(Sender: TObject);
 begin
   ShowFilterDialog();
+end;
+
+procedure TmstMPBrowserForm.btnLoadAllClick(Sender: TObject);
+var
+  PrjId: Integer;
+  Prj: TmstProjectMP;
+  I: Integer;
+begin
+  if ibqProjects.Active = True then
+  begin
+    FHighlightEnabled := False;
+    try
+      ibqProjects.First;
+      while not ibqProjects.Eof do
+      begin
+        PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+        Prj := GetProjectAndLoadToGIS(PrjId);
+        if Prj.Objects.Count > 1 then
+        begin
+          for I := 1 to Prj.Objects.Count - 1 do
+            ibqProjects.Next;
+        end;
+        ibqProjects.Next;
+      end;
+      kaDBGrid1.Refresh;
+      //
+//      L := DrawBox.GIS.Layers.LayerByName(SL_PROJECT_OPEN);
+//      if Assigned(L) then
+//        L.LayerInfo.Visible := True;
+//      L := DrawBox.GIS.Layers.LayerByName(SL_PROJECT_CLOSED);
+//      if Assigned(L) then
+//        L.LayerInfo.Visible := True;
+    finally
+      FHighlightEnabled := True;
+    end;
+    DrawBox.RegenDrawing;
+  end;
+end;
+
+procedure TmstMPBrowserForm.btnLoadToLayerClick(Sender: TObject);
+var
+  PrjId: Integer;
+  Prj: TmstProjectMP;
+begin
+  if ibqProjects.Active then
+  begin
+    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+    Prj := GetProjectAndLoadToGIS(PrjId);
+    if Assigned(Prj) then
+    begin
+      TProjectUtils.ShowProjectLayer(Prj);
+      DisplayPrj(Prj);
+      kaDBGrid1.Refresh;
+    end;
+  end;
+end;
+
+procedure TmstMPBrowserForm.btnPropertiesClick(Sender: TObject);
+var
+  PrjId: Integer;
+  Prj: TmstProject;
+begin
+  if not ibqProjects.Active then
+    Exit;
+  PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+  Prj := GetProjectAndLoadToGIS(PrjId);
+  if not Assigned(Prj) then
+  begin
+    ShowMessage(
+      'Не удалось загрузить проект!' + sLineBreak +
+      'Обратитесь к администратору.');
+  end
+  else
+  begin
+    if Prj.Edit(True) then
+    begin
+      Prj.Save(mstClientAppModule.MapMngr as IDb);
+      ibqProjects.Refresh;
+    end;
+  end;
 end;
 
 procedure TmstMPBrowserForm.chbTransparencyClick(Sender: TObject);
@@ -244,7 +391,6 @@ end;
 procedure TmstMPBrowserForm.DisplayObj(Prj: TmstProjectMP; ObjId: Integer);
 var
   aLayer: TEzBaseLayer;
-  aRecNo: Integer;
   MpObj: TmstProjectMPObject;
   LayerName: string;
 begin
@@ -257,16 +403,23 @@ begin
   if Assigned(aLayer) then
   begin
     aLayer.Recno := MpObj.EzLayerRecno;
-    FDrawBox.SetEntityInViewEx(aLayer.Name, aRecno, True);
-    FDrawBox.BlinkEntityEx(aLayer.Name, aRecno);
+    FDrawBox.SetEntityInViewEx(aLayer.Name, MpObj.EzLayerRecno, True);
+    FDrawBox.BlinkEntityEx(aLayer.Name, MpObj.EzLayerRecno);
   end;
+end;
 
+procedure TmstMPBrowserForm.DisplayPrj(Prj: TmstProjectMP);
+begin
+  DrawBox.ZoomWindow(TProjectUtils.Window(Prj));
 end;
 
 procedure TmstMPBrowserForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   mstMPBrowserForm := nil;
   Action := caFree;
+  TMPSettings.SetCurrentMPObj(-1, -1);
+  mstClientAppModule.WriteFormPosition(Application, Self);
+  mstClientAppModule.WriteGridProperties(Self, kaDBGrid1);
 end;
 
 procedure TmstMPBrowserForm.FormCreate(Sender: TObject);
@@ -276,6 +429,12 @@ begin
   FHighlightEnabled := True;
   mstClientAppModule.ReadFormPosition(Application, Self);
   mstClientAppModule.ReadGridProperties(Self, kaDBGrid1);
+end;
+
+procedure TmstMPBrowserForm.FormDestroy(Sender: TObject);
+begin
+  FFilter.Free;
+  FRowIndex.Free;
 end;
 
 function TmstMPBrowserForm.GetProjectAndLoadToGIS(PrjId: Integer): TmstProjectMP;
@@ -288,6 +447,30 @@ begin
   begin
     TProjectUtils.AddProjectToGIS(Result);
     mstClientAppModule.AddLoadedProject(PrjId, True);
+  end;
+end;
+
+procedure TmstMPBrowserForm.ibqProjectsAfterClose(DataSet: TDataSet);
+begin
+  TMPSettings.SetCurrentMPObj(-1, -1);
+end;
+
+procedure TmstMPBrowserForm.ibqProjectsAfterScroll(DataSet: TDataSet);
+var
+  OldPrjId, PrjId: Integer;
+  ObjId: Integer;
+  OldLoaded, NewLoaded: Boolean;
+begin
+  if FHighlightEnabled then
+  begin
+    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+    ObjId := ibqProjects.FieldByName(SF_OBJ_ID).AsInteger;
+    OldPrjId := TProjectsSettings.FProjectId;
+    TMPSettings.SetCurrentMPObj(PrjId, ObjId);
+    OldLoaded := mstClientAppModule.IsProjectLoaded(OldPrjId, True);
+    NewLoaded := mstClientAppModule.IsProjectLoaded(PrjId, True);
+    if OldLoaded or NewLoaded then
+      FDrawBox.RegenDrawing;
   end;
 end;
 
@@ -395,9 +578,80 @@ begin
   end;
 end;
 
+procedure TmstMPBrowserForm.kaDBGrid1CellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor;
+  State: TGridDrawState; var FontStyle: TFontStyles);
+var
+  PrjId: Integer;
+  Loaded: Boolean;
+begin
+  PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+  Loaded := mstClientAppModule.IsProjectLoaded(PrjId, True);
+  if Loaded then
+  begin
+    FontColor := clGreen;
+    if State = [] then
+      Background := clYellow;
+  end;
+end;
+
 function TmstMPBrowserForm.Locate(const PrjId, ObjId: Integer): Boolean;
 begin
   Result := IntLocate(PrjId, ObjId, True);
+end;
+
+procedure TmstMPBrowserForm.miDeleteObjectClick(Sender: TObject);
+var
+//  S1: string;
+//  Answer: Integer;
+//  I,
+  PrjId, ObjId: Integer;
+//  Id2: Integer;
+  WasLoaded: Boolean;
+  Prj: TmstProjectMP;
+  MpObj: TmstProjectMPObject;
+  L: TEzBaseLayer;
+begin
+//  S1 := 'Проект будет удалён без возможности восстановления.' + sLineBreak +
+//        'Адрес проекта: ' + IBQuery1.FieldByName(SF_ADDRESS).AsString + sLineBreak + sLineBreak +
+//        'Удалить проект?';
+//  Answer := MessageBox(Self.Handle, PChar(S1), 'Внимание!', MB_YESNO + MB_ICONQUESTION);
+//  if Answer = mrYes then
+  if ibqProjects.Active then
+  begin
+//    I := ibqProjects.RecNo;
+    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+    ObjId := ibqProjects.FieldByName(SF_OBJ_ID).AsInteger;
+    Prj := mstClientAppModule.GetProject(PrjId, True, True) as TmstProjectMP;
+    if Prj = nil then
+      Exit;
+    if Prj.Objects.Count = 1 then
+      DeleteProject()
+    else
+    begin
+      // удаляем объект из проекта
+      ibqProjects.Delete;
+      FRowIndex.DeleteValue(PrjId, ObjId);
+      //
+      MpObj := Prj.Objects.GetByDbId(ObjId);
+      if Assigned(MpObj) then
+      begin
+        WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId, True);
+        if WasLoaded then
+        begin
+          L := DrawBox.GIS.Layers.LayerByName(MpObj.EzLayerName);
+          L.DeleteEntity(MpObj.EzLayerRecno);
+          DrawBox.RegenDrawing;
+        end;
+      end;
+      //
+      Prj.Objects.DeleteObj(ObjId);
+    end;
+  end;
+end;
+
+procedure TmstMPBrowserForm.miDeleteProjectClick(Sender: TObject);
+begin
+  DeleteProject();
 end;
 
 procedure TmstMPBrowserForm.PrepareDataSet;
@@ -497,6 +751,18 @@ begin
     IBTransaction1.Commit;
 end;
 
+procedure TmstMPBrowserForm.sbtnDeleteProjectClick(Sender: TObject);
+var
+  Pt: TPoint;
+begin
+  if not ibqProjects.Active then
+    Exit;
+  Pt.X := 0;
+  Pt.Y := sbtnDeleteProject.Height;
+  Pt := sbtnDeleteProject.ClientToScreen(Pt);
+  PopupMenuDelete.Popup(Pt.X, Pt.Y);
+end;
+
 procedure TmstMPBrowserForm.SetDrawBox(const Value: TEzBaseDrawBox);
 begin
   FDrawBox := Value;
@@ -520,6 +786,31 @@ begin
   begin
     ApplyFilter();
   end;
+end;
+
+procedure TmstMPBrowserForm.btnRemovePrjFromMapClick(Sender: TObject);
+var
+  PrjId: Integer;
+begin
+  if ibqProjects.Active then
+  begin
+    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+    if mstClientAppModule.IsProjectLoaded(PrjId, True) then
+    begin
+      TProjectUtils.RemoveProjectFromLayer(PrjId, True);
+      mstClientAppModule.RemoveLoadedProject(PrjId, True);
+      DrawBox.RegenDrawing;
+      kaDbGrid1.Refresh;
+    end;
+  end;
+end;
+
+procedure TmstMPBrowserForm.btnRemoveAllPrjsFromMapClick(Sender: TObject);
+begin
+  TProjectUtils.ClearProjectLayers(True);
+  mstClientAppModule.ClearLoadedProjects(True);
+  DrawBox.RegenDrawing;
+  kaDbGrid1.Refresh;
 end;
 
 procedure TmstMPBrowserForm.trackAlphaChange(Sender: TObject);

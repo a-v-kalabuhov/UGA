@@ -26,7 +26,6 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 745
     DesignSize = (
       869
       29)
@@ -102,8 +101,6 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 452
-    ExplicitWidth = 745
     DesignSize = (
       869
       36)
@@ -177,14 +174,8 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
     Align = alClient
     Constraints.MinWidth = 745
     TabOrder = 2
-    ExplicitWidth = 745
-    ExplicitHeight = 423
     object tabData: TTabSheet
       Caption = #1055#1088#1086#1077#1082#1090#1099
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 737
-      ExplicitHeight = 395
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -192,7 +183,6 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
         Height = 33
         Align = alTop
         TabOrder = 0
-        ExplicitWidth = 737
         DesignSize = (
           861
           33)

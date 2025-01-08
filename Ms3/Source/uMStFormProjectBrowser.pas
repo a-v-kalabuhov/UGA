@@ -764,43 +764,43 @@ var
   CoordsFile: string;
 begin
   // получаем текущую линию
-    PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
-    Prj := mstClientAppModule.GetProject(PrjId, True, False);
-    if Assigned(Prj) then
+  PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
+  Prj := mstClientAppModule.GetProject(PrjId, True, False);
+  if Assigned(Prj) then
+  begin
+    LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
+    Line := Prj.Lines.ByDbId(LineId);
+    if Assigned(Line) then
     begin
-      LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
-      Line := Prj.Lines.ByDbId(LineId);
-      if Assigned(Line) then
+      // составляем список координат
+      Coords := TStringList.Create;
+      Coords.Forget;
+      for I := 0 to Line.Points.Count - 1 do
       begin
-        // составляем список координат
-        Coords := TStringList.Create;
-        Coords.Forget;
-        for I := 0 to Line.Points.Count - 1 do
+        Coords.Add(IntToStr(Succ(I)) + ';' +
+                   FormatFloat('#0.00', Line.Points[I].X) + ';' +
+                   FormatFloat('#0.00', Line.Points[I].Y));
+      end;
+      if Assigned(Line.ZoneLine) then
+      begin
+        Coords.Add('');
+        Coords.Add('Охранная зона ' + FormatFloat('#0.00', Line.ZoneWidth) + 'м');
+        for I := 0 to Line.ZoneLine.Points.Count - 1 do
         begin
           Coords.Add(IntToStr(Succ(I)) + ';' +
-                     FormatFloat('#0.00', Line.Points[I].X) + ';' +
-                     FormatFloat('#0.00', Line.Points[I].Y));
+                     FormatFloat('#0.00', Line.ZoneLine.Points[I].X) + ';' +
+                     FormatFloat('#0.00', Line.ZoneLine.Points[I].Y));
         end;
-        if Assigned(Line.ZoneLine) then
-        begin
-          Coords.Add('');
-          Coords.Add('Охранная зона ' + FormatFloat('#0.00', Line.ZoneWidth) + 'м');
-          for I := 0 to Line.ZoneLine.Points.Count - 1 do
-          begin
-            Coords.Add(IntToStr(Succ(I)) + ';' +
-                       FormatFloat('#0.00', Line.ZoneLine.Points[I].X) + ';' +
-                       FormatFloat('#0.00', Line.ZoneLine.Points[I].Y));
-          end;
-        end;
-        // пишем его в файл
-        TmpFile := TFileUtils.CreateTempFile(mstClientAppModule.SessionDir);
-        CoordsFile := ChangeFileExt(TmpFile, '.txt');
-        TFileUtils.RenameFile(TmpFile, CoordsFile);
-        Coords.SaveToFile(CoordsFile);
-        // открываем файл
-        ShellExecute(Handle, 'open', PChar(CoordsFile), nil, nil, SW_SHOWNORMAL);
       end;
+      // пишем его в файл
+      TmpFile := TFileUtils.CreateTempFile(mstClientAppModule.SessionDir);
+      CoordsFile := ChangeFileExt(TmpFile, '.txt');
+      TFileUtils.RenameFile(TmpFile, CoordsFile);
+      Coords.SaveToFile(CoordsFile);
+      // открываем файл
+      ShellExecute(Handle, 'open', PChar(CoordsFile), nil, nil, SW_SHOWNORMAL);
     end;
+  end;
 end;
 
 procedure TMStProjectBrowserForm.btnDisplayClick(Sender: TObject);
@@ -898,7 +898,6 @@ begin
       ibqProjects.Refresh;
     end;
   end;
-
 end;
 
 procedure TMStProjectBrowserForm.btnZoneClick(Sender: TObject);

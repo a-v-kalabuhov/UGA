@@ -1,7 +1,7 @@
 object mstMPBrowserForm: TmstMPBrowserForm
   Left = 0
   Top = 0
-  Caption = 'mstMPBrowserForm'
+  Caption = #1057#1074#1086#1076#1085#1099#1081' '#1087#1083#1072#1085
   ClientHeight = 370
   ClientWidth = 952
   Color = clBtnFace
@@ -13,6 +13,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
   OldCreateOrder = False
   OnClose = FormClose
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -23,7 +24,6 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 835
     DesignSize = (
       952
       29)
@@ -46,6 +46,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
       Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1085#1072' '#1082#1072#1088#1090#1091
       ParentShowHint = False
       ShowHint = True
+      OnClick = btnLoadToLayerClick
     end
     object btnLoadAll: TSpeedButton
       Left = 274
@@ -56,8 +57,9 @@ object mstMPBrowserForm: TmstMPBrowserForm
       Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1074#1089#1077
       ParentShowHint = False
       ShowHint = True
+      OnClick = btnLoadAllClick
     end
-    object SpeedButton1: TSpeedButton
+    object btnRemovePrjFromMap: TSpeedButton
       Left = 390
       Top = 3
       Width = 110
@@ -66,8 +68,9 @@ object mstMPBrowserForm: TmstMPBrowserForm
       Caption = #1059#1073#1088#1072#1090#1100' '#1089' '#1082#1072#1088#1090#1099
       ParentShowHint = False
       ShowHint = True
+      OnClick = btnRemovePrjFromMapClick
     end
-    object SpeedButton2: TSpeedButton
+    object btnRemoveAllPrjsFromMap: TSpeedButton
       Left = 506
       Top = 3
       Width = 110
@@ -76,6 +79,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
       Caption = #1059#1073#1088#1072#1090#1100' '#1074#1089#1077
       ParentShowHint = False
       ShowHint = True
+      OnClick = btnRemoveAllPrjsFromMapClick
     end
     object DBNavigator1: TDBNavigator
       Left = 4
@@ -95,8 +99,6 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 317
-    ExplicitWidth = 835
     DesignSize = (
       952
       36)
@@ -107,6 +109,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
       Height = 23
       Anchors = [akRight, akBottom]
       Caption = #1055#1086#1082#1072#1079#1072#1090#1100' '#1082#1086#1086#1088#1076#1080#1085#1072#1090#1099
+      OnClick = btnCoordsClick
       ExplicitLeft = 920
     end
     object btnZone: TSpeedButton
@@ -119,7 +122,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
       Enabled = False
       ExplicitLeft = 688
     end
-    object SpeedButton3: TSpeedButton
+    object btnRemoveZone: TSpeedButton
       Left = 709
       Top = 6
       Width = 110
@@ -169,12 +172,8 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Align = alClient
     Constraints.MinWidth = 745
     TabOrder = 2
-    ExplicitWidth = 835
-    ExplicitHeight = 288
     object tabData: TTabSheet
       Caption = #1055#1088#1086#1077#1082#1090#1099
-      ExplicitWidth = 827
-      ExplicitHeight = 260
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -182,7 +181,6 @@ object mstMPBrowserForm: TmstMPBrowserForm
         Height = 33
         Align = alTop
         TabOrder = 0
-        ExplicitWidth = 827
         DesignSize = (
           944
           33)
@@ -253,6 +251,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
             0000FF0000FF000000000000000000000000000000000000FF00FF0000000000
             00000000FF00FFFF00FF00000000000000000000000000000000000000000000
             0000000000000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          OnClick = btnPropertiesClick
         end
         object sbtnDeleteProject: TSpeedButton
           Left = 842
@@ -304,6 +303,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
             020E0E100E0E0E0E0E0E0E0E100210020E0E0E0E02100E0E0E0E0E021002100E
             0E0E0E0E0E02100E0E0E0E10020E0E0E0E0E0E0E0E0E02100E0E0E0E0E0E0E0E
             0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E}
+          OnClick = sbtnDeleteProjectClick
           ExplicitLeft = 834
         end
       end
@@ -321,6 +321,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
         TitleFont.Height = -11
         TitleFont.Name = 'Tahoma'
         TitleFont.Style = []
+        OnCellColors = kaDBGrid1CellColors
         Columns = <
           item
             Expanded = False
@@ -423,6 +424,8 @@ object mstMPBrowserForm: TmstMPBrowserForm
   object ibqProjects: TIBQuery
     Database = MStIBXMapMngr.dbKis
     Transaction = IBTransaction1
+    AfterClose = ibqProjectsAfterClose
+    AfterScroll = ibqProjectsAfterScroll
     SQL.Strings = (
       'SELECT '
       
@@ -500,11 +503,13 @@ object mstMPBrowserForm: TmstMPBrowserForm
   object PopupMenuDelete: TPopupMenu
     Left = 648
     Top = 264
-    object N1: TMenuItem
+    object miDeleteProject: TMenuItem
       Caption = #1059#1076#1072#1083#1080#1090#1100' '#1074#1077#1089#1100' '#1087#1088#1086#1077#1082#1090'...'
+      OnClick = miDeleteProjectClick
     end
-    object N2: TMenuItem
+    object miDeleteObject: TMenuItem
       Caption = #1059#1076#1072#1083#1080#1090#1100' '#1074#1099#1073#1088#1072#1085#1085#1091#1102' '#1083#1080#1085#1080#1102'...'
+      OnClick = miDeleteObjectClick
     end
   end
   object IBSQL1: TIBSQL

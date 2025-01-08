@@ -41,6 +41,7 @@ type
     class function GetMPLayerName(StatusId, MPLayerId: Integer): String;
     //
     class procedure AddMpObjToLayer(aLayer: TEzBaseLayer; aMpObj: TmstProjectMPObject);
+    class function GetMpObjEntity(aMpObj: TmstProjectMPObject): TEzEntity;
   public
     class var GIS: TEzBaseGIS;
     class var AllLayers: TmstProjectLayers;
@@ -453,6 +454,28 @@ end;
 class function TProjectUtils.GetMPLayerName(StatusId, MPLayerId: Integer): String;
 begin
   Result := 'ProjectPlanSub' + IntToStr(GetMPLayerCode(StatusId, MPLayerId));
+end;
+
+class function TProjectUtils.GetMpObjEntity(aMpObj: TmstProjectMPObject): TEzEntity;
+var
+  I: Integer;
+  EntClass: TEzEntityClass;
+  EntityID: TEzEntityID;
+begin
+  EntityID := TEzEntityID(aMpObj.EzId);
+  EntClass := GetClassFromID(EntityID);
+  Result := EntClass.Create(0, True);
+  try
+    aMPObj.EzData.Position := 0;
+    Result.LoadFromStream(aMPObj.EzData);
+    if aMpObj.Project.CK36 then
+      TEzCSConverter.EntityToVrn(Result, not aMPObj.Project.ExchangeXY);
+    if aMpObj.Project.ExchangeXY then
+      TEzCSConverter.ExchangeXY(Result);
+  except
+    FreeAndNil(Result);
+    raise;
+  end;
 end;
 
 class function TProjectUtils.LineToEntity(aPrj: TmstProject; aProjLine: TmstProjectLine; Poly: Boolean): TEzOpenedEntity;
