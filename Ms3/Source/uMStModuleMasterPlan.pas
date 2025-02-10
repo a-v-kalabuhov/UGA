@@ -114,7 +114,8 @@ const
     '    MASTER_PLAN_CLASS_ID, ' +
     '    STATUS, ' +
     '    DISMANTLED, ' +
-    '    ARCHIVED ' +
+    '    ARCHIVED, ' +
+    '    TABLE_VERSION ' +
     'FROM ' +
     '    MASTER_PLAN_OBJECTS ' +
     'ORDER BY ID';
@@ -167,12 +168,13 @@ const
     + 'MPO.DRAW_DATE, '
     + 'MPO.IS_LINE, '
     + 'MPO.ROTATION, '
+    + 'MPO.EZDATA, '
+    + 'MPO.EZ_ID, '
     + 'MPO.MINX, '
     + 'MPO.MINY, '
     + 'MPO.MAXX, '
     + 'MPO.MAXY, '
     + 'MPO.PROJECT_NAME, '
-    + 'MPO.CK36, '
     + 'MPO.CUSTOMER_ORGS_ID, '
     + 'MPO.EXECUTOR_ORGS_ID, '
     + 'MPO.OWNER_ORG_ID, '
@@ -234,7 +236,6 @@ const
     + 'MPO.MAXY, '
     + 'MPO.LOADED, '
     + 'MPO.PROJECT_NAME, '
-    + 'MPO.CK36, '
     + 'MPO.CUSTOMER_ORGS_ID, '
     + 'MPO.EXECUTOR_ORGS_ID, '
     + 'MPO.OWNER_ORG_ID, '
@@ -324,7 +325,7 @@ begin
   FIdxBrowser.UseBinarySearch := True;
   FIdxEz := TQueryRowIndex.Create;
   FIdxEz.UseBinarySearch := True;
-  FMPAdapter := TmstMPObjectAdapter.Create(memBrowser);
+  FMPAdapter := TmstMPObjectAdapter.Create(memObjects);
   FEzAdapter := TmstMPObjectEzAdapter.Create(memEzData);
 end;
 
@@ -877,6 +878,8 @@ var
   ObjId: Integer;
   Dummy: Integer;
 begin
+  if ToUpdate.Count = 0 then
+    Exit;
   DsChanges.First;
   while not DsChanges.Eof do
   begin
@@ -1019,6 +1022,8 @@ var
   Dummy: Integer;
   NeedToSort: Boolean;
 begin
+  if ToInsert.Count = 0 then
+    Exit;
   NeedToSort := False;
   DsChanges.First;
   while not DsChanges.Eof do

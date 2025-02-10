@@ -201,6 +201,7 @@ end;
 procedure TmstMPBrowserForm.btnLoadAllClick(Sender: TObject);
 begin
   FMP.LoadAllToGIS();
+  kaDBGrid1.Refresh;
 end;
 
 procedure TmstMPBrowserForm.btnLoadToLayerClick(Sender: TObject);
