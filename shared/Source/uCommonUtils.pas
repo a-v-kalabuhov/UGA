@@ -102,7 +102,51 @@ type
   function ColorToHex(Color: TColor): string;
   function HexToColor(Hex: string): TColor;
 
+type
+  TGetValueFunc = function (Item: Pointer): Boolean of object;
+  TCompareValueFunc = function (Item: Pointer): Integer of object;
+
+  function DoBinarySearch(aList: TList; CheckValue: TGetValueFunc; CompareValue: TCompareValueFunc): Integer;
+
 implementation
+
+function DoBinarySearch(aList: TList; CheckValue: TGetValueFunc; CompareValue: TCompareValueFunc): Integer;
+var
+  nLow: Integer;
+  nHigh: Integer;
+  nCheckPos: Integer;
+  Found: Boolean;
+  CompareResult: Integer;
+begin
+  Result := -1;
+  if aList.Count = 1 then
+  begin
+    Found := CheckValue(aList[0]);
+    if Found then
+      Result := 0;
+    Exit;
+  end;
+  //
+  nLow := 0;
+  nHigh := Pred(aList.Count);
+  // keep searching until found or
+  // no more items to search
+  while nLow <= nHigh do
+  begin
+     nCheckPos := (nLow + nHigh) div 2;
+     CompareResult := CompareValue(aList[nCheckPos]);
+     if CompareResult < 0 then  // less than
+       nLow := Succ(nCheckPos)
+     else
+     if CompareResult > 0 then  // greater than
+       nHigh := Pred(nCheckPos)
+     else                       // equal to
+     begin
+       Result := nCheckPos;
+       Exit;
+     end;
+  end;
+end;
 
 function ArabianToLatin(Number: Integer): String;
 var

@@ -22,7 +22,7 @@ uses
   uMStKernelStackConsts, uMStKernelIBX, uMStConsts,
   uMStImport, uMstImportFactory, uMStClassesProjectsEz,
   uMStClassesWatermarkDraw, uMstClassesLots, uMStClassesProjects, uMStClassesProjectsSearch, uMStClassesProjectsMIFExport,
-  uMstDialogFactory,
+  uMstDialogFactory, uMStClassesProjectsMP, 
   uMStModuleMapMngrIBX, uMStModuleProjectImport, uMstModuleMasterPlan,
   uMStFormLayerBrowser, VirtualTrees;
 
@@ -323,6 +323,10 @@ type
     N53: TMenuItem;
     N54: TMenuItem;
     acMPClassSettings: TAction;
+    N55: TMenuItem;
+    N56: TMenuItem;
+    DXF4: TMenuItem;
+    XLS2: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -486,6 +490,7 @@ type
     procedure N53Click(Sender: TObject);
     procedure XLS1Click(Sender: TObject);
     procedure acMPClassSettingsExecute(Sender: TObject);
+    procedure DXF4Click(Sender: TObject);
   private
     Points: TAllotmentPoints;
     FCursorState: TCursorState;
@@ -504,7 +509,6 @@ type
     FDragText: Boolean;
     FWatermark: TWatermark;
     FImport: TmstProjectImportModule;
-    FMasterPlan: TmstMasterPlanModule;
     FRestored: Boolean;
     // X и Y - координаты на карте
     procedure PreparePopupMenuItems(const X, Y: Double; AMenu: TMenu);
@@ -512,7 +516,7 @@ type
     procedure ReleaseImage(Sender: TObject);
     procedure LoadLotsClick(Sender: TObject); overload;
     procedure LoadLots(const ALeft, ATop, ARight, ABottom: Double); overload;
-    procedure LoadProjects(const ALeft, ATop, ARight, ABottom: Double; MasterPlan: Boolean);
+    procedure LoadProjects(const ALeft, ATop, ARight, ABottom: Double);
     procedure LoadProjectsClick(Sender: TObject);
     procedure SetCursorState(const Value: TCursorState);
     procedure ShowCoord(Vector: TEzVector);
@@ -538,7 +542,6 @@ type
     function GetProjectToExport(Sender: TObject; const ProjectId: Integer): TmstProject;
     procedure LoadSessionOptions();
     procedure RestorePanelsWidth();
-    function GetMP: TmstMasterPlanModule;
     procedure GetProjectImportLayer(Sender: TObject; out Layer: TEzBaseLayer);
     procedure DoProjectImportExecuted(Sender: TObject; Cancelled: Boolean; aProject: TmstProject);
     function DoCreateProject(): TmstProject;
@@ -1106,11 +1109,13 @@ begin
 end;
 
 procedure TmstClientMainForm.DXF3Click(Sender: TObject);
-var
-  MP: TmstMasterPlanModule;
 begin
-  MP := GetMP();
-  MP.ImportDXF(Self.DrawBox);
+  mstClientAppModule.MP.ImportDXF(mstProjected);
+end;
+
+procedure TmstClientMainForm.DXF4Click(Sender: TObject);
+begin
+  mstClientAppModule.MP.ImportDXF(mstDrawn);
 end;
 
 procedure TmstClientMainForm.edtFastFindLotEnter(Sender: TObject);
@@ -1257,13 +1262,8 @@ begin
   B := mstClientAppModule.ReadAppParam(Application, Self, 'MainFormBigButtons', varBoolean);
   N44.Checked := B;
   UpdateButtonSize(B);
-end;
-
-function TmstClientMainForm.GetMP: TmstMasterPlanModule;
-begin
-  if FMasterPlan = nil then
-    FMasterPlan := TmstMasterPlanModule.Create(Self);
-  Result := FMasterPlan;
+  //
+  mstClientAppModule.MP.SetDrawBox(Self.DrawBox);
 end;
 
 function TmstClientMainForm.GetPrintPermission(Maps: TStringList; Order: IOrder): TmstPrintPermission;
@@ -1324,7 +1324,7 @@ end;
 
 function TmstClientMainForm.GetProjectToExport(Sender: TObject; const ProjectId: Integer): TmstProject;
 begin
-  Result := mstClientAppModule.GetProject(ProjectId, True, False);
+  Result := mstClientAppModule.GetProject(ProjectId, True);
 end;
 
 procedure TmstClientMainForm.GISBeforeClose(Sender: TObject);
@@ -1363,8 +1363,7 @@ begin
       mstClientAppModule.Stack.Clear;
     mstClientAppModule.Stack.BeginUpdate;
     mstClientAppModule.FindLots(DrawBox, WX, WY);
-    mstClientAppModule.FindProjects(DrawBox, WX, WY, False);
-    mstClientAppModule.FindProjects(DrawBox, WX, WY, True);
+    mstClientAppModule.FindProjects(DrawBox, WX, WY);
   finally
     mstClientAppModule.Stack.EndUpdate;
     mstClientAppModule.Stack.UpdateView;
@@ -1450,7 +1449,7 @@ begin
   end;
 end;
 
-procedure TmstClientMainForm.LoadProjects(const ALeft, ATop, ARight, ABottom: Double; MasterPlan: Boolean);
+procedure TmstClientMainForm.LoadProjects(const ALeft, ATop, ARight, ABottom: Double);
 var
   Frm: TmstLoadLotProgressForm;
 begin
@@ -1458,7 +1457,7 @@ begin
   Enabled := False;
   try
     Frm.Show;
-    mstClientAppModule.LoadProjects(ALeft, ATop, ARight, ABottom, MasterPlan, Frm.OnProgress2);
+    mstClientAppModule.LoadProjects(ALeft, ATop, ARight, ABottom, Frm.OnProgress2);
   finally
     Enabled := True;
     Frm.Free;
@@ -1480,7 +1479,7 @@ begin
         Exit;
       if TGeoUtils.MapTopLeft(TmpMap.MapName, aTop, aLeft) then
       begin
-        LoadProjects(aLeft, aTop, aLeft + 250, aTop - 250, False);
+        LoadProjects(aLeft, aTop, aLeft + 250, aTop - 250);
       end;
     end;
 end;
@@ -2132,7 +2131,7 @@ end;
 
 procedure TmstClientMainForm.acProjectExportUpdate(Sender: TObject);
 begin
-  acProjectExport.Enabled := mstClientAppModule.HasLoadedProjects(False);
+  acProjectExport.Enabled := mstClientAppModule.HasLoadedProjects();
 end;
 
 procedure TmstClientMainForm.acProjectFindByAddressExecute(Sender: TObject);
@@ -2336,11 +2335,8 @@ begin
 end;
 
 procedure TmstClientMainForm.N53Click(Sender: TObject);
-var
-  MP: TmstMasterPlanModule;
 begin
-  MP := GetMP();
-  MP.DisplayNavigator(Self.DrawBox);
+  mstClientAppModule.MP.DisplayNavigator(Self.DrawBox);
 end;
 
 procedure TmstClientMainForm.N7Click(Sender: TObject);

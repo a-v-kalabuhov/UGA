@@ -160,11 +160,11 @@ begin
     try
       RowNo := ibqProjects.RecNo;
       PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
-      WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId, False);
+      WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId);
       if WasLoaded then
       begin
-        TProjectUtils.RemoveProjectFromLayer(PrjId, False);
-        mstClientAppModule.RemoveLoadedProject(PrjId, False);
+        TProjectUtils.RemoveProjectFromLayer(PrjId);
+        mstClientAppModule.RemoveLoadedProject(PrjId);
         DrawBox.RegenDrawing;
       end;
       //
@@ -254,12 +254,12 @@ function TMStProjectBrowserForm.GetProjectAndLoadToGIS(PrjId: Integer): TmstProj
 var
   Loaded: Boolean;
 begin
-  Loaded := mstClientAppModule.IsProjectLoaded(PrjId, False);
-  Result := mstClientAppModule.GetProject(PrjId, True, False);
+  Loaded := mstClientAppModule.IsProjectLoaded(PrjId);
+  Result := mstClientAppModule.GetProject(PrjId, True);
   if Assigned(Result) and not Loaded then
   begin
     TProjectUtils.AddProjectToGIS(Result);
-    mstClientAppModule.AddLoadedProject(PrjId, False);
+    mstClientAppModule.AddLoadedProject(PrjId);
   end;
 end;
 
@@ -285,8 +285,8 @@ begin
     LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
     OldPrjId := TProjectsSettings.FProjectId;
     TProjectsSettings.SetCurrentProjectLine(PrjId, LineId);
-    OldLoaded := mstClientAppModule.IsProjectLoaded(OldPrjId, False);
-    NewLoaded := mstClientAppModule.IsProjectLoaded(PrjId, False);
+    OldLoaded := mstClientAppModule.IsProjectLoaded(OldPrjId);
+    NewLoaded := mstClientAppModule.IsProjectLoaded(PrjId);
     if OldLoaded or NewLoaded then
       FDrawBox.RegenDrawing;
   end;
@@ -403,7 +403,7 @@ var
   Loaded: Boolean;
 begin
   PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
-  Loaded := mstClientAppModule.IsProjectLoaded(PrjId, False);
+  Loaded := mstClientAppModule.IsProjectLoaded(PrjId);
   if Loaded then
   begin
     FontColor := clGreen;
@@ -453,7 +453,7 @@ begin
 //    I := ibqProjects.RecNo;
     PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
     LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
-    Prj := mstClientAppModule.GetProject(PrjId, True, False);
+    Prj := mstClientAppModule.GetProject(PrjId, True);
     if Prj = nil then
       Exit;
     if Prj.Lines.Count = 1 then
@@ -465,7 +465,7 @@ begin
       FRowIndex.DeleteValue(PrjId, LineId);
       Prj.Lines.DeleteLine(LineId);
       Prj.Places.DeletePlace(LineId);
-      WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId, False);
+      WasLoaded := mstClientAppModule.IsProjectLoaded(PrjId);
       if WasLoaded then
       begin
         TProjectUtils.RemoveProjectLineFromLayer(PrjId, LineId);
@@ -575,7 +575,7 @@ begin
       ibqProjects.Next;
     end;
   end;
-  FRowIndex.Sort();
+  FRowIndex.Sort(True);
 end;
 
 procedure TMStProjectBrowserForm.RefreshData;
@@ -660,10 +660,10 @@ begin
   if ibqProjects.Active then
   begin
     PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
-    if mstClientAppModule.IsProjectLoaded(PrjId, False) then
+    if mstClientAppModule.IsProjectLoaded(PrjId) then
     begin
-      TProjectUtils.RemoveProjectFromLayer(PrjId, False);
-      mstClientAppModule.RemoveLoadedProject(PrjId, False);
+      TProjectUtils.RemoveProjectFromLayer(PrjId);
+      mstClientAppModule.RemoveLoadedProject(PrjId);
       DrawBox.RegenDrawing;
       kaDbGrid1.Refresh;
     end;
@@ -672,8 +672,8 @@ end;
 
 procedure TMStProjectBrowserForm.SpeedButton2Click(Sender: TObject);
 begin
-  TProjectUtils.ClearProjectLayers(False);
-  mstClientAppModule.ClearLoadedProjects(False);
+  TProjectUtils.ClearProjectLayers();
+  mstClientAppModule.ClearLoadedProjects();
   DrawBox.RegenDrawing;
   kaDbGrid1.Refresh;
 end;
@@ -688,9 +688,9 @@ begin
   begin
     // текущий проект
     PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
-    if mstClientAppModule.IsProjectLoaded(PrjId, False) then
+    if mstClientAppModule.IsProjectLoaded(PrjId) then
     begin
-      Prj := mstClientAppModule.GetProject(PrjId, False, False);
+      Prj := mstClientAppModule.GetProject(PrjId, False);
       if Assigned(Prj) then
       begin
         // текущая линия
@@ -765,7 +765,7 @@ var
 begin
   // получаем текущую линию
   PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
-  Prj := mstClientAppModule.GetProject(PrjId, True, False);
+  Prj := mstClientAppModule.GetProject(PrjId, True);
   if Assigned(Prj) then
   begin
     LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;

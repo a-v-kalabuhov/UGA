@@ -9,7 +9,8 @@ uses
   EzBaseGIS, EzBasicCtrls, EzCmdLine, EzCtrls, EzSystem, EzEntities, EzLib, EzBase,
   uDBGrid,
   uFileUtils, uCommonUtils, uCK36,
-  uMStModuleApp, uMStKernelIBX, uMStConsts, uMStClassesProjects;
+  uMStConsts,
+  uMStModuleApp, uMStKernelIBX, uMStClassesProjects;
 
 type
   TmstEditProjectDialog = class(TForm)
@@ -141,9 +142,6 @@ var
 implementation
 
 {$R *.dfm}
-
-const
-  SQL_GET_ORG_NAME = 'SELECT NAME FROM LICENSED_ORGS WHERE ID=:ID';
 
 { TmstEditProjectDialog }
 
@@ -465,7 +463,7 @@ var
 begin
   aDb := mstClientAppModule.MapMngr as IDb;
   Conn := aDb.GetConnection(cmReadOnly, dmKis);
-  Ds := Conn.GetDataSet(SQL_GET_ORG_NAME);
+  Ds := Conn.GetDataSet(SQL_SELECT_LICENSED_ORG_NAME);
   Conn.SetParam(Ds, SF_ID, OrgId);
   Ds.Open;
   if Ds.IsEmpty then

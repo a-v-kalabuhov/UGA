@@ -262,8 +262,10 @@ type
   end;
 
   TSaveLineState = record
-    Ds1, Ds2, DsMain1, DsMain2: TDataSet;
-    PtDs1, PtDs2, PtDsMain1, PtDsMain2: TDataSet;
+    //Ds1,
+    Ds2, DsMain1, DsMain2: TDataSet;
+    //PtDs1,
+    PtDs2, PtDsMain1, PtDsMain2: TDataSet;
   end;
 
   TmstProject = class(TmstObject)
@@ -309,6 +311,7 @@ type
     procedure AssignTo(Target: TPersistent); override;
     function GetObjectId: Integer; override;
     function GetText: String; override;
+    procedure RefreshExchangeXY(); virtual;
     //
     procedure LoadLines(DataSet: TDataSet);
     procedure SaveLine(Conn: IIBXConnection; aLine: TmstProjectLine; var aState: TSaveLineState);
@@ -416,7 +419,6 @@ uses
   uMStModuleApp;
 
 const
-  SQL_GEN_PROJECT_ID = 'SELECT GEN_ID(PROJECTS_GEN, 1) FROM RDB$DATABASE';
   SQL_CHECK_PROJECT_EXISTS = 'SELECT ID FROM PROJECTS WHERE ID=:ID';
   SQL_INSERT_PROJECT =
       'insert into PROJECTS ' +
@@ -440,9 +442,7 @@ const
       '    MAXY = :MAXY, ' +
       '    CK36 = :CK36 ' +
       'where (ID = :ID)';
-  SQL_LINES_GEN_ID = 'SELECT GEN_ID(PROJECT_LINES_GEN, 1) FROM RDB$DATABASE';
   SQL_CHECK_LINE_EXISTS = 'SELECT ID FROM PROJECT_LINES WHERE ID=:ID';
-  SQL_LINE_POINTS_GEN_ID = 'SELECT GEN_ID(PROJECT_LINE_POINTS_GEN, 1) FROM RDB$DATABASE';
   SQL_CHECK_LINE_POINT_EXISTS = 'SELECT ID FROM PROJECT_LINE_POINTS WHERE ID=:ID';
   SQL_INSERT_LINE =
       'insert into PROJECT_LINES (ID, PROJECTS_ID, INFO, DIAMETER, VOLTAGE, PROJECT_LAYERS_ID) ' +
@@ -733,10 +733,15 @@ begin
   end;
 end;
 
+procedure TmstProject.RefreshExchangeXY;
+begin
+
+end;
+
 function TmstProject.Save(aDb: IDb): Boolean;
 var
   Conn: IIBXConnection;
-  Ds1, Ds2, DsMain: TDataSet;
+  Ds2, DsMain: TDataSet;
   B1, B2: Boolean;
   Sql: string;
   I: Integer;
@@ -750,10 +755,7 @@ begin
     B1 := DatabaseId < 1;
     if B1 then
     begin
-      Ds1 := Conn.GetDataSet(SQL_GEN_PROJECT_ID);
-      Ds1.Open;
-      DatabaseId := Ds1.Fields[0].AsInteger;
-      Ds1.Close;
+      DatabaseId := Conn.GenNextValue(SG_PROJECTS);
       B2 := True;
     end
     else
@@ -787,11 +789,11 @@ begin
     Conn.SetParam(DsMain, SF_MAXY, MaxY);
     Conn.ExecDataSet(DsMain);
     //
-    SaveLineState.Ds1 := nil;
+    //SaveLineState.Ds1 := nil;
     SaveLineState.Ds2 := nil;
     SaveLineState.DsMain1 := nil;
     SaveLineState.DsMain2 := nil;
-    SaveLineState.PtDs1 := nil;
+    //SaveLineState.PtDs1 := nil;
     SaveLineState.PtDs2 := nil;
     SaveLineState.PtDsMain1 := nil;
     SaveLineState.PtDsMain2 := nil;
@@ -803,7 +805,7 @@ begin
     //
 //    ShowMessage('SavePlace: ' + sLineBreak +
 //              '  Total=' + IntToStr(Places.Count));
-    SavePlaceState.Ds1 := nil;
+    //SavePlaceState.Ds1 := nil;
     SavePlaceState.Ds2 := nil;
     SavePlaceState.DsMain1 := nil;
     SavePlaceState.DsMain2 := nil;
@@ -821,20 +823,14 @@ end;
 procedure TmstProject.SaveLine;
 var
   B2: Boolean;
-  Ds1, Ds2, DsMain: TDataSet;
+  //Ds1,
+  Ds2, DsMain: TDataSet;
   I: Integer;
   Pt: TmstProjectPoint;
 begin
   if aLine.DatabaseId < 1 then
   begin
-    if aState.Ds1 = nil then
-    begin
-      aState.Ds1 := Conn.GetDataSet(SQL_LINES_GEN_ID);
-    end;
-    Ds1 := aState.Ds1;
-    Ds1.Open;
-    aLine.DatabaseId := Ds1.Fields[0].AsInteger;
-    Ds1.Close;
+    aLine.DatabaseId := Conn.GenNextValue(SG_PROJECT_LINES);
     B2 := True;
   end
   else
@@ -877,16 +873,12 @@ end;
 procedure TmstProject.SaveLinePoint;
 var
   B2: Boolean;
-  Ds1, Ds2, DsMain: TDataSet;
+  //Ds1,
+  Ds2, DsMain: TDataSet;
 begin
  if aPt.DatabaseId < 1 then
   begin
-    if aState.PtDs1 = nil then
-      aState.PtDs1 := Conn.GetDataSet(SQL_LINE_POINTS_GEN_ID);
-    Ds1 := aState.PtDs1;
-    Ds1.Open;
-    aPt.DatabaseId := Ds1.Fields[0].AsInteger;
-    Ds1.Close;
+    aPt.DatabaseId := Conn.GenNextValue(SG_PROJECT_LINE_POINTS);
     B2 := True;
   end
   else
@@ -923,7 +915,8 @@ end;
 procedure TmstProject.SavePlace(Conn: IIBXConnection; aPlace: TmstProjectPlace; var aState: TSaveLineState);
 var
   B2: Boolean;
-  Ds1, Ds2, DsMain: TDataSet;
+  //Ds1,
+  Ds2, DsMain: TDataSet;
   LayerId: Integer;
 //  Id1, Id2: Integer;
 begin
@@ -935,14 +928,7 @@ begin
 //  Id1 := aPlace.DatabaseId;
   if aPlace.DatabaseId < 1 then
   begin
-    if aState.Ds1 = nil then
-    begin
-      aState.Ds1 := Conn.GetDataSet(SQL_PRJ_PLACES_GEN_ID);
-    end;
-    Ds1 := aState.Ds1;
-    Ds1.Open;
-    aPlace.DatabaseId := Ds1.Fields[0].AsInteger;
-    Ds1.Close;
+    aPlace.DatabaseId := Conn.GenNextValue(SG_PROJECT_PLACES_GEN);
     B2 := True;
   end
   else
@@ -1002,6 +988,7 @@ end;
 procedure TmstProject.SetCK36(const Value: Boolean);
 begin
   FCK36 := Value;
+  RefreshExchangeXY();
 end;
 
 procedure TmstProject.SetConfirmDate(const Value: TDateTime);
@@ -1032,6 +1019,7 @@ end;
 procedure TmstProject.SetExchangeXY(const Value: Boolean);
 begin
   FExchangeXY := Value;
+  RefreshExchangeXY();
 end;
 
 procedure TmstProject.SetExecutorOrgId(const Value: Integer);

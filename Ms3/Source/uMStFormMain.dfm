@@ -834,6 +834,8 @@ object mstClientMainForm: TmstClientMainForm
       NodeDataSize = 4
       TabOrder = 1
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+      ExplicitLeft = 0
+      ExplicitTop = 228
       Columns = <>
     end
   end
@@ -949,14 +951,27 @@ object mstClientMainForm: TmstClientMainForm
     object N51: TMenuItem
       Caption = #1057#1074#1086#1076#1085#1099#1081' '#1087#1083#1072#1085
       object N52: TMenuItem
-        Caption = #1055#1088#1080#1085#1103#1090#1100' '#1080#1079' '#1092#1072#1081#1083#1072
-        object DXF3: TMenuItem
-          Caption = 'DXF...'
-          OnClick = DXF3Click
+        Caption = #1047#1072#1088#1091#1079#1080#1090#1100' '#1080#1079' '#1092#1072#1081#1083#1072
+        object N55: TMenuItem
+          Caption = #1055#1088#1086#1077#1082#1090#1085#1099#1077
+          object DXF3: TMenuItem
+            Caption = 'DXF...'
+            OnClick = DXF3Click
+          end
+          object XLS1: TMenuItem
+            Caption = 'XLS...'
+            OnClick = XLS1Click
+          end
         end
-        object XLS1: TMenuItem
-          Caption = 'XLS...'
-          OnClick = XLS1Click
+        object N56: TMenuItem
+          Caption = #1053#1072#1085#1077#1089#1105#1085#1085#1099#1077
+          object DXF4: TMenuItem
+            Caption = #1092#1072#1081#1083' DXF...'
+            OnClick = DXF4Click
+          end
+          object XLS2: TMenuItem
+            Caption = #1092#1072#1081#1083' XLS...'
+          end
         end
       end
       object N53: TMenuItem
@@ -1500,7 +1515,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 80
     Top = 256
     Bitmap = {
-      494C010154007801D40110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010154007801E40110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000006001000001002000000000000060
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4477,7 +4492,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 460
     Top = 224
     Bitmap = {
-      494C010112001300CC0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010112001300DC0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

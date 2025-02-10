@@ -123,7 +123,7 @@ begin
         if ListIndex < 0 then
         begin
           TProjectUtils.AddProjectToGIS(Prj);
-          mstClientAppModule.AddLoadedProject(Prj.DatabaseId, False);
+          mstClientAppModule.AddLoadedProject(Prj.DatabaseId);
 //          Added := True;
         end;
       except
@@ -159,7 +159,7 @@ begin
         if ListIndex < 0 then
         begin
           TProjectUtils.AddProjectToGIS(Prj);
-          mstClientAppModule.AddLoadedProject(Prj.DatabaseId, False);
+          mstClientAppModule.AddLoadedProject(Prj.DatabaseId);
 //          Added := True;
         end;
       except
@@ -278,7 +278,7 @@ begin
         if ListIndex < 0 then
         begin
           TProjectUtils.AddProjectToGIS(Prj);
-          mstClientAppModule.AddLoadedProject(Prj.DatabaseId, False);
+          mstClientAppModule.AddLoadedProject(Prj.DatabaseId);
 //          Added := True;
         end;
       except
@@ -314,7 +314,7 @@ begin
         if ListIndex < 0 then
         begin
           TProjectUtils.AddProjectToGIS(Prj);
-          mstClientAppModule.AddLoadedProject(Prj.DatabaseId, False);
+          mstClientAppModule.AddLoadedProject(Prj.DatabaseId);
 //          Added := True;
         end;
       except

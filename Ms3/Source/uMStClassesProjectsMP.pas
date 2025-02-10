@@ -12,12 +12,23 @@ uses
 type
   TmstProjectMP = class;
 
-  TmstProjectMPObject = class(TmstObject)
+  TmstMPObjectState = (
+    mstProjected, // проектируемые объекты
+    mstDrawn      // нанесённые
+  );
+
+  TmstMPObjectCheckState = (
+    ocsNone = 0, // проверен
+    ocsChecked = 1, // проверен
+    ocsImported = 2, // проверен
+    ocsEdited = 3 // проверен
+  );
+
+  TmstMPObject = class(TmstObject)
   private
     FClassId: Integer;
     FArchived: Boolean;
     FDocNumber: string;
-    FStatus: Integer;
     FConfirmed: Boolean;
     FDismantled: Boolean;
     FAddress: string;
@@ -42,18 +53,31 @@ type
     FMaxY: Double;
     FMinX: Double;
     FMinY: Double;
-    FProject: TmstProjectMP;
     FEzLayerRecno: Integer;
-    FLayer: TmstProjectLayer;
     FGuid: string;
     FEzLayerName: string;
+    FObjState: TmstMPObjectState;
+    FCheckState: TmstMPObjectCheckState;
+    FCK36: Boolean;
+    FExchangeXY: Boolean;
+    FMPLayerId: Integer;
+    FProjectName: string;
+    FDrawOrgId: Integer;
+    FCustomerOrgId: Integer;
+    FExecutorOrgId: Integer;
+    FOwnerOrgId: Integer;
+    FDrawn: Boolean;
+    FProjected: Boolean;
+    FCertifNumber: string;
+    FCertifDate: TDateTime;
+    FHasCertif: Boolean;
+    FMPObjectGuid: string;
     procedure SetClassId(const Value: Integer);
     procedure SetAddress(const Value: string);
     procedure SetArchived(const Value: Boolean);
     procedure SetConfirmed(const Value: Boolean);
     procedure SetDismantled(const Value: Boolean);
     procedure SetDocNumber(const Value: string);
-    procedure SetStatus(const Value: Integer);
     procedure SetDocDate(const Value: TDateTime);
     procedure SetBottom(const Value: string);
     procedure SetDiameter(const Value: Integer);
@@ -75,8 +99,23 @@ type
     procedure SetMinX(const Value: Double);
     procedure SetMinY(const Value: Double);
     procedure SetEzLayerRecno(const Value: Integer);
-    function GetClassId: Integer;
     procedure SetEzLayerName(const Value: string);
+    procedure SetObjState(const Value: TmstMPObjectState);
+    procedure SetCheckState(const Value: TmstMPObjectCheckState);
+    procedure SetCK36(const Value: Boolean);
+    procedure SetExchangeXY(const Value: Boolean);
+    procedure SetMPLayerId(const Value: Integer);
+    procedure SetProjectName(const Value: string);
+    procedure SetCustomerOrgId(const Value: Integer);
+    procedure SetDrawOrgId(const Value: Integer);
+    procedure SetExecutorOrgId(const Value: Integer);
+    procedure SetOwnerOrgId(const Value: Integer);
+    procedure SetDrawn(const Value: Boolean);
+    procedure SetProjected(const Value: Boolean);
+    procedure SetCertifDate(const Value: TDateTime);
+    procedure SetCertifNumber(const Value: string);
+    procedure SetHasCertif(const Value: Boolean);
+    procedure SetMPObjectGuid(const Value: string);
   protected
     function GetObjectId: Integer; override;
     function GetText: String; override;
@@ -85,14 +124,17 @@ type
     constructor Create; override;
     destructor Destroy; override;
     //
-    property Project: TmstProjectMP read FProject;
-    property Layer: TmstProjectLayer read FLayer write FLayer;
+    function Status(): Integer;
+    procedure UpdateObjState();
     //
-    property Guid: string read FGuid;
+    property InstanceGuid: string read FGuid;
+    // это униальный ID объекта, который можно использовать при привязке нанесённых к проектируемым 
+    property MPObjectGuid: string read FMPObjectGuid write SetMPObjectGuid;
+    //
     property Address: string read FAddress write SetAddress;
     property Archived: Boolean read FArchived write SetArchived;
     property Bottom: string read FBottom write SetBottom;
-    property ClassId: Integer read GetClassId write SetClassId;
+    property ClassId: Integer read FClassId write SetClassId;
     property Confirmed: Boolean read FConfirmed write SetConfirmed;
     property Diameter: Integer read FDiameter write SetDiameter;
     property Dismantled: Boolean read FDismantled write SetDismantled;
@@ -107,10 +149,18 @@ type
     property RequestNumber: string read FRequestNumber write SetRequestNumber;
     property RequestDate: TDateTime read FRequestDate write SetRequestDate;
     property Rotation: Integer read FRotation write SetRotation;
-    property Status: Integer read FStatus write SetStatus;
     property Top: string read FTop write SetTop;
     property Underground: Boolean read FUnderground write SetUnderground;
     property Voltage: Integer read FVoltage write SetVoltage;
+    // импорт
+    property ProjectName: string read FProjectName write SetProjectName;
+    property CK36: Boolean read FCK36 write SetCK36;
+    property ExchangeXY: Boolean read FExchangeXY write SetExchangeXY;
+    property MPLayerId: Integer read FMPLayerId write SetMPLayerId;
+    property CustomerOrgId: Integer read FCustomerOrgId write SetCustomerOrgId;
+    property ExecutorOrgId: Integer read FExecutorOrgId write SetExecutorOrgId;
+    property OwnerOrgId: Integer read FOwnerOrgId write SetOwnerOrgId;
+    property DrawOrgId: Integer read FDrawOrgId write SetDrawOrgId;
     // используются местная СК: Х - вверх, Y - вправо (геодезические кооринаты)
     property MinX: Double read FMinX write SetMinX;
     // используются местная СК: Х - вверх, Y - вправо (геодезические кооринаты)
@@ -119,6 +169,19 @@ type
     property MaxX: Double read FMaxX write SetMaxX;
     // используются местная СК: Х - вверх, Y - вправо (геодезические кооринаты)
     property MaxY: Double read FMaxY write SetMaxY;
+    //
+    property CheckState: TmstMPObjectCheckState read FCheckState write SetCheckState;
+    property ObjState: TmstMPObjectState read FObjState write SetObjState;
+    // нанесён
+    property Drawn: Boolean read FDrawn write SetDrawn;
+    // проектируемый
+    property Projected: Boolean read FProjected write SetProjected;
+    // справка выдана
+    property HasCertif: Boolean read FHasCertif write SetHasCertif;
+    // номер справки
+    property CertifNumber: string read FCertifNumber write SetCertifNumber;
+    // дата справки
+    property CertifDate: TDateTime read FCertifDate write SetCertifDate;
     //
     property EzData: TStream read FEzData;
     property EzId: Integer read FEzId write SetEzId;
@@ -129,17 +192,17 @@ type
   TmstProjectObjects = class(TObjectList)
   private
     FOwner: TmstProjectMP;
-    function GetItems(Index: Integer): TmstProjectMPObject;
-    procedure SetItems(Index: Integer; const Value: TmstProjectMPObject);
+    function GetItems(Index: Integer): TmstMPObject;
+    procedure SetItems(Index: Integer; const Value: TmstMPObject);
   public
     constructor Create(aOwner: TmstProjectMP);
-    function Add(): TmstProjectMPObject;
+    function Add(): TmstMPObject;
     procedure CopyFrom(Source: TmstProjectObjects);
     procedure DeleteObj(const DbId: Integer);
-    function GetByGuid(const aGuid: string): TmstProjectMPObject;
-    function GetByDbId(const aId: Integer): TmstProjectMPObject;
+    function GetByGuid(const aGuid: string): TmstMPObject;
+    function GetByDbId(const aId: Integer): TmstMPObject;
     //
-    property Items[Index: Integer]: TmstProjectMPObject read GetItems write SetItems; default;
+    property Items[Index: Integer]: TmstMPObject read GetItems write SetItems; default;
     property Owner: TmstProjectMP read FOwner;
   end;
 
@@ -152,6 +215,9 @@ type
     FStatus: Integer;
     FObjects: TmstProjectObjects;
     FOwnerOrgId: Integer;
+    FObjState: TmstMPObjectState;
+    FCheckState: TmstMPObjectCheckState;
+    FRequestDate: TDateTime;
     procedure SetDrawOrgId(const Value: Integer);
     procedure SetDrawDate(const Value: TDateTime);
     procedure SetName(const Value: string);
@@ -159,10 +225,14 @@ type
     procedure SetStatus(const Value: Integer);
     procedure SetObjects(const Value: TmstProjectObjects);
     procedure SetOwnerOrgId(const Value: Integer);
+    procedure SetObjState(const Value: TmstMPObjectState);
+    procedure SetCheckState(const Value: TmstMPObjectCheckState);
+    procedure SetRequestDate(const Value: TDateTime);
   protected
     procedure AssignTo(Target: TPersistent); override;
     function GetObjectId: Integer; override;
     function GetText: String; override;
+    procedure RefreshExchangeXY(); override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -176,16 +246,21 @@ type
     property OwnerOrgId: Integer read FOwnerOrgId write SetOwnerOrgId;
     property Name: string read FName write SetName;
     property RequestNumber: string read FRequestNumber write SetRequestNumber;
+    property RequestDate: TDateTime read FRequestDate write SetRequestDate;
     property Status: Integer read FStatus write SetStatus;
     //
+    property CheckState: TmstMPObjectCheckState read FCheckState write SetCheckState;
+    property ObjState: TmstMPObjectState read FObjState write SetObjState;
     //
     property Objects: TmstProjectObjects read FObjects write SetObjects;
   end;
 
   TmstMPProjectSaver = class(TInterfacedObject, IProjectSaver)
   private
-    procedure SaveObj(Conn: IIBXConnection; aPrj: TmstProjectMP; aObj: TmstProjectMPObject;
-      var aState: TSaveLineState);
+    FTableVersion: Integer;
+    procedure GetNewTableVersionValue(Conn: IIBXConnection);
+    function GetEntityStream(aObj: TmstMPObject; CK36: Boolean): TStream;
+    procedure SaveObj(Conn: IIBXConnection; aObj: TmstMPObject; var aState: TSaveLineState);
   protected
     procedure Save(aDb: IDb; aProject: TmstProject);
   end;
@@ -197,84 +272,34 @@ uses
   uMStModuleApp;
 
 const
-  SQL_GEN_MP_ID = 'SELECT GEN_ID(MASTER_PLAN_GEN, 1) FROM RDB$DATABASE';
-  SQL_CHECK_MP_EXISTS = 'SELECT ID FROM MASTER_PLAN WHERE ID=:ID';
-  SQL_INSERT_MP =
-      'INSERT INTO MASTER_PLAN ' +
-      '( ID,  ADDRESS,  DOC_NUMBER,  DOC_DATE,  CUSTOMER_ORGS_ID,  EXECUTOR_ORGS_ID, ' +
-      ' DRAW_ORGS_ID, DRAW_DATE, OWNER_ORG_ID, ' +
-      ' MINX,  MINY,  MAXX,  MAXY,  CK36,  EXCHANGE_XY, ' +
-      ' NAME,  REQUEST_NUMBER,  STATUS) ' +
-      'VALUES ' +
-      '(:ID, :ADDRESS, :DOC_NUMBER, :DOC_DATE, :CUSTOMER_ORGS_ID, :EXECUTOR_ORGS_ID, ' +
-      ':DRAW_ORGS_ID,:DRAW_DATE,:OWNER_ORG_ID, ' +
-      ':MINX, :MINY, :MAXX, :MAXY, :CK36, :EXCHANGE_XY, ' +
-      ':NAME, :REQUEST_NUMBER, :STATUS) ';
-  SQL_UPDATE_MP =
-      'UPDATE MASTER_PLAN SET ' +
-      '   ADDRESS = :ADDRESS, ' +
-      '   DOC_NUMBER = :DOC_NUMBER, ' +
-      '   DOC_DATE = :DOC_DATE, ' +
-      '   STATUS = :STATUS, ' +
-      '   CUSTOMER_ORGS_ID = :CUSTOMER_ORGS_ID, ' +
-      '   EXECUTOR_ORGS_ID = :EXECUTOR_ORGS_ID, ' +
-      '   DRAW_ORGS_ID = :DRAW_ORGS_ID, ' +
-      '   DRAW_DATE = :DRAW_DATE, ' +
-      '   OWNER_ORG_ID = :OWNER_ORG_ID, ' +
-      '   MINX = :MINX, ' +
-      '   MINY = :MINY, ' +
-      '   MAXX = :MAXX, ' +
-      '   MAXY = :MAXY, ' +
-      '   CK36 = :CK36, ' +
-      '   EXCHANGE_XY = :EXCHANGE_XY, ' +
-      '   NAME = :NAME, ' +
-      '   REQUEST_NUMBER = :REQUEST_NUMBER ' +
-      'WHERE (ID = :ID)';
-  SQL_MP_OBJECTS_GEN_ID = 'SELECT GEN_ID(MP_OBJECTS_GEN, 1) FROM RDB$DATABASE';
-  SQL_CHECK_MP_LINE_EXISTS = 'SELECT ID FROM PROJECT_LINES WHERE ID=:ID';
-  SQL_LINE_POINTS_GEN_ID = 'SELECT GEN_ID(PROJECT_LINE_POINTS_GEN, 1) FROM RDB$DATABASE';
-  SQL_CHECK_LINE_POINT_EXISTS = 'SELECT ID FROM PROJECT_LINE_POINTS WHERE ID=:ID';
-  SQL_INSERT_LINE =
-      'insert into PROJECT_LINES (ID, PROJECTS_ID, INFO, DIAMETER, VOLTAGE, PROJECT_LAYERS_ID) ' +
-      'values (:ID, :PROJECTS_ID, :INFO, :DIAMETER, :VOLTAGE, :PROJECT_LAYERS_ID)';
-  SQL_UPDATE_LINE =
-      'update PROJECT_LINES ' +
-      'set PROJECTS_ID = :PROJECTS_ID, ' +
-      '    INFO = :INFO, ' +
-      '    DIAMETER = :DIAMETER, ' +
-      '    VOLTAGE = :VOLTAGE, ' +
-      '    PROJECT_LAYERS_ID = :PROJECT_LAYERS_ID ' +
-      'where (ID = :ID)';
-  SQL_INSERT_LINE_POINT =
-      'insert into PROJECT_LINE_POINTS (ID, PROJECT_LINES_ID, X, Y, Z) ' +
-      'values (:ID, :PROJECT_LINES_ID, :X, :Y, :Z)';
-  SQL_UPDATE_LINE_POINT =
-      'update PROJECT_LINE_POINTS ' +
-      'set PROJECT_LINES_ID = :PROJECT_LINES_ID, ' +
-      '    X = :X, ' +
-      '    Y = :Y, ' +
-      '    Z = :Z ' +
-      'where (ID = :ID)';
-  SQL_PRJ_PLACES_GEN_ID = 'SELECT GEN_ID(PROJECT_PLACES_GEN, 1) FROM RDB$DATABASE';
   SQL_CHECK_MP_OBJECT_EXISTS = 'SELECT ID FROM MASTER_PLAN_OBJECTS WHERE ID=:ID';
   SQL_INSERT_MP_OBJECT =
       'INSERT INTO MASTER_PLAN_OBJECTS (' +
-      '  ID,              MASTER_PLAN_ID, MASTER_PLAN_CLASS_ID, STATUS,     DISMANTLED, ' +
+      '  ID,  OBJ_ID,     MASTER_PLAN_CLASS_ID,                 STATUS,     DISMANTLED, ' +
       '  ARCHIVED,        CONFIRMED,      ADDRESS,              DOC_NUMBER, DOC_DATE, ' +
       '  REQUEST_NUMBER,  REQUEST_DATE,   UNDERGROUND,          DIAMETER,   PIPE_COUNT, ' +
       '  VOLTAGE,         MATERIAL,       TOP,                  BOTTOM,     FLOOR, ' +
+      '  PROJECTED,       CHECK_STATE,    LOADED,               PROJECT_NAME, ' +
       '  OWNER,           DRAW_DATE,      IS_LINE,              ROTATION,   EZDATA, ' +
+      '  CUSTOMER_ORGS_ID,                EXECUTOR_ORGS_ID, ' +
+      '  OWNER_ORG_ID,    DRAW_ORGS_ID,   DELETED,              TABLE_VERSION, ' +
+      '  DRAWN,           HAS_CERTIF,     CERTIF_NUMBER,        CERTIF_DATE, ' +
       '  EZ_ID,           MINX,           MINY,                 MAXX,       MAXY) ' +
       'VALUES (' +
-      ' :ID,             :MASTER_PLAN_ID,:MASTER_PLAN_CLASS_ID,:STATUS,    :DISMANTLED, ' +
+      ' :ID, :OBJ_ID,    :MASTER_PLAN_CLASS_ID,                :STATUS,    :DISMANTLED, ' +
       ' :ARCHIVED,       :CONFIRMED,     :ADDRESS,             :DOC_NUMBER,:DOC_DATE, ' +
       ' :REQUEST_NUMBER, :REQUEST_DATE,  :UNDERGROUND,         :DIAMETER,  :PIPE_COUNT, ' +
       ' :VOLTAGE,        :MATERIAL,      :TOP,                 :BOTTOM,    :FLOOR, ' +
+      ' :PROJECTED,      :CHECK_STATE,   :LOADED,              :PROJECT_NAME, ' +
       ' :OWNER,          :DRAW_DATE,     :IS_LINE,             :ROTATION,  :EZDATA, ' +
+      ' :CUSTOMER_ORGS_ID,               :EXECUTOR_ORGS_ID, ' +
+      ' :OWNER_ORG_ID,   :DRAW_ORGS_ID,   0,                   :TABLE_VERSION, ' +
+      ' :DRAWN,          :HAS_CERTIF,    :CERTIF_NUMBER,       :CERTIF_DATE, ' +
       ' :EZ_ID,          :MINX,          :MINY,                :MAXX,      :MAXY)';
   SQL_UPDATE_MP_OBJECT =
       'UPDATE MASTER_PLAN_OBJECTS ' +
-      'SET MASTER_PLAN_ID = :MASTER_PLAN_ID, ' +
+      'SET ' +
+      '   OBJ_ID = :OBJ_ID, ' +
       '   MASTER_PLAN_CLASS_ID = :MASTER_PLAN_CLASS_ID, ' +
       '   STATUS = :STATUS, ' +
       '   DISMANTLED = :DISMANTLED, ' +
@@ -293,6 +318,8 @@ const
       '   TOP = :TOP, ' +
       '   BOTTOM = :BOTTOM, ' +
       '   FLOOR = :FLOOR, ' +
+      '   PROJECTED = :PROJECTED, ' +
+      '   CHECK_STATE = :CHECK_STATE, ' +
       '   OWNER = :OWNER, ' +
       '   DRAW_DATE = :DRAW_DATE, ' +
       '   IS_LINE = :IS_LINE, ' +
@@ -302,109 +329,95 @@ const
       '   MINX = :MINX, ' +
       '   MINY = :MINY, ' +
       '   MAXX = :MAXX, ' +
-      '   MAXY = :MAXY ' +
+      '   MAXY = :MAXY, ' +
+      '   CUSTOMER_ORGS_ID = :CUSTOMER_ORGS_ID, ' +
+      '   EXECUTOR_ORGS_ID = :EXECUTOR_ORGS_ID, ' +
+      '   OWNER_ORG_ID = :OWNER_ORG_ID, ' +
+      '   DRAW_ORGS_ID = :DRAW_ORGS_ID, ' +
+      '   DELETED = 0, ' +
+      '   TABLE_VERSION = :TABLE_VERSION, ' +
+      '   DRAWN = :DRAWN, ' +
+      '   PROJECT_NAME = :PROJECT_NAME, ' +
+      '   LOADED = :LOADED, ' +
+      '   HAS_CERTIF = :HAS_CERTIF, ' +
+      '   CERTIF_NUMBER = :CERTIF_NUMBER, ' +
+      '   CERTIF_DATE = :CERTIF_DATE ' +
       'WHERE (ID = :ID)';
-  SQL_LOAD_PROJECT = 'SELECT * FROM PROJECTS WHERE ID=:ID';
-  SQL_LOAD_LAYERS_FOR_LINES =
-                    'SELECT DISTINCT(LAYERS.*) ' +
-                    'FROM PROJECT_LINES LINES LEFT JOIN PROJECT_LAYERS LAYERS ON (LINES.PROJECT_LAYERS_ID = LAYERS.ID) ' +
-                    'WHERE ' +
-                    '    LINES.PROJECTS_ID=:ID';
-  SQL_LOAD_LAYERS_FOR_PLACES =
-                    'SELECT DISTINCT(LAYERS.*) ' +
-                    'FROM PROJECT_PLACES PLACES LEFT JOIN PROJECT_LAYERS LAYERS ON (PLACES.PROJECT_LAYERS_ID = LAYERS.ID) ' +
-                    'WHERE ' +
-                    '    PLACES.PROJECTS_ID=:ID';
-  SQL_PROJECT_LAYERS_ALL =
-                    'SELECT * FROM PROJECT_LAYERS ORDER BY ID';
-
-  SQL_LOAD_LINES =
-                    'SELECT PP.*, PL.INFO, PL.DIAMETER, PL.VOLTAGE, PL.PROJECT_LAYERS_ID ' +
-                    'FROM PROJECT_LINE_POINTS PP LEFT JOIN PROJECT_LINES PL ON (PP.PROJECT_LINES_ID = PL.ID) ' +
-                    'WHERE PL.PROJECTS_ID=:ID ' +
-                    'ORDER BY PP.PROJECT_LINES_ID, PP.ID';
-  SQL_LOAD_PROJECT_NET_TYPES =
-                    'SELECT * FROM PROJECT_NET_TYPES ORDER BY ID';
-  SQL_LOAD_PLACES = 'SELECT * FROM PROJECT_PLACES WHERE PROJECTS_ID=:ID';
 
 { TmstMPProjectSaver }
+
+function TmstMPProjectSaver.GetEntityStream(aObj: TmstMPObject; CK36: Boolean): TStream;
+var
+  EntClass: TEzEntityClass;
+  EntityID: TEzEntityID;
+  Ent: TEzEntity;
+begin
+  Result := nil;
+  EntityID := TEzEntityID(aObj.EzId);
+  EntClass := GetClassFromID(EntityID);
+  Ent := EntClass.Create(0, True);
+  try
+    aObj.EzData.Position := 0;
+    Ent.LoadFromStream(aObj.EzData);
+    if CK36 then
+      TEzCSConverter.EntityToVrn(Ent, True);
+//      TEzCSConverter.EntityToVrn(Ent, not aObj.ExchangeXY);
+//    if aObj.ExchangeXY then
+//      TEzCSConverter.ExchangeXY(Ent);
+    //
+    Result := TMemoryStream.Create;
+    Ent.SaveToStream(Result);
+    Result.Position := 0;
+  except
+    FreeAndNil(Ent);
+  end;
+end;
+
+procedure TmstMPProjectSaver.GetNewTableVersionValue;
+begin
+  FTableVersion := Conn.GetGenValue(SG_MP_OBJECTS_TABLE_VERSION);
+end;
 
 procedure TmstMPProjectSaver.Save(aDb: IDb; aProject: TmstProject);
 var
   Conn: IIBXConnection;
-  Ds1, Ds2, DsMain: TDataSet;
-  B1, B2: Boolean;
-  Sql: string;
   I: Integer;
   SaveObjState: TSaveLineState;
-  Obj: TmstProjectMPObject;
+  Obj: TmstMPObject;
   Prj: TmstProjectMP;
 begin
   Prj := aProject as TmstProjectMP;
   // создаём соединение
   Conn := aDb.GetConnection(cmReadWrite, dmKis);
   try
-    B1 := Prj.DatabaseId < 1;
-    if B1 then
-    begin
-      Ds1 := Conn.GetDataSet(SQL_GEN_MP_ID);
-      Ds1.Open;
-      Prj.DatabaseId := Ds1.Fields[0].AsInteger;
-      Ds1.Close;
-      B2 := True;
-    end
-    else
-    begin
-      Ds2 := Conn.GetDataSet(SQL_CHECK_MP_EXISTS);
-      Conn.SetParam(Ds2, SF_ID, Prj.DatabaseId);
-      Ds2.Open;
-      B2 := Ds2.IsEmpty;
-      Ds2.Close;
-    end;
-    if B2 then
-      Sql := SQL_INSERT_MP
-    else
-      Sql := SQL_UPDATE_MP;
+    GetNewTableVersionValue(Conn);
     //
-    DsMain := Conn.GetDataSet(Sql);
-    //  
-    Conn.SetParam(DsMain, SF_ID, Prj.DatabaseId); // '(:ID
-    Conn.SetParam(DsMain, SF_ADDRESS, Prj.Address); // :ADDRESS
-    Conn.SetParam(DsMain, SF_DOC_NUMBER, Prj.DocNumber); // :DOC_NUMBER
-    if Prj.DocDate <> 0 then
-      Conn.SetParam(DsMain, SF_DOC_DATE, Prj.DocDate); // :DOC_DATE
-    Conn.SetNullableParam(DsMain, SF_CUSTOMER_ORGS_ID, Prj.CustomerOrgId, 0); // :CUSTOMER_ORGS_ID
-    Conn.SetNullableParam(DsMain, SF_EXECUTOR_ORGS_ID, Prj.ExecutorOrgId, 0); // :EXECUTOR_ORGS_ID
-    Conn.SetNullableParam(DsMain, SF_DRAW_ORGS_ID, Prj.DrawOrgId, 0); // :DRAW_ORGS_ID
-    Conn.SetNullableParam(DsMain, SF_OWNER_ORG_ID, Prj.OwnerOrgId, 0); // :OWNER_ORG_ID
-    if Prj.DrawDate <> 0 then
-      Conn.SetParam(DsMain, SF_DRAW_DATE, Prj.DrawDate); // :DRAW_DATE
-    aProject.CalcExtent();
-    Conn.SetParam(DsMain, SF_MINX, Prj.MinX);
-    Conn.SetParam(DsMain, SF_MINY, Prj.MinY);
-    Conn.SetParam(DsMain, SF_MAXX, Prj.MaxX);
-    Conn.SetParam(DsMain, SF_MAXY, Prj.MaxY);
-    Conn.SetParam(DsMain, SF_CK36, IfThen(Prj.Ck36, 1, 0));
-    Conn.SetParam(DsMain, SF_EXCHANGE_XY, IfThen(Prj.ExchangeXY, 1, 0));
-
-    Conn.SetParam(DsMain, SF_NAME, Prj.Name); // :NAME
-    Conn.SetParam(DsMain, SF_REQUEST_NUMBER, Prj.RequestNumber); // :REQUEST_NUMBER
-    Conn.SetParam(DsMain, SF_STATUS, Prj.Status); // :STATUS
-    Conn.ExecDataSet(DsMain);
-    //
-    SaveObjState.Ds1 := nil;
+    //SaveObjState.Ds1 := nil;
     SaveObjState.Ds2 := nil;
     SaveObjState.DsMain1 := nil;
     SaveObjState.DsMain2 := nil;
-    SaveObjState.PtDs1 := nil;
+    //SaveObjState.PtDs1 := nil;
     SaveObjState.PtDs2 := nil;
     SaveObjState.PtDsMain1 := nil;
     SaveObjState.PtDsMain2 := nil;
     for I := 0 to Prj.Objects.Count - 1 do
     begin
       Obj := Prj.Objects[I];
-      SaveObj(Conn, Prj, Obj, SaveObjState);
+      Obj.ProjectName := Prj.Name;
+      Obj.Address := Prj.Address;
+      Obj.CK36 := Prj.CK36;
+      Obj.ExchangeXY := Prj.ExchangeXY;
+      Obj.CustomerOrgId := Prj.CustomerOrgId;
+      Obj.ExecutorOrgId := Prj.ExecutorOrgId;
+      Obj.OwnerOrgId := Prj.OwnerOrgId;
+      Obj.DrawOrgId := Prj.DrawOrgId;
+      Obj.RequestNumber := Prj.RequestNumber;
+      Obj.RequestDate := Prj.RequestDate;
+      Obj.DrawDate := Prj.DrawDate;
+      SaveObj(Conn, Obj, SaveObjState);
     end;
+    //
+    Prj.CalcExtent();
     //
     Conn.Commit();
   except
@@ -413,23 +426,17 @@ begin
   end;
 end;
 
-procedure TmstMPProjectSaver.SaveObj(Conn: IIBXConnection; aPrj: TmstProjectMP; aObj: TmstProjectMPObject;
+procedure TmstMPProjectSaver.SaveObj(Conn: IIBXConnection; aObj: TmstMPObject;
   var aState: TSaveLineState);
 var
   B2: Boolean;
   Ds1, Ds2, DsMain: TDataSet;
   Xmin, Xmax, Ymin, Ymax: Double;
+  EzStream: TStream;
 begin
   if aObj.DatabaseId < 1 then
   begin
-    if aState.Ds1 = nil then
-    begin
-      aState.Ds1 := Conn.GetDataSet(SQL_MP_OBJECTS_GEN_ID);
-    end;
-    Ds1 := aState.Ds1;
-    Ds1.Open;
-    aObj.DatabaseId := Ds1.Fields[0].AsInteger;
-    Ds1.Close;
+    aObj.DatabaseId := Conn.GenNextValue(SG_MP_OBJECTS);
     B2 := True;
   end
   else
@@ -456,46 +463,109 @@ begin
     DsMain := aState.DsMain2;
   end;
   // 
+  //ID,
   Conn.SetParam(DsMain, SF_ID, aObj.DatabaseId);
-  Conn.SetParam(DsMain, SF_MASTER_PLAN_ID, aPrj.DatabaseId);
+  //OBJ_ID,
+  Conn.SetParam(DsMain, SF_OBJ_ID, aObj.MPObjectGuid);
+  //MASTER_PLAN_CLASS_ID,
   Conn.SetNullableParam(DsMain, SF_MASTER_PLAN_CLASS_ID, aObj.ClassId, 0);
+  //STATUS,
   Conn.SetParam(DsMain, SF_STATUS, aObj.Status);
+  //DISMANTLED,
   Conn.SetParam(DsMain, SF_DISMANTLED, IfThen(aObj.Dismantled, 1, 0));
+  //ARCHIVED,
   Conn.SetParam(DsMain, SF_ARCHIVED, IfThen(aObj.Archived, 1, 0));
+  //CONFIRMED,
   Conn.SetParam(DsMain, SF_CONFIRMED, IfThen(aObj.Confirmed, 1, 0));
+  //ADDRESS,
   Conn.SetParam(DsMain, SF_ADDRESS, aObj.Address);
+  //DOC_NUMBER,
   Conn.SetParam(DsMain, SF_DOC_NUMBER, aObj.DocNumber);
+  //DOC_DATE,
   Conn.SetParam(DsMain, SF_DOC_DATE, aObj.DocDate);
+  //REQUEST_NUMBER,
   Conn.SetParam(DsMain, SF_REQUEST_NUMBER, aObj.RequestNumber);
+  //REQUEST_DATE,
   Conn.SetParam(DsMain, SF_REQUEST_DATE, aObj.RequestDate);
+  //UNDERGROUND,
   Conn.SetParam(DsMain, SF_UNDERGROUND, IfThen(aObj.Underground, 1, 0));
+  //DIAMETER,
   Conn.SetParam(DsMain, SF_DIAMETER, aObj.Diameter);
+  //PIPE_COUNT,
   Conn.SetParam(DsMain, SF_PIPE_COUNT, aObj.PipeCount);
+  //VOLTAGE,
   Conn.SetParam(DsMain, SF_VOLTAGE, aObj.Voltage);
+  //MATERIAL,
   Conn.SetParam(DsMain, SF_MATERIAL, aObj.Material);
+  //TOP,
   Conn.SetParam(DsMain, SF_TOP, aObj.Top);
+  //BOTTOM,
   Conn.SetParam(DsMain, SF_BOTTOM, aObj.Bottom);
+  //FLOOR,
   Conn.SetParam(DsMain, SF_FLOOR, aObj.Floor);
+  //OWNER,
   Conn.SetParam(DsMain, SF_OWNER, aObj.Owner);
+  //DRAW_DATE,
   Conn.SetParam(DsMain, SF_DRAW_DATE, aObj.DrawDate);
+  //IS_LINE,
   Conn.SetParam(DsMain, SF_IS_LINE, IfThen(aObj.IsLine, 1, 0));
+  //ROTATION,
   Conn.SetParam(DsMain, SF_ROTATION, aObj.Rotation);
-  Conn.SetBlobParam(DsMain, SF_EZDATA, aObj.EzData);
+  //EZDATA,
+  EzStream := GetEntityStream(aObj, aObj.CK36);
+  try
+    Conn.SetBlobParam(DsMain, SF_EZDATA, EzStream);
+  finally
+    EzStream.Free;
+  end;
+  //EZ_ID,
   Conn.SetParam(DsMain, SF_EZ_ID, aObj.EzId);
+  //LOADED,
+  Conn.SetParam(DsMain, SF_LOADED, 0);
+  //PROJECT_NAME,
+  Conn.SetParam(DsMain, SF_PROJECT_NAME, aObj.ProjectName);
+  //CK36,
+//  Conn.SetParam(DsMain, SF_CK36, IfThen(aObj.CK36, 1, 0));
+  //CUSTOMER_ORGS_ID,
+  Conn.SetNullableParam(DsMain, SF_CUSTOMER_ORGS_ID, aObj.CustomerOrgId, 0); // :CUSTOMER_ORGS_ID
+  //EXECUTOR_ORGS_ID,
+  Conn.SetNullableParam(DsMain, SF_EXECUTOR_ORGS_ID, aObj.ExecutorOrgId, 0); // :EXECUTOR_ORGS_ID
+  //OWNER_ORG_ID,
+  Conn.SetNullableParam(DsMain, SF_OWNER_ORG_ID, aObj.OwnerOrgId, 0); // :OWNER_ORG_ID
+  //DRAW_ORGS_ID,
+  Conn.SetNullableParam(DsMain, SF_DRAW_ORGS_ID, aObj.DrawOrgId, 0); // :DRAW_ORGS_ID
+  //TABLE_VERSION
+  Conn.SetParam(DsMain, SF_TABLE_VERSION, FTableVersion);
+  //DRAWN,
+  Conn.SetParam(DsMain, SF_DRAWN, IfThen(aObj.Drawn, 1, 0));
+  //PROJECTED,
+  Conn.SetParam(DsMain, SF_PROJECTED, IfThen(aObj.Projected, 1, 0));
+  //CERTIF_DATE,
+  Conn.SetNullableParam(DsMain, SF_CERTIF_DATE, aObj.CertifDate, 0);
+  //CERTIF_NUMBER,
+  Conn.SetParam(DsMain, SF_CERTIF_NUMBER, aObj.CertifNumber);
+  //HAS_CERTIF,
+  Conn.SetParam(DsMain, SF_HAS_CERTIF, IfThen(aObj.HasCertif, 1, 0));
+  //CHECK_STATS
+  Conn.SetParam(DsMain, SF_CHECK_STATE, Integer(aObj.CheckState));
   //
   XMin := aObj.MinX;
   YMin := aObj.MinY;
   XMax := aObj.MaxX;
   YMax := aObj.MaxY;
-  if aPrj.CK36 then
+  if aObj.CK36 then
   begin
     TEzCSConverter.XY2DToVrn(Xmin, Ymin, False);
     TEzCSConverter.XY2DToVrn(Xmax, Ymax, False);
   end;
   //
+  //MINX,
   Conn.SetParam(DsMain, SF_MINX, Xmin);
+  //MINY,
   Conn.SetParam(DsMain, SF_MINY, Ymin);
+  //MAXX,
   Conn.SetParam(DsMain, SF_MAXX, Xmax);
+  //MAXY,
   Conn.SetParam(DsMain, SF_MAXY, Ymax);
   //
   Conn.ExecDataSet(DsMain);
@@ -518,6 +588,9 @@ begin
     Tgt.FName := Self.FName;
     Tgt.FRequestNumber := Self.FRequestNumber;
     Tgt.FStatus := Self.FStatus;
+    Tgt.FObjState := Self.FObjState;
+    Tgt.FCheckState := Self.FCheckState;
+    Tgt.FRequestDate := Self.FRequestDate;
     //
     Tgt.FObjects.CopyFrom(Self.Objects);
   end;
@@ -526,7 +599,7 @@ end;
 procedure TmstProjectMP.CalcExtent;
 var
   I: Integer;
-  Obj: TmstProjectMPObject;
+  Obj: TmstMPObject;
 begin
   inherited;
   if (MinX = 0) and (MinY = 0) and (MaxX = 0) and (MaxY = 0) then
@@ -606,6 +679,23 @@ begin
   Result := True;
 end;
 
+procedure TmstProjectMP.RefreshExchangeXY;
+var
+  I: Integer;
+begin
+  inherited;
+  for I := 0 to Objects.Count - 1 do
+  begin
+    Objects[I].ExchangeXY := Self.ExchangeXY;
+    Objects[I].CK36 := Self.CK36;
+  end;
+end;
+
+procedure TmstProjectMP.SetCheckState(const Value: TmstMPObjectCheckState);
+begin
+  FCheckState := Value;
+end;
+
 procedure TmstProjectMP.SetDrawDate(const Value: TDateTime);
 begin
   FDrawDate := Value;
@@ -626,9 +716,19 @@ begin
   FObjects := Value;
 end;
 
+procedure TmstProjectMP.SetObjState(const Value: TmstMPObjectState);
+begin
+  FObjState := Value;
+end;
+
 procedure TmstProjectMP.SetOwnerOrgId(const Value: Integer);
 begin
   FOwnerOrgId := Value;
+end;
+
+procedure TmstProjectMP.SetRequestDate(const Value: TDateTime);
+begin
+  FRequestDate := Value;
 end;
 
 procedure TmstProjectMP.SetRequestNumber(const Value: string);
@@ -641,27 +741,27 @@ begin
   FStatus := Value;
 end;
 
-{ TmstProjectMPObject }
+{ TmstMPObject }
 
-procedure TmstProjectMPObject.AssignTo(Target: TPersistent);
+procedure TmstMPObject.AssignTo(Target: TPersistent);
 var
-  Tgt: TmstProjectMPObject;
+  Tgt: TmstMPObject;
 begin
-  if not (Target is TmstProjectMPObject) then
+  if not (Target is TmstMPObject) then
     inherited;
-  if Target is TmstProjectMPObject then
+  if Target is TmstMPObject then
   begin
-    Tgt := TmstProjectMPObject(Target);
+    Tgt := TmstMPObject(Target);
     //
-    Tgt.FGuid := FGuid;
+    Tgt.FMPObjectGuid := FMPObjectGuid;
     Tgt.FClassId := FClassId;
     Tgt.FArchived := FArchived;
     Tgt.FDocNumber := FDocNumber;
-    Tgt.FStatus := FStatus;
     Tgt.FConfirmed := FConfirmed;
     Tgt.FDismantled := FDismantled;
     Tgt.FAddress := FAddress;
     Tgt.FDocDate := FDocDate;
+    Tgt.FRequestNumber := FRequestNumber;
     Tgt.FRequestDate := FRequestDate;
     Tgt.FMaterial := FMaterial;
     Tgt.FVoltage := FVoltage;
@@ -670,7 +770,6 @@ begin
     Tgt.FFloor := FFloor;
     Tgt.FDiameter := FDiameter;
     Tgt.FBottom := FBottom;
-    Tgt.FRequestNumber := FRequestNumber;
     Tgt.FTop := FTop;
     Tgt.FOwner := FOwner;
     Tgt.FDrawDate := FDrawDate;
@@ -682,6 +781,23 @@ begin
     Tgt.FMinY := FMinY;
     Tgt.FEzLayerRecno := Self.FEzLayerRecno;
     Tgt.FEzLayerName := FEzLayerName;
+    Tgt.FObjState := FObjState;
+    Tgt.FCheckState := FCheckState;
+    Tgt.FClassId := FClassId;
+    Tgt.FDrawOrgId := FDrawOrgId;
+    Tgt.FCustomerOrgId := FCustomerOrgId;
+    Tgt.FExecutorOrgId := FExecutorOrgId;
+    Tgt.FOwnerOrgId := FOwnerOrgId;
+    Tgt.FDrawn := FDrawn;
+    Tgt.FProjected := FProjected;
+    Tgt.FCertifNumber := FCertifNumber;
+    Tgt.FCertifDate := FCertifDate;
+    Tgt.FHasCertif := FHasCertif;
+    //
+    Tgt.FCK36 := FCK36;
+    Tgt.FExchangeXY := FExchangeXY;
+    Tgt.FMPLayerId := FMPLayerId;
+    Tgt.ProjectName := FProjectName;
     //
     Tgt.FEzData.Size := 0;
     Self.FEzData.Position := 0;
@@ -690,204 +806,304 @@ begin
     Self.FEzData.Position := 0;
     Tgt.FEzId := Self.FEzId;
     //
-    if Assigned(Self.FLayer) then
-      Tgt.FLayer := Tgt.Project.Layers.ByDbId(Self.Layer.DatabaseId)
-    else
-      Tgt.FLayer := nil;
-    //
     Tgt.DatabaseId := Self.DatabaseId;
   end;
 end;
 
-constructor TmstProjectMPObject.Create;
+constructor TmstMPObject.Create;
 begin
   inherited;
   FEzData := TMemoryStream.Create;
   FEzId := -1;
-  FGuid := GetUniqueString();
+  FGuid := GetUniqueString(False, True);
+  // при создании можно взять любой ГУИД,
+  // если будет загрузка из Бд, то он изменится
+  FMpObjectGuid := FGuid;
 end;
 
-destructor TmstProjectMPObject.Destroy;
+destructor TmstMPObject.Destroy;
 begin
   FreeAndNil(FEzData);
   inherited;
 end;
 
-function TmstProjectMPObject.GetClassId: Integer;
-begin
-  if FLayer <> nil then
-    Result := FLayer.DatabaseId
-  else
-    Result := FClassId;
-end;
-
-function TmstProjectMPObject.GetObjectId: Integer;
+function TmstMPObject.GetObjectId: Integer;
 begin
   Result := inherited GetObjectId();
 end;
 
-function TmstProjectMPObject.GetText: String;
+function TmstMPObject.GetText: String;
 begin
   Result := '';
 end;
 
-procedure TmstProjectMPObject.SetAddress(const Value: string);
+procedure TmstMPObject.SetAddress(const Value: string);
 begin
   FAddress := Value;
 end;
 
-procedure TmstProjectMPObject.SetArchived(const Value: Boolean);
+procedure TmstMPObject.SetArchived(const Value: Boolean);
 begin
   FArchived := Value;
 end;
 
-procedure TmstProjectMPObject.SetBottom(const Value: string);
+procedure TmstMPObject.SetBottom(const Value: string);
 begin
   FBottom := Value;
 end;
 
-procedure TmstProjectMPObject.SetClassId(const Value: Integer);
+procedure TmstMPObject.SetCertifDate(const Value: TDateTime);
+begin
+  FCertifDate := Value;
+end;
+
+procedure TmstMPObject.SetCertifNumber(const Value: string);
+begin
+  FCertifNumber := Value;
+end;
+
+procedure TmstMPObject.SetCheckState(const Value: TmstMPObjectCheckState);
+begin
+  FCheckState := Value;
+end;
+
+procedure TmstMPObject.SetCK36(const Value: Boolean);
+begin
+  FCK36 := Value;
+end;
+
+procedure TmstMPObject.SetClassId(const Value: Integer);
 begin
   FClassId := Value;
 end;
 
-procedure TmstProjectMPObject.SetConfirmed(const Value: Boolean);
+procedure TmstMPObject.SetConfirmed(const Value: Boolean);
 begin
   FConfirmed := Value;
 end;
 
-procedure TmstProjectMPObject.SetDiameter(const Value: Integer);
+procedure TmstMPObject.SetCustomerOrgId(const Value: Integer);
+begin
+  FCustomerOrgId := Value;
+end;
+
+procedure TmstMPObject.SetDiameter(const Value: Integer);
 begin
   FDiameter := Value;
 end;
 
-procedure TmstProjectMPObject.SetDismantled(const Value: Boolean);
+procedure TmstMPObject.SetDismantled(const Value: Boolean);
 begin
   FDismantled := Value;
 end;
 
-procedure TmstProjectMPObject.SetDocDate(const Value: TDateTime);
+procedure TmstMPObject.SetDocDate(const Value: TDateTime);
 begin
   FDocDate := Value;
 end;
 
-procedure TmstProjectMPObject.SetDocNumber(const Value: string);
+procedure TmstMPObject.SetDocNumber(const Value: string);
 begin
   FDocNumber := Value;
 end;
 
-procedure TmstProjectMPObject.SetDrawDate(const Value: TDateTime);
+procedure TmstMPObject.SetDrawDate(const Value: TDateTime);
 begin
   FDrawDate := Value;
 end;
 
-procedure TmstProjectMPObject.SetEzLayerRecno(const Value: Integer);
+procedure TmstMPObject.SetDrawn(const Value: Boolean);
+begin
+  FDrawn := Value;
+end;
+
+procedure TmstMPObject.SetDrawOrgId(const Value: Integer);
+begin
+  FDrawOrgId := Value;
+end;
+
+procedure TmstMPObject.SetEzLayerRecno(const Value: Integer);
 begin
   FEzLayerRecno := Value;
 end;
 
-procedure TmstProjectMPObject.SetEzId(const Value: Integer);
+procedure TmstMPObject.SetExchangeXY(const Value: Boolean);
+begin
+  FExchangeXY := Value;
+end;
+
+procedure TmstMPObject.SetExecutorOrgId(const Value: Integer);
+begin
+  FExecutorOrgId := Value;
+end;
+
+procedure TmstMPObject.SetEzId(const Value: Integer);
 begin
   FEzId := Value;
 end;
 
-procedure TmstProjectMPObject.SetFloor(const Value: string);
+procedure TmstMPObject.SetFloor(const Value: string);
 begin
   FFloor := Value;
 end;
 
-procedure TmstProjectMPObject.SetIsLine(const Value: Boolean);
+procedure TmstMPObject.SetHasCertif(const Value: Boolean);
+begin
+  FHasCertif := Value;
+end;
+
+procedure TmstMPObject.SetIsLine(const Value: Boolean);
 begin
   FIsLine := Value;
 end;
 
-procedure TmstProjectMPObject.SetEzLayerName(const Value: string);
+procedure TmstMPObject.SetEzLayerName(const Value: string);
 begin
   FEzLayerName := Value;
 end;
 
-procedure TmstProjectMPObject.SetMaterial(const Value: string);
+procedure TmstMPObject.SetMaterial(const Value: string);
 begin
   FMaterial := Value;
 end;
 
-procedure TmstProjectMPObject.SetMaxX(const Value: Double);
+procedure TmstMPObject.SetMaxX(const Value: Double);
 begin
   FMaxX := Value;
 end;
 
-procedure TmstProjectMPObject.SetMaxY(const Value: Double);
+procedure TmstMPObject.SetMaxY(const Value: Double);
 begin
   FMaxY := Value;
 end;
 
-procedure TmstProjectMPObject.SetMinX(const Value: Double);
+procedure TmstMPObject.SetMinX(const Value: Double);
 begin
   FMinX := Value;
 end;
 
-procedure TmstProjectMPObject.SetMinY(const Value: Double);
+procedure TmstMPObject.SetMinY(const Value: Double);
 begin
   FMinY := Value;
 end;
 
-procedure TmstProjectMPObject.SetOwner(const Value: string);
+procedure TmstMPObject.SetMPLayerId(const Value: Integer);
+begin
+  FMPLayerId := Value;
+end;
+
+procedure TmstMPObject.SetMPObjectGuid(const Value: string);
+begin
+  FMPObjectGuid := Value;
+end;
+
+procedure TmstMPObject.SetObjState(const Value: TmstMPObjectState);
+begin
+  FObjState := Value;
+end;
+
+procedure TmstMPObject.SetOwner(const Value: string);
 begin
   FOwner := Value;
 end;
 
-procedure TmstProjectMPObject.SetPipeCount(const Value: Integer);
+procedure TmstMPObject.SetOwnerOrgId(const Value: Integer);
+begin
+  FOwnerOrgId := Value;
+end;
+
+procedure TmstMPObject.SetPipeCount(const Value: Integer);
 begin
   FPipeCount := Value;
 end;
 
-procedure TmstProjectMPObject.SetRequestDate(const Value: TDateTime);
+procedure TmstMPObject.SetProjected(const Value: Boolean);
+begin
+  FProjected := Value;
+end;
+
+procedure TmstMPObject.SetProjectName(const Value: string);
+begin
+  FProjectName := Value;
+end;
+
+procedure TmstMPObject.SetRequestDate(const Value: TDateTime);
 begin
   FRequestDate := Value;
 end;
 
-procedure TmstProjectMPObject.SetRequestNumber(const Value: string);
+procedure TmstMPObject.SetRequestNumber(const Value: string);
 begin
   FRequestNumber := Value;
 end;
 
-procedure TmstProjectMPObject.SetRotation(const Value: Integer);
+procedure TmstMPObject.SetRotation(const Value: Integer);
 begin
   FRotation := Value;
 end;
 
-procedure TmstProjectMPObject.SetStatus(const Value: Integer);
-begin
-  FStatus := Value;
-end;
-
-procedure TmstProjectMPObject.SetTop(const Value: string);
+procedure TmstMPObject.SetTop(const Value: string);
 begin
   FTop := Value;
 end;
 
-procedure TmstProjectMPObject.SetUnderground(const Value: Boolean);
+procedure TmstMPObject.SetUnderground(const Value: Boolean);
 begin
   FUnderground := Value;
 end;
 
-procedure TmstProjectMPObject.SetVoltage(const Value: Integer);
+procedure TmstMPObject.SetVoltage(const Value: Integer);
 begin
   FVoltage := Value;
 end;
 
+function TmstMPObject.Status: Integer;
+begin
+  if Drawn then
+    Result := 4
+  else
+    if Dismantled then
+      Result := 3
+    else
+    if HasCertif then
+      Result := 2
+    else
+      Result := 1;
+end;
+
+procedure TmstMPObject.UpdateObjState;
+begin
+  if Drawn then
+    ObjState := mstDrawn
+  else
+    ObjState := mstProjected;
+end;
+
 { TmstProjectObjects }
 
-function TmstProjectObjects.Add: TmstProjectMPObject;
+function TmstProjectObjects.Add: TmstMPObject;
 begin
-  Result := TmstProjectMPObject.Create;
+  Result := TmstMPObject.Create;
   inherited Add(Result);
-  Result.FProject := FOwner;
+  Result.FObjState := FOwner.ObjState;
+  case Result.FObjState of
+  mstProjected:
+    begin
+      Result.FDrawn := False;
+      Result.FProjected := True;
+    end;
+  mstDrawn :
+    begin
+      Result.FDrawn := True;
+      Result.FProjected := False;
+    end;
+  end;
+  Result.FCheckState := FOwner.CheckState;
 end;
 
 procedure TmstProjectObjects.CopyFrom(Source: TmstProjectObjects);
 var
-  Src, Tgt: TmstProjectMPObject;
+  Src, Tgt: TmstMPObject;
   I: Integer;
 begin
   Clear();
@@ -917,7 +1133,7 @@ begin
     end;
 end;
 
-function TmstProjectObjects.GetByDbId(const aId: Integer): TmstProjectMPObject;
+function TmstProjectObjects.GetByDbId(const aId: Integer): TmstMPObject;
 var
   I: Integer;
 begin
@@ -930,12 +1146,12 @@ begin
   Result := nil;
 end;
 
-function TmstProjectObjects.GetByGuid(const aGuid: string): TmstProjectMPObject;
+function TmstProjectObjects.GetByGuid(const aGuid: string): TmstMPObject;
 var
   I: Integer;
 begin
   for I := 0 to Count - 1 do
-    if Items[I].Guid = aGuid then
+    if Items[I].MPObjectGuid = aGuid then
     begin
       Result := Items[i];
       Exit;
@@ -943,12 +1159,12 @@ begin
   Result := nil;
 end;
 
-function TmstProjectObjects.GetItems(Index: Integer): TmstProjectMPObject;
+function TmstProjectObjects.GetItems(Index: Integer): TmstMPObject;
 begin
-  Result := TmstProjectMPObject(inherited Items[Index]);
+  Result := TmstMPObject(inherited Items[Index]);
 end;
 
-procedure TmstProjectObjects.SetItems(Index: Integer; const Value: TmstProjectMPObject);
+procedure TmstProjectObjects.SetItems(Index: Integer; const Value: TmstMPObject);
 begin
   inherited Items[Index] := Value;
 end;

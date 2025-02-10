@@ -32,6 +32,8 @@ type
   protected
     procedure ExecDataSet(DataSet: TDataSet);
     function  GetDataSet(const aSQL: String): TDataSet;
+    function  GetGenValue(const GenName: string): Integer;
+    function  GenNextValue(const GenName: string): Integer;
     function  GetRecordCount(const aSQL: String; const Fetch: Boolean): Integer;
     procedure SetNullableParam(DataSet: TDataSet; const ParamName: String; const ParamValue: Variant;
       const NullValue: Variant);
@@ -67,10 +69,10 @@ type
     procedure LoadLotCategoriesLayers(aLayerList: TmstLayerList);
     function GetLotCategoriesCount: Integer;
     function GetLotCategories(Index: Integer): TmstLotCategory;
-    procedure LoadProjectPlanLayers(aLayerList: TmstLayerList);
-    procedure LoadProjectPlanSubLayers(aLayer: TmstLayer; const aStatusId, aLayerId: Integer; var Position: Integer);
+    procedure LoadMasterPlanLayers(aLayerList: TmstLayerList);
+    procedure LoadMasterPlanSubLayers(aLayer: TmstLayer; const aStatusId, aLayerId: Integer; var Position: Integer);
     procedure LoadMPLayers();
-    procedure AddMPLayer(aLayer: TmstMPLayer; aParentLayer: TmstLayer;const aStatusId: Integer; AddedLayers: TList; var Position: Integer);
+    procedure AddMPLayer(aMPLayer: TmstMPLayer; aParentLayer: TmstLayer;const aStatusId: Integer; AddedLayers: TList; var Position: Integer);
   private
     FAppModule: ImstAppModule;
     FUserLogActive: Boolean;
@@ -95,8 +97,8 @@ type
     function  GetLots(aLot: TmstLot): ILots;
     function  GetLotIdsByField(const FieldName, Value: String): TList;
     //
-    function  GetProjectById(const aId: Integer; MasterPlan: Boolean): TmstProject;
-    function  GetProjectIdsByField(const FieldName, Value: String; MasterPlan: Boolean): TList;
+    function  GetProjectById(const aId: Integer): TmstProject;
+    function  GetProjectIdsByField(const FieldName, Value: String): TList;
     function  GetMapImage(aMapList: TmstMapList; aMap: TmstMap; const Directory: String): Boolean;
     function  GetOrders(): IOrders;
     function  GetParameters(): IParameters;
@@ -107,7 +109,7 @@ type
     procedure LoadLots(const Rect: TEzRect; LotList: TmstLotList;
       Layer: TEzBaseLayer; LotCategory: Integer; CallBack: TProgressEvent2);
     procedure LoadMaps(aMapList: TmstMapList);
-    procedure LoadProjects(const Rect: TEzRect; aList: TmstObjectList; MasterPlan: Boolean; CallBack: TProgressEvent2);
+    procedure LoadProjects(const Rect: TEzRect; aList: TmstObjectList; CallBack: TProgressEvent2);
     procedure LoadRedLines(Layer: TEzBaseLayer);
     procedure LoadStreets(aStreetList: TmstStreetList); 
     function  Logon(aUser: TmstUser): Boolean;
@@ -188,9 +190,8 @@ const
   SQL_GET_ALLOTMENTS_COUNT = 'SELECT COUNT(*) FROM GET_ALLOTMENTS_BY_RECT(:MINX, :MAXX, :MINY, :MAXY, :CHECKED, :CANCELLED)';
   SQL_GET_ALLOTMENT_CONTOURS = 'SELECT * FROM GET_CONTOURS_BY_RECT(:MINX, :MAXX, :MINY, :MAXY, :CHECKED, :CANCELLED) ORDER BY ALLOTMENTS_ID, ID';
   SQL_GET_ALLOTMENT_POINTS = 'SELECT * FROM GET_POINTS_BY_RECT(:MINX, :MAXX, :MINY, :MAXY, :CHECKED, :CANCELLED) ORDER BY ALLOTMENTS_ID, CONTOURS_ID, ID';
-  SQL_GET_NEW_LAYER_ID = 'SELECT GEN_ID(LAYERS_GEN, 1) FROM RDB$DATABASE';
   SQL_GET_ALLOTMENT_MAIN_DATA = 'GET_ALLOTMENT_MAIN_DATA';
-  SQL_GET_NEW_ID = 'SELECT GEN_ID(%s_GEN, 1) FROM RDB$DATABASE';
+  SQL_GET_CURRENT_ID = 'SELECT GEN_ID(%s_GEN, 0) FROM RDB$DATABASE';
   SQL_GET_LAYER_HAS_SEMANTIC = 'SELECT FIRST 1 ID FROM LAYERS_SEMANTIC WHERE LAYERS_ID=:LAYERS_ID';
 //  SQL_GET_LAYER_HAS_SEMANTIC = 'SELECT COUNT(ID) FROM LAYERS_SEMANTIC WHERE LAYERS_ID=:LAYERS_ID';
   SQL_GET_OBJECT_SEMANTIC = 'SELECT * FROM LAYERS_SEMANTIC WHERE OBJECT_ID=:OBJECT_ID';
@@ -217,7 +218,6 @@ const
 procedure TMStIBXMapMngr.SaveLayer(aLayer: TmstLayer);
 var
   Conn: IIBXConnection;
-  dsGetNewId: TDataSet;
   dsSaveLayer: TDataSet;
   Sql: string;
 begin
@@ -226,10 +226,7 @@ begin
   // если нет id то вставляем
   if aLayer.Id = 0 then
   begin
-    dsGetNewId := Conn.GetDataSet(SQL_GET_NEW_LAYER_ID);
-    dsGetNewId.Open;
-    aLayer.Id := dsGetNewId.Fields[0].AsInteger;
-    dsGetNewId.Close;
+    aLayer.Id := Conn.GenNextValue(SG_LAYERS);
     //
     Sql := 'insert into LAYERS (ID, NAME, VISIBLE_NAME, LAYER_TYPE, VISIBLE, LAYER_POSITION) ' + sLineBreak +
            'values (:ID, :NAME, :VISIBLE_NAME, :LAYER_TYPE, :VISIBLE, :LAYER_POSITION)';
@@ -343,19 +340,19 @@ begin
   //
   LoadLotCategoriesLayers(aLayerList);
   //
-  LoadProjectPlanLayers(aLayerList);
+  LoadMasterPlanLayers(aLayerList);
 end;
 
 function TMStIBXMapMngr.GenId(const aTable: string): Integer;
 var
   Conn: IIBXConnection;
-  Ds: TDataSet;
 begin
   Conn := GetConnection(cmReadOnly, dmGeo);
-  Ds := Conn.GetDataSet(Format(SQL_GET_NEW_ID, [aTable]));
-  Ds.Open;
-  Result := Ds.Fields[0].AsInteger;
-  Ds.Close;
+  try
+    Result := Conn.GenNextValue(aTable);
+  finally
+    Conn.Commit;
+  end;
 end;
 
 function TMStIBXMapMngr.GetAppInfo: string;
@@ -617,14 +614,14 @@ begin
   end;
 end;
 
-procedure TMStIBXMapMngr.LoadProjectPlanLayers(aLayerList: TmstLayerList);
+procedure TMStIBXMapMngr.LoadMasterPlanLayers(aLayerList: TmstLayerList);
 var
   LLayer, LastLayer: TmstLayer;
   LayerId: Integer;
   Position: Integer;
   I: Integer;
 begin
-  LoadMPLayers();
+  LoadMPLayers(); // зарузка из БД
   if Assigned(aLayerList) then
   begin
     LastLayer := aLayerList.LastByPosition;
@@ -641,11 +638,14 @@ begin
     LLayer.Visible := True;
     LayerId := TProjectUtils.GetMPLayerCode(0, 0);//50000000;
     LLayer.Id := LayerId;
-    LLayer.Name := TProjectUtils.GetMPLayerName(0, 0);
+    LLayer.Name := SL_MASTER_PLAN;//TProjectUtils.GetMPLayerName(0, 0);
+    LLayer.IsMP := True;
+    LLayer.MpStatusId := 0;
+    LLayer.MpCategoryId := 0;
     //
     for I := TmstMPStatuses.MinId to TmstMPStatuses.MaxId do
     begin
-      LoadProjectPlanSubLayers(LLayer, I, LayerId, Position);
+      LoadMasterPlanSubLayers(LLayer, I, LayerId, Position);
     end;
 //    LayerId := LayerId + 10000;
 //    LoadProjectPlanSubLayers(LLayer, 'проектные', LayerId, Position);
@@ -658,7 +658,7 @@ begin
   end;
 end;
 
-procedure TMStIBXMapMngr.LoadProjectPlanSubLayers(aLayer: TmstLayer;
+procedure TMStIBXMapMngr.LoadMasterPlanSubLayers(aLayer: TmstLayer;
  const aStatusId, aLayerId: Integer; var Position: Integer);
 var
   SubLayer: TmstLayer;
@@ -675,6 +675,9 @@ begin
   SubLayer.Position := Position;
   SubLayer.LayerType := 2;
   SubLayer.Visible := True;
+  SubLayer.IsMP := True;
+  SubLayer.MpStatusId := aStatusId;
+  SubLayer.MpCategoryId := 0;
   Inc(Position);
   //
   Added := TList.Create;
@@ -811,14 +814,14 @@ begin
 //  Inc(Position);
 end;
 
-procedure TMStIBXMapMngr.LoadProjects(const Rect: TEzRect; aList: TmstObjectList; MasterPlan: Boolean; CallBack: TProgressEvent2);
+procedure TMStIBXMapMngr.LoadProjects(const Rect: TEzRect; aList: TmstObjectList; CallBack: TProgressEvent2);
 var
   Loader: IEzProjectLoader;
 begin
   inherited;
   if Assigned(aList) then
   begin
-    Loader := TMStEzProjectLoaderFactory.CreateLoader(MasterPlan);
+    Loader := TMStEzProjectLoaderFactory.CreateLoader(False);
     Loader.SetDb(Self as IDb);
     Loader.SetList(aList);
     Loader.SetRect(Rect);
@@ -909,13 +912,11 @@ begin
   Result := M as IParameters;
 end;
 
-function TMStIBXMapMngr.GetProjectIdsByField(const FieldName, Value: String; MasterPlan: Boolean): TList;
+function TMStIBXMapMngr.GetProjectIdsByField(const FieldName, Value: String): TList;
 var
   Conn: IIBXConnection;
   DataSet: TDataSet;
 begin
-  if MasterPlan then
-    raise Exception.Create('MasterPlan');
   Result := TList.Create;
   Conn := GetConnection(cmReadOnly, dmKis);
   DataSet := Conn.GetDataSet('SELECT ID FROM PROJECTS WHERE UPPER(' + FieldName + ') LIKE :VALUE');
@@ -929,12 +930,9 @@ begin
   DataSet.Close;
 end;
 
-function TMStIBXMapMngr.GetProjectById(const aId: Integer; MasterPlan: Boolean): TmstProject;
+function TMStIBXMapMngr.GetProjectById(const aId: Integer): TmstProject;
 begin
-  if MasterPlan then
-    Result := TmstProject.Create
-  else
-    Result := TmstProjectMP.Create;
+  Result := TmstProject.Create;
   Result.DatabaseId := aId;
   if not Result.Load(Self as IDb) then
     FreeAndNil(Result);
@@ -1273,7 +1271,7 @@ begin
   inherited;
 end;
 
-procedure TMStIBXMapMngr.AddMPLayer(aLayer: TmstMPLayer; aParentLayer: TmstLayer;
+procedure TMStIBXMapMngr.AddMPLayer(aMPLayer: TmstMPLayer; aParentLayer: TmstLayer;
   const aStatusId: Integer; AddedLayers: TList;
   var Position: Integer);
 var
@@ -1281,24 +1279,27 @@ var
   I: Integer;
   MpL: TmstMPLayer;
 begin
-  if AddedLayers.IndexOf(aLayer)>= 0 then
+  if AddedLayers.IndexOf(aMPLayer)>= 0 then
     Exit;
   Layer := aParentLayer.AddChild();
-  Layer.Id := TProjectUtils.GetMPLayerCode(aStatusId, aLayer.Id);
-  Layer.Name := TProjectUtils.GetMPLayerName(aStatusId, aLayer.Id);
-  Layer.Caption := aLayer.Name;
+  Layer.Id := TProjectUtils.GetMPLayerCode(aStatusId, aMPLayer.Id);
+  Layer.Name := TProjectUtils.GetMPLayerName(aStatusId, aMPLayer.Id);
+  Layer.Caption := aMPLayer.Name;
   Layer.Position := Position;
   Layer.LayerType := 2;
   Layer.Visible := True;
+  Layer.IsMP := True;
+  Layer.MpStatusId := aStatusId;
+  Layer.MpCategoryId := aMPLayer.Id;
   Inc(Position);
-  AddedLayers.Add(aLayer);
+  AddedLayers.Add(aMPLayer);
   //
-  if aLayer.IsGroup <> 0 then
+  if aMPLayer.IsGroup <> 0 then
   begin
     for I := 0 to FMPLayers.Count - 1 do
     begin
       MpL := TmstMPLayer(FMPLayers[I]);
-      if MpL.GroupId = aLayer.Id then
+      if MpL.GroupId = aMPLayer.Id then
         AddMPLayer(MpL, Layer, aStatusId, AddedLayers, Position);
     end;
   end;
@@ -1426,8 +1427,7 @@ begin
   end;
 end;
 
-function TMStIBXMapMngr.DeleteMapImage(aMapList: TmstMapList;
-  aMap: TmstMap): Boolean;
+function TMStIBXMapMngr.DeleteMapImage(aMapList: TmstMapList; aMap: TmstMap): Boolean;
 var
   Conn: IIBXConnection;
 begin
@@ -1666,6 +1666,18 @@ begin
   end;
 end;
 
+function TIBXConnection.GenNextValue(const GenName: string): Integer;
+var
+  dsGetNewId: TDataSet;
+  Sql: string;
+begin
+  Sql := 'SELECT GEN_ID(' + GenName + '_GEN, 1) FROM RDB$DATABASE';
+  dsGetNewId := GetDataSet(Sql);
+  dsGetNewId.Open;
+  Result := dsGetNewId.Fields[0].AsInteger;
+  dsGetNewId.Close;
+end;
+
 function TIBXConnection.GetDataSet(const aSQL: String): TDataSet;
 begin
   Result := TIBQuery.Create(nil);
@@ -1679,6 +1691,18 @@ begin
     Prepare;
   end;
   FDataSets.InsertComponent(Result);
+end;
+
+function TIBXConnection.GetGenValue(const GenName: string): Integer;
+var
+  Sql: string;
+  Ds: TDataSet;
+begin
+  Sql := Format(SQL_GET_CURRENT_ID, [GenName]);
+  Ds := GetDataSet(Sql);
+  Ds.Open;
+  Result := Ds.Fields[0].AsInteger;
+  Ds.Close;
 end;
 
 function TIBXConnection.GetRecordCount(const aSQL: String; const Fetch: Boolean): Integer;

@@ -9,7 +9,7 @@ type
     procedure LocateAddress(const DbId: Integer);
     procedure LocateContour(const aCategoryId, aLotDbId, aContourDbId: Integer);
     procedure LocateLot(const aCategoryId, aDbId: Integer);
-    procedure LocateProject(const DbId: Integer; MasterPlan: Boolean);
+    procedure LocateProject(const DbId: Integer);
     procedure RepaintViewports;
     procedure UnHideLot(const aCategoryId, DatabaseId: Integer);
   end;

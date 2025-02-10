@@ -30,8 +30,8 @@ type
     class function LineToEntity(aPrj: TmstProject; aProjLine: TmstProjectLine; Poly: Boolean): TEzOpenedEntity;
     class procedure ShowProjectLayer(aPrj: TmstProject);
     //
-    class procedure ClearProjectLayers(MasterPlan: Boolean);
-    class procedure RemoveProjectFromLayer(const ProjectId: Integer; MasterPlan: Boolean);
+    class procedure ClearProjectLayers();
+    class procedure RemoveProjectFromLayer(const ProjectId: Integer);
     class procedure RemoveProjectLineFromLayer(const ProjectId, LineId: Integer);
     //
     class function AddLineZoneToGIS(aLine: TmstProjectLine; aZoneWidth: Double): Boolean;
@@ -40,8 +40,8 @@ type
     class function GetMPLayerCode(StatusId, MPLayerId: Integer): Integer;
     class function GetMPLayerName(StatusId, MPLayerId: Integer): String;
     //
-    class procedure AddMpObjToLayer(aLayer: TEzBaseLayer; aMpObj: TmstProjectMPObject);
-    class function GetMpObjEntity(aMpObj: TmstProjectMPObject): TEzEntity;
+    class procedure AddMpObjToLayer(aLayer: TEzBaseLayer; aMpObj: TmstMPObject);
+    class function GetMpObjEntity(aMpObj: TmstMPObject): TEzEntity;
   public
     class var GIS: TEzBaseGIS;
     class var AllLayers: TmstProjectLayers;
@@ -190,9 +190,8 @@ begin
   end;
 end;
 
-class procedure TProjectUtils.AddMpObjToLayer(aLayer: TEzBaseLayer; aMpObj: TmstProjectMPObject);
+class procedure TProjectUtils.AddMpObjToLayer(aLayer: TEzBaseLayer; aMpObj: TmstMPObject);
 var
-  I: Integer;
   Ent: TEzEntity;
   EntClass: TEzEntityClass;
   EntityID: TEzEntityID;
@@ -205,9 +204,9 @@ begin
     try
       aMPObj.EzData.Position := 0;
       Ent.LoadFromStream(aMPObj.EzData);
-      if aMpObj.Project.CK36 then
-        TEzCSConverter.EntityToVrn(Ent, not aMPObj.Project.ExchangeXY);
-      if aMpObj.Project.ExchangeXY then
+      if aMpObj.CK36 then
+        TEzCSConverter.EntityToVrn(Ent, not aMPObj.ExchangeXY);
+      if aMpObj.ExchangeXY then
         TEzCSConverter.ExchangeXY(Ent);
       aMPObj.EzLayerName := aLayer.Name;
       aMPObj.EzLayerRecno := aLayer.AddEntity(Ent);
@@ -219,13 +218,8 @@ end;
 
 class procedure TProjectUtils.AddMPProjectToGIS(aPrj: TmstProjectMP);
 var
-  S1, S2: string;
-  OldLayer: TEzBaseLayer;
-  NewLayer: TEzBaseLayer;
   I: Integer;
-  MyId, PrjId: string;
-  Found: Boolean;
-  MpObj: TmstProjectMPObject;
+  MpObj: TmstMPObject;
   ObjLayerName: string;
   EzLayer: TEzBaseLayer;
 begin
@@ -233,7 +227,7 @@ begin
   for I := 0 to aPrj.Objects.Count - 1 do
   begin
     MpObj := aPrj.Objects[I];
-    ObjLayerName := GetMPLayerName(MpObj.Status, MpObj.Layer.MPLayerId);
+    ObjLayerName := GetMPLayerName(MpObj.Status, MpObj.MPLayerId);
     EzLayer := Self.GIS.Layers.LayerByName(ObjLayerName);
     if EzLayer <> nil then
     begin
@@ -383,15 +377,8 @@ end;
 
 class procedure TProjectUtils.ClearProjectLayers;
 begin
-  if MasterPlan then
-  begin
-    ClearLayer(SL_PROJECT_CLOSED, nil);
-    ClearLayer(SL_PROJECT_OPEN, nil);
-  end
-  else
-  begin
-    raise Exception.Create('MasterPlan');
-  end;
+  ClearLayer(SL_PROJECT_CLOSED, nil);
+  ClearLayer(SL_PROJECT_OPEN, nil);
 end;
 
 class procedure TProjectUtils.FindProjectInGIS(Prj: TmstProject; LineId: Integer; out Layer: TEzBaseLayer; out RecNo: Integer);
@@ -456,9 +443,8 @@ begin
   Result := 'ProjectPlanSub' + IntToStr(GetMPLayerCode(StatusId, MPLayerId));
 end;
 
-class function TProjectUtils.GetMpObjEntity(aMpObj: TmstProjectMPObject): TEzEntity;
+class function TProjectUtils.GetMpObjEntity(aMpObj: TmstMPObject): TEzEntity;
 var
-  I: Integer;
   EntClass: TEzEntityClass;
   EntityID: TEzEntityID;
 begin
@@ -468,9 +454,9 @@ begin
   try
     aMPObj.EzData.Position := 0;
     Result.LoadFromStream(aMPObj.EzData);
-    if aMpObj.Project.CK36 then
-      TEzCSConverter.EntityToVrn(Result, not aMPObj.Project.ExchangeXY);
-    if aMpObj.Project.ExchangeXY then
+    if aMpObj.CK36 then
+      TEzCSConverter.EntityToVrn(Result, not aMPObj.ExchangeXY);
+    if aMpObj.ExchangeXY then
       TEzCSConverter.ExchangeXY(Result);
   except
     FreeAndNil(Result);
@@ -588,7 +574,7 @@ begin
   end;
 end;
 
-class procedure TProjectUtils.RemoveProjectFromLayer(const ProjectId: Integer; MasterPlan: Boolean);
+class procedure TProjectUtils.RemoveProjectFromLayer(const ProjectId: Integer);
 begin
   RemoveProjectFromLayerProjectId := ProjectId;
   RemoveProjectLineFromLayerProjectId := -1;

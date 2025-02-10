@@ -1,0 +1,43 @@
+unit uMStClassesMPIntf;
+
+interface
+
+uses
+  DB, Graphics,
+  EzBaseGIS,
+  uMStKernelClasses, uMStKernelIBX, uMStKernelAppSettings,
+  uMStClassesMPClassif, uMStClassesProjectsMP;
+
+type
+  ImstMPModule = interface
+    ['{9950B1D8-F72C-409E-BEE9-A06839D82445}']
+    function Classifier: TmstMPClassifier;
+    procedure DisplayNavigator(aDrawBox: TEzBaseDrawBox);
+    procedure ImportDXF(const aObjState: TmstMPObjectState);
+    procedure SetAppSettingsEvent(aEvent: TGetAppSettingsEvent);
+    procedure SetDbEvent(aDbEvent: TGetDbEvent);
+    procedure SetDrawBox(aDrawBox: TEzBaseDrawBox);
+    procedure LoadFromDb();
+    procedure NavigatorClosed();
+    //
+    function GetObjByDbId(const ObjId: Integer; LoadEzData: Boolean): TmstMPObject;
+    procedure DeleteObj(const ObjId: Integer);
+    function EditObjProperties(const ObjId: Integer): Boolean;
+    function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
+    procedure UpdateLayersVisibility(aLayers: TmstLayerList);
+    //
+    function IsLoaded(const ObjId: Integer): Boolean;
+    procedure LoadAllToGIS();
+    procedure LoadToGis(const ObjId: Integer; const Display: Boolean);
+    procedure UnloadAllFromGis();
+    function UnloadFromGis(const ObjId: Integer): Boolean;
+  end;
+
+  ImstMPModuleObjList = interface
+    ['{353E66CC-A116-430A-A842-4DF7B91ADE5F}']
+    function BrowserDataSet(): TDataSet;
+  end;
+
+implementation
+
+end.

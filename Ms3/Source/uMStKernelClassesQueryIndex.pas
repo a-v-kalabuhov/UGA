@@ -4,6 +4,7 @@ interface
 
 uses
   Classes,
+  uCommonUtils,
   EzLib;
 
 type
@@ -25,7 +26,13 @@ type
   TQueryRowIndex = class
   private
     FIndex: TList;
+    FUseBinarySearch: Boolean;
     function GetEntry(const Id: Integer): TIndexEntry;
+    procedure SetUseBinarySearch(const Value: Boolean);
+  private
+    FBinSearchId: Integer;
+    function CheckEntry(aItem: Pointer): Boolean;
+    function CompareEntry(aItem: Pointer): Integer;
   public
     constructor Create;
     destructor Destroy; override;
@@ -34,8 +41,12 @@ type
     procedure Clear();
     function Delete(const Id: Integer): Boolean;
     procedure DeleteValue(const Id, Value: Integer);
+    function Contains(const Id: Integer): Boolean;
     function Get(const Id: Integer): TIntegerList;
-    procedure Sort();
+    function GetFirstRow(const Id: Integer): Integer;
+    procedure Sort(WithEntries: Boolean);
+    //
+    property UseBinarySearch: Boolean read FUseBinarySearch write SetUseBinarySearch;
   end;
 
 implementation
@@ -56,6 +67,11 @@ begin
   Entry.Items.Add(Value);
 end;
 
+function TQueryRowIndex.CheckEntry(aItem: Pointer): Boolean;
+begin
+  Result := TIndexEntry(aItem).FId = FBinSearchId;
+end;
+
 procedure TQueryRowIndex.Clear;
 var
   I: Integer;
@@ -67,6 +83,22 @@ begin
   end;
 end;
 
+function TQueryRowIndex.CompareEntry(aItem: Pointer): Integer;
+begin
+  Result := TIndexEntry(aItem).FId - FBinSearchId;
+end;
+
+function TQueryRowIndex.Contains(const Id: Integer): Boolean;
+var
+  Tmp: TIntegerList;
+begin
+  Tmp := Get(Id);
+  if Assigned(Tmp) and (Tmp.Count > 0) then
+    Result := True
+  else
+    Result := False;
+end;
+
 constructor TQueryRowIndex.Create;
 begin
   FIndex := TList.Create;
@@ -74,34 +106,70 @@ end;
 
 function TQueryRowIndex.Delete(const Id: Integer): Boolean;
 var
-  I: Integer;
+  I, J, K: Integer;
+  Recno: Integer;
   Entry: TIndexEntry;
+  Tmp: TIndexEntry;
 begin
   Result := False;
+  J := -1;
   for I := 0 to FIndex.Count - 1 do
   begin
     Entry := TIndexEntry(FIndex[I]);
     if Entry.Id = Id then
     begin
-      Result := True;
-      FIndex.Delete(I);
-      Entry.Free;
-      Exit;
+      J := I;
+      Break;
     end;
+  end;
+  //
+  if J >= 0 then
+  begin
+    FIndex.Delete(I);
+    for I := 0 to FIndex.Count - 1 do
+    begin
+      Tmp := TIndexEntry(FIndex[I]);
+      for J := 0 to Tmp.FItems.Count - 1 do
+      begin
+        Recno := Tmp.FItems[J];
+        for K := 0 to Entry.FItems.Count - 1 do
+        begin
+          if Entry.FItems[K] < Recno then
+            Dec(Recno);
+        end;
+        Tmp.FItems[J] := Recno;
+      end;
+    end;
+    Result := True;
+    Entry.Free;
   end;
 end;
 
 procedure TQueryRowIndex.DeleteValue(const Id, Value: Integer);
 var
-  I: Integer;
+  I, J, Recno: Integer;
   Entry: TIndexEntry;
+  Tmp: TIndexEntry;
 begin
   Entry := GetEntry(Id);
   if Assigned(Entry) and (Entry.Items.Count > 0) then
   begin
     I := Entry.Items.IndexOfValue(Value);
     if I >= 0 then
+    begin
       Entry.Items.Delete(I);
+      for I := 0 to FIndex.Count - 1 do
+      begin
+        Tmp := TIndexEntry(FIndex[I]);
+        for J := 0 to Tmp.FItems.Count - 1 do
+        begin
+          Recno := Tmp.FItems[J];
+          if Value < Recno then
+              Dec(Recno);
+          Tmp.FItems[J] := Recno;
+        end;
+      end;
+    end;
   end;
 end;
 
@@ -131,16 +199,40 @@ var
   I: Integer;
   Entry: TIndexEntry;
 begin
-  for I := 0 to FIndex.Count - 1 do
+  Result := nil;
+  if FUseBinarySearch then
   begin
-    Entry := TIndexEntry(FIndex[I]);
-    if Entry.Id = Id then
+    FBinSearchId := Id;
+    I := DoBinarySearch(FIndex, CheckEntry, CompareEntry);
+    if I >= 0 then
+      Result := TIndexEntry(FIndex[I]);
+  end
+  else
+  begin
+    for I := 0 to FIndex.Count - 1 do
     begin
-      Result := Entry;
-      Exit;
+      Entry := TIndexEntry(FIndex[I]);
+      if Entry.Id = Id then
+      begin
+        Result := Entry;
+        Exit;
+      end;
     end;
   end;
-  Result := nil;
+end;
+
+function TQueryRowIndex.GetFirstRow(const Id: Integer): Integer;
+var
+  Entry: TIndexEntry;
+begin
+  Result := -1;
+  Entry := GetEntry(Id);
+  if (Entry <> nil) and (Entry.Items.Count > 0) then
+  begin
+    Entry.Sort();
+    Result := Entry.Items[0];
+    Exit;
+  end;
 end;
 
 function CompareEntries(Item1, Item2: Pointer): Integer;
@@ -152,17 +244,23 @@ begin
   Result := Entry1.Id - Entry2.Id;
 end;
 
+procedure TQueryRowIndex.SetUseBinarySearch(const Value: Boolean);
+begin
+  FUseBinarySearch := Value;
+end;
+
 procedure TQueryRowIndex.Sort;
 var
   I: Integer;
   Entry: TIndexEntry;
 begin
   FIndex.Sort(CompareEntries);
-  for I := 0 to FIndex.Count - 1 do
-  begin
-    Entry := TIndexEntry(FIndex[I]);
-    Entry.Sort();
-  end;
+  if WithEntries then
+    for I := 0 to FIndex.Count - 1 do
+    begin
+      Entry := TIndexEntry(FIndex[I]);
+      Entry.Sort();
+    end;
 end;
 
 { TIndexEntry }

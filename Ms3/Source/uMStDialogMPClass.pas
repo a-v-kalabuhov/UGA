@@ -189,6 +189,7 @@ end;
 procedure TmstMPClassDialog.SetNetTypes(const Value: TStrings);
 begin
   FNetTypes := Value;
+  cbProjectLayer.Items.Clear();
   cbProjectLayer.Items.Assign(FNetTypes);
 end;
 

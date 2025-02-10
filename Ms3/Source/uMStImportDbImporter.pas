@@ -7,7 +7,7 @@ uses
   //
   uCommonClasses,
   //
-  uMStKernelIBX, uMStKernelSemantic, uMStImport, uMStModuleApp;
+  uMStKernelIBX, uMStKernelSemantic, uMStImport, uMStModuleApp, uMStConsts;
 
 type
   TmstDbImporter = class
@@ -17,7 +17,6 @@ type
     procedure SetEntityRecNo(const Value: Integer);
   private
     FConn: IIBXConnection;
-    FQueryId: TDataSet;
     FLayersId: Integer;
     FObjectId: string;
     FQuery: TDataSet;
@@ -39,9 +38,6 @@ type
   end;
 
 implementation
-
-const
-  SQL_GEN_LAYERS_SEMANTIC_ID = 'SELECT GEN_ID(LAYERS_SEMANTIC_GEN, 1) FROM RDB$DATABASE';
 
 { TmstDbImporter }
 
@@ -98,16 +94,7 @@ end;
 
 function TmstDbImporter.GenNewId: Integer;
 begin
-  if not Assigned(FQueryId) then
-  begin
-    FQueryId := FConn.GetDataSet(SQL_GEN_LAYERS_SEMANTIC_ID);
-  end;
-  FQueryId.Open;
-  try
-    Result := FQueryId.Fields[0].AsInteger;
-  finally
-    FQueryId.Close;
-  end;
+  Result := FConn.GenNextValue(SG_LAYERS_SEMANTIC);
 end;
 
 function TmstDbImporter.PrepareSQL(Fld: TmstLayerField; IsString: Boolean): string;

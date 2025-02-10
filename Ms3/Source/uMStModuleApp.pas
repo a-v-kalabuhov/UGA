@@ -20,10 +20,10 @@ uses
   uGC, uCommonUtils, uVCLUtils, uFileUtils, uGeoUtils,
   // Project
   uMStKernelTypes, uMStKernelClasses, uMStKernelClassesSearch, uMStKernelInterfaces, uMStKernelAppModule,
-  uMStKernelStack, uMStKernelIBX,
+  uMStKernelStack, uMStKernelIBX, uMStKernelAppSettings,
   uMStModuleMapMngrIBX,
   uMStImportEzClasses,
-  uMStClassesLots, uMStCLassesProjects;
+  uMStClassesLots, uMStClassesProjects, uMStClassesMPIntf;
 
 type
   ELayerNotFound = class(Exception);
@@ -34,7 +34,7 @@ type
   TmstProgressEvent = procedure (const Message: String; Percent: Byte;
     Delay: Integer; Ticks: Integer = -1) of object;
 
-  TMStClientAppModule = class(TDataModule, ImstAppModule, ImstLotController)
+  TMStClientAppModule = class(TDataModule, ImstAppModule, ImstLotController, ImstAppSettings)
     GIS: TEzGIS;
     ApplicationEvents: TApplicationEvents;
     procedure DataModuleDestroy(Sender: TObject);
@@ -58,16 +58,8 @@ type
     FStreets: TmstStreetList;
     FLotRegistry: TmstLotRegistry;
     FPrjRegistry: TmstProjectList;
-    FMPRegistry: TmstProjectList;
-//    FLots: TmstLotList;
-//    FAnnulledLots: TmstLotList;
-//    FActualLots: TmstLotList;
+//    FMPRegistry: TmstProjectList;
     FAddresses: TmstAddressList;
-    // Слои
-//    FLotLayer: TEzBaseLayer;
-//    FAnnulledLotLayer: TEzBaseLayer;
-//    FActualLotLayer: TEzBaseLayer;
-//    FKioskLayer: TEzBaseLayer;
     FStack: TmstObjectStack;
     FFinder: TmstFinder;
     FShowInvisibleLots: Boolean;
@@ -75,7 +67,6 @@ type
     FMode: TmstAppMode;
     FUser: TmstUser;
     FLoadedProjects: TIntegerList;
-    FLoadedMPPrjs: TIntegerList;
     FNetTypes: TmstProjectNetTypes;
     // GUI инициализации
     procedure StartInit;
@@ -96,20 +87,21 @@ type
     procedure InitDataStorages;
     procedure InitGIS;
     // Работа со слоями
-    procedure InitLayers;
+    procedure InitLayers(const ProgressStep: Integer);
     procedure DownloadLayers;
     procedure ConnectLayersToGIS;
+
     // Загрузка данных с сервера по различным объектам
     // улицы
-    procedure InitStreets;
+    procedure InitStreets(const ProgressStep: Integer);
     procedure DownloadStreets;
     procedure LinkStreetsToLayer;
     // адреса
-    procedure InitAddresses;
+    procedure InitAddresses(const ProgressStep: Integer);
     procedure DownloadAddresses;
     procedure LinkAddressesToLayer;
     // отводы
-    procedure InitLots;
+    procedure InitLots(const ProgressStep: Integer);
     procedure DownloadLots;
     procedure LinkLotsToLayer;
     procedure AddLotToLayer(aLot: TmstLot; Layer: TEzBaseLayer);
@@ -117,11 +109,15 @@ type
     //
     procedure AddProjectToLayer(Prj: TmstProject);
     // планшеты
-    procedure InitMaps;
+    procedure InitMaps(const ProgressStep: Integer);
     procedure DownloadMaps;
     procedure LinkMapsToLayer;
     // красные линии
     procedure InitRedLines;
+    // сводный план
+    procedure InitMP(const ProgressStep: Integer);
+    procedure DownloadMP;
+    procedure LinkMPToLayer;
     // Загрузка данных о планшетах в список FMaps
     procedure ReLoadMaps;
     // Загрузка данных в слои из списков
@@ -130,6 +126,7 @@ type
     function GetImageNomenclature(ImageID: Integer): String;
     function GetMapNomenclature(MapEntityID: Integer): String;
     procedure LayerVisibleChanged(Sender: TObject; ALayer: TmstLayer);
+    procedure MPLayerVisibleChanged(ALayer: TmstLayer);
     procedure OnDeleteLayer(Sender: TObject; aLayer: TmstLayer);
     procedure OnSelectLayer(Sender: TObject; aLayer: TmstLayer);
     procedure CreateAlertWindow;
@@ -159,6 +156,14 @@ type
       const Clip: TEzRect; var EntList: TEzEntityList);
     function IntLoadMapImage(aMap: TmstMap): Boolean;  // MapId = Entity.ID
     procedure LoadLayersVisibility();
+  private
+    function IsMPLayer(aLayer: TEzBaseLayer): Boolean;
+    function GetMPObjectisVisible(aLayer: TEzBaseLayer; aRecNo: Integer; var LineColor: TColor): Boolean;
+  private
+    FMasterPlan: ImstMPModule;
+    function GetMP: ImstMPModule;
+    procedure GetAppSettingsForMP(Sender: TObject; out aAppSettings: ImstAppSettings);
+    procedure GetDbForMP(Sender: TObject; out aDb: IDb);
   protected
     function GetLotLayer(const LotCategoryId: Integer): TEzBaseLayer;
     procedure LoadLotFromDataSets(ALot: TmstLot; MainDataSet, ContoursDataSet, PointsDataSet: TDataSet);
@@ -169,7 +174,7 @@ type
     // Работа с отводами
     procedure FindLots(DrawBox: TEzDrawBox; const X, Y: Double);
     procedure FindMap(const Nomenclature: String; OnMapFound: TNotifyEvent);
-    procedure FindProjects(DrawBox: TEzDrawBox; const X, Y: Double; MasterPlan: Boolean);
+    procedure FindProjects(DrawBox: TEzDrawBox; const X, Y: Double);
     procedure HideLot(const aCategoryId, DatabaseId: Integer);
     function GetLotList(const aCategoryId: Integer): TmstLotList;
     //
@@ -180,9 +185,9 @@ type
     procedure LoadLots(const aLeft, aTop, aRight, aBottom: Double; CallBack: TProgressEvent2);
     procedure LoadLotsByField(const FieldName, Text: String; OnLotLoaded: TNotifyEvent);
     //
-    function GetProject(PrjId: Integer; LoadIsNotExtsts: Boolean; MasterPlan: Boolean): TmstProject;
-    procedure LoadProjects(const aLeft, aTop, aRight, aBottom: Double; MasterPlan: Boolean; CallBack: TProgressEvent2);
-    procedure LoadProjectsByField(const FieldName, Text: String; MasterPlan: Boolean; OnPrjLoaded: TNotifyEvent);
+    function GetProject(PrjId: Integer; LoadIsNotExtsts: Boolean): TmstProject;
+    procedure LoadProjects(const aLeft, aTop, aRight, aBottom: Double; CallBack: TProgressEvent2);
+    procedure LoadProjectsByField(const FieldName, Text: String; OnPrjLoaded: TNotifyEvent);
     // Загрузка изображения планшета
     function LoadMapImage(MapEntityId: Integer): Boolean;  // MapId = Entity.ID
     // Поиск адреса и установке его на экране
@@ -190,7 +195,7 @@ type
     // Поиск участка и установке его на экране
     procedure LocateContour(const aCategoryId, aLotDbId, aContourDbId: Integer);
     procedure LocateLot(const aCategoryId, aDbId: Integer);
-    procedure LocateProject(const DbId: Integer; MasterPlan: Boolean);
+    procedure LocateProject(const DbId: Integer);
     procedure LogError(E: Exception; Info: TStrings); overload;
     procedure LogError(E: Exception; const Info: string); overload;
     // Обновление информации по планшетам
@@ -229,15 +234,15 @@ type
     procedure DisplayLayersDialog();
     procedure RepaintViewports;
     //
-    function FindProject(const aId: Integer; MasterPlan: Boolean): TmstProject;
-    procedure AddLoadedProject(const aId: Integer; MasterPlan: Boolean);
-    procedure ClearLoadedProjects(MasterPlan: Boolean);
-    function HasLoadedProjects(MasterPlan: Boolean): Boolean;
-    function IsProjectLoaded(const aId: Integer; MasterPlan: Boolean): Boolean;
-    procedure RemoveLoadedProject(const aId: Integer; MasterPlan: Boolean);
+    function FindProject(const aId: Integer): TmstProject;
+    procedure AddLoadedProject(const aId: Integer);
+    procedure ClearLoadedProjects();
+    function HasLoadedProjects(): Boolean;
+    function IsProjectLoaded(const aId: Integer): Boolean;
+    procedure RemoveLoadedProject(const aId: Integer);
     //
     property MainWorkDir: String read FMainWorkDir;
-    property SessionDir: String read FSessionDir;
+    function SessionDir: String;
     // Слои
     property Layers: TmstLayerList read FLayers;
     property LayerMaps: TEzBaseLayer read GetMapLayer; // M500
@@ -247,6 +252,7 @@ type
 //    property Lots: TmstLotList read FLots;
     property Addresses: TmstAddressList read FAddresses;
     property NetTypes: TmstProjectNetTypes read FNetTypes;
+    property MP: ImstMPModule read GetMP;
 
     property Finder: TmstFinder read FFinder;
     property Stack: TmstObjectStack read FStack;
@@ -269,7 +275,7 @@ uses
   uMStConsts,
   uMStKernelGISUtils, uMStKernelConsts, uMStKernelClassesOptions, uMStClassesProjectsUtils,
   uMStFormMain, uMStFormLayers, uMStFormSplash,
-  uMStModulePrint;
+  uMStModulePrint, uMStModuleMasterPlan;
 
 const
   PROP_COL = 'Columns.';
@@ -420,7 +426,6 @@ begin
     NCSecwShutdown;
     FNetTypes.Free;
     FLoadedProjects.Free;
-    FLoadedMPPrjs.Free;
     FUser.Free;
     FreeAndNil(FStack);
     FreeAndNil(FAddresses);
@@ -429,7 +434,7 @@ begin
     FreeAndNil(FLayers);
     FreeAndNil(FLotRegistry);
     FreeAndNil(FMapMngr);
-    FreeAndNil(FMPRegistry);
+//    FreeAndNil(FMPRegistry);
   finally
     ClearTempFolder;
   end;
@@ -448,9 +453,16 @@ begin
   FMapMngr.LoadMaps(FMaps);
 end;
 
+procedure TMStClientAppModule.DownloadMP;
+begin
+  MP.LoadFromDb();
+end;
+
 procedure TMStClientAppModule.DownloadLayers;
 begin
   FMapMngr.LoadLayers(FLayers);
+  //
+  MP.UpdateLayersVisibility(FLayers);
 end;
 
 procedure TMStClientAppModule.DownloadLots;
@@ -462,6 +474,16 @@ procedure TMStClientAppModule.DownloadStreets;
 begin
   FStreets.Clear;
   FMapMngr.LoadStreets(FStreets);
+end;
+
+procedure TMStClientAppModule.GetAppSettingsForMP(Sender: TObject; out aAppSettings: ImstAppSettings);
+begin
+  aAppSettings := Self as ImstAppSettings;
+end;
+
+procedure TMStClientAppModule.GetDbForMP(Sender: TObject; out aDb: IDb);
+begin
+  aDb := MapMngr as IDb;
 end;
 
 function TMStClientAppModule.GetImageNomenclature(ImageID: Integer): String;
@@ -544,6 +566,33 @@ begin
    Result := '';
 end;
 
+function TMStClientAppModule.GetMP: ImstMPModule;
+begin
+  if FMasterPlan = nil then
+  begin
+    FMasterPlan := TmstMasterPlanModule.Create(Self) as ImstMPModule;
+    FMasterPlan.SetAppSettingsEvent(GetAppSettingsForMP); 
+    FMasterPlan.SetDbEvent(GetDbForMP);
+  end;
+  Result := FMasterPlan;
+end;
+
+function TMStClientAppModule.GetMPObjectisVisible(aLayer: TEzBaseLayer; aRecNo: Integer; var LineColor: TColor): Boolean;
+var
+  DbId: Integer;
+begin
+  // определяем, какому статусу принадлежит объект
+  // определяем, какой катеории принадлежит объект
+  // из классификатора вытаскиваем виден он или нет
+  Result := MP.Classifier.MPVisible;
+  if Result then
+  begin
+    aLayer.Recno := aRecNo;
+    DbId := aLayer.RecEntity().ExtID;
+    Result := MP.IsObjectVisible(DbId, LineColor);
+  end;
+end;
+
 function TMStClientAppModule.GetOption(const Section, Option, NoValue: String): String;
 var
   IniFileName: string;
@@ -564,23 +613,20 @@ begin
   Result := FMapMngr.GetOrders;
 end;
 
-function TMStClientAppModule.GetProject(PrjId: Integer; LoadIsNotExtsts: Boolean; MasterPlan: Boolean): TmstProject;
+function TMStClientAppModule.GetProject(PrjId: Integer; LoadIsNotExtsts: Boolean): TmstProject;
 var
   Tmp: TmstObject;
   Reg: TmstProjectList;
 begin
   Result := nil;
-  if MasterPlan then
-    Reg := FMPRegistry
-  else
-    Reg := FPrjRegistry;
+  Reg := FPrjRegistry;
   Tmp := Reg.GetByDatabaseId(PrjId);
   if Assigned(Tmp) then
     Result := TmstProject(Tmp);
   if (Result = nil) and LoadIsNotExtsts then
   begin
     try
-      Result := MapMngr.GetProjectById(PrjId, MasterPlan);
+      Result := MapMngr.GetProjectById(PrjId);
       if Assigned(Result) then
         Reg.Add(Result);
     except
@@ -605,7 +651,7 @@ end;
 procedure TMStClientAppModule.InitAddresses;
 begin
   DownloadAddresses;
-  ProgressInit(5);
+  ProgressInit(ProgressStep);
   LinkAddressesToLayer;
 end;
 
@@ -650,27 +696,28 @@ begin
     // 3.	Создание файла ГИС.
     InitGIS;
     // 4.	Загрузка информации о слоях и создание/подключение нужных слоев.
-    ProgressInit('Загрузка данных...  слои', 10, 100, 0);
-    InitLayers;
-    ProgressInit('Загрузка данных...  слои', 20, 100, 0);
+    ProgressInit('Загрузка данных...  слои', 13, 100, 0);
+    InitLayers(2);
+    ProgressInit('Загрузка данных...  слои', 17, 100, 0);
     // 5.	Загрузка данных по активным объектам.
     // -	улицы
-    ProgressInit('Загрузка данных...  улицы', 30, 100);
-    InitStreets;
-    ProgressInit('Загрузка данных...  улицы', 40, 100, 0);
+    ProgressInit('Загрузка данных...  улицы', 20, 100);
+    InitStreets(5);
+    ProgressInit('Загрузка данных...  улицы', 30, 100, 0);
     // -	адреса
-    ProgressInit('Загрузка данных...	адреса', 50, 100);
-    InitAddresses;
-    ProgressInit('Загрузка данных...	адреса', 60, 100, 0);
+    ProgressInit('Загрузка данных...	адреса', 40, 100);
+    InitAddresses(5);
+    ProgressInit('Загрузка данных...	адреса', 50, 100, 0);
     // -	отводы
-    ProgressInit('Загрузка данных...	отводы', 70, 100);
-    InitLots;
-    ProgressInit('Загрузка данных...	отводы', 80, 100, 0);
-    // -	знаки
-    // ПОКА НЕТУ
+    ProgressInit('Загрузка данных...	отводы', 60, 100);
+    InitLots(5);
+    ProgressInit('Загрузка данных...	отводы', 70, 100, 0);
+    // -	сводный план
+    InitMP(5);
+    ProgressInit('Загрузка данных...	сводный план', 80, 100, 0);
     // -	планшеты
     ProgressInit('Загрузка данных...	планшеты', 90, 100);
-    InitMaps;
+    InitMaps(5);
 //    ProgressInit('Загрузка данных...	киоски', 95, 100, 0);
 //    InitMAFs;
     ProgressInit('Загрузка данных...	красные линии', 95, 100, 0);
@@ -742,11 +789,6 @@ begin
     FPrjRegistry := TmstProjectList.Create;
   end;
 
-  if not Assigned(FMPRegistry) then
-  begin
-    FMPRegistry := TmstProjectList.Create;
-  end;
-
   if not Assigned(FStack) then
   begin
     FStack := TmstObjectStack.Create(Self as ImstAppModule, FMapMngr as IDb, FMapMngr as ImstLotCategories, Self as ImstLotController);
@@ -773,7 +815,7 @@ end;
 procedure TMStClientAppModule.InitLayers;
 begin
   DownLoadLayers;
-  ProgressInit(5);
+  ProgressInit(ProgressStep);
   ConnectLayersToGIS();
   FLayers.OnDeleteLayer := OnDeleteLayer;
   FLayers.OnSelectLayer := OnSelectLayer;
@@ -782,7 +824,7 @@ end;
 procedure TMStClientAppModule.InitLots;
 begin
   DownloadLots;
-  ProgressInit(5);
+  ProgressInit(ProgressStep);
   LinkLotsToLayer;
 end;
 
@@ -812,14 +854,21 @@ end;
 procedure TMStClientAppModule.InitMaps;
 begin
   DownloadMaps;
-  ProgressInit(5);
+  ProgressInit(ProgressStep);
   LinkMapsToLayer;
+end;
+
+procedure TMStClientAppModule.InitMP;
+begin
+  DownloadMP();
+  ProgressInit(ProgressStep);
+  LinkMPToLayer();
 end;
 
 procedure TMStClientAppModule.InitStreets;
 begin
   DownloadStreets;
-  ProgressInit(5);
+  ProgressInit(ProgressStep);
   LinkStreetsToLayer;
 end;
 
@@ -841,11 +890,18 @@ procedure TMStClientAppModule.LayerVisibleChanged(Sender: TObject; ALayer: TmstL
 var
   Layer: TEzBaseLayer;
 begin
-  Layer := GIS.Layers.LayerByName(ALayer.Name);
-  if Assigned(Layer) then
+  if ALayer.IsMP then
   begin
-    Layer.LayerInfo.Visible := ALayer.Visible;
-    GIS.RepaintViewports;
+    MPLayerVisibleChanged(ALayer);
+  end
+  else
+  begin
+    Layer := GIS.Layers.LayerByName(ALayer.Name);
+    if Assigned(Layer) then
+    begin
+      Layer.LayerInfo.Visible := ALayer.Visible;
+      GIS.RepaintViewports;
+    end;
   end;
 end;
 
@@ -895,6 +951,11 @@ begin
     Ent.Forget();
     FMaps[I].MapEntityId := LayerMaps.AddEntity(Ent);
   end;
+end;
+
+procedure TMStClientAppModule.LinkMPToLayer;
+begin
+  Sleep(1000);
 end;
 
 procedure TMStClientAppModule.LinkStreetsToLayer;
@@ -1056,21 +1117,18 @@ begin
   end;
 end;
 
-procedure TMStClientAppModule.LoadProjects(const aLeft, aTop, aRight, aBottom: Double; MasterPlan: Boolean; CallBack: TProgressEvent2);
+procedure TMStClientAppModule.LoadProjects(const aLeft, aTop, aRight, aBottom: Double; CallBack: TProgressEvent2);
 var
   R: TEzRect;
   Reg: TmstProjectList;
 begin
-  if MasterPlan then
-    Reg := FMPRegistry
-  else
-    Reg := FPrjRegistry;
+  Reg := FPrjRegistry;
   R := Rect2D(ABottom, ALeft, ATop, ARight);
   R := ReorderRect2D(R);
-  FMapMngr.LoadProjects(R, Reg, MasterPlan, CallBack);
+  FMapMngr.LoadProjects(R, Reg, CallBack);
 end;
 
-procedure TMStClientAppModule.LoadProjectsByField(const FieldName, Text: String; MasterPlan: Boolean; OnPrjLoaded: TNotifyEvent);
+procedure TMStClientAppModule.LoadProjectsByField(const FieldName, Text: String; OnPrjLoaded: TNotifyEvent);
 var
   IdList: TList;
   I: Integer;
@@ -1080,17 +1138,9 @@ var
   Reg: TmstProjectList;
   Lst: TIntegerList;
 begin
-  if MasterPlan then
-  begin
-    Reg := FMPRegistry;
-    Lst := FLoadedMPPrjs;
-  end
-  else
-  begin
-    Reg := FPrjRegistry;
-    Lst := FLoadedProjects;
-  end;
-  IdList := FMapMngr.GetProjectIdsByField(FieldName, Text, MasterPlan);
+  Reg := FPrjRegistry;
+  Lst := FLoadedProjects;
+  IdList := FMapMngr.GetProjectIdsByField(FieldName, Text);
   try
     Added := False;
     for I := 0 to Pred(IdList.Count) do
@@ -1100,7 +1150,7 @@ begin
       Prj := TmstProject(Reg.GetByDatabaseId(Id));
       if not Assigned(Prj) then
       begin
-        Prj := FMapMngr.GetProjectById(Id, MasterPlan);
+        Prj := FMapMngr.GetProjectById(Id);
         if Assigned(Prj) then
         begin
           Reg.Add(Prj);
@@ -1152,19 +1202,14 @@ begin
   FMaps := TmpMaps;
 end;
 
-procedure TMStClientAppModule.RemoveLoadedProject(const aId: Integer; MasterPlan: Boolean);
+procedure TMStClientAppModule.RemoveLoadedProject(const aId: Integer);
 var
   Idx: Integer;
-  Lst: TIntegerList;
 begin
-  if MasterPlan then
-    Lst := FLoadedProjects
-  else
-    Lst := FLoadedMPPrjs;
-  if Lst.Find(aId, Idx) then
+  if FLoadedProjects.Find(aId, Idx) then
   begin
-    Lst.Delete(Idx);
-//    Lst.Sort;
+    FLoadedProjects.Delete(Idx);
+//    FLoadedProjects.Sort;
   end;
 end;
 
@@ -1326,17 +1371,16 @@ begin
   Result := FileLoaded;
 end;
 
-function TMStClientAppModule.IsProjectLoaded(const aId: Integer; MasterPlan: Boolean): Boolean;
+function TMStClientAppModule.IsMPLayer(alayer: TEzBaseLayer): Boolean;
+begin
+  Result := alayer.Name = SL_MASTER_PLAN;
+end;
+
+function TMStClientAppModule.IsProjectLoaded(const aId: Integer): Boolean;
 var
   Idx: Integer;
-var
-  Lst: TIntegerList;
 begin
-  if MasterPlan then
-    Lst := FLoadedProjects
-  else
-    Lst := FLoadedMPPrjs;
-  Result := Lst.Find(aId, Idx);
+  Result := FLoadedProjects.Find(aId, Idx);
 end;
 
 procedure TMStClientAppModule.LocateLot(const aCategoryId, aDbId: Integer);
@@ -1352,15 +1396,12 @@ begin
   end;
 end;
 
-procedure TMStClientAppModule.LocateProject(const DbId: Integer; MasterPlan: Boolean);
+procedure TMStClientAppModule.LocateProject(const DbId: Integer);
 var
   Prj: TmstProject;
   Reg: TmstProjectList;
 begin
-  if MasterPlan then
-    Reg := FMPRegistry
-  else
-    Reg := FPrjRegistry;
+  Reg := FPrjRegistry;
   Prj := Reg.GetByDatabaseId(DbId) as TmstProject;
   if Assigned(Prj) then
   begin
@@ -1414,6 +1455,11 @@ begin
 //    if (NewSelection.LotType >= 0) and (NewSelection.Id >= 0) then
       RedrawLot(NewSelection.CategoryId, NewSelection.Id);
   end;
+end;
+
+function TMStClientAppModule.SessionDir: String;
+begin
+  Result := FSessionDir;
 end;
 
 procedure TMStClientAppModule.LogError(E: Exception; Info: TStrings);
@@ -1506,19 +1552,14 @@ begin
   end;
 end;
 
-procedure TMStClientAppModule.AddLoadedProject(const aId: Integer; MasterPlan: Boolean);
+procedure TMStClientAppModule.AddLoadedProject(const aId: Integer);
 var
   Idx: Integer;
-  Lst: TIntegerList;
 begin
-  if MasterPlan then
-    Lst := FLoadedProjects
-  else
-    Lst := FLoadedMPPrjs;
-  if not Lst.Find(aId, Idx) then
+  if not FLoadedProjects.Find(aId, Idx) then
   begin
-    Lst.Add(aId);
-    Lst.Sort;
+    FLoadedProjects.Add(aId);
+    FLoadedProjects.Sort;
   end;
 end;
 
@@ -1551,16 +1592,13 @@ begin
     end;
 end;
 
-function TMStClientAppModule.FindProject(const aId: Integer; MasterPlan: Boolean): TmstProject;
+function TMStClientAppModule.FindProject(const aId: Integer): TmstProject;
 var
   I: Integer;
   aPrj: TmstProject;
   Reg: TmstProjectList;
 begin
-  if MasterPlan then
-    Reg := FMPRegistry
-  else
-    Reg := FPrjRegistry;
+  Reg := FPrjRegistry;
   for I := 0 to Reg.Count - 1 do
   begin
     aPrj := TmstProject(Reg[I]);
@@ -1573,7 +1611,7 @@ begin
   Result := nil;
 end;
 
-procedure TMStClientAppModule.FindProjects(DrawBox: TEzDrawBox; const X, Y: Double; MasterPlan: Boolean);
+procedure TMStClientAppModule.FindProjects(DrawBox: TEzDrawBox; const X, Y: Double);
 var
   Prj: TmstProject;
   PrjExtent: TEzRect;
@@ -1581,10 +1619,7 @@ var
   I: Integer;
   Reg: TmstProjectList;
 begin
-  if MasterPlan then
-    Reg := FMPRegistry
-  else
-    Reg := FPrjRegistry;
+  Reg := FPrjRegistry;
   Pt := Point2D(X, Y);
   for I := 0 to Reg.Count - 1 do
   begin
@@ -1595,15 +1630,9 @@ begin
   end;
 end;
 
-function TMStClientAppModule.HasLoadedProjects(MasterPlan: Boolean): Boolean;
-var
-  Lst: TIntegerList;
+function TMStClientAppModule.HasLoadedProjects(): Boolean;
 begin
-  if MasterPlan then
-    Lst := FLoadedProjects
-  else
-    Lst := FLoadedMPPrjs;
-  Result := Lst.Count > 0;
+  Result := FLoadedProjects.Count > 0;
 end;
 
 procedure TMStClientAppModule.HideLot(const aCategoryId, DatabaseId: Integer);
@@ -1777,7 +1806,7 @@ begin
   if DrawMode = dmNormal then
   begin                           
     Layer.Recno := Recno;
-    if (Layer.Name = SL_PROJECT_OPEN) or (Layer.Name = SL_PROJECT_CLOSED) then
+    if (Layer.DBTable <> nil) and (Layer.Name = SL_PROJECT_OPEN) or (Layer.Name = SL_PROJECT_CLOSED) then
     begin
       Layer.DBTable.RecNo := Layer.Recno;
       NetId := Layer.DBTable.IntegerGet(SLF_NET_ID);
@@ -1799,6 +1828,8 @@ procedure TMStClientAppModule.GISBeforePaintEntity(Sender: TObject;
   Grapher: TEzGrapher; Canvas: TCanvas; const Clip: TEzRect;
   DrawMode: TEzDrawMode; var CanShow: Boolean; var EntList: TEzEntityList;
   var AutoFree: Boolean);
+var
+  Clr: TColor;
 begin
   Layer.Recno := Recno;
   if Pos('CADASTR_', Layer.Name) = 1 then
@@ -1811,6 +1842,14 @@ begin
   begin
     if Entity.EntityID = idPictureRef then
       PrepareM500Bitmap(TEzPictureRef(Entity));
+  end
+  else
+  if IsMPLayer(Layer) then
+  begin
+    CanShow := GetMPObjectisVisible(Layer, Recno, Clr);
+    if CanShow then
+      if Entity is TEzOpenedEntity then
+        TEzOpenedEntity(Entity).PenTool.Color := Clr;
   end
   else
   if Mode = amPrint then
@@ -1839,7 +1878,6 @@ var
   aLabel: TEzTrueTypeText;
 begin
   FLoadedProjects := TIntegerList.Create;
-  FLoadedMPPrjs := TIntegerList.Create;
   FNetTypes := TmstProjectNetTypes.Create;
   // создаем симовл для точки выбранного отвода
   aSymbol := TEzSymbol.Create(Ez_Symbols);
@@ -1932,18 +1970,25 @@ begin
       J := GIS.Layers.Add(Self.SessionDir + aLayer.Name, ltDesktop);
       Layer := GIS.Layers[J];
     end;
+  ID_LT_FAKE :
+    begin
+      Layer := nil;
+    end;
   else
     begin
       DeleteFiles(Self.SessionDir, aLayer.Name + '.*');
       Layer := GIS.Layers.CreateNewEx(Self.SessionDir + aLayer.Name, csCartesian, cum, nil);
     end;
   end;
-  Layer.Open;
-  if UseLayerVisibility then
-    LayerVisible := aLayer.Visible
-  else
-    LayerVisible := True;
-  Layer.LayerInfo.Visible := LayerVisible;
+  if Assigned(Layer) then
+  begin
+    Layer.Open;
+    if UseLayerVisibility then
+      LayerVisible := aLayer.Visible
+    else
+      LayerVisible := True;
+    Layer.LayerInfo.Visible := LayerVisible;
+  end;
   //
   for I := 0 to aLayer.ChildCount - 1 do
     ConnectLayerToGIS(aLayer.Child[I], UseLayerVisibility);
@@ -2136,15 +2181,9 @@ begin
   end;
 end;
 
-procedure TMStClientAppModule.ClearLoadedProjects(MasterPlan: Boolean);
-var
-  Lst: TIntegerList;
+procedure TMStClientAppModule.ClearLoadedProjects();
 begin
-  if MasterPlan then
-    Lst := FLoadedProjects
-  else
-    Lst := FLoadedMPPrjs;
-  Lst.Clear;
+  FLoadedProjects.Clear;
 end;
 
 function TMStClientAppModule.ClearMapImagesTo399(mLog: TMemo{var Message: String}): Boolean;
@@ -2289,6 +2328,33 @@ end;
 procedure TMStClientAppModule.MapsPrinted;
 begin
   FMapMngr.AfterMapsPrint(MapNames, Order);
+end;
+
+procedure TMStClientAppModule.MPLayerVisibleChanged(ALayer: TmstLayer);
+var
+  Redraw: Boolean;
+begin
+  Redraw := True;
+  // надо обновить справочник по видимости объектов в МП
+  {
+  Что за справочник?
+  К каждому объекту привязана ссылка на классификатор объектов.
+  В классификаторе есть ID класса.
+  ID класса связано с ID слоя МП.
+  КРоме того у объекта есть StatsId, который тоже привязан к слою МП.
+  StatsId вычисляется только динамически:
+  - проектный/нанесённый
+  - справка выдана
+  - демонтируемый
+  }
+  if ALayer.Parent = nil then
+    MP.Classifier.MPVisible := ALayer.Visible;
+  if ALayer.MpStatusId > 0 then
+    MP.Classifier.SetMPStatusVisible(ALayer.MpStatusId, ALayer.Visible);
+  if ALayer.MpCategoryId > 0 then
+    MP.Classifier.SetMPCategoryVisible(ALayer.MpStatusId, ALayer.MpCategoryId, ALayer.Visible);
+  //
+  GIS.RepaintViewports;
 end;
 
 function TMStClientAppModule.GetLastUserId: Integer;

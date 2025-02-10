@@ -149,7 +149,10 @@ type
     FHidden: Boolean;
     FId: Integer;
     FParent: TmstLayer;
-    FChildLayers: TObjectList; 
+    FChildLayers: TObjectList;
+    FIsMP: Boolean;
+    FMpCategoryId: Integer;
+    FMpStateId: Integer;
     procedure SetName(const Value: String);
     procedure SetCaption(const Value: String);
     procedure SetPosition(const Value: SmallInt);
@@ -160,9 +163,15 @@ type
     procedure SetParent(const Value: TmstLayer);
     function GetChild(Index: Integer): TmstLayer;
     function GetChildCount: Integer;
+    procedure SetIsMP(const Value: Boolean);
+    procedure SetMpCategoryId(const Value: Integer);
+    procedure SetMpStateId(const Value: Integer);
   public
     constructor Create;
     destructor Destroy; override;
+    //
+    function AddChild(): TmstLayer;
+    procedure AppendChild(aLayer: TmstLayer);
     //
     property Id: Integer read FId write SetId;
     property Name: String read FName write SetName;
@@ -177,10 +186,13 @@ type
     property Visible: Boolean read FVisible write SetVisible;
     property Hidden: Boolean read FHidden write SetHidden;
     property Parent: TmstLayer read FParent write SetParent;
+    //
     property ChildCount: Integer read GetChildCount;
     property Child[Index: Integer]: TmstLayer read GetChild;
-    function AddChild(): TmstLayer;
-    procedure AppendChild(aLayer: TmstLayer);
+    //
+    property IsMP: Boolean read FIsMP write SetIsMP;
+    property MpCategoryId: Integer read FMpCategoryId write SetMpCategoryId;
+    property MpStatusId: Integer read FMpStateId write SetMpStateId;
   end;
 
   TmstLayerEvent = procedure (Sender: TObject; Layer: TmstLayer) of object;
@@ -639,9 +651,24 @@ begin
   FId := Value;
 end;
 
+procedure TmstLayer.SetIsMP(const Value: Boolean);
+begin
+  FIsMP := Value;
+end;
+
 procedure TmstLayer.SetLayerType(const Value: SmallInt);
 begin
   FLayerType := Value;
+end;
+
+procedure TmstLayer.SetMpCategoryId(const Value: Integer);
+begin
+  FMpCategoryId := Value;
+end;
+
+procedure TmstLayer.SetMpStateId(const Value: Integer);
+begin
+  FMpStateId := Value;
 end;
 
 procedure TmstLayer.SetName(const Value: String);

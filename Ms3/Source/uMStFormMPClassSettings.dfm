@@ -49,19 +49,9 @@ object mstMPClassSettingsForm: TmstMPClassSettingsForm
       end
       item
         Expanded = False
-        FieldName = 'NET_TYPES_ID'
-        Visible = True
-      end
-      item
-        Expanded = False
         FieldName = 'NET_NAME'
         Title.Caption = #1057#1083#1086#1081' '#1074' '#1087#1088#1086#1077#1082#1090#1077
         Width = 200
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'MP_NET_TYPES_ID'
         Visible = True
       end
       item
@@ -70,6 +60,16 @@ object mstMPClassSettingsForm: TmstMPClassSettingsForm
         Title.Caption = #1057#1083#1086#1081' '#1074' '#1089#1074#1086#1076#1085#1086#1084' '#1087#1083#1072#1085#1077
         Width = 200
         Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NET_TYPES_ID'
+        Visible = False
+      end
+      item
+        Expanded = False
+        FieldName = 'MP_NET_TYPES_ID'
+        Visible = False
       end>
   end
   object Panel1: TPanel
@@ -80,7 +80,6 @@ object mstMPClassSettingsForm: TmstMPClassSettingsForm
     Align = alTop
     Caption = '   '
     TabOrder = 0
-    ExplicitWidth = 830
     DesignSize = (
       894
       32)
@@ -119,7 +118,6 @@ object mstMPClassSettingsForm: TmstMPClassSettingsForm
       ModalResult = 2
       TabOrder = 2
       OnClick = btnCloseClick
-      ExplicitLeft = 748
     end
     object edSearch: TEdit
       Left = 237

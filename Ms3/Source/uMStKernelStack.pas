@@ -725,7 +725,7 @@ begin
       FAppModule.LocateAddress(DbId)
     else
     if Node.NodeType in [ID_NODETYPE_PRJ, ID_NODETYPE_MP_PRJ] then
-      FAppModule.LocateProject(DbId, Node.NodeType = ID_NODETYPE_MP_PRJ);
+      FAppModule.LocateProject(DbId);
   end;
 end;
 

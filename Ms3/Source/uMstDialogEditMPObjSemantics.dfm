@@ -148,6 +148,7 @@ object mstEditMPObjSemanticsDialog: TmstEditMPObjSemanticsDialog
     Anchors = [akLeft, akBottom]
     DataField = 'NET_STATE_ID'
     DataSource = DataSource1
+    Enabled = False
     KeyField = 'ID'
     ListField = 'NAME'
     ListSource = dsNetStates

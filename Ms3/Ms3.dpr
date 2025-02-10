@@ -98,7 +98,12 @@ uses
   uMStClassesProjectsUtils in 'Source\uMStClassesProjectsUtils.pas',
   uMStClassesMPStatuses in 'Source\uMStClassesMPStatuses.pas',
   uMStClassesProjectsBrowserMP in 'Source\uMStClassesProjectsBrowserMP.pas',
-  uMStDialogMPBrowserFilter in 'Source\uMStDialogMPBrowserFilter.pas' {mstMPBrowserFilterDialog};
+  uMStDialogMPBrowserFilter in 'Source\uMStDialogMPBrowserFilter.pas' {mstMPBrowserFilterDialog},
+  uMStClassesMPClassif in 'Source\uMStClassesMPClassif.pas',
+  uMStClassesMPIntf in 'Source\uMStClassesMPIntf.pas',
+  uMStDialogMPObjectSemantics in 'Source\uMStDialogMPObjectSemantics.pas' {mstEditMPObjectSemanticsDialog},
+  uMStKernelAppSettings in 'Source\uMStKernelAppSettings.pas',
+  uMStClassesMPObjectAdapter in 'Source\uMStClassesMPObjectAdapter.pas';
 
 {$R *.RES}
 
@@ -109,8 +114,8 @@ begin
   Application.Title := 'Планшетохранилище 3.1';
   try
     Application.CreateForm(TmstClientAppModule, mstClientAppModule);
-    Application.CreateForm(TmstPrintModule, mstPrintModule);
-    Application.CreateForm(TmstClientMainForm, mstClientMainForm);
+  Application.CreateForm(TmstPrintModule, mstPrintModule);
+  Application.CreateForm(TmstClientMainForm, mstClientMainForm);
   except
     on E: Exception do
     begin

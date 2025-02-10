@@ -31,15 +31,11 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
     Top = 11
     Width = 1182
     Height = 651
-    ActivePage = tsMap
+    ActivePage = tsSemantics
     Align = alClient
     TabOrder = 0
     object tsSemantics: TTabSheet
       Caption = #1044#1072#1085#1085#1099#1077' '#1087#1088#1086#1077#1082#1090#1072
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 103
         Top = 78
@@ -145,7 +141,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Width = 921
         Height = 21
         MaxLength = 120
-        TabOrder = 2
+        TabOrder = 3
         Text = 'edAddress'
       end
       object edDocNum: TEdit
@@ -154,7 +150,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Width = 177
         Height = 21
         MaxLength = 120
-        TabOrder = 3
+        TabOrder = 4
         Text = 'edDocNum'
       end
       object edDocDate: TEdit
@@ -163,7 +159,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Width = 116
         Height = 21
         MaxLength = 120
-        TabOrder = 4
+        TabOrder = 5
         Text = 'edDocDate'
       end
       object edCustomer: TEdit
@@ -174,7 +170,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         MaxLength = 120
         ParentColor = True
         ReadOnly = True
-        TabOrder = 6
+        TabOrder = 7
         Text = 'edCustomer'
         OnKeyPress = edCustomerKeyPress
       end
@@ -184,7 +180,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Width = 75
         Height = 25
         Caption = #1042#1099#1073#1088#1072#1090#1100
-        TabOrder = 7
+        TabOrder = 8
         OnClick = btnCustomerClick
       end
       object edExecutor: TEdit
@@ -195,7 +191,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         MaxLength = 120
         ParentColor = True
         ReadOnly = True
-        TabOrder = 8
+        TabOrder = 9
         Text = 'edExecutor'
         OnKeyPress = edExecutorKeyPress
       end
@@ -205,7 +201,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Width = 75
         Height = 25
         Caption = #1042#1099#1073#1088#1072#1090#1100
-        TabOrder = 9
+        TabOrder = 10
         OnClick = btnExecutorClick
       end
       object chbCK36: TCheckBox
@@ -215,7 +211,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Height = 17
         Alignment = taLeftJustify
         Caption = #1052#1057#1050'36'
-        TabOrder = 5
+        TabOrder = 1
       end
       object edName: TEdit
         Left = 144
@@ -223,7 +219,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Width = 921
         Height = 21
         MaxLength = 120
-        TabOrder = 1
+        TabOrder = 2
         Text = 'edName'
       end
       object cbStatusList: TComboBox
@@ -232,7 +228,8 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Width = 145
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        Enabled = False
+        ItemHeight = 13
         TabOrder = 0
       end
       object edDrawer: TEdit
@@ -243,7 +240,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         MaxLength = 120
         ParentColor = True
         ReadOnly = True
-        TabOrder = 12
+        TabOrder = 13
         Text = 'edDrawer'
         OnKeyPress = edDrawerKeyPress
       end
@@ -253,7 +250,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Width = 75
         Height = 25
         Caption = #1042#1099#1073#1088#1072#1090#1100
-        TabOrder = 13
+        TabOrder = 14
         OnClick = btnDrawerClick
       end
       object edDrawDate: TEdit
@@ -262,7 +259,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Width = 116
         Height = 21
         MaxLength = 120
-        TabOrder = 14
+        TabOrder = 15
         Text = 'edDrawDate'
       end
       object edRequestNumber: TEdit
@@ -271,7 +268,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Width = 177
         Height = 21
         MaxLength = 120
-        TabOrder = 15
+        TabOrder = 6
         Text = 'edRequestNumber'
       end
       object edOwner: TEdit
@@ -282,7 +279,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         MaxLength = 120
         ParentColor = True
         ReadOnly = True
-        TabOrder = 10
+        TabOrder = 11
         Text = 'edOwner'
         OnKeyPress = edOwnerKeyPress
       end
@@ -292,17 +289,13 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Width = 75
         Height = 25
         Caption = #1042#1099#1073#1088#1072#1090#1100
-        TabOrder = 11
+        TabOrder = 12
         OnClick = btnOwnerClick
       end
     end
     object tsMap: TTabSheet
       Caption = #1050#1072#1088#1090#1072
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Splitter1: TSplitter
         Left = 0
         Top = 423
@@ -418,7 +411,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
             Width = 285
             Height = 21
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 13
             TabOrder = 0
             OnChange = cbLayersChange
           end
@@ -441,14 +434,14 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
             TabOrder = 3
             OnClick = btnLocateClick
           end
-          object Button1: TButton
+          object btnProperties: TButton
             Left = 569
             Top = 2
             Width = 110
             Height = 21
             Caption = #1048#1079#1084#1077#1085#1080#1090#1100' '#1076#1072#1085#1085#1099#1077
             TabOrder = 2
-            OnClick = btnLocateClick
+            OnClick = btnPropertiesClick
           end
         end
       end
@@ -476,7 +469,6 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
     OnClick = btnOKClick
   end
   object mdNav: TRxMemoryData
-    Active = True
     FieldDefs = <
       item
         Name = 'ENT_ID'
@@ -547,7 +539,8 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
     AfterEdit = mdNavAfterEdit
     AfterPost = mdNavAfterPost
     OnCalcFields = mdNavCalcFields
-    Left = 744
+    Left = 144
+    Top = 104
     object mdNavENT_ID: TIntegerField
       DisplayLabel = #8470' '#1087'/'#1087
       DisplayWidth = 5
@@ -621,9 +614,10 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
       Size = 254
     end
     object mdNavOBJ_ID: TStringField
+      DisplayWidth = 36
       FieldName = 'OBJ_ID'
       Visible = False
-      Size = 32
+      Size = 36
     end
     object mdNavLAYER_NAME: TStringField
       DisplayLabel = #1057#1083#1086#1081
@@ -633,16 +627,19 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
   end
   object dsNav: TDataSource
     DataSet = mdNav
-    Left = 784
+    Left = 184
+    Top = 104
   end
   object EzGIS1: TEzGIS
     Active = False
     LayersSubdir = 'C:\Program Files\CodeGear\RAD Studio\5.0\bin\'
     OnAfterPaintEntity = EzGIS1AfterPaintEntity
-    Left = 664
+    Left = 64
+    Top = 104
   end
   object ActionList1: TActionList
-    Left = 704
+    Left = 104
+    Top = 104
     object acSemCopy: TAction
       Caption = #1047#1072#1087#1086#1084#1085#1080#1090#1100
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1089#1077#1084#1085#1072#1090#1080#1082#1091' '#1074' '#1073#1091#1092#1077#1088#1077

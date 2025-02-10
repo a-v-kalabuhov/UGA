@@ -3,13 +3,14 @@ object mstMPBrowserForm: TmstMPBrowserForm
   Top = 0
   Caption = #1057#1074#1086#1076#1085#1099#1081' '#1087#1083#1072#1085
   ClientHeight = 370
-  ClientWidth = 952
+  ClientWidth = 1161
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   OnClose = FormClose
   OnCreate = FormCreate
@@ -19,16 +20,16 @@ object mstMPBrowserForm: TmstMPBrowserForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 952
+    Width = 1161
     Height = 29
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
-      952
+      1161
       29)
     object btnClose: TSpeedButton
-      Left = 837
+      Left = 1046
       Top = 3
       Width = 110
       Height = 23
@@ -59,7 +60,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
       ShowHint = True
       OnClick = btnLoadAllClick
     end
-    object btnRemovePrjFromMap: TSpeedButton
+    object btnRemoveFromMap: TSpeedButton
       Left = 390
       Top = 3
       Width = 110
@@ -68,18 +69,18 @@ object mstMPBrowserForm: TmstMPBrowserForm
       Caption = #1059#1073#1088#1072#1090#1100' '#1089' '#1082#1072#1088#1090#1099
       ParentShowHint = False
       ShowHint = True
-      OnClick = btnRemovePrjFromMapClick
+      OnClick = btnRemoveFromMapClick
     end
-    object btnRemoveAllPrjsFromMap: TSpeedButton
+    object btnRemoveAllFromMap: TSpeedButton
       Left = 506
       Top = 3
       Width = 110
       Height = 23
-      Hint = #1059#1073#1088#1072#1090#1100' '#1074#1089#1077' '#1079#1072#1075#1088#1091#1078#1077#1085#1085#1099#1077' '#1087#1088#1086#1077#1082#1090#1099' '#1089' '#1082#1072#1088#1090#1099
+      Hint = #1059#1073#1088#1072#1090#1100' '#1074#1089#1077' '#1079#1072#1075#1088#1091#1078#1077#1085#1085#1099#1077' '#1086#1073#1098#1077#1082#1090#1099' '#1089' '#1082#1072#1088#1090#1099
       Caption = #1059#1073#1088#1072#1090#1100' '#1074#1089#1077
       ParentShowHint = False
       ShowHint = True
-      OnClick = btnRemoveAllPrjsFromMapClick
+      OnClick = btnRemoveAllFromMapClick
     end
     object DBNavigator1: TDBNavigator
       Left = 4
@@ -94,16 +95,16 @@ object mstMPBrowserForm: TmstMPBrowserForm
   object Panel3: TPanel
     Left = 0
     Top = 334
-    Width = 952
+    Width = 1161
     Height = 36
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      952
+      1161
       36)
     object btnCoords: TSpeedButton
-      Left = 825
+      Left = 1034
       Top = 6
       Width = 122
       Height = 23
@@ -113,34 +114,33 @@ object mstMPBrowserForm: TmstMPBrowserForm
       ExplicitLeft = 920
     end
     object btnZone: TSpeedButton
-      Left = 593
+      Left = 458
       Top = 6
       Width = 110
       Height = 23
       Anchors = [akRight, akBottom]
       Caption = #1055#1086#1089#1090#1088#1086#1080#1090#1100' '#1079#1086#1085#1091
       Enabled = False
-      ExplicitLeft = 688
+      Visible = False
     end
     object btnRemoveZone: TSpeedButton
-      Left = 709
+      Left = 570
       Top = 6
       Width = 110
       Height = 23
       Anchors = [akRight, akBottom]
       Caption = #1059#1076#1072#1083#1080#1090#1100' '#1079#1086#1085#1091
       Enabled = False
-      ExplicitLeft = 804
+      Visible = False
     end
     object btnDisplay: TSpeedButton
-      Left = 477
+      Left = 918
       Top = 6
       Width = 110
       Height = 23
       Anchors = [akRight, akBottom]
       Caption = #1055#1086#1082#1072#1079#1072#1090#1100' '#1085#1072' '#1082#1072#1088#1090#1077
       OnClick = btnDisplayClick
-      ExplicitLeft = 572
     end
     object chbTransparency: TCheckBox
       Left = 8
@@ -166,7 +166,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
   object PageControl1: TPageControl
     Left = 0
     Top = 29
-    Width = 952
+    Width = 1161
     Height = 305
     ActivePage = tabData
     Align = alClient
@@ -177,12 +177,12 @@ object mstMPBrowserForm: TmstMPBrowserForm
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 944
+        Width = 1153
         Height = 33
         Align = alTop
         TabOrder = 0
         DesignSize = (
-          944
+          1153
           33)
         object btnFilterStart: TSpeedButton
           Left = 4
@@ -254,7 +254,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
           OnClick = btnPropertiesClick
         end
         object sbtnDeleteProject: TSpeedButton
-          Left = 842
+          Left = 1051
           Top = 1
           Width = 94
           Height = 26
@@ -310,7 +310,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
       object kaDBGrid1: TkaDBGrid
         Left = 0
         Top = 33
-        Width = 944
+        Width = 1153
         Height = 244
         Align = alClient
         DataSource = DataSource1
@@ -322,42 +322,112 @@ object mstMPBrowserForm: TmstMPBrowserForm
         TitleFont.Name = 'Tahoma'
         TitleFont.Style = []
         OnCellColors = kaDBGrid1CellColors
+        OnGetLogicalValue = kaDBGrid1GetLogicalValue
+        OnLogicalColumn = kaDBGrid1LogicalColumn
         Columns = <
           item
             Expanded = False
-            FieldName = 'PROJECT_ID'
+            FieldName = 'ID'
+            Width = 50
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'MASTER_PLAN_CLASS_ID'
+            Title.Caption = 'ID '#1082#1083#1072#1089#1089#1072
+            Width = 60
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'LAYER_NAME'
+            Title.Caption = #1050#1083#1072#1089#1089
+            Width = 100
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'STATUS'
+            Title.Caption = 'ID c'#1090#1072#1090#1091#1089#1072
+            Width = 60
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'STATUS_NAME'
+            Title.Caption = #1057#1090#1072#1090#1091#1089
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'ARCHIVED'
+            Title.Caption = #1040#1088#1093#1080#1074#1085#1099#1081
+            Width = 60
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'CONFIRMED'
+            Title.Caption = #1057#1086#1075#1083#1072#1089#1086#1074#1072#1085
+            Width = 65
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DISMANTLED'
+            Title.Caption = #1044#1077#1084#1086#1085#1090#1080#1088#1086#1074#1072#1085
+            Width = 75
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'ADDRESS'
             Title.Caption = #1040#1076#1088#1077#1089
-            Width = 300
+            Width = 150
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'DOC_NUMBER'
-            Title.Caption = #1053#1086#1084#1077#1088
-            Width = 50
+            Title.Caption = #8470' '#1087#1088#1086#1077#1082#1090#1072
+            Width = 70
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'DOC_DATE'
             Title.Caption = #1044#1072#1090#1072' '#1087#1088#1086#1077#1082#1090#1072
-            Width = 80
+            Width = 75
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'LINE_ID'
+            FieldName = 'NAME'
+            Title.Caption = #1055#1088#1086#1077#1082#1090
+            Width = 200
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'INFO'
-            Visible = False
+            FieldName = 'REQUEST_NUMBER'
+            Title.Caption = #8470' '#1079#1072#1103#1074#1082#1080
+            Width = 75
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'REQUEST_DATE'
+            Title.Caption = #1044#1072#1090#1072' '#1079#1072#1103#1074#1082#1080
+            Width = 75
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'UNDERGROUND'
+            Title.Caption = #1055#1086#1076#1079#1077#1084'.'
+            Width = 60
+            Visible = True
           end
           item
             Expanded = False
@@ -368,156 +438,117 @@ object mstMPBrowserForm: TmstMPBrowserForm
           end
           item
             Expanded = False
+            FieldName = 'PIPE_COUNT'
+            Title.Caption = #1050#1086#1083'-'#1074#1086' '#1090#1088#1091#1073'/'#1082#1072#1073#1077#1083#1077#1081
+            Width = 115
+            Visible = True
+          end
+          item
+            Expanded = False
             FieldName = 'VOLTAGE'
-            Title.Caption = #1053#1072#1087#1088#1103#1078'.'
-            Width = 60
+            Title.Caption = #1053#1072#1087#1088#1103#1078#1077#1085#1080#1077
+            Width = 70
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'LAYER_ID'
-            Visible = False
-          end
-          item
-            Expanded = False
-            FieldName = 'LAYER_NAME'
-            Title.Caption = #1057#1083#1086#1081
-            Width = 200
+            FieldName = 'MATERIAL'
+            Title.Caption = #1052#1072#1090#1077#1088#1080#1072#1083
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CUSTOMER'
-            Title.Caption = #1047#1072#1082#1072#1079#1095#1080#1082
-            Width = 200
+            FieldName = 'TOP'
+            Title.Caption = #1042#1077#1088#1093
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'EXECUTOR'
-            Title.Caption = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100
-            Width = 200
+            FieldName = 'BOTTOM'
+            Title.Caption = #1053#1080#1079
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CONFIRMED'
-            Title.Caption = #1055#1088#1086#1074#1077#1088#1077#1085
-            Width = 55
+            FieldName = 'FLOOR'
+            Title.Caption = #1044#1085#1086
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'CONFIRM_DATE'
-            Title.Caption = #1044#1072#1090#1072' '#1087#1088#1086#1074#1077#1088#1082#1080
+            FieldName = 'OWNER'
+            Title.Caption = #1041#1072#1083#1072#1085#1089#1086#1076#1077#1088#1078#1072#1090#1077#1083#1100
+            Width = 120
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'IS_LINE'
+            Title.Caption = #1051#1080#1085#1080#1103
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'ROTATION'
+            Title.Caption = #1059#1075#1086#1083' '#1087#1086#1074#1086#1088#1086#1090#1072
             Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DRAW_DATE'
+            Title.Caption = #1044#1072#1090#1072' '#1085#1072#1085#1077#1089#1077#1085#1080#1103
+            Width = 90
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'CUSTOMER_ORGS_ID'
+            Title.Caption = #1047#1072#1082#1072#1079#1095#1080#1082' ID'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'CUSTOMER_NAME'
+            Title.Caption = #1047#1072#1082#1072#1079#1095#1080#1082
+            Width = 150
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'EXECUTOR_ORGS_ID'
+            Title.Caption = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100' ID'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'EXECUTOR_NAME'
+            Title.Caption = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100
+            Width = 150
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DRAW_ORGS_ID'
+            Title.Caption = #1050#1077#1084' '#1085#1072#1085#1077#1089#1077#1085#1086' ID'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DRAWER_NAME'
+            Title.Caption = #1050#1077#1084' '#1085#1072#1085#1077#1089#1077#1085#1086
+            Width = 150
             Visible = True
           end>
       end
     end
   end
   object DataSource1: TDataSource
-    DataSet = ibqProjects
-    Left = 504
-    Top = 144
-  end
-  object ibqProjects: TIBQuery
-    Database = MStIBXMapMngr.dbKis
-    Transaction = IBTransaction1
-    AfterClose = ibqProjectsAfterClose
-    AfterScroll = ibqProjectsAfterScroll
-    SQL.Strings = (
-      'SELECT '
-      
-        '       PRJS.ID AS PROJECT_ID, PRJS.ADDRESS, PRJS.DOC_NUMBER, PRJ' +
-        'S.DOC_DATE, PRJS.CONFIRMED, PRJS.CONFIRM_DATE,'
-      
-        '       LINES.ID AS LINE_ID, LINES.INFO, LINES.DIAMETER, LINES.VO' +
-        'LTAGE,'
-      '       LAYERS.ID AS LAYER_ID, LAYERS.NAME AS LAYER_NAME,'
-      '       ORGS2.NAME AS CUSTOMER, ORGS1.NAME AS EXECUTOR'
-      'FROM'
-      '    PROJECT_LINES LINES'
-      '    LEFT JOIN'
-      
-        '    PROJECT_LAYERS LAYERS ON (LINES.PROJECT_LAYERS_ID = LAYERS.I' +
-        'D)'
-      '    LEFT JOIN'
-      '    PROJECTS PRJS ON (LINES.PROJECTS_ID = PROJECTS.ID)'
-      '    LEFT JOIN'
-      '    LICENSED_ORGS ORGS1 ON (PRJS.EXECUTOR_ORGS_ID = ORGS1.ID)'
-      '    LEFT JOIN'
-      '    LICENSED_ORGS ORGS2 ON (PRJS.CUSTOMER_ORGS_ID = ORGS2.ID)'
-      'ORDER BY PRJS.ID')
-    UpdateObject = IBUpdateSQL1
-    Left = 584
-    Top = 144
-  end
-  object IBTransaction1: TIBTransaction
-    AllowAutoStart = False
-    DefaultDatabase = MStIBXMapMngr.dbKis
-    Params.Strings = (
-      'read_committed'
-      'rec_version'
-      'nowait')
-    AutoStopAction = saCommit
-    Left = 544
-    Top = 144
+    Left = 88
+    Top = 136
   end
   object ActionList1: TActionList
-    Left = 144
-    Top = 208
-  end
-  object IBUpdateSQL1: TIBUpdateSQL
-    RefreshSQL.Strings = (
-      'SELECT '
-      
-        '       PRJS.ID AS PROJECT_ID, PRJS.ADDRESS, PRJS.DOC_NUMBER, PRJ' +
-        'S.DOC_DATE, PRJS.CONFIRMED, PRJS.CONFIRM_DATE,'
-      
-        '       LINES.ID AS LINE_ID, LINES.INFO, LINES.DIAMETER, LINES.VO' +
-        'LTAGE,'
-      '       LAYERS.ID AS LAYER_ID, LAYERS.NAME AS LAYER_NAME,'
-      '       ORGS2.NAME AS CUSTOMER, ORGS1.NAME AS EXECUTOR'
-      'FROM'
-      '    PROJECT_LINES LINES'
-      '    LEFT JOIN'
-      
-        '    PROJECT_LAYERS LAYERS ON (LINES.PROJECT_LAYERS_ID = LAYERS.I' +
-        'D)'
-      '    LEFT JOIN'
-      '    PROJECTS PRJS ON (LINES.PROJECTS_ID = PROJECTS.ID)'
-      '    LEFT JOIN'
-      '    LICENSED_ORGS ORGS1 ON (PRJS.EXECUTOR_ORGS_ID = ORGS1.ID)'
-      '    LEFT JOIN'
-      '    LICENSED_ORGS ORGS2 ON (PRJS.CUSTOMER_ORGS_ID = ORGS2.ID)'
-      'WHERE '
-      '    PRJS.ID=:PROJECT_ID')
-    DeleteSQL.Strings = (
-      'DELETE FROM PROJECT_LINES'
-      'WHERE '
-      'ID=:LINE_ID')
-    Left = 616
-    Top = 144
-  end
-  object PopupMenuDelete: TPopupMenu
-    Left = 648
-    Top = 264
-    object miDeleteProject: TMenuItem
-      Caption = #1059#1076#1072#1083#1080#1090#1100' '#1074#1077#1089#1100' '#1087#1088#1086#1077#1082#1090'...'
-      OnClick = miDeleteProjectClick
-    end
-    object miDeleteObject: TMenuItem
-      Caption = #1059#1076#1072#1083#1080#1090#1100' '#1074#1099#1073#1088#1072#1085#1085#1091#1102' '#1083#1080#1085#1080#1102'...'
-      OnClick = miDeleteObjectClick
-    end
-  end
-  object IBSQL1: TIBSQL
-    Database = MStIBXMapMngr.dbKis
-    SQL.Strings = (
-      'DELETE FROM PROJECTS WHERE ID=:ID')
-    Transaction = IBTransaction1
-    Left = 584
-    Top = 184
+    Left = 32
+    Top = 136
   end
 end

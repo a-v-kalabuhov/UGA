@@ -81,7 +81,7 @@ type
     mdNavLAYER_NAME: TStringField;
     DBNavigator1: TDBNavigator;
     btnLocate: TButton;
-    Button1: TButton;
+    btnProperties: TButton;
     procedure btnCustomerClick(Sender: TObject);
     procedure btnExecutorClick(Sender: TObject);
     procedure btnDrawerClick(Sender: TObject);
@@ -104,6 +104,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure dbgNavCellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor; State: TGridDrawState;
       var FontStyle: TFontStyles);
+    procedure btnPropertiesClick(Sender: TObject);
   private
     FOriginal: TmstProjectMP;
     FTempProject: TmstProjectMP;
@@ -133,8 +134,8 @@ type
     function CheckField(aControl: TEdit; const aFieldName: string): Boolean;
     function CheckDateField(aControl: TEdit; const aFieldName: string): Boolean;
     procedure NeedToFillField(aControl: TEdit; const aFieldName: string);
-    function GetCurrentMpObj(): TmstProjectMPObject;
-    procedure LoadDataFromNavDataSet(MpObj: TmstProjectMPObject);
+    function GetCurrentMpObj(): TmstMPObject;
+    procedure LoadDataFromNavDataSet(MpObj: TmstMPObject);
   private
     function GetCanSave: Boolean;
     procedure SetCanSave(const Value: Boolean);
@@ -232,13 +233,13 @@ var
   Layer: TEzBaseLayer;
   RecNo: Integer;
   ObjGuid: string;
-  MpObj: TmstProjectMPObject;
+  MpObj: TmstMPObject;
 begin
   ObjGuid := mdNavOBJ_ID.AsString;
   MpObj := FTempProject.Objects.GetByGuid(ObjGuid);
   if Assigned(MpObj) then
   begin
-    Layer := EzGIS1.Layers.LayerByName(MPObj.Layer.Name);
+    Layer := EzGIS1.Layers.LayerByName(MPObj.EzLayerName);
     if Assigned(Layer) then
     begin
       RecNo := mdNavENT_ID.AsInteger;
@@ -258,13 +259,26 @@ procedure TmstEditProjectMPDialog.btnOwnerClick(Sender: TObject);
 var
   Id: Integer;
   aName: string;
+  I: Integer;
+  Obj: TmstMPObject;
 begin
   Id := FTempProject.OwnerOrgId;
   if SelectOrg(Id, aName) then
   begin
     FTempProject.OwnerOrgId := Id;
     edOwner.Text := aName;
+    for I := 0 to FTempProject.Objects.Count - 1 do
+    begin
+      Obj := FTempProject.Objects[I];
+      Obj.Owner := aName;
+      Obj.OwnerOrgId := Id;
+    end;
   end;
+end;
+
+procedure TmstEditProjectMPDialog.btnPropertiesClick(Sender: TObject);
+begin
+  EditCurrentObjectSemantic();
 end;
 
 procedure TmstEditProjectMPDialog.cbLayersChange(Sender: TObject);
@@ -423,11 +437,11 @@ end;
 
 function SortObjsByLayerAndEntId(Item1, Item2: Pointer): Integer;
 var
-  Obj1, Obj2: TmstProjectMPObject;
+  Obj1, Obj2: TmstMPObject;
 begin
-  Obj1 := TmstProjectMPObject(Item1);
-  Obj2 := TmstProjectMPObject(Item2);
-  Result := AnsiCompareStr(Obj1.Layer.Name, Obj1.Layer.Name);
+  Obj1 := TmstMPObject(Item1);
+  Obj2 := TmstMPObject(Item2);
+  Result := AnsiCompareStr(Obj1.EzLayerName, Obj1.EzLayerName);
   if Result = 0 then
     Result := Obj1.EzLayerRecno - Obj2.EzLayerRecno;
 end;
@@ -436,7 +450,7 @@ procedure TmstEditProjectMPDialog.FillNavDataSet;
 var
   I: Integer;
   Layer: TEzBaseLayer;
-  MPObj: TmstProjectMPObject;
+  MPObj: TmstMPObject;
   L: TmstProjectLayer;
 begin
   if FLayersUpdating then
@@ -450,13 +464,13 @@ begin
     for I := 0 to FTempProject.Objects.Count - 1 do
     begin
       MPObj := FTempProject.Objects[I];
-      if (L = nil) or (L = MPObj.Layer) then
+      if (L = nil) or (L.MPLayerId = MPObj.MPLayerId) then
       begin
-        Layer := EzGIS1.Layers.LayerByName(MPObj.Layer.Name);
+        Layer := EzGIS1.Layers.LayerByName(MPObj.EzLayerName);
         if Assigned(Layer) then
         begin
           mdNav.Append;
-          mdNav.FieldByName('OBJ_ID').AsString := MPObj.Guid;
+          mdNav.FieldByName('OBJ_ID').AsString := MPObj.MPObjectGuid;
           mdNav.FieldByName('NET_STATE_ID').AsInteger := MPObj.Status;
           //mdNav.FieldByName('NET_STATE_NAME').AsString := MPObj.Guid;
           mdNav.FieldByName('DISMANTLED').AsBoolean := MPObj.Dismantled;
@@ -471,7 +485,7 @@ begin
           mdNav.FieldByName('BOTTOM').AsString := MPObj.Bottom;
           mdNav.FieldByName('FLOOR').AsString := MPObj.Floor;
           mdNav.FieldByName('ENT_ID').AsInteger := MPObj.EzLayerRecno;
-          mdNav.FieldByName('LAYER_NAME').AsString := MPObj.Layer.Name;
+          mdNav.FieldByName('LAYER_NAME').AsString := MPObj.EzLayerName;
           mdNav.Post;
         end;
       end;
@@ -497,7 +511,7 @@ begin
   Result := btnOK.Visible;
 end;
 
-function TmstEditProjectMPDialog.GetCurrentMpObj: TmstProjectMPObject;
+function TmstEditProjectMPDialog.GetCurrentMpObj: TmstMPObject;
 var
   ObjGuid: string;
 begin
@@ -536,9 +550,8 @@ begin
     Result := -1;
 end;
 
-procedure TmstEditProjectMPDialog.LoadDataFromNavDataSet(MpObj: TmstProjectMPObject);
+procedure TmstEditProjectMPDialog.LoadDataFromNavDataSet(MpObj: TmstMPObject);
 begin
-  MpObj.Status := mdNavNET_STATE_ID.AsInteger;
   MpObj.Dismantled := mdNavDISMANTLED.AsBoolean;
   MpObj.Archived := mdNavARCHIVED.AsBoolean;
   MpObj.Confirmed := mdNavAGREED.AsBoolean;
@@ -572,20 +585,22 @@ end;
 
 procedure TmstEditProjectMPDialog.LoadPrjStatus;
 var
-  I, J, K: Integer;
+  I, I1, J, K: Integer;
   S: string;
 begin
   // грузим список статусов в комбо
   cbStatusList.Clear;
-  K := 0;
+  if FTempProject.ObjState = mstDrawn then
+    K := 4
+  else
+    K := 1;
   for I := TmstMPStatuses.MinId to TmstMPStatuses.MaxId do
   begin
     S := TmstMPStatuses.StatusName(I);
     J := cbStatusList.Items.AddObject(S, Pointer(I));
-    if I = FTempProject.Status then
-      K := J;
+    if I = K then
+      cbStatusList.ItemIndex := J;
   end;
-  cbStatusList.ItemIndex := K;
 end;
 
 procedure TmstEditProjectMPDialog.LoadProject;
@@ -653,7 +668,7 @@ end;
 
 procedure TmstEditProjectMPDialog.mdNavAfterPost(DataSet: TDataSet);
 var
-  MpObj: TmstProjectMPObject;
+  MpObj: TmstMPObject;
 begin
   if FNavUpdating then
     Exit;
@@ -745,12 +760,13 @@ var
 //  Ent: TEzEntity;
 //  EntClass: TEzEntityClass;
 //  EntityID: TEzEntityID;
-  MPObj: TmstProjectMPObject;
+  MPObj: TmstMPObject;
+  Ext: TEzRect;
 begin
   for I := 0 to FTempProject.Objects.Count - 1 do
   begin
     MPObj := FTempProject.Objects[I];
-    Layer := EzGIS1.Layers.LayerByName(MPObj.Layer.Name);
+    Layer := EzGIS1.Layers.LayerByName(MPObj.EzLayerName);
     if Assigned(Layer) then
     begin
       TProjectUtils.AddMpObjToLayer(Layer, MPObj);
@@ -767,6 +783,16 @@ begin
 //      finally
 //        FreeAndNil(Ent);
 //      end;
+    end;
+  end;
+  //
+  if MPObj <> nil then
+  begin
+    Layer := EzGIS1.Layers.LayerByName(MPObj.EzLayerName);
+    if Assigned(Layer) then
+    begin
+      Ext := Layer.UpdateExtension;
+
     end;
   end;
 end;
