@@ -23,14 +23,14 @@ uses
   uMStImport, uMstImportFactory, uMStClassesProjectsEz,
   uMStClassesWatermarkDraw, uMstClassesLots, uMStClassesProjects, uMStClassesProjectsSearch, uMStClassesProjectsMIFExport,
   uMstDialogFactory, uMStClassesProjectsMP, 
-  uMStModuleMapMngrIBX, uMStModuleProjectImport, uMstModuleMasterPlan,
+  uMStModuleMapMngrIBX, uMStModuleProjectImport, uMstModuleMasterPlan, uMStDialogMPLineColors,
   uMStFormLayerBrowser, VirtualTrees;
 
 const
   WM_RESTORE_PANELS = WM_USER + 100;
 
 type
-  TAllotmentPoint = record
+  TMstPoint = record
     Name: string[10];
     X: Double;
     Y: Double;
@@ -39,9 +39,29 @@ type
   end;
   //размер 55 байт, максимальное число точек отвода - 144
 
-  TAllotmentPoints = array of TAllotmentPoint;
+  TMstPointArray = array of TMstPoint;
 
-  TCursorState = (csNone, csArrow, csZoomIn, csZoomOut, csZoomRect, csZoomSelection, csZoomPrev, csReadyToDrag, csDraging, csProcessing, csLotInfo, csMapHistory, csShowLots, csLoadmap, csUnloadMap, csCalc, csCoord, csLoadLots, csPrintPrepare, csPrint);
+  TCursorState = (
+    csNone,
+    csArrow,
+    csZoomIn,
+    csZoomOut,
+    csZoomRect,
+    csZoomSelection,
+    csZoomPrev,
+    csReadyToDrag,
+    csDraging,
+    csProcessing,
+    csLotInfo,
+    csMapHistory,
+    csShowLots,
+    csLoadmap,
+    csUnloadMap,
+    csCalc,
+    csCoord,
+    csLoadLots,
+    csPrintPrepare,
+    csPrint);
 
   TEntityState = (esNone, esResizePointFound, esResizing);
 
@@ -327,6 +347,15 @@ type
     N56: TMenuItem;
     DXF4: TMenuItem;
     XLS2: TMenuItem;
+    N57: TMenuItem;
+    ToolButton50: TToolButton;
+    ToolButton51: TToolButton;
+    acSavePointList: TAction;
+    Label3: TLabel;
+    acMPPickupPoints: TAction;
+    N58: TMenuItem;
+    N59: TMenuItem;
+    N60: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -491,8 +520,13 @@ type
     procedure XLS1Click(Sender: TObject);
     procedure acMPClassSettingsExecute(Sender: TObject);
     procedure DXF4Click(Sender: TObject);
+    procedure N57Click(Sender: TObject);
+    procedure acSavePointListUpdate(Sender: TObject);
+    procedure acMPPickupPointsExecute(Sender: TObject);
+    procedure acMPPickupPointsUpdate(Sender: TObject);
+    procedure acSavePointListExecute(Sender: TObject);
   private
-    Points: TAllotmentPoints;
+    FPoints: TMstPointArray;
     FCursorState: TCursorState;
     FPrevCurState: TCursorState;
     LastLayerName: string;
@@ -556,6 +590,15 @@ type
   private
     FNetTypesUpdate: Boolean;
     procedure NetTypeMenuClick(Sender: TObject);
+  private
+    FdWX, FdWY: Double;
+    procedure DoDrawBoxPopup(const X, Y: Integer; const WX, WY: Double);
+    procedure DoLocateEntityInLayerBrowser(const WX, WY: Double);
+    procedure DoSwitchScrollCommand();
+    procedure DoRunAutoScroll(Shift: TShiftState; const X, Y: Integer; const WX, WY: Double);
+  private
+    procedure SavePointListToMPObject();
+    function SavePointsToMPObject(): TmstMPObject;
   public
     property CursorState: TCursorState read FCursorState write SetCursorState;
     property Logged: Boolean read FLogged write FLogged;
@@ -585,9 +628,6 @@ uses
   uMStModulePrint, uMStDialogPointSize, uMStFormMapImages, uMStGISEzActions,
   uMStFormRichTextEditor, uMStFormPrintStats, uMStFormLoadLotProgress,
   uMstFormOrderList, uMStFormProjectBrowser, uMStFormMPBrowser, uMStFormMPClassSettings;
-
-var
-  dWX, dWY: Double;
 
 procedure TmstClientMainForm.acAerialExecute(Sender: TObject);
 begin
@@ -805,6 +845,25 @@ begin
   acReportEditTable.Enabled := mstPrintModule.HasLot;
 end;
 
+procedure TmstClientMainForm.acSavePointListExecute(Sender: TObject);
+begin
+  SavePointListToMPObject();
+end;
+
+procedure TmstClientMainForm.acSavePointListUpdate(Sender: TObject);
+var
+  B: Boolean;
+begin
+  B := CmdLine.CurrentAction is TmstMeasureAction;
+  if B then
+  begin
+    B := CmdLine.CurrentActionID = 'PROJECT_LINE';
+    if B then
+      B := ListView.Items.Count > 1;
+  end;
+  acSavePointList.Enabled := B;
+end;
+
 procedure TmstClientMainForm.acScrollExecute(Sender: TObject);  // +
 begin
   CursorState := csReadyToDrag;
@@ -936,6 +995,7 @@ var
 begin
   try
     if (Command = 'ZOOMWIN') or (Command = 'ZOOMIN') or (Command = 'ZOOMOUT') then
+    begin
       if FPrevCurState = csCalc then
       begin
         CursorState := csCalc;
@@ -946,6 +1006,17 @@ begin
         if Command = 'ZOOMWIN' then
           CursorState := csNone;
       end;
+    end
+    else
+    if (Command = 'CALC') then
+    begin
+      if (ActionID = 'PROJECT_LINE') then
+      begin
+        if CursorState = csCoord then
+          SavePointListToMPObject();
+        CursorState := csNone;
+      end;
+    end;
     //
     if ActionID = 'REPORT' then
     begin
@@ -978,38 +1049,16 @@ begin
 end;
 
 procedure TmstClientMainForm.DrawBoxMouseDown2D(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer; const WX, WY: Double);
-var
-  ActId, ObjId: string;
-  C: TPoint;
-  ScrollAction: TmstAutoHandScrollAction;
-  NRecNo: Integer;
-  Layer: TEzBaseLayer;
 begin
   if Button = mbRight then
   begin
-    dWX := WX;
-    dWY := WY;
-    PreparePopupMenuItems(WX, WY, PopupMenu);
-    C := DrawBox.ClientToScreen(Types.Point(X, Y));
-    PopupMenu.Popup(C.X, C.Y);
+    // возможно здесь надо сбросить какие-то параметры текущего состояния
+    DoDrawBoxPopup(X, Y, WX, WY);
   end
   else
   if (Button = mbMiddle) then
   begin
-    FDragText := False;
-    ActId := CmdLine.CurrentAction.ActionID;
-    if ActId <> 'SCROLL' then
-    begin
-      CursorState := csReadyToDrag;
-      CmdLine.Clear;
-      CmdLine.DoCommand('SCROLL', 'SCROLL');
-    end
-    else
-    begin
-      CursorState := csArrow;
-      CmdLine.Clear;
-      DrawBox.Cursor := crDefault;
-    end;
+    DoSwitchScrollCommand();
   end
   else
   if Button = mbLeft then
@@ -1017,44 +1066,21 @@ begin
     FDragText := False;
     if ssCtrl in Shift then
     begin
-      ScrollAction := TmstAutoHandScrollAction.CreateAction(CmdLine);
-      ScrollAction.OnMouseDown(Self, mbLeft, Shift, X, Y, WX, WY);
-      CmdLine.Push(TmstAutoHandScrollAction.CreateAction(CmdLine), False, 'AUTOSCROLL', '');
+      DoRunAutoScroll(Shift, X, Y, WX, WY);
     end
     else
     if (mstClientAppModule.Mode = amNone) and (CursorState in [csNone, csArrow]) then
     begin
       if Shift = [ssAlt] then
         LoadLotInfoToTree(WX, WY);
-      if Assigned(MStLayerBrowserForm) and MStLayerBrowserForm.Visible then
-      begin
-        if Assigned(MStLayerBrowserForm.Layer) then
-        begin
-          // выбираем слой на карте
-          // чпокаем в нём объекты
-          // первый чпокнутый показываем в браузере
-          Layer := GIS.Layers.LayerByName(MStLayerBrowserForm.Layer.Name);
-          if Assigned(Layer) then
-          begin
-            NRecNo := PickSingleEntity(Layer, DrawBox, Point2D(WX, WY), 10);
-            if NRecNo > 0 then
-            begin
-              Layer.Recno := NRecNo;
-              Layer.DBTable.RecNo := NRecNo;
-              ObjId := Layer.DBTable.FieldGet('OBJECT_ID');
-              MStLayerBrowserForm.Locate(ObjId);
-            end;
-          end;
-//          if Self.DrawBox.PickEntity(WY, WY, 8, MStLayerBrowserForm.Layer.Name, Layer, NRecNo, NPoint, nil) then
-//          begin
-//            Layer.Recno := NRecNo;
-//            Layer.DBTable.RecNo := NRecNo;
-//            ObjId := Layer.DBTable.FieldGet('OBJECT_ID');
-//            MStLayerBrowserForm.Locate(ObjId);
-//          end;
-        end;
-      end;
+      DoLocateEntityInLayerBrowser(WX, WY);
       LocateProjectLine(Point2D(WX, WY));
+      //
+//      if FPickPanel <> nil then
+//        if FPickPanel.Visible then
+//        begin
+//          FPickPanel.AddPoint(WX, WY);
+//        end;
     end;
   end;
 end;
@@ -1201,7 +1227,7 @@ procedure TmstClientMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boole
 begin
   CanClose := Application.MessageBox(PChar('Закрыть приложение?'), PChar('Подтверждение'), MB_YESNO + MB_ICONQUESTION) = mrYes;
   if CanClose then
-    Finalize(Points);
+    Finalize(FPoints);
   mstClientAppModule.WriteFormPosition(Application, Self);
   mstClientAppModule.SetOption('MainForm', 'LeftPanelWidth', IntToStr(pnLeft.Width));
   mstClientAppModule.SetOption('MainForm', 'RightPanelWidth', IntToStr(pnRight.Width));
@@ -1414,10 +1440,10 @@ procedure TmstClientMainForm.LoadLotsClick(Sender: TObject);
 var
   ALeft, ATop, ARight, ABottom: Double;
 begin
-  ALeft := dWY - 100;
-  ARight := dWY + 100;
-  ATop := dWX + 100;
-  ABottom := dWX - 100;
+  ALeft := FdWY - 100;
+  ARight := FdWY + 100;
+  ATop := FdWX + 100;
+  ABottom := FdWX - 100;
   LoadLots(ALeft, ATop, ARight, ABottom);
   DrawBox.RegenDrawing;
 end;
@@ -1618,6 +1644,50 @@ begin
   FRestored := True;
 end;
 
+procedure TmstClientMainForm.SavePointListToMPObject;
+var
+  Obj: TmstMPObject;
+begin
+  // прерываем действие в CmdLine
+  CursorState := csNone;
+  // копируем список точек в буфер
+  Obj := SavePointsToMPObject();
+  if Obj <> nil then
+  begin
+    try
+      if mstClientAppModule.MP.EditNewObject(Obj) then
+      begin
+        mstClientAppModule.MP.LoadToGis(Obj.DatabaseId, False);
+        ListView.Clear;
+        DrawBox.RegenDrawing();
+      end;
+    finally
+      Obj.Free;
+    end;
+  end;
+end;
+
+function TmstClientMainForm.SavePointsToMPObject: TmstMPObject;
+var
+  I: Integer;
+  Ent: TEzPolyLine;
+  EzPoints: array of TEzPoint;
+begin
+  Result := nil;
+  if Length(FPoints) > 1 then
+  begin
+    SetLength(EzPoints, Length(FPoints));
+    Result := TmstMPObject.Create;
+    for I := 0 to Length(FPoints) - 1 do
+      EzPoints[I] := Point2D(FPoints[I].Y, FPoints[I].X);
+    Ent := TEzPolyLine.CreateEntity(EzPoints);
+    Ent.UpdateExtension;
+    Ent.SaveToStream(Result.EzData);
+    Result.EzId := Integer(Ent.EntityID);
+    Result.EzData.Position := 0;
+  end;
+end;
+
 function TmstClientMainForm.SelectOrder(Maps: TStringList): IOrder;
 var
   Orders: IOrders;
@@ -1643,11 +1713,12 @@ begin
     Exit;
   if FCursorState in [csZoomIn, csZoomOut, csReadyToDrag] then
     CmdLine.Clear;
-  if CmdLine.IsBusy and (FCursorState <> csCalc) then
+  if CmdLine.IsBusy and ((FCursorState <> csCalc) and (FCursorState <> csCoord)) then
     Exit;
 
-  if (FCursorState = csCalc) then
+  if (FCursorState in [csCalc, csCoord]) then
   begin
+    FCursorState := Value;
     CmdLine.Clear;
     tbSnaps.Visible := False;
 //    CmdLine.AccuSnap.Enabled := False;
@@ -1661,11 +1732,15 @@ begin
       end;
   end; // of case
   FCursorState := Value;
+  TreeView.Enabled := FCursorState <> csCoord;
   case FCursorState of
     csCalc:
       tbSnaps.Visible := True;
     csCoord:
-      DrawBox.Cursor := crCoords;
+      begin
+        tbSnaps.Visible := True;
+        DrawBox.Cursor := crCoords;
+      end;
     csLotInfo:
       DrawBox.Cursor := crHelp;
     csNone, csArrow:
@@ -1683,11 +1758,11 @@ var
 begin
   try
     //clear TAllotmentPoint to array
-    if Length(Points) > 0 then
-      Finalize(Points);
+    if Length(FPoints) > 0 then
+      Finalize(FPoints);
     //allocate memory for array
     if Vector.Count > 0 then
-      SetLength(Points, Vector.Count);
+      SetLength(FPoints, Vector.Count);
     with ListView do
     begin
       Clear;
@@ -1697,15 +1772,15 @@ begin
           Caption := IntToStr(I + 1);
           SubItems.Add(Format('%0.2f', [Vector[I].Y]));
           SubItems.Add(Format('%0.2f', [Vector[I].X]));
-          Points[I].Name := Caption;
-          Points[I].X := Vector[I].Y;
-          Points[I].Y := Vector[I].X;
+          FPoints[I].Name := Caption;
+          FPoints[I].X := Vector[I].Y;
+          FPoints[I].Y := Vector[I].X;
           if Vector.Count < 2 then
           begin
             LenStr := '';
             AzimStr := '';
-            Points[I].Length := 0;
-            Points[I].Azimuth := 0;
+            FPoints[I].Length := 0;
+            FPoints[I].Azimuth := 0;
           end
           else
           begin
@@ -1715,11 +1790,11 @@ begin
             else
               Pt2 := Vector[Succ(I)];
             L := Dist2D(Pt1, Pt2);
-            Points[I].Length := L;
+            FPoints[I].Length := L;
             LenStr := Format('%0.2f', [L]);
             //AzimStr := GetDegreeCorner(Angle2D(Pt11, Pt22), True);
             Azimuth := CalcAzimuth(Pt1.y, Pt1.x, Pt2.y, Pt2.x);
-            Points[I].Azimuth := Azimuth;
+            FPoints[I].Azimuth := Azimuth;
             AzimStr := GetDegreeCorner(Azimuth);
           end;
           SubItems.Add(LenStr);
@@ -1757,8 +1832,8 @@ begin
   end
   else
     mstClientAppModule.Stack.ClearSelection;
-  if Length(Points) > 0 then
-    Finalize(Points);
+  if Length(FPoints) > 0 then
+    Finalize(FPoints);
   TreeView.Realign;
 end;
 
@@ -1786,7 +1861,7 @@ var
   s: string;
 begin
   s := '';
-  if Length(Points) <> 0 then
+  if Length(FPoints) <> 0 then
   begin
 {    MessageBox(Handle, PChar('Не удалось скопировать данные!'),
                  PChar('Ошибка!'), MB_OK);
@@ -1796,11 +1871,11 @@ begin
     for i := 0 to ListView.Items.Count - 1 do
       if all or ListView.Items[i].Selected then
       begin
-        s := s + Points[i].Name + #9;
-        s := s + Format('%0.9f', [Points[i].X]) + #9;
-        s := s + Format('%0.9f', [Points[i].Y]) + #9;
-        s := s + Format('%0.9f', [Points[i].Length]) + #9;
-        s := s + GetDegreeCorner(Points[i].Azimuth) + #9;
+        s := s + FPoints[i].Name + #9;
+        s := s + Format('%0.9f', [FPoints[i].X]) + #9;
+        s := s + Format('%0.9f', [FPoints[i].Y]) + #9;
+        s := s + Format('%0.9f', [FPoints[i].Length]) + #9;
+        s := s + GetDegreeCorner(FPoints[i].Azimuth) + #9;
         if Length(s) > 0 then
           SetLength(s, Length(s) - 1);
         s := s + #13#10;
@@ -2014,6 +2089,31 @@ begin
   CloseMPBrowser();
   //
   DisplayMPClassSettings();
+end;
+
+procedure TmstClientMainForm.acMPPickupPointsExecute(Sender: TObject);
+var
+  Act: TmstMeasureAction;
+begin
+  if CursorState = csCoord then
+  begin
+    CursorState := csNone;
+    CmdLine.Clear;
+  end
+  else
+  begin
+    CursorState := csCoord;
+    Act := TmstMeasureAction.CreateAction(CmdLine);
+    Act.OnPointListChange := ShowCoord;
+    Act.ShowResult := False;
+    CmdLine.Push(Act, True, 'CALC', 'PROJECT_LINE');
+  end;
+end;
+
+procedure TmstClientMainForm.acMPPickupPointsUpdate(Sender: TObject);
+begin
+  acMPPickupPoints.Enabled := CursorState in [csNone, csArrow];
+  acMPPickupPoints.Checked := CursorState = csCoord;
 end;
 
 procedure TmstClientMainForm.acPrintPrepareExecute(Sender: TObject);
@@ -2337,6 +2437,19 @@ end;
 procedure TmstClientMainForm.N53Click(Sender: TObject);
 begin
   mstClientAppModule.MP.DisplayNavigator(Self.DrawBox);
+end;
+
+procedure TmstClientMainForm.N57Click(Sender: TObject);
+var
+  Dlg: TmstMPLineColorsDialog;
+begin
+  Dlg := TmstMPLineColorsDialog.Create(Self);
+  try
+    Dlg.Execute();
+    DrawBox.RegenDrawing;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TmstClientMainForm.N7Click(Sender: TObject);
@@ -2904,6 +3017,46 @@ begin
   Result := TEzProjectReaderFactory.NewReader(False);
 end;
 
+procedure TmstClientMainForm.DoDrawBoxPopup(const X, Y: Integer; const WX, WY: Double);
+var
+  C: TPoint;
+begin
+  FdWX := WX;
+  FdWY := WY;
+  PreparePopupMenuItems(WX, WY, PopupMenu);
+  C := DrawBox.ClientToScreen(Types.Point(X, Y));
+  PopupMenu.Popup(C.X, C.Y);
+end;
+
+procedure TmstClientMainForm.DoLocateEntityInLayerBrowser;
+var
+  ActId, ObjId: string;
+  NRecNo: Integer;
+  Layer: TEzBaseLayer;
+begin
+  if Assigned(MStLayerBrowserForm) and MStLayerBrowserForm.Visible then
+  begin
+    if Assigned(MStLayerBrowserForm.Layer) then
+    begin
+      // выбираем слой на карте
+      // чпокаем в нём объекты
+      // первый чпокнутый показываем в браузере
+      Layer := GIS.Layers.LayerByName(MStLayerBrowserForm.Layer.Name);
+      if Assigned(Layer) then
+      begin
+        NRecNo := PickSingleEntity(Layer, DrawBox, Point2D(WX, WY), 10);
+        if NRecNo > 0 then
+        begin
+          Layer.Recno := NRecNo;
+          Layer.DBTable.RecNo := NRecNo;
+          ObjId := Layer.DBTable.FieldGet('OBJECT_ID');
+          MStLayerBrowserForm.Locate(ObjId);
+        end;
+      end;
+    end;
+  end;
+end;
+
 function TmstClientMainForm.DoCreateProject: TmstProject;
 begin
   Result := TmstProject.Create;
@@ -2934,6 +3087,35 @@ begin
   finally
     DrawBox.GIS.Layers.Delete(SL_PROJECT_IMPORT, True);
     DrawBox.RegenDrawing;
+  end;
+end;
+
+procedure TmstClientMainForm.DoRunAutoScroll;
+var
+  ScrollAction: TmstAutoHandScrollAction;
+begin
+  ScrollAction := TmstAutoHandScrollAction.CreateAction(CmdLine);
+  ScrollAction.OnMouseDown(Self, mbLeft, Shift, X, Y, WX, WY);
+  CmdLine.Push(TmstAutoHandScrollAction.CreateAction(CmdLine), False, 'AUTOSCROLL', '');
+end;
+
+procedure TmstClientMainForm.DoSwitchScrollCommand;
+var
+  ActId: string;
+begin
+  FDragText := False;
+  ActId := CmdLine.CurrentAction.ActionID;
+  if ActId <> 'SCROLL' then
+  begin
+    CursorState := csReadyToDrag;
+    CmdLine.Clear;
+    CmdLine.DoCommand('SCROLL', 'SCROLL');
+  end
+  else
+  begin
+    CursorState := csArrow;
+    CmdLine.Clear;
+    DrawBox.Cursor := crDefault;
   end;
 end;
 

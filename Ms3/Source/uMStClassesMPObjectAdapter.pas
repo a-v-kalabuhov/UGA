@@ -63,7 +63,6 @@ var
   EntClass: TEzEntityClass;
   EntityID: TEzEntityID;
   EzData: TStream;
-  EzDataFld: TField;
 begin
   EntityID := Self.EzEntityId;
   EntClass := GetClassFromID(EntityID);

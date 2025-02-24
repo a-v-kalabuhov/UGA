@@ -472,7 +472,6 @@ begin
           mdNav.Append;
           mdNav.FieldByName('OBJ_ID').AsString := MPObj.MPObjectGuid;
           mdNav.FieldByName('NET_STATE_ID').AsInteger := MPObj.Status;
-          //mdNav.FieldByName('NET_STATE_NAME').AsString := MPObj.Guid;
           mdNav.FieldByName('DISMANTLED').AsBoolean := MPObj.Dismantled;
           mdNav.FieldByName('ARCHIVED').AsBoolean := MPObj.Archived;
           mdNav.FieldByName('AGREED').AsBoolean := MPObj.Confirmed;
@@ -585,7 +584,7 @@ end;
 
 procedure TmstEditProjectMPDialog.LoadPrjStatus;
 var
-  I, I1, J, K: Integer;
+  I, J, K: Integer;
   S: string;
 begin
   // грузим список статусов в комбо
@@ -784,15 +783,15 @@ begin
 //        FreeAndNil(Ent);
 //      end;
     end;
-  end;
-  //
-  if MPObj <> nil then
-  begin
-    Layer := EzGIS1.Layers.LayerByName(MPObj.EzLayerName);
-    if Assigned(Layer) then
+    //
+    if MPObj <> nil then
     begin
-      Ext := Layer.UpdateExtension;
+      Layer := EzGIS1.Layers.LayerByName(MPObj.EzLayerName);
+      if Assigned(Layer) then
+      begin
+        Ext := Layer.UpdateExtension;
 
+      end;
     end;
   end;
 end;

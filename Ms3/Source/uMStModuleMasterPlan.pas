@@ -74,6 +74,7 @@ type
     function GetObjByDbId(const ObjId: Integer; LoadEzData: Boolean): TmstMPObject;
     procedure DeleteObj(const ObjId: Integer);
     function EditObjProperties(const ObjId: Integer): Boolean;
+    function EditNewObject(const MpObj: TmstMPObject): Boolean;
     function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
     procedure UpdateLayersVisibility(aLayers: TmstLayerList);
     //
@@ -83,6 +84,8 @@ type
     procedure UnloadAllFromGis();
     function UnloadFromGis(const ObjId: Integer): Boolean;
     //
+    procedure GiveOutCertif(const ObjId: Integer; CertifNumber: string; CertifDate: TDateTime);
+    procedure CopyToDrawn(const ObjId: Integer);
     function BrowserDataSet(): TDataSet;
   private
     FMPAdapter: TmstMPObjectAdapter;
@@ -91,6 +94,7 @@ type
     // обновляет данные в детальном датасете
     procedure RefreshMPObjectData(aObj: TmstMPObject);
     // сохраняет в базу
+    procedure SaveMPObjectCoords(aObj: TmstMPObject);
     procedure SaveMPObjectSemantics(aObj: TmstMPObject);
     procedure AddCurrentObjToLayer(const Display: Boolean);
     function LocateObj(ObjId: Integer; Ds: TDataSet): Boolean;
@@ -144,6 +148,7 @@ const
     'SELECT '
     + 'MPO.ID, '
     + 'MPO.OBJ_ID, '
+    + 'MPO.LINKED_OBJ_ID, '
     + 'MPO.MASTER_PLAN_CLASS_ID, '
     + 'MPO.STATUS, '
     + 'MPO.DISMANTLED, '
@@ -204,6 +209,7 @@ const
     'SELECT '
     + 'MPO.ID, '
     + 'MPO.OBJ_ID, '
+    + 'MPO.LINKED_OBJ_ID, '
     + 'MPO.MASTER_PLAN_CLASS_ID, '
     + 'MPO.STATUS, '
     + 'MPO.DISMANTLED, '
@@ -264,7 +270,8 @@ const
   SQL_UPDATE_MP_OBJECT_SEMANTICS =
     'UPDATE MASTER_PLAN_OBJECTS SET '
 //  + 'MASTER_PLAN_CLASS_ID = :MASTER_PLAN_CLASS_ID, '
-//  + 'OBJ_ID = :OBJ_ID, '
+  + 'OBJ_ID = :OBJ_ID, '
+  + 'LINKED_OBJ_ID = :LINKED_OBJ_ID, '
   + 'STATUS = :STATUS, '
   + 'DISMANTLED = :DISMANTLED, '
   + 'ARCHIVED = :ARCHIVED, '
@@ -290,7 +297,7 @@ const
 //  + 'CK36 = :CK36, '
   + 'CUSTOMER_ORGS_ID = :CUSTOMER_ORGS_ID, '
   + 'EXECUTOR_ORGS_ID = :EXECUTOR_ORGS_ID, '
-//  + 'OWNER_ORG_ID = :OWNER_ORG_ID, '
+  + 'OWNER_ORG_ID = :OWNER_ORG_ID, '
   + 'DRAW_ORGS_ID = :DRAW_ORGS_ID, '
 //  + 'DELETED = :DELETED, '
   + 'TABLE_VERSION = :TABLE_VERSION, '
@@ -308,11 +315,65 @@ const
   + 'TABLE_VERSION = :TABLE_VERSION '
   + 'WHERE (ID = :ID)';
 
+  SQL_SET_MP_CERTIF_GIVED_OUT =
+    'UPDATE MASTER_PLAN_OBJECTS '
+  + 'SET HAS_CERTIF = :HAS_CERTIF, '
+  + 'CERTIF_NUMBER = :CERTIF_NUMBER, '
+  + 'CERTIF_DATE = :CERTIF_DATE, '
+  + 'TABLE_VERSION = :TABLE_VERSION '
+  + 'WHERE (ID = :ID)';
+
+  SQL_COPY_MP_OBJECT_TO_DRAWN =
+    'INSERT INTO MASTER_PLAN_OBJECTS '
+  + '(ID, OBJ_ID, MASTER_PLAN_CLASS_ID, STATUS, DISMANTLED, ARCHIVED, CONFIRMED, ADDRESS, '
+  + 'DOC_NUMBER, DOC_DATE, REQUEST_NUMBER, REQUEST_DATE, UNDERGROUND, DIAMETER, PIPE_COUNT, '
+  + 'VOLTAGE, MATERIAL, TOP, BOTTOM, FLOOR, OWNER, DRAW_DATE, IS_LINE, ROTATION, EZDATA, '
+  + 'EZ_ID, EZ_RECNO, MINX, MINY, MAXX, MAXY, LOADED, PROJECT_NAME, CUSTOMER_ORGS_ID, '
+  + 'EXECUTOR_ORGS_ID, OWNER_ORG_ID, DRAW_ORGS_ID, DELETED, TABLE_VERSION, DRAWN, PROJECTED, '
+  + 'CERTIF_DATE, CERTIF_NUMBER, HAS_CERTIF, CHECK_STATE, LINKED_OBJ_ID) '
+  + 'SELECT :NEW_ID, :OBJ_ID, MASTER_PLAN_CLASS_ID, STATUS, DISMANTLED, ARCHIVED, CONFIRMED, ADDRESS, DOC_NUMBER, DOC_DATE, '
+  + 'REQUEST_NUMBER, REQUEST_DATE, UNDERGROUND, DIAMETER, PIPE_COUNT, VOLTAGE, MATERIAL, TOP, BOTTOM, FLOOR, OWNER, '
+  + 'DRAW_DATE, IS_LINE, ROTATION, EZDATA, EZ_ID, EZ_RECNO, MINX, MINY, MAXX, MAXY, LOADED, PROJECT_NAME, '
+  + 'CUSTOMER_ORGS_ID, EXECUTOR_ORGS_ID, OWNER_ORG_ID, DRAW_ORGS_ID, DELETED, :TABLE_VERSION, 1, PROJECTED, '
+  + 'CERTIF_DATE, CERTIF_NUMBER, HAS_CERTIF, CHECK_STATE, :LINKED_OBJ_ID '
+  + 'FROM MASTER_PLAN_OBJECTS '
+  + 'WHERE ID=:ID';
+
+
 { TmstMasterPlanModule }
 
 function TmstMasterPlanModule.Classifier: TmstMPClassifier;
 begin
   Result := FClassifier;
+end;
+
+procedure TmstMasterPlanModule.CopyToDrawn(const ObjId: Integer);
+var
+  Db: IDb;
+  Conn: IIBXConnection;
+  Ds: TDataSet;
+  Vrs: Integer;
+  NewObjId: Integer;
+begin
+  DoGetDb(Db);
+  Conn := Db.GetConnection(cmReadWrite, dmKis);
+  try
+    FIdxObjects.GetFirstRow(ObjId);
+    Vrs := Conn.GenNextValue(SG_MP_OBJECTS_TABLE_VERSION);
+    Ds := Conn.GetDataSet(SQL_COPY_MP_OBJECT_TO_DRAWN);
+    Conn.SetParam(Ds, SF_ID, ObjId);
+    NewObjId := Conn.GetGenValue(SG_MP_OBJECTS);
+    Conn.SetParam(Ds, SF_NEW_ID, NewObjId);
+    Conn.SetParam(Ds, SF_TABLE_VERSION, Vrs);
+    Conn.SetParam(Ds, SF_OBJ_ID, GetUniqueString(False, True));
+    Conn.SetParam(Ds, SF_LINKED_OBJ_ID, FMPAdapter.Id);
+    Conn.SetParam(Ds, SF_ID, ObjId);
+    Conn.ExecDataSet(Ds);
+  finally
+    Conn.Commit;
+  end;
+  //
+  RefreshObjList();
 end;
 
 constructor TmstMasterPlanModule.Create;
@@ -331,8 +392,6 @@ end;
 
 procedure TmstMasterPlanModule.DeleteMpObjFromDb(ObjId: Integer);
 var
-  View: TEzRect;
-  Saver: IProjectSaver;
   Db: IDb;
   Conn: IIBXConnection;
   Ds: TDataSet;
@@ -497,13 +556,32 @@ begin
   else
   begin
     Dlg := TmstEditMPObjectSemanticsDialog.Create(Self);
-    ;
-    if Dlg.EditObject(MpObj, Self as ImstMPModule) then
+    if Dlg.EditObject(MpObj, Self as ImstMPModule, False, False) then
     begin
       Result := True;
       SaveMPObjectSemantics(MpObj);
       RefreshMPObjectData(MpObj);
     end;
+  end;
+end;
+
+function TmstMasterPlanModule.EditNewObject(const MpObj: TmstMPObject): Boolean;
+var
+  Dlg: TmstEditMPObjectSemanticsDialog;
+begin
+  Result := False;
+  // создаём окно и показываем его
+  Dlg := TmstEditMPObjectSemanticsDialog.Create(Self);
+  if Dlg.EditObject(MpObj, Self as ImstMPModule, True, True) then
+  begin
+    Result := True;
+    MpObj.UpdateObjState();
+    MpObj.IsLine := True;
+    MpObj.CK36 := False;
+    MpObj.ExchangeXY := False;
+    //
+    SaveMPObjectCoords(MpObj);
+    RefreshObjList();
   end;
 end;
 
@@ -586,6 +664,7 @@ begin
   //FTableVersion := memBrowser.FieldByName(SF_TABLE_VERSION).AsInteger;
   Result.DatabaseId := memBrowser.FieldByName(SF_ID).AsInteger;
   Result.MPObjectGuid := memBrowser.FieldByName(SF_OBJ_ID).AsString;
+  Result.LinkedObjectGuid := memBrowser.FieldByName(SF_LINKED_OBJ_ID).AsString;
   Result.Address := memBrowser.FieldByName(SF_ADDRESS).AsString;
   Result.Archived := memBrowser.FieldByName(SF_ARCHIVED).AsInteger = 1;
   Result.Bottom := memBrowser.FieldByName(SF_BOTTOM).AsString;
@@ -628,6 +707,41 @@ begin
   if LoadEzData then
   begin
     raise Exception.Create('TmstMasterPlanModule.GetObjByDbId');
+  end;
+end;
+
+procedure TmstMasterPlanModule.GiveOutCertif(const ObjId: Integer; CertifNumber: string; CertifDate: TDateTime);
+var
+  Db: IDb;
+  Conn: IIBXConnection;
+  Ds: TDataSet;
+  RowNum: Integer;
+  Vrs: Integer;
+begin
+  // соединение
+  DoGetDb(Db);
+  //
+  Conn := Db.GetConnection(cmReadWrite, dmKis);
+  try
+  // выполняем запрос на обновление данных
+    Ds := Conn.GetDataSet(SQL_SET_MP_CERTIF_GIVED_OUT);
+    Conn.SetParam(Ds, SF_ID, ObjId);
+    Conn.SetParam(Ds, SF_CERTIF_NUMBER, CertifNumber);
+    Conn.SetParam(Ds, SF_HAS_CERTIF, 1);
+    Conn.SetNullableParam(Ds, SF_CERTIF_DATE, CertifDate, 0);
+    Vrs := Conn.GenNextValue(SG_MP_OBJECTS_TABLE_VERSION);
+    Conn.SetParam(Ds, SF_TABLE_VERSION, Vrs);
+    Conn.ExecDataSet(Ds);
+    //
+    RowNum := FIdxBrowser.GetFirstRow(ObjId);
+    memBrowser.RecNo := RowNum;
+    memBrowser.Edit;
+    memBrowser.FieldByName(SF_CERTIF_NUMBER).Value := CertifNumber;
+    memBrowser.FieldByName(SF_CERTIF_DATE).Value := CertifDate;
+    memBrowser.FieldByName(SF_HAS_CERTIF).Value := 1;
+    memBrowser.Post;
+  finally
+    Conn.Commit;
   end;
 end;
 
@@ -758,10 +872,12 @@ end;
 
 procedure TmstMasterPlanModule.RefreshMPObjectData(aObj: TmstMPObject);
 begin
-  LocateObj(aObj.DatabaseId, memBrowser);
+  if not LocateObj(aObj.DatabaseId, memBrowser) then
+    Exit;
   memBrowser.Edit;
   memBrowser.FieldByName(SF_TABLE_VERSION).AsInteger := FTableVersion;
   memBrowser.FieldByName(SF_OBJ_ID).AsString := aObj.MPObjectGuid;
+  memBrowser.FieldByName(SF_LINKED_OBJ_ID).AsString := aObj.LinkedObjectGuid;
   memBrowser.FieldByName(SF_ADDRESS).AsString := aObj.Address;
   memBrowser.FieldByName(SF_ARCHIVED).AsInteger := IfThen(aObj.Archived, 1, 0);
   memBrowser.FieldByName(SF_BOTTOM).AsString := aObj.Bottom;
@@ -1006,6 +1122,11 @@ begin
       FEzAdapter.Loaded := True;
       Layer.Recno := FEzAdapter.EzRecno;
     end;
+    //
+    memBrowser.Edit;
+    memBrowser.FieldByName(SF_LOADED).AsInteger := 1;
+    memBrowser.Post;
+    //
     if Display then
     begin
       FDrawBox.SetEntityInViewEx(Layer.Name, Layer.Recno, True);
@@ -1170,6 +1291,16 @@ begin
 
 end;
 
+procedure TmstMasterPlanModule.SaveMPObjectCoords;
+var
+  Db: IDb;
+  Saver: ImstObjectSaver;
+begin
+  DoGetDb(Db);
+  Saver := TmstMPObjectSaver.Create() as ImstObjectSaver;
+  Saver.Save(Db, aObj);
+end;
+
 procedure TmstMasterPlanModule.SaveMPObjectSemantics(aObj: TmstMPObject);
 var
   Db: IDb;
@@ -1189,7 +1320,8 @@ begin
     Ds := Conn.GetDataSet(Sql);
     Conn.SetParam(Ds, SF_ID, aObj.DatabaseId);
     Conn.SetParam(Ds, SF_TABLE_VERSION, FTableVersion);
-//    Conn.SetParam(Ds, SF_OBJ_ID, aObj.MPObjectId);
+    Conn.SetParam(Ds, SF_OBJ_ID, aObj.MPObjectGuid);
+    Conn.SetParam(Ds, SF_LINKED_OBJ_ID, aObj.LinkedObjectGuid);
     Conn.SetParam(Ds, SF_ADDRESS, aObj.Address);
     Conn.SetParam(Ds, SF_ARCHIVED, IfThen(aObj.Archived, 1, 0));
     Conn.SetParam(Ds, SF_BOTTOM, aObj.Bottom);
@@ -1216,6 +1348,7 @@ begin
     Conn.SetParam(Ds, SF_PROJECT_NAME, aObj.ProjectName);
     //Conn.SetParam(Ds, SF_CK36, IfThen(aObj.CK36, 1, 0));
     //Conn.SetParam(Ds, SF_, IfThen(aObj.ExchangeXY, 1, 0));
+    Conn.SetNullableParam(Ds, SF_OWNER_ORG_ID, aObj.OwnerOrgId, 0);
     Conn.SetNullableParam(Ds, SF_CUSTOMER_ORGS_ID, aObj.CustomerOrgId, 0);
     Conn.SetNullableParam(Ds, SF_EXECUTOR_ORGS_ID, aObj.ExecutorOrgId, 0);
     Conn.SetNullableParam(Ds, SF_DRAW_ORGS_ID, aObj.DrawOrgId, 0);
@@ -1228,7 +1361,7 @@ begin
     //Conn.SetParam(Ds, SF_MAXY, aObj.MaxY);
     // используются местная СК: Х - вверх, Y - вправо (геодезические кооринаты)
     //
-    Conn.SetParam(Ds, SF_CHECK_STATE, aObj.CheckState);
+    Conn.SetParam(Ds, SF_CHECK_STATE, Integer(aObj.CheckState));
 //    Conn.SetParam(Ds, SF_, aObj.ObjState);
     // нанесён
     Conn.SetParam(Ds, SF_DRAWN, IfThen(aObj.Drawn, 1, 0));

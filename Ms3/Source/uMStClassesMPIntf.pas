@@ -22,7 +22,9 @@ type
     //
     function GetObjByDbId(const ObjId: Integer; LoadEzData: Boolean): TmstMPObject;
     procedure DeleteObj(const ObjId: Integer);
+    function EditNewObject(const Obj: TmstMPObject): Boolean;
     function EditObjProperties(const ObjId: Integer): Boolean;
+//    function EditObjectProps(const Obj: TmstMPObject): Boolean;
     function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
     procedure UpdateLayersVisibility(aLayers: TmstLayerList);
     //
@@ -31,11 +33,19 @@ type
     procedure LoadToGis(const ObjId: Integer; const Display: Boolean);
     procedure UnloadAllFromGis();
     function UnloadFromGis(const ObjId: Integer): Boolean;
+    //
+    procedure CopyToDrawn(const ObjId: Integer);
+    procedure GiveOutCertif(const ObjId: Integer; CertifNumber: string; CertifDate: TDateTime);
   end;
 
   ImstMPModuleObjList = interface
     ['{353E66CC-A116-430A-A842-4DF7B91ADE5F}']
     function BrowserDataSet(): TDataSet;
+  end;
+
+  ImstMPObjectSaver = interface
+    ['{37CC5354-D092-4A5E-9E28-D361C9C8921C}']
+    function SaveMPObject(aDb: IDb; MPObject: TmstMPObject): Boolean;
   end;
 
 implementation

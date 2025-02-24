@@ -43,11 +43,9 @@ object mstMPBrowserForm: TmstMPBrowserForm
       Top = 3
       Width = 110
       Height = 23
-      Hint = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1074#1099#1073#1088#1072#1085#1085#1099#1081' '#1087#1088#1086#1077#1082#1090' '#1085#1072' '#1082#1072#1088#1090#1091
-      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1085#1072' '#1082#1072#1088#1090#1091
+      Action = acLoadToGis
       ParentShowHint = False
       ShowHint = True
-      OnClick = btnLoadToLayerClick
     end
     object btnLoadAll: TSpeedButton
       Left = 274
@@ -174,6 +172,10 @@ object mstMPBrowserForm: TmstMPBrowserForm
     TabOrder = 2
     object tabData: TTabSheet
       Caption = #1055#1088#1086#1077#1082#1090#1099
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -221,7 +223,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
         object btnProperties: TSpeedButton
           Left = 170
           Top = 1
-          Width = 94
+          Width = 77
           Height = 26
           Caption = #1057#1074#1086#1081#1089#1090#1074#1072
           Glyph.Data = {
@@ -306,6 +308,40 @@ object mstMPBrowserForm: TmstMPBrowserForm
           OnClick = sbtnDeleteProjectClick
           ExplicitLeft = 834
         end
+        object btnSpravka: TSpeedButton
+          Left = 253
+          Top = 1
+          Width = 116
+          Height = 26
+          Action = acGiveOutCertif
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            18000000000000030000000000000000000000000000000000004CB1224CB122
+            4CB1224CB1224CB1224CB1224CB1224CB1224CB1224CB1224CB1224CB1224CB1
+            224CB1224CB1224CB12200000000000000000000000000000000000000000000
+            00000000000000004CB1224CB1224CB1224CB1224CB1224CB122000000FFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000004CB1224CB1224CB1
+            224CB1224CB1224CB122000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFF0000004CB1224CB1224CB1224CB1224CB1224CB122000000FFFFFF
+            000000000000FFFFFF000000000000000000FFFFFF0000004CB1224CB1224CB1
+            224CB1224CB1224CB122000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFF0000000000004CB1224CB1224CB1224CB1224CB122000000FFFFFF
+            000000BDBDBD000000000000FFFFFF000000FFFFFF0000000000FF0000004CB1
+            224CB1224CB1224CB122000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFF0000000000FF0000FF0000004CB1224CB1224CB122000000FFFFFF
+            000000000000FFFFFF0000000000000000000000FF0000FF0000FF0000FF0000
+            FF0000004CB1224CB122000000FFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF00
+            00000000FF0000FF0000FF0000FF0000FF0000FF0000004CB122000000FFFFFF
+            000000BDBDBDFFFFFF000000FFFFFF0000000000FF0000FF0000FF0000FF0000
+            FF0000FF0000FF000000000000FFFFFFFFFFFFFFFFFFFFFFFF00000000000000
+            00000000FF0000FF0000FF0000FF0000FF0000FF0000004CB122000000000000
+            0000000000000000000000004CB1220000000000FF0000FF0000FF0000FF0000
+            FF0000004CB1224CB1224CB1224CB1224CB1224CB1224CB1224CB1224CB1224C
+            B1224CB1224CB1220000FF0000FF0000004CB1224CB1224CB1224CB1224CB122
+            4CB1224CB1224CB1224CB1224CB1224CB1224CB1224CB1220000FF0000004CB1
+            224CB1224CB1224CB1224CB1224CB1224CB1224CB1224CB1224CB1224CB1224C
+            B1224CB1224CB1220000004CB1224CB1224CB1224CB1224CB122}
+        end
       end
       object kaDBGrid1: TkaDBGrid
         Left = 0
@@ -321,6 +357,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
         TitleFont.Height = -11
         TitleFont.Name = 'Tahoma'
         TitleFont.Style = []
+        OnMouseUp = kaDBGrid1MouseUp
         OnCellColors = kaDBGrid1CellColors
         OnGetLogicalValue = kaDBGrid1GetLogicalValue
         OnLogicalColumn = kaDBGrid1LogicalColumn
@@ -550,5 +587,34 @@ object mstMPBrowserForm: TmstMPBrowserForm
   object ActionList1: TActionList
     Left = 32
     Top = 136
+    object acGiveOutCertif: TAction
+      Caption = #1042#1099#1076#1072#1090#1100' '#1089#1087#1088#1072#1074#1082#1091
+      OnExecute = acGiveOutCertifExecute
+      OnUpdate = acGiveOutCertifUpdate
+    end
+    object acLoadToGis: TAction
+      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1085#1072' '#1082#1072#1088#1090#1091
+      OnExecute = acLoadToGisExecute
+      OnUpdate = acLoadToGisUpdate
+    end
+    object acCopyObjId: TAction
+      Caption = #1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100' ID '#1086#1073#1098#1077#1082#1090#1072
+      OnExecute = acCopyObjIdExecute
+    end
+    object acProjectedToDrawn: TAction
+      Caption = #1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100' '#1074' '#1085#1072#1085#1077#1089#1105#1085#1085#1099#1077
+      OnExecute = acProjectedToDrawnExecute
+      OnUpdate = acProjectedToDrawnUpdate
+    end
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 448
+    Top = 144
+    object ID1: TMenuItem
+      Action = acCopyObjId
+    end
+    object N1: TMenuItem
+      Action = acProjectedToDrawn
+    end
   end
 end

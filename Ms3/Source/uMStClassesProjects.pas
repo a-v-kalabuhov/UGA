@@ -409,6 +409,11 @@ type
     procedure Save(aDb: IDb; aProject: TmstProject);
   end;
 
+  ImstObjectSaver = interface
+    ['{00148F43-A979-42DD-A911-E595A519A912}']
+    procedure Save(aDb: IDb; aObject: TmstObject);
+  end;
+
   TGetProjectSaver = procedure (Sender: TObject; out aSaver: IProjectSaver) of object;
   TCreateProjectFunc = function (): TmstProject of object;
 

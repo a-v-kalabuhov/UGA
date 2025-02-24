@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls;
+  Dialogs, StdCtrls, ExtCtrls;
 
 type
   TmstMPClassDialog = class(TForm)
@@ -18,6 +18,7 @@ type
     Label3: TLabel;
     procedure edLayerNameChange(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     FMPNetTypes: TStrings;
     FNetTypes: TStrings;
@@ -113,6 +114,12 @@ end;
 procedure TmstMPClassDialog.edLayerNameChange(Sender: TObject);
 begin
   Caption := 'Класс - ' + edLayerName.Text;
+end;
+
+procedure TmstMPClassDialog.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  mstMPClassDialog := nil;
+  Action := caFree;
 end;
 
 function TmstMPClassDialog.GetLayerName: string;

@@ -623,8 +623,8 @@ var
 begin
   if not ibqProjects.Active then
     Exit;
-    Pt.X := 0;
-    Pt.Y := sbtnDeleteProject.Height;
+  Pt.X := 0;
+  Pt.Y := sbtnDeleteProject.Height;
   Pt := sbtnDeleteProject.ClientToScreen(Pt);
   PopupMenuDelete.Popup(Pt.X, Pt.Y);
 end;

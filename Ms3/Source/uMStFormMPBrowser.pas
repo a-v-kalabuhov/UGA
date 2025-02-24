@@ -5,14 +5,14 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs,
   EzBaseGIS, IBSQL, Menus, IBCustomDataSet, IBUpdateSQL, ActnList, IBDatabase, DB, IBQuery, Grids, DBGrids, uDBGrid,
-  ComCtrls, StdCtrls, DBCtrls, Buttons, ExtCtrls, ShellAPI,
+  ComCtrls, StdCtrls, DBCtrls, Buttons, ExtCtrls, ShellAPI, Clipbrd,
   //
   EzLib,
   //
   uGC, uFileUtils,
   uMStKernelIBX,
   uMStClassesProjectsMP, uMStClassesMPIntf, uMStKernelAppSettings,
-  uMStKernelClassesQueryIndex, uMStClassesProjectsUtils, uMStClassesProjectsBrowserMP;
+  uMStKernelClassesQueryIndex, uMStClassesProjectsUtils, uMStClassesProjectsBrowserMP, uMStClassesMPStatuses;
   //
 //  uMStModuleApp;
 
@@ -42,6 +42,14 @@ type
     kaDBGrid1: TkaDBGrid;
     DataSource1: TDataSource;
     ActionList1: TActionList;
+    btnSpravka: TSpeedButton;
+    acGiveOutCertif: TAction;
+    acLoadToGis: TAction;
+    PopupMenu1: TPopupMenu;
+    acCopyObjId: TAction;
+    ID1: TMenuItem;
+    acProjectedToDrawn: TAction;
+    N1: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure chbTransparencyClick(Sender: TObject);
     procedure trackAlphaChange(Sender: TObject);
@@ -53,7 +61,6 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure kaDBGrid1CellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor;
       State: TGridDrawState; var FontStyle: TFontStyles);
-    procedure btnLoadToLayerClick(Sender: TObject);
     procedure btnLoadAllClick(Sender: TObject);
     procedure btnCoordsClick(Sender: TObject);
     procedure btnRemoveAllFromMapClick(Sender: TObject);
@@ -64,6 +71,14 @@ type
     procedure sbtnDeleteProjectClick(Sender: TObject);
     procedure kaDBGrid1GetLogicalValue(Sender: TObject; Column: TColumn; var Value: Boolean);
     procedure kaDBGrid1LogicalColumn(Sender: TObject; Column: TColumn; var Value: Boolean);
+    procedure acGiveOutCertifExecute(Sender: TObject);
+    procedure acGiveOutCertifUpdate(Sender: TObject);
+    procedure acLoadToGisExecute(Sender: TObject);
+    procedure acLoadToGisUpdate(Sender: TObject);
+    procedure kaDBGrid1MouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure acCopyObjIdExecute(Sender: TObject);
+    procedure acProjectedToDrawnExecute(Sender: TObject);
+    procedure acProjectedToDrawnUpdate(Sender: TObject);
   private
     FDrawBox: TEzBaseDrawBox;
     procedure SetDrawBox(const Value: TEzBaseDrawBox);
@@ -93,12 +108,84 @@ var
 implementation
 
 uses
-  uMStConsts, uMStClassesProjects,
+  uMStConsts, uMStClassesProjects, uMStDialogCertifNumber,
   uMStDialogMPBrowserFilter;
 
 {$R *.dfm}
 
 { TmstMPBrowserForm }
+
+procedure TmstMPBrowserForm.acCopyObjIdExecute(Sender: TObject);
+var
+  ObjGuid: string;
+begin
+  ObjGuid := DataSource1.DataSet.FieldByName(SF_OBJ_ID).AsString;
+  Clipboard.AsText := ObjGuid;
+end;
+
+procedure TmstMPBrowserForm.acGiveOutCertifExecute(Sender: TObject);
+var
+  Dlg: TmstMPCertifDialog;
+  CertifNumber: string;
+  CertifDate: TDateTime;
+  ObjId: Integer;
+begin
+  // показывается окно для ввода номера и даты справки,
+  Dlg := TmstMPCertifDialog.Create(Self);
+  try
+    CertifNumber := DataSource1.DataSet.FieldByName(SF_CERTIF_NUMBER).AsString;
+    CertifDate := DataSource1.DataSet.FieldByName(SF_CERTIF_DATE).AsDateTime;
+    if Dlg.Execute(CertifNumber, CertifDate) then
+    begin
+      // сеть помечается как "Справка выдана" и переносится в другую группу слоёв.
+      ObjId := DataSource1.DataSet.FieldByName(SF_ID).AsInteger;
+      FMP.GiveOutCertif(ObjId, CertifNumber, CertifDate);
+      DrawBox.RegenDrawing;
+    end;
+  finally
+    Dlg.Free;
+  end;
+end;
+
+procedure TmstMPBrowserForm.acGiveOutCertifUpdate(Sender: TObject);
+var
+  HasCertif: Boolean;
+  Status: Integer;
+begin
+  HasCertif := DataSource1.DataSet.FieldByName(SF_HAS_CERTIF).AsInteger = 1;
+  Status := DataSource1.DataSet.FieldByName(SF_STATUS).AsInteger;
+  acGiveOutCertif.Enabled := not HasCertif or (Status <> TmstMPStatuses.Drawn);
+end;
+
+procedure TmstMPBrowserForm.acLoadToGisExecute(Sender: TObject);
+begin
+  LoadAndDisplayCurrentObj();
+end;
+
+procedure TmstMPBrowserForm.acLoadToGisUpdate(Sender: TObject);
+var
+  ObjLoaded: Boolean;
+begin
+  ObjLoaded := DataSource1.DataSet.FieldByName(SF_LOADED).AsInteger = 1;
+  acLoadToGis.Enabled := not ObjLoaded;
+end;
+
+procedure TmstMPBrowserForm.acProjectedToDrawnExecute(Sender: TObject);
+var
+  ObjId: Integer;
+begin
+  ObjId := DataSource1.DataSet.FieldByName(SF_ID).AsInteger;
+  FMP.CopyToDrawn(ObjId);
+  kaDBGrid1.Refresh;
+end;
+
+procedure TmstMPBrowserForm.acProjectedToDrawnUpdate(Sender: TObject);
+var
+  Drawn: Boolean;
+begin
+  Drawn := DataSource1.DataSet.FieldByName(SF_DRAWN).AsInteger = 1;
+  acProjectedToDrawn.Enabled := not Drawn;
+end;
 
 procedure TmstMPBrowserForm.ApplyFilter;
 var
@@ -202,11 +289,6 @@ procedure TmstMPBrowserForm.btnLoadAllClick(Sender: TObject);
 begin
   FMP.LoadAllToGIS();
   kaDBGrid1.Refresh;
-end;
-
-procedure TmstMPBrowserForm.btnLoadToLayerClick(Sender: TObject);
-begin
-  LoadAndDisplayCurrentObj();
 end;
 
 procedure TmstMPBrowserForm.btnPropertiesClick(Sender: TObject);
@@ -315,6 +397,22 @@ begin
      (Column.FieldName = SF_DRAWN) or
      (Column.FieldName = SF_PROJECTED) or
      (Column.FieldName = SF_HAS_CERTIF);
+end;
+
+procedure TmstMPBrowserForm.kaDBGrid1MouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  aRow, aCol: Integer;
+  Pt: TPoint;
+begin
+  if Button <> mbRight then
+    Exit;
+  aRow := kaDBGrid1.Row;
+  aCol := kaDBGrid1.Col;
+  if (aRow > 0) and (aCol > 0) then
+  begin
+    Pt := Mouse.CursorPos;
+    PopupMenu1.Popup(Pt.X, Pt.Y);
+  end;
 end;
 
 procedure TmstMPBrowserForm.LoadAndDisplayCurrentObj;

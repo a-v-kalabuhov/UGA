@@ -5,6 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, DB,
   Dialogs, StdCtrls, Mask, JvExMask, JvSpin,
+  EzLib,
   uMStConsts, uMStClassesProjectsMP, uMStKernelIBX, uMStClassesMPIntf,
   uMStModuleApp;
 
@@ -74,6 +75,10 @@ type
     btnClearCustomer: TButton;
     btnClearExecutor: TButton;
     btnClearDrawer: TButton;
+    Label26: TLabel;
+    edLinkedGuid: TEdit;
+    Label27: TLabel;
+    edObjGuid: TEdit;
     procedure btnCancelClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure btnSelectCustomerClick(Sender: TObject);
@@ -85,6 +90,8 @@ type
   private
     FMPModule: ImstMPModule;
     FObject: TmstMPObject;
+    FCanChangeStatus: Boolean;
+    FCanChangeClass: Boolean;
     function CheckData(): Boolean;
     function CheckDate(aEdit: TEdit): Boolean;
     procedure ReadFromObject();
@@ -93,7 +100,7 @@ type
     function SelectOrg(var Id: Integer; out OrgName: string): Boolean;
     function GetDate(const aText: string): TDateTime;
   public
-    function EditObject(AObject: TmstMPObject; aMPModule: ImstMPModule): Boolean;
+    function EditObject(AObject: TmstMPObject; aMPModule: ImstMPModule; CanChangeStatus, CanChangeClass: Boolean): Boolean;
   end;
 
 var
@@ -208,10 +215,13 @@ begin
   end;
 end;
 
-function TmstEditMPObjectSemanticsDialog.EditObject(AObject: TmstMPObject; aMPModule: ImstMPModule): Boolean;
+function TmstEditMPObjectSemanticsDialog.EditObject(AObject: TmstMPObject; aMPModule: ImstMPModule;
+  CanChangeStatus, CanChangeClass: Boolean): Boolean;
 begin
   FObject := AObject;
   FMPModule := aMPModule;
+  FCanChangeStatus := CanChangeStatus;
+  FCanChangeClass := CanChangeClass;
   ReadFromObject();
   Result := ShowModal = mrOk;
   if Result then
@@ -248,6 +258,9 @@ end;
 procedure TmstEditMPObjectSemanticsDialog.ReadFromObject;
 var
   S: string;
+  I: Integer;
+  ClassIds: TIntegerList;
+  ClassId: Integer;
 begin
   if FObject.RequestDate = 0 then
     edRequestDate.Text := ''
@@ -266,16 +279,37 @@ begin
     cbProjected.ItemIndex := 0
   else
     cbProjected.ItemIndex := 1;
+  cbProjected.Enabled := FCanChangeStatus;
+  cbClass.Enabled := FCanChangeClass;
   chbConfirmed.Checked := FObject.Confirmed;
   chbDismantled.Checked := FObject.Dismantled;
   edCustomer.Text := GetOrgName(FObject.CustomerOrgId);
   edExecutor.Text := GetOrgName(FObject.ExecutorOrgId);
   edOwner.Text := FObject.Owner;
   //
-  S := FMPModule.Classifier.GetClassName(FObject.ClassId);
-  cbClass.Items.Clear;
-  cbClass.Items.Add(S);
-  cbClass.ItemIndex := 0;
+  if FCanChangeClass then
+  begin
+    ClassIds := FMPModule.Classifier.GetClassIdList();
+    try
+      cbClass.Items.Clear;
+      for I := 0 to ClassIds.Count - 1 do
+      begin
+        ClassId := ClassIds[I];
+        S := FMPModule.Classifier.GetClassName(ClassId);
+        cbClass.Items.AddObject(S, TObject(ClassId));
+      end;
+    finally
+      ClassIds.Free;
+    end;
+    cbClass.ItemIndex := 0;
+  end
+  else
+  begin
+    S := FMPModule.Classifier.GetClassName(FObject.ClassId);
+    cbClass.Items.Clear;
+    cbClass.Items.AddObject(S, TObject(FObject.ClassId));
+    cbClass.ItemIndex := 0;
+  end;
   //
   chbUnderground.Checked := FObject.Underground;
   spinDiameter.Value := FObject.Diameter;
@@ -297,6 +331,8 @@ begin
     edCertifDate.Text := ''
   else
     edCertifDate.Text := FormatDateTime('dd.mm.yyyy', FObject.CertifDate);
+  edLinkedGuid.Text := FObject.LinkedObjectGuid;
+  edObjGuid.Text := FObject.MPObjectGuid;
 end;
 
 function TmstEditMPObjectSemanticsDialog.SelectOrg(var Id: Integer; out OrgName: string): Boolean;
@@ -305,6 +341,8 @@ begin
 end;
 
 procedure TmstEditMPObjectSemanticsDialog.WriteToObject;
+var
+  StatusId: Integer;
 begin
   FObject.RequestDate := GetDate(edRequestDate.Text);
   FObject.DocDate := GetDate(edDocDate.Text);
@@ -330,6 +368,25 @@ begin
   FObject.HasCertif := chbHasCertif.Checked;
   FObject.CertifNumber := edCertifNumber.Text;
   FObject.CertifDate := GetDate(edCertifDate.Text);
+  //
+  if FCanChangeStatus then
+  begin
+    if cbProjected.ItemIndex = 1 then
+    begin
+      FObject.Drawn := True;
+      FObject.Projected := False;
+    end
+    else
+    begin
+      FObject.Drawn := False;
+      FObject.Projected := True;
+    end;
+  end;
+  //
+  if FCanChangeClass then
+  begin
+    FObject.ClassId := Integer(cbClass.Items.Objects[cbClass.ItemIndex]);
+  end;
 end;
 
 end.

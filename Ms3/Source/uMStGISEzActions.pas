@@ -31,7 +31,9 @@ type
 
   TmstMeasureAction = class(TmstAddEntityAction)
   private
+    FShowResult: Boolean;
     procedure DoNextPoint(Sender: TObject);
+    procedure SetShowResult(const Value: Boolean);
   protected
     procedure MyMouseDown(Sender: TObject; Button: TMouseButton; Shift:
       TShiftState; X, Y: Integer; const WX, WY: Double); override;
@@ -45,6 +47,8 @@ type
     procedure ReplacePoint(const Pt: TEzPoint; Index: Integer); override;
     procedure RemovePoint(Index: Integer); override;
     procedure ClearPoints; override;
+    //
+    property ShowResult: Boolean read FShowResult write SetShowResult;
   end;
 
   TmstAddLotAction = Class(TmstAddEntityAction)
@@ -89,6 +93,7 @@ uses
 constructor TmstMeasureAction.CreateAction(CmdLine: TEzCmdLine);
 begin
   inherited CreateAction(CmdLine, TEzPolyline.CreateEntity([{Point2D(0, 0)}]));
+  FShowResult := True;
 end;
 
 procedure TmstMeasureAction.MyMouseDown(Sender: TObject;
@@ -168,6 +173,11 @@ begin
   UpdateLastPoint;
 end;
 
+procedure TmstMeasureAction.SetShowResult(const Value: Boolean);
+begin
+  FShowResult := Value;
+end;
+
 procedure TmstMeasureAction.UpdateResult;
 var
   Area, Perimeter, LastLength: Double;
@@ -194,8 +204,11 @@ begin
                          Sqr(y[FCurrentIndex - 1] - y[FCurrentIndex]));
     FreeAndNil(Ent);
   end;
-  uMStFormMeasureResult.ShowMeasureResult(Area, Perimeter, LastLength);
-  frmMeasureResult.btnGo.OnClick := DoNextPoint;
+  if FShowResult then
+  begin
+    uMStFormMeasureResult.ShowMeasureResult(Area, Perimeter, LastLength);
+    frmMeasureResult.btnGo.OnClick := DoNextPoint;
+  end;
   CmdLine.ActiveDrawBox.SetFocus;
 end;
 
@@ -529,6 +542,7 @@ var
   Corner: Double;
 begin
   if FEntity.Points.Count > 1 then
+  if FShowResult then
   if Assigned(frmMeasureResult) then
     with frmMeasureResult do
     begin

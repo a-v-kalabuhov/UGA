@@ -8,6 +8,11 @@ type
     class function StatusName(const aStatus: Integer): string;
     class function MinId: Integer;
     class function MaxId: Integer;
+  public
+    const Projected = 1;
+    const ProjectedDismantled = 2;
+    const ProjectedCertified = 3;
+    const Drawn = 4;
   end;
 
 implementation

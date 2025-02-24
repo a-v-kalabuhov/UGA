@@ -3,7 +3,9 @@ program NewMain;
 uses
   Forms,
   fmain in 'fmain.pas' {Form1},
-  fLayerOpts in 'fLayerOpts.pas' {frmLayerOptions};
+  fLayerOpts in 'fLayerOpts.pas' {frmLayerOptions},
+  fAccuSnapSetts in 'fAccuSnapSetts.pas' {frmAccuSnapSetts},
+  fAccuSnap in 'fAccuSnap.pas' {frmAccuSnap};
 
 {$R *.res}
 

@@ -18,11 +18,11 @@ object mstMPClassSettingsForm: TmstMPClassSettingsForm
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object kaDBGrid1: TkaDBGrid
+  object gridClassif: TkaDBGrid
     Left = 0
-    Top = 32
+    Top = 34
     Width = 894
-    Height = 374
+    Height = 372
     Align = alClient
     DataSource = DataSource1
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
@@ -76,13 +76,13 @@ object mstMPClassSettingsForm: TmstMPClassSettingsForm
     Left = 0
     Top = 0
     Width = 894
-    Height = 32
+    Height = 34
     Align = alTop
     Caption = '   '
     TabOrder = 0
     DesignSize = (
       894
-      32)
+      34)
     object Label1: TLabel
       Left = 197
       Top = 9
@@ -96,6 +96,7 @@ object mstMPClassSettingsForm: TmstMPClassSettingsForm
       Top = 4
       Width = 75
       Height = 25
+      Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100'... (F2)'
       Action = acMPClassEdit
       TabOrder = 0
     end
@@ -154,7 +155,7 @@ object mstMPClassSettingsForm: TmstMPClassSettingsForm
         ', PL.NET_TYPES_ID, PL.ACTUAL,'
       
         'PNT.NAME AS NET_NAME, PL.MP_NET_TYPES_ID, MPNT.NAME AS MP_NET_NA' +
-        'ME'
+        'ME, MPL.LINE_COLOR'
       'FROM PROJECT_LAYERS PL'
       '     LEFT JOIN'
       '     PROJECT_NET_TYPES PNT ON (PL.NET_TYPES_ID = PNT.ID)'
@@ -164,53 +165,6 @@ object mstMPClassSettingsForm: TmstMPClassSettingsForm
     UpdateObject = updProjectLayerClass
     Left = 96
     Top = 304
-    object ibqProjectLayerClassID: TIntegerField
-      FieldName = 'ID'
-      Origin = '"PROJECT_LAYERS"."ID"'
-      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
-    end
-    object ibqProjectLayerClassNAME: TIBStringField
-      FieldName = 'NAME'
-      Origin = '"PROJECT_LAYERS"."NAME"'
-      Required = True
-      Size = 255
-    end
-    object ibqProjectLayerClassREQUIRED: TSmallintField
-      FieldName = 'REQUIRED'
-      Origin = '"PROJECT_LAYERS"."REQUIRED"'
-    end
-    object ibqProjectLayerClassDESTROYED: TSmallintField
-      FieldName = 'DESTROYED'
-      Origin = '"PROJECT_LAYERS"."DESTROYED"'
-    end
-    object ibqProjectLayerClassOBJECT_TYPE: TSmallintField
-      FieldName = 'OBJECT_TYPE'
-      Origin = '"PROJECT_LAYERS"."OBJECT_TYPE"'
-      Required = True
-    end
-    object ibqProjectLayerClassNET_TYPES_ID: TSmallintField
-      FieldName = 'NET_TYPES_ID'
-      Origin = '"PROJECT_LAYERS"."NET_TYPES_ID"'
-    end
-    object ibqProjectLayerClassACTUAL: TSmallintField
-      FieldName = 'ACTUAL'
-      Origin = '"PROJECT_LAYERS"."ACTUAL"'
-    end
-    object ibqProjectLayerClassNET_NAME: TIBStringField
-      FieldName = 'NET_NAME'
-      Origin = '"PROJECT_NET_TYPES"."NAME"'
-      Size = 80
-    end
-    object ibqProjectLayerClassMP_NET_TYPES_ID: TIntegerField
-      FieldName = 'MP_NET_TYPES_ID'
-      Origin = '"PROJECT_LAYERS"."MP_NET_TYPES_ID"'
-      Required = True
-    end
-    object ibqProjectLayerClassMP_NET_NAME: TIBStringField
-      FieldName = 'MP_NET_NAME'
-      Origin = '"MASTER_PLAN_LAYERS"."NAME"'
-      Size = 255
-    end
   end
   object updProjectLayerClass: TIBUpdateSQL
     Left = 128
@@ -233,5 +187,15 @@ object mstMPClassSettingsForm: TmstMPClassSettingsForm
       Caption = #1059#1076#1072#1083#1080#1090#1100
       Enabled = False
     end
+  end
+  object ibsqlLineColor: TIBSQL
+    Database = MStIBXMapMngr.dbKis
+    SQL.Strings = (
+      'UPDATE MASTER_PLAN_LAYERS'
+      'SET LINE_COLOR = :LINE_COLOR '
+      'WHERE ID=:ID')
+    Transaction = IBTransaction1
+    Left = 96
+    Top = 336
   end
 end

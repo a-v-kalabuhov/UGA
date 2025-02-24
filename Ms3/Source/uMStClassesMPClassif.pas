@@ -4,6 +4,7 @@ interface
 
 uses
   SysUtils, Classes, DB, Contnrs, Graphics,
+  EzLib,
   uCommonUtils;
 
 const
@@ -48,6 +49,7 @@ type
     procedure Clear();
     procedure Reindex();
     function Find(const DbId: Integer; const BinSearch: Boolean): TMPObjClassEntry;
+    procedure GetClassDbIds(IdList: TIntegerList);
   end;
 
   TmstMPClassifier = class
@@ -69,6 +71,7 @@ type
     function GetMPCategoryVisible(MpStatusId, MpCategoryId: Integer): Boolean;
     procedure SetMPCategoryVisible(MpStatusId, MpCategoryId: Integer; Visible: Boolean);
     //
+    function GetClassIdList(): TIntegerList;
     function GetClassName(const aClassId: Integer): string;
     function GetClassCategoryId(const aClassId: Integer): Integer;
     function GetClassCategoryColor(const aClassId: Integer): TColor;
@@ -131,6 +134,12 @@ begin
     Result := -1;
 end;
 
+function TmstMPClassifier.GetClassIdList: TIntegerList;
+begin
+  Result := TIntegerList.Create;
+  FClasses.GetClassDbIds(Result);
+end;
+
 function TmstMPClassifier.GetClassName(const aClassId: Integer): string;
 var
   Entry: TMPObjClassEntry;
@@ -162,6 +171,7 @@ var
   CatId: Integer;
   ObjClassId: string;
   ObjClassName: string;
+  CatColorName: string;
   CatColor: Integer;
 begin
 //    'SELECT PL.ID, PL.NAME, PL.CLASS_ID, PL.MP_NET_TYPES_ID AS MP_CATEGORY_ID '
@@ -177,7 +187,9 @@ begin
     ObjClassName := DataSet.FieldByName(SF_NAME).AsString;
     ObjClassId := DataSet.FieldByName(SF_CLASS_ID).AsString;
     CatId := DataSet.FieldByName(SF_MP_CATEGORY_ID).AsInteger;
-    CatColor := DataSet.FieldByName(SF_LINE_COLOR).AsInteger;
+    CatColorName := DataSet.FieldByName(SF_LINE_COLOR).AsString;
+    if not TryStrToInt(CatColorName, CatColor) then
+      CatColor := clBlack;
     FClasses.AddClass(DbId, CatId, ObjClassId, ObjClassName, CatColor);
     DataSet.Next;
   end;
@@ -333,6 +345,16 @@ begin
         Exit;
       end;
     end;
+  end;
+end;
+
+procedure TMPObjClassesList.GetClassDbIds(IdList: TIntegerList);
+var
+  I: Integer;
+begin
+  for I := 0 to FList.Count - 1 do
+  begin
+    IdList.Add(TMPObjClassEntry(FList[I]).fDbId);
   end;
 end;
 

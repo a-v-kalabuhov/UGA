@@ -13,7 +13,7 @@ type
     IBTransaction1: TIBTransaction;
     ibqProjectLayerClass: TIBQuery;
     updProjectLayerClass: TIBUpdateSQL;
-    kaDBGrid1: TkaDBGrid;
+    gridClassif: TkaDBGrid;
     Panel1: TPanel;
     btnEdit: TButton;
     btnDelete: TButton;
@@ -24,16 +24,7 @@ type
     acMPClassDelete: TAction;
     edSearch: TEdit;
     Label1: TLabel;
-    ibqProjectLayerClassID: TIntegerField;
-    ibqProjectLayerClassNAME: TIBStringField;
-    ibqProjectLayerClassREQUIRED: TSmallintField;
-    ibqProjectLayerClassDESTROYED: TSmallintField;
-    ibqProjectLayerClassOBJECT_TYPE: TSmallintField;
-    ibqProjectLayerClassNET_TYPES_ID: TSmallintField;
-    ibqProjectLayerClassACTUAL: TSmallintField;
-    ibqProjectLayerClassNET_NAME: TIBStringField;
-    ibqProjectLayerClassMP_NET_TYPES_ID: TIntegerField;
-    ibqProjectLayerClassMP_NET_NAME: TIBStringField;
+    ibsqlLineColor: TIBSQL;
     procedure btnCloseClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -68,7 +59,8 @@ uses
 const
   SQL_SELECT_PROJECT_LAYER_CLASSES =
     'SELECT PL.ID, PL.NAME, PL.REQUIRED, PL.DESTROYED, PL.OBJECT_TYPE, PL.NET_TYPES_ID, PL.ACTUAL, '
-    + ' PNT.NAME AS NET_NAME, PL.MP_NET_TYPES_ID, MPNT.NAME AS MP_NET_NAME '
+    + ' PNT.NAME AS NET_NAME, PL.MP_NET_TYPES_ID, '
+    + ' MPNT.NAME AS MP_NET_NAME '
     + ' FROM PROJECT_LAYERS PL '
     + '      LEFT JOIN '
     + '      PROJECT_NET_TYPES PNT ON (PL.NET_TYPES_ID = PNT.ID) '
@@ -80,9 +72,10 @@ const
     'UPDATE PROJECT_LAYERS '
     + ' SET NAME=:NAME, NET_TYPES_ID=:NET_TYPES_ID, MP_NET_TYPES_ID=:MP_NET_TYPES_ID '
     + ' WHERE ID=:ID ';
-  SQL_REFRESH_PROJECT_LAYER_CLASSES = 
+  SQL_REFRESH_PROJECT_LAYER_CLASSES =
     'SELECT PL.ID, PL.NAME, PL.REQUIRED, PL.DESTROYED, PL.OBJECT_TYPE, PL.NET_TYPES_ID, PL.ACTUAL, '
-    + ' PNT.NAME AS NET_NAME, PL.MP_NET_TYPES_ID, MPNT.NAME AS MP_NET_NAME '
+    + ' PNT.NAME AS NET_NAME, PL.MP_NET_TYPES_ID, '
+    + ' MPNT.NAME AS MP_NET_NAME '
     + ' FROM PROJECT_LAYERS PL '
     + '      LEFT JOIN '
     + '      PROJECT_NET_TYPES PNT ON (PL.NET_TYPES_ID = PNT.ID) '
@@ -138,6 +131,7 @@ begin
     ibqProjectLayerClass.FieldByName(SF_NET_TYPES_ID).AsInteger := Dlg.NetTypeId;
     ibqProjectLayerClass.FieldByName(SF_MP_NET_TYPES_ID).AsInteger := Dlg.MPNetTypeId;
     ibqProjectLayerClass.Post;
+    //
     IBTransaction1.CommitRetaining;
   end;
 end;
@@ -209,8 +203,8 @@ begin
   ibqProjectLayerClass.First;
   while not ibqProjectLayerClass.Eof do
   begin
-    aLayerName := ibqProjectLayerClassNAME.AsString;
-    aId := ibqProjectLayerClassID.AsInteger;
+    aLayerName := ibqProjectLayerClass.FieldByName(SF_NAME).AsString;
+    aId := ibqProjectLayerClass.FieldByName(SF_ID).AsInteger;
     FLayerNames.AddObject(aLayerName, Pointer(aId));
     ibqProjectLayerClass.Next;
   end;

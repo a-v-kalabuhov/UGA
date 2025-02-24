@@ -72,6 +72,7 @@ type
     FCertifDate: TDateTime;
     FHasCertif: Boolean;
     FMPObjectGuid: string;
+    FLinkedObjectGuid: string;
     procedure SetClassId(const Value: Integer);
     procedure SetAddress(const Value: string);
     procedure SetArchived(const Value: Boolean);
@@ -116,6 +117,7 @@ type
     procedure SetCertifNumber(const Value: string);
     procedure SetHasCertif(const Value: Boolean);
     procedure SetMPObjectGuid(const Value: string);
+    procedure SetLinkedObjectGuid(const Value: string);
   protected
     function GetObjectId: Integer; override;
     function GetText: String; override;
@@ -130,6 +132,8 @@ type
     property InstanceGuid: string read FGuid;
     // это униальный ID объекта, который можно использовать при привязке нанесённых к проектируемым 
     property MPObjectGuid: string read FMPObjectGuid write SetMPObjectGuid;
+    // ID объекта, который привязан к текущему  
+    property LinkedObjectGuid: string read FLinkedObjectGuid write SetLinkedObjectGuid;
     //
     property Address: string read FAddress write SetAddress;
     property Archived: Boolean read FArchived write SetArchived;
@@ -258,11 +262,19 @@ type
   TmstMPProjectSaver = class(TInterfacedObject, IProjectSaver)
   private
     FTableVersion: Integer;
-    procedure GetNewTableVersionValue(Conn: IIBXConnection);
     function GetEntityStream(aObj: TmstMPObject; CK36: Boolean): TStream;
     procedure SaveObj(Conn: IIBXConnection; aObj: TmstMPObject; var aState: TSaveLineState);
   protected
     procedure Save(aDb: IDb; aProject: TmstProject);
+  end;
+
+  TmstMPObjectSaver = class(TInterfacedObject, ImstObjectSaver)
+  private
+    FTableVersion: Integer;
+    procedure SaveObj(Conn: IIBXConnection; aObj: TmstMPObject);
+    function GetEntityStream(aObj: TmstMPObject; CK36: Boolean): TStream;
+  protected
+    procedure Save(aDb: IDb; MPObject: TmstObject);
   end;
 
 implementation
@@ -275,24 +287,30 @@ const
   SQL_CHECK_MP_OBJECT_EXISTS = 'SELECT ID FROM MASTER_PLAN_OBJECTS WHERE ID=:ID';
   SQL_INSERT_MP_OBJECT =
       'INSERT INTO MASTER_PLAN_OBJECTS (' +
-      '  ID,  OBJ_ID,     MASTER_PLAN_CLASS_ID,                 STATUS,     DISMANTLED, ' +
+      '  ID,              OBJ_ID,         MASTER_PLAN_CLASS_ID, ' +
+      '  LINKED_OBJ_ID, ' +
+      '  STATUS,     DISMANTLED, ' +
       '  ARCHIVED,        CONFIRMED,      ADDRESS,              DOC_NUMBER, DOC_DATE, ' +
       '  REQUEST_NUMBER,  REQUEST_DATE,   UNDERGROUND,          DIAMETER,   PIPE_COUNT, ' +
       '  VOLTAGE,         MATERIAL,       TOP,                  BOTTOM,     FLOOR, ' +
       '  PROJECTED,       CHECK_STATE,    LOADED,               PROJECT_NAME, ' +
       '  OWNER,           DRAW_DATE,      IS_LINE,              ROTATION,   EZDATA, ' +
-      '  CUSTOMER_ORGS_ID,                EXECUTOR_ORGS_ID, ' +
+      '  CUSTOMER_ORGS_ID, ' +
+      '  EXECUTOR_ORGS_ID, ' +
       '  OWNER_ORG_ID,    DRAW_ORGS_ID,   DELETED,              TABLE_VERSION, ' +
       '  DRAWN,           HAS_CERTIF,     CERTIF_NUMBER,        CERTIF_DATE, ' +
       '  EZ_ID,           MINX,           MINY,                 MAXX,       MAXY) ' +
       'VALUES (' +
-      ' :ID, :OBJ_ID,    :MASTER_PLAN_CLASS_ID,                :STATUS,    :DISMANTLED, ' +
+      ' :ID,             :OBJ_ID,        :MASTER_PLAN_CLASS_ID, ' +
+      ' :LINKED_OBJ_ID, ' +
+      ' :STATUS,    :DISMANTLED, ' +
       ' :ARCHIVED,       :CONFIRMED,     :ADDRESS,             :DOC_NUMBER,:DOC_DATE, ' +
       ' :REQUEST_NUMBER, :REQUEST_DATE,  :UNDERGROUND,         :DIAMETER,  :PIPE_COUNT, ' +
       ' :VOLTAGE,        :MATERIAL,      :TOP,                 :BOTTOM,    :FLOOR, ' +
       ' :PROJECTED,      :CHECK_STATE,   :LOADED,              :PROJECT_NAME, ' +
       ' :OWNER,          :DRAW_DATE,     :IS_LINE,             :ROTATION,  :EZDATA, ' +
-      ' :CUSTOMER_ORGS_ID,               :EXECUTOR_ORGS_ID, ' +
+      ' :CUSTOMER_ORGS_ID, ' +
+      ' :EXECUTOR_ORGS_ID, ' +
       ' :OWNER_ORG_ID,   :DRAW_ORGS_ID,   0,                   :TABLE_VERSION, ' +
       ' :DRAWN,          :HAS_CERTIF,    :CERTIF_NUMBER,       :CERTIF_DATE, ' +
       ' :EZ_ID,          :MINX,          :MINY,                :MAXX,      :MAXY)';
@@ -301,6 +319,7 @@ const
       'SET ' +
       '   OBJ_ID = :OBJ_ID, ' +
       '   MASTER_PLAN_CLASS_ID = :MASTER_PLAN_CLASS_ID, ' +
+      '   LINKED_OBJ_ID = :LINKED_OBJ_ID, ' +
       '   STATUS = :STATUS, ' +
       '   DISMANTLED = :DISMANTLED, ' +
       '   ARCHIVED = :ARCHIVED, ' +
@@ -373,11 +392,6 @@ begin
   end;
 end;
 
-procedure TmstMPProjectSaver.GetNewTableVersionValue;
-begin
-  FTableVersion := Conn.GetGenValue(SG_MP_OBJECTS_TABLE_VERSION);
-end;
-
 procedure TmstMPProjectSaver.Save(aDb: IDb; aProject: TmstProject);
 var
   Conn: IIBXConnection;
@@ -390,13 +404,11 @@ begin
   // создаём соединение
   Conn := aDb.GetConnection(cmReadWrite, dmKis);
   try
-    GetNewTableVersionValue(Conn);
+    FTableVersion := Conn.GetGenValue(SG_MP_OBJECTS_TABLE_VERSION);
     //
-    //SaveObjState.Ds1 := nil;
     SaveObjState.Ds2 := nil;
     SaveObjState.DsMain1 := nil;
     SaveObjState.DsMain2 := nil;
-    //SaveObjState.PtDs1 := nil;
     SaveObjState.PtDs2 := nil;
     SaveObjState.PtDsMain1 := nil;
     SaveObjState.PtDsMain2 := nil;
@@ -417,8 +429,6 @@ begin
       SaveObj(Conn, Obj, SaveObjState);
     end;
     //
-    Prj.CalcExtent();
-    //
     Conn.Commit();
   except
     Conn.Rollback();
@@ -430,7 +440,8 @@ procedure TmstMPProjectSaver.SaveObj(Conn: IIBXConnection; aObj: TmstMPObject;
   var aState: TSaveLineState);
 var
   B2: Boolean;
-  Ds1, Ds2, DsMain: TDataSet;
+  //Ds1,
+  Ds2, DsMain: TDataSet;
   Xmin, Xmax, Ymin, Ymax: Double;
   EzStream: TStream;
 begin
@@ -482,11 +493,11 @@ begin
   //DOC_NUMBER,
   Conn.SetParam(DsMain, SF_DOC_NUMBER, aObj.DocNumber);
   //DOC_DATE,
-  Conn.SetParam(DsMain, SF_DOC_DATE, aObj.DocDate);
+  Conn.SetNullableParam(DsMain, SF_DOC_DATE, aObj.DocDate, 0);
   //REQUEST_NUMBER,
   Conn.SetParam(DsMain, SF_REQUEST_NUMBER, aObj.RequestNumber);
   //REQUEST_DATE,
-  Conn.SetParam(DsMain, SF_REQUEST_DATE, aObj.RequestDate);
+  Conn.SetNullableParam(DsMain, SF_REQUEST_DATE, aObj.RequestDate, 0);
   //UNDERGROUND,
   Conn.SetParam(DsMain, SF_UNDERGROUND, IfThen(aObj.Underground, 1, 0));
   //DIAMETER,
@@ -506,7 +517,7 @@ begin
   //OWNER,
   Conn.SetParam(DsMain, SF_OWNER, aObj.Owner);
   //DRAW_DATE,
-  Conn.SetParam(DsMain, SF_DRAW_DATE, aObj.DrawDate);
+  Conn.SetNullableParam(DsMain, SF_DRAW_DATE, aObj.DrawDate, 0);
   //IS_LINE,
   Conn.SetParam(DsMain, SF_IS_LINE, IfThen(aObj.IsLine, 1, 0));
   //ROTATION,
@@ -524,8 +535,6 @@ begin
   Conn.SetParam(DsMain, SF_LOADED, 0);
   //PROJECT_NAME,
   Conn.SetParam(DsMain, SF_PROJECT_NAME, aObj.ProjectName);
-  //CK36,
-//  Conn.SetParam(DsMain, SF_CK36, IfThen(aObj.CK36, 1, 0));
   //CUSTOMER_ORGS_ID,
   Conn.SetNullableParam(DsMain, SF_CUSTOMER_ORGS_ID, aObj.CustomerOrgId, 0); // :CUSTOMER_ORGS_ID
   //EXECUTOR_ORGS_ID,
@@ -754,6 +763,7 @@ begin
     Tgt := TmstMPObject(Target);
     //
     Tgt.FMPObjectGuid := FMPObjectGuid;
+    Tgt.FLinkedObjectGuid := FLinkedObjectGuid;
     Tgt.FClassId := FClassId;
     Tgt.FArchived := FArchived;
     Tgt.FDocNumber := FDocNumber;
@@ -955,6 +965,11 @@ end;
 procedure TmstMPObject.SetIsLine(const Value: Boolean);
 begin
   FIsLine := Value;
+end;
+
+procedure TmstMPObject.SetLinkedObjectGuid(const Value: string);
+begin
+  FLinkedObjectGuid := Value;
 end;
 
 procedure TmstMPObject.SetEzLayerName(const Value: string);
@@ -1167,6 +1182,191 @@ end;
 procedure TmstProjectObjects.SetItems(Index: Integer; const Value: TmstMPObject);
 begin
   inherited Items[Index] := Value;
+end;
+
+{ TmstMPObjectSaver }
+
+function TmstMPObjectSaver.GetEntityStream(aObj: TmstMPObject; CK36: Boolean): TStream;
+var
+  EntClass: TEzEntityClass;
+  EntityID: TEzEntityID;
+  Ent: TEzEntity;
+begin
+  Result := nil;
+  EntityID := TEzEntityID(aObj.EzId);
+  EntClass := GetClassFromID(EntityID);
+  Ent := EntClass.Create(0, True);
+  try
+    aObj.EzData.Position := 0;
+    Ent.LoadFromStream(aObj.EzData);
+    if CK36 then
+      TEzCSConverter.EntityToVrn(Ent, True);
+//      TEzCSConverter.EntityToVrn(Ent, not aObj.ExchangeXY);
+//    if aObj.ExchangeXY then
+//      TEzCSConverter.ExchangeXY(Ent);
+    //
+    Result := TMemoryStream.Create;
+    Ent.SaveToStream(Result);
+    Result.Position := 0;
+  except
+    FreeAndNil(Ent);
+  end;
+end;
+
+procedure TmstMPObjectSaver.Save(aDb: IDb; MPObject: TmstObject);
+var
+  Conn: IIBXConnection;
+  Obj: TmstMPObject;
+begin
+  Obj := MPObject as TmstMPObject;
+  // создаём соединение
+  Conn := aDb.GetConnection(cmReadWrite, dmKis);
+  try
+    FTableVersion := Conn.GetGenValue(SG_MP_OBJECTS_TABLE_VERSION);
+    //
+    SaveObj(Conn, Obj);
+    //
+    Conn.Commit();
+  except
+    Conn.Rollback();
+    raise;
+  end;
+end;
+
+procedure TmstMPObjectSaver.SaveObj(Conn: IIBXConnection; aObj: TmstMPObject);
+var
+  NewObject: Boolean;
+  DsCheck, DsMain: TDataSet;
+  Xmin, Xmax, Ymin, Ymax: Double;
+  EzStream: TStream;
+  Sql: string;
+begin
+  if aObj.DatabaseId < 1 then
+  begin
+    aObj.DatabaseId := Conn.GenNextValue(SG_MP_OBJECTS);
+    NewObject := True;
+  end
+  else
+  begin
+    DsCheck := Conn.GetDataSet(SQL_CHECK_MP_OBJECT_EXISTS);
+    Conn.SetParam(DsCheck, SF_ID, aObj.DatabaseId);
+    DsCheck.Open;
+    NewObject := DsCheck.Fields[0].AsInteger = 0;
+    DsCheck.Close;
+  end;
+  //
+  if NewObject then
+    Sql := SQL_INSERT_MP_OBJECT
+  else
+    Sql := SQL_UPDATE_MP_OBJECT;
+  DsMain := Conn.GetDataSet(Sql);
+  //
+  //ID,
+  Conn.SetParam(DsMain, SF_ID, aObj.DatabaseId);
+  //TABLE_VERSION
+  Conn.SetParam(DsMain, SF_TABLE_VERSION, FTableVersion);
+  //OBJ_ID,
+  Conn.SetParam(DsMain, SF_OBJ_ID, aObj.MPObjectGuid);
+  //LINKED_OBJ_ID,
+  Conn.SetParam(DsMain, SF_LINKED_OBJ_ID, aObj.LinkedObjectGuid);
+  //MASTER_PLAN_CLASS_ID,
+  Conn.SetNullableParam(DsMain, SF_MASTER_PLAN_CLASS_ID, aObj.ClassId, 0);
+  //STATUS,
+  Conn.SetParam(DsMain, SF_STATUS, aObj.Status);
+  //DISMANTLED,
+  Conn.SetParam(DsMain, SF_DISMANTLED, IfThen(aObj.Dismantled, 1, 0));
+  //ARCHIVED,
+  Conn.SetParam(DsMain, SF_ARCHIVED, IfThen(aObj.Archived, 1, 0));
+  //CONFIRMED,
+  Conn.SetParam(DsMain, SF_CONFIRMED, IfThen(aObj.Confirmed, 1, 0));
+  //ADDRESS,
+  Conn.SetParam(DsMain, SF_ADDRESS, aObj.Address);
+  //DOC_NUMBER,
+  Conn.SetParam(DsMain, SF_DOC_NUMBER, aObj.DocNumber);
+  //DOC_DATE,
+  Conn.SetNullableParam(DsMain, SF_DOC_DATE, aObj.DocDate, 0);
+  //REQUEST_NUMBER,
+  Conn.SetParam(DsMain, SF_REQUEST_NUMBER, aObj.RequestNumber);
+  //REQUEST_DATE,
+  Conn.SetNullableParam(DsMain, SF_REQUEST_DATE, aObj.RequestDate, 0);
+  //UNDERGROUND,
+  Conn.SetParam(DsMain, SF_UNDERGROUND, IfThen(aObj.Underground, 1, 0));
+  //DIAMETER,
+  Conn.SetParam(DsMain, SF_DIAMETER, aObj.Diameter);
+  //PIPE_COUNT,
+  Conn.SetParam(DsMain, SF_PIPE_COUNT, aObj.PipeCount);
+  //VOLTAGE,
+  Conn.SetParam(DsMain, SF_VOLTAGE, aObj.Voltage);
+  //MATERIAL,
+  Conn.SetParam(DsMain, SF_MATERIAL, aObj.Material);
+  //TOP,
+  Conn.SetParam(DsMain, SF_TOP, aObj.Top);
+  //BOTTOM,
+  Conn.SetParam(DsMain, SF_BOTTOM, aObj.Bottom);
+  //FLOOR,
+  Conn.SetParam(DsMain, SF_FLOOR, aObj.Floor);
+  //OWNER,
+  Conn.SetParam(DsMain, SF_OWNER, aObj.Owner);
+  //DRAW_DATE,
+  Conn.SetNullableParam(DsMain, SF_DRAW_DATE, aObj.DrawDate, 0);
+  //IS_LINE,
+  Conn.SetParam(DsMain, SF_IS_LINE, IfThen(aObj.IsLine, 1, 0));
+  //ROTATION,
+  Conn.SetParam(DsMain, SF_ROTATION, aObj.Rotation);
+  //EZDATA,
+  EzStream := GetEntityStream(aObj, aObj.CK36);
+  try
+    Conn.SetBlobParam(DsMain, SF_EZDATA, EzStream);
+  finally
+    EzStream.Free;
+  end;
+  //EZ_ID,
+  Conn.SetParam(DsMain, SF_EZ_ID, aObj.EzId);
+  //LOADED,
+  Conn.SetParam(DsMain, SF_LOADED, 0);
+  //PROJECT_NAME,
+  Conn.SetParam(DsMain, SF_PROJECT_NAME, aObj.ProjectName);
+  //CUSTOMER_ORGS_ID,
+  Conn.SetNullableParam(DsMain, SF_CUSTOMER_ORGS_ID, aObj.CustomerOrgId, 0); // :CUSTOMER_ORGS_ID
+  //EXECUTOR_ORGS_ID,
+  Conn.SetNullableParam(DsMain, SF_EXECUTOR_ORGS_ID, aObj.ExecutorOrgId, 0); // :EXECUTOR_ORGS_ID
+  //OWNER_ORG_ID,
+  Conn.SetNullableParam(DsMain, SF_OWNER_ORG_ID, aObj.OwnerOrgId, 0); // :OWNER_ORG_ID
+  //DRAW_ORGS_ID,
+  Conn.SetNullableParam(DsMain, SF_DRAW_ORGS_ID, aObj.DrawOrgId, 0); // :DRAW_ORGS_ID
+  //DRAWN,
+  Conn.SetParam(DsMain, SF_DRAWN, IfThen(aObj.Drawn, 1, 0));
+  //PROJECTED,
+  Conn.SetParam(DsMain, SF_PROJECTED, IfThen(aObj.Projected, 1, 0));
+  //CERTIF_DATE,
+  Conn.SetNullableParam(DsMain, SF_CERTIF_DATE, aObj.CertifDate, 0);
+  //CERTIF_NUMBER,
+  Conn.SetParam(DsMain, SF_CERTIF_NUMBER, aObj.CertifNumber);
+  //HAS_CERTIF,
+  Conn.SetParam(DsMain, SF_HAS_CERTIF, IfThen(aObj.HasCertif, 1, 0));
+  //CHECK_STATS
+  Conn.SetParam(DsMain, SF_CHECK_STATE, Integer(aObj.CheckState));
+  //
+  XMin := aObj.MinX;
+  YMin := aObj.MinY;
+  XMax := aObj.MaxX;
+  YMax := aObj.MaxY;
+  if aObj.CK36 then
+  begin
+    TEzCSConverter.XY2DToVrn(Xmin, Ymin, False);
+    TEzCSConverter.XY2DToVrn(Xmax, Ymax, False);
+  end;
+  //
+  //MINX,
+  Conn.SetParam(DsMain, SF_MINX, Xmin);
+  //MINY,
+  Conn.SetParam(DsMain, SF_MINY, Ymin);
+  //MAXX,
+  Conn.SetParam(DsMain, SF_MAXX, Xmax);
+  //MAXY,
+  Conn.SetParam(DsMain, SF_MAXY, Ymax);
+  //
+  Conn.ExecDataSet(DsMain);
 end;
 
 initialization

@@ -43,6 +43,12 @@
     <DelphiCompile Include="NewMain.dpr">
       <MainSource>MainSource</MainSource>
     </DelphiCompile>
+    <DCCReference Include="fAccuSnap.pas">
+      <Form>frmAccuSnap</Form>
+    </DCCReference>
+    <DCCReference Include="fAccuSnapSetts.pas">
+      <Form>frmAccuSnapSetts</Form>
+    </DCCReference>
     <DCCReference Include="fLayerOpts.pas">
       <Form>frmLayerOptions</Form>
     </DCCReference>

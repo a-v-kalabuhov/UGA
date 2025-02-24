@@ -3,7 +3,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
   Top = 0
   BorderStyle = bsDialog
   Caption = #1057#1077#1084#1072#1085#1090#1080#1082#1072' '#1086#1073#1098#1077#1082#1090#1072
-  ClientHeight = 527
+  ClientHeight = 541
   ClientWidth = 995
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -14,19 +14,19 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
   OldCreateOrder = False
   DesignSize = (
     995
-    527)
+    541)
   PixelsPerInch = 96
   TextHeight = 13
   object GroupBox1: TGroupBox
     Left = 8
     Top = 8
     Width = 445
-    Height = 449
+    Height = 467
     Caption = #1055#1088#1086#1077#1082#1090
     TabOrder = 0
     DesignSize = (
       445
-      449)
+      467)
     object Label10: TLabel
       Left = 35
       Top = 102
@@ -134,6 +134,24 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Anchors = [akTop, akRight]
       Caption = #1044#1072#1090#1072' '#1085#1072#1085#1077#1089#1077#1085#1080#1103':'
     end
+    object Label26: TLabel
+      Left = 14
+      Top = 417
+      Width = 96
+      Height = 13
+      Alignment = taRightJustify
+      Anchors = [akTop, akRight]
+      Caption = 'ID c'#1074#1103#1079#1072#1085#1085#1086#1081' '#1089#1077#1090#1080':'
+    end
+    object Label27: TLabel
+      Left = 69
+      Top = 443
+      Width = 41
+      Height = 13
+      Alignment = taRightJustify
+      Anchors = [akTop, akRight]
+      Caption = 'ID '#1089#1077#1090#1080':'
+    end
     object edRequestDate: TEdit
       Left = 116
       Top = 153
@@ -231,7 +249,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Height = 25
       Anchors = [akTop, akRight]
       Caption = #1042#1099#1073#1088#1072#1090#1100'...'
-      TabOrder = 10
+      TabOrder = 11
       OnClick = btnSelectExecutorClick
     end
     object edOwner: TEdit
@@ -241,7 +259,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Height = 21
       Anchors = [akTop, akRight]
       MaxLength = 255
-      TabOrder = 11
+      TabOrder = 12
       Text = 'edOwner'
     end
     object edDrawer: TEdit
@@ -251,7 +269,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Height = 21
       Anchors = [akTop, akRight]
       Color = clBtnFace
-      TabOrder = 12
+      TabOrder = 13
       Text = 'edDrawer'
     end
     object btnSelectDrawer: TButton
@@ -261,7 +279,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Height = 25
       Anchors = [akTop, akRight]
       Caption = #1042#1099#1073#1088#1072#1090#1100'...'
-      TabOrder = 13
+      TabOrder = 15
       OnClick = btnSelectDrawerClick
     end
     object edDrawDate: TEdit
@@ -271,7 +289,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Height = 21
       Anchors = [akTop, akRight]
       MaxLength = 10
-      TabOrder = 14
+      TabOrder = 16
       Text = 'edDrawDate'
     end
     object btnClearCustomer: TButton
@@ -291,7 +309,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Height = 25
       Anchors = [akTop, akRight]
       Caption = #1054#1095#1080#1089#1090#1080#1090#1100
-      TabOrder = 15
+      TabOrder = 10
       OnClick = btnClearExecutorClick
     end
     object btnClearDrawer: TButton
@@ -301,23 +319,45 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Height = 25
       Anchors = [akTop, akRight]
       Caption = #1054#1095#1080#1089#1090#1080#1090#1100
-      TabOrder = 16
+      TabOrder = 14
       OnClick = btnClearDrawerClick
+    end
+    object edLinkedGuid: TEdit
+      Left = 116
+      Top = 414
+      Width = 313
+      Height = 21
+      Anchors = [akTop, akRight]
+      MaxLength = 36
+      TabOrder = 17
+      Text = 'edLinkedGuid'
+    end
+    object edObjGuid: TEdit
+      Left = 116
+      Top = 440
+      Width = 313
+      Height = 21
+      Anchors = [akTop, akRight]
+      MaxLength = 36
+      ParentColor = True
+      ReadOnly = True
+      TabOrder = 18
+      Text = 'edObjGuid'
     end
   end
   object GroupBox2: TGroupBox
     Left = 459
     Top = 8
     Width = 444
-    Height = 449
+    Height = 467
     Caption = #1057#1074#1086#1081#1089#1074#1072
     TabOrder = 1
     DesignSize = (
       444
-      449)
+      467)
     object Label1: TLabel
       Left = 55
-      Top = 23
+      Top = 21
       Width = 40
       Height = 13
       Alignment = taRightJustify
@@ -442,10 +482,8 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Style = csDropDownList
       Anchors = [akTop, akRight]
       Enabled = False
-      ItemHeight = 13
-      ItemIndex = 0
+      ItemHeight = 0
       TabOrder = 1
-      Text = #1087#1088#1086#1077#1082#1090#1080#1088#1091#1077#1084#1099#1081
       Items.Strings = (
         #1087#1088#1086#1077#1082#1090#1080#1088#1091#1077#1084#1099#1081
         #1085#1072#1085#1077#1089#1105#1085#1085#1099#1081)
@@ -476,7 +514,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Style = csDropDownList
       Anchors = [akTop, akRight]
       Enabled = False
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 4
     end
     object chbUnderground: TCheckBox
@@ -583,7 +621,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
   end
   object GroupBox3: TGroupBox
     Left = 8
-    Top = 463
+    Top = 475
     Width = 895
     Height = 58
     Caption = #1057#1087#1088#1072#1074#1082#1072
