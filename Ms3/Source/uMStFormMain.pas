@@ -356,6 +356,9 @@ type
     N58: TMenuItem;
     N59: TMenuItem;
     N60: TMenuItem;
+    N61: TMenuItem;
+    acMPExportMidMif: TAction;
+    midmif2: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -525,6 +528,8 @@ type
     procedure acMPPickupPointsExecute(Sender: TObject);
     procedure acMPPickupPointsUpdate(Sender: TObject);
     procedure acSavePointListExecute(Sender: TObject);
+    procedure acMPExportMidMifUpdate(Sender: TObject);
+    procedure acMPExportMidMifExecute(Sender: TObject);
   private
     FPoints: TMstPointArray;
     FCursorState: TCursorState;
@@ -2089,6 +2094,21 @@ begin
   CloseMPBrowser();
   //
   DisplayMPClassSettings();
+end;
+
+procedure TmstClientMainForm.acMPExportMidMifExecute(Sender: TObject);
+var
+  MIFFileName: string;
+begin
+  if not SaveDialog2.Execute(Handle) then
+    Exit;
+  MIFFileName := SaveDialog2.Files[0];
+  mstClientAppModule.MP.ExportToMif(MIFFileName);
+end;
+
+procedure TmstClientMainForm.acMPExportMidMifUpdate(Sender: TObject);
+begin
+  acMPExportMidMif.Enabled := mstClientAppModule.MP.HasLoaded();
 end;
 
 procedure TmstClientMainForm.acMPPickupPointsExecute(Sender: TObject);

@@ -1996,7 +1996,7 @@ end;
 
 procedure TMStClientAppModule.OnDeleteLayer(Sender: TObject; aLayer: TmstLayer);
 begin
-  if Assigned(aLayer) then
+  if Assigned(aLayer) and GIS.Active then
     GIS.Layers.Delete(aLayer.Name, True);
 end;
 

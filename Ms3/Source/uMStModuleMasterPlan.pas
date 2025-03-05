@@ -13,7 +13,7 @@ uses
   uMStClassesProjects, uMStClassesProjectsMP, uMStKernelGISUtils, uMStClassesMasterPlan, uMStKernelIBX,
   uMStModuleProjectImport, uMStClassesProjectsEz, uMStClassesMPClassif, uMStClassesMPIntf, uMStKernelClasses,
   uMStFormMPBrowser, uMStKernelClassesQueryIndex, uMStKernelAppSettings, uMStClassesMPObjectAdapter,
-  uMStDialogMPObjectSemantics;
+  uMStDialogMPObjectSemantics, uMStClassesMPMIFExport;
 
 type
   TObjIdEvent = procedure (ObjId: Integer) of object;
@@ -78,6 +78,7 @@ type
     function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
     procedure UpdateLayersVisibility(aLayers: TmstLayerList);
     //
+    function HasLoaded(): Boolean;
     function IsLoaded(const ObjId: Integer): Boolean;
     procedure LoadAllToGIS();
     procedure LoadToGis(const ObjId: Integer; const Display: Boolean);
@@ -87,6 +88,7 @@ type
     procedure GiveOutCertif(const ObjId: Integer; CertifNumber: string; CertifDate: TDateTime);
     procedure CopyToDrawn(const ObjId: Integer);
     function BrowserDataSet(): TDataSet;
+    procedure ExportToMif(const aMifFileName: string);
   private
     FMPAdapter: TmstMPObjectAdapter;
     FEzAdapter: TmstMPObjectEzAdapter;
@@ -565,6 +567,38 @@ begin
   end;
 end;
 
+procedure TmstMasterPlanModule.ExportToMif(const aMifFileName: string);
+var
+  Exp: TmstMPMIFExport;
+  Ent: TEzEntity;
+  Layer: TEzBaseLayer;
+  ObjId: Integer;
+  MpObj: TmstMPObject;
+begin
+  Layer := GetMPLayer();
+  if Layer = nil then
+    Exit;
+  Exp := TmstMPMIFExport.Create;
+  Exp.Forget();
+  Exp.DrawBox := Self.FDrawBox;
+  Exp.Layer := Self.GetMPLayer();
+
+  Layer.First;
+  while not Layer.Eof do
+  begin
+    if not Layer.RecIsDeleted then
+    begin
+      ObjId := Layer.RecEntity.ExtID;
+      MpObj := GetObjByDbId(ObjId, False);
+      if MpObj <> nil then
+        Exp.AddObject(MpObj, Layer.RecEntity);
+    end;
+    Layer.Next;
+  end;
+  //
+  Exp.Save(aMifFileName);
+end;
+
 function TmstMasterPlanModule.EditNewObject(const MpObj: TmstMPObject): Boolean;
 var
   Dlg: TmstEditMPObjectSemanticsDialog;
@@ -663,30 +697,105 @@ begin
   Result := TmstMPObject.Create;
   //FTableVersion := memBrowser.FieldByName(SF_TABLE_VERSION).AsInteger;
   Result.DatabaseId := memBrowser.FieldByName(SF_ID).AsInteger;
+//  WMIF('  ' + SF_CLASS_ID + ' Char(50) ');
+//  S := S + DecorateFieldValue(MpObj.MpClassGuid, 50) + ',';
+  Result.MpClassGuid := memBrowser.FieldByName(SF_CLASS_ID).AsString;
+//  WMIF('  ' + SF_CLASS_NAME + ' Char(255) ');
+//  S := S + DecorateFieldValue(MpObj.MpClassName, 255) + ',';
+  Result.MpClassName := memBrowser.FieldByName(SF_LAYER_NAME).AsString;
+//  WMIF('  ' + SF_OBJ_ID + ' Char(36) ');
+//  S := S + DecorateFieldValue(MpObj.MPObjectGuid, 36) + ',';
   Result.MPObjectGuid := memBrowser.FieldByName(SF_OBJ_ID).AsString;
+//  WMIF('  ' + SF_LINKED_OBJ_ID + ' Char(36) ');
+//  S := S + DecorateFieldValue(MpObj.LinkedObjectGuid, 36) + ',';
   Result.LinkedObjectGuid := memBrowser.FieldByName(SF_LINKED_OBJ_ID).AsString;
+//  WMIF('  ' + SF_ADDRESS + ' Char(255) ');
+//  S := S + DecorateFieldValue(MpObj.Address, 255) + ',';
   Result.Address := memBrowser.FieldByName(SF_ADDRESS).AsString;
-  Result.Archived := memBrowser.FieldByName(SF_ARCHIVED).AsInteger = 1;
-  Result.Bottom := memBrowser.FieldByName(SF_BOTTOM).AsString;
-  Result.ClassId := memBrowser.FieldByName(SF_MASTER_PLAN_CLASS_ID).AsInteger;
-  Result.Confirmed := memBrowser.FieldByName(SF_CONFIRMED).AsInteger = 1;
-  Result.Diameter := memBrowser.FieldByName(SF_DIAMETER).AsInteger;
-  Result.Dismantled := memBrowser.FieldByName(SF_DISMANTLED).AsInteger = 1;
+//  WMIF('  ' + SF_DOC_NUMBER + ' Char(12) ');
+//  S := S + DecorateFieldValue(MpObj.DocNumber, 12) + ',';
   Result.DocNumber := memBrowser.FieldByName(SF_DOC_NUMBER).AsString;
+//  WMIF('  ' + SF_DOC_DATE + ' Char(10) ');
+//  S := S + DecorateFieldValue(GetDateStr(MpObj.DocDate), 10) + ',';
   Result.DocDate := memBrowser.FieldByName(SF_DOC_DATE).AsDateTime;
-  Result.DrawDate := memBrowser.FieldByName(SF_DRAW_DATE).AsDateTime;
-  Result.Floor := memBrowser.FieldByName(SF_FLOOR).AsString;
-  Result.IsLine := memBrowser.FieldByName(SF_IS_LINE).AsInteger = 1;
-  Result.Material := memBrowser.FieldByName(SF_MATERIAL).AsString;
-  Result.Owner := memBrowser.FieldByName(SF_OWNER).AsString;
-  Result.PipeCount := memBrowser.FieldByName(SF_PIPE_COUNT).AsInteger;
-  Result.RequestNumber := memBrowser.FieldByName(SF_REQUEST_NUMBER).AsString;
-  Result.RequestDate := memBrowser.FieldByName(SF_REQUEST_DATE).AsDateTime;
-  Result.Rotation := memBrowser.FieldByName(SF_ROTATION).AsInteger;
-  Result.Top := memBrowser.FieldByName(SF_TOP).AsString;
-  Result.Underground := memBrowser.FieldByName(SF_UNDERGROUND).AsInteger = 1;
-  Result.Voltage := memBrowser.FieldByName(SF_VOLTAGE).AsInteger;
+//  WMIF('  ' + SF_PROJECT_NAME + ' Char(255) ');
+//  S := S + DecorateFieldValue(MpObj.ProjectName, 255) + ',';
   Result.ProjectName := memBrowser.FieldByName(SF_PROJECT_NAME).AsString;
+//  WMIF('  ' + SF_REQUEST_NUMBER + ' Char(12) ');
+//  S := S + DecorateFieldValue(MpObj.RequestNumber, 12) + ',';
+  Result.RequestNumber := memBrowser.FieldByName(SF_REQUEST_NUMBER).AsString;
+//  WMIF('  ' + SF_REQUEST_DATE + ' Char(10) ');
+//  S := S + DecorateFieldValue(GetDateStr(MpObj.RequestDate), 10) + ',';
+  Result.RequestDate := memBrowser.FieldByName(SF_REQUEST_DATE).AsDateTime;
+//  WMIF('  ' + SF_DRAW_DATE + ' Char(10) ');
+//  S := S + DecorateFieldValue(GetDateStr(MpObj.DrawDate), 10) + ',';
+  Result.DrawDate := memBrowser.FieldByName(SF_DRAW_DATE).AsDateTime;
+//  WMIF('  ' + SF_OWNER + ' Char(255) ');
+//  S := S + DecorateFieldValue(MpObj.Owner, 255) + ',';
+  Result.Owner := memBrowser.FieldByName(SF_OWNER).AsString;
+//  WMIF('  ' + SF_CUSTOMER + ' Char(255) ');
+//  S := S + DecorateFieldValue(MpObj.CustomerOrg, 255) + ',';
+  Result.CustomerOrg := memBrowser.FieldByName(SF_CUSTOMER_NAME).AsString;
+//  WMIF('  ' + SF_EXECUTOR + ' Char(255) ');
+//  S := S + DecorateFieldValue(MpObj.ExecutorOrg, 255) + ',';
+  Result.ExecutorOrg := memBrowser.FieldByName(SF_EXECUTOR_NAME).AsString;
+//  WMIF('  ' + SF_DRAW_ORG + ' Char(255) ');
+//  S := S + DecorateFieldValue(MpObj.DrawOrg, 255) + ',';
+  Result.DrawOrg := memBrowser.FieldByName(SF_DRAWER_NAME).AsString;
+//  WMIF('  ' + SF_ROTATION + ' Integer ');
+//  S := S + IntToStr(MpObj.Rotation) + ',';
+  Result.Rotation := memBrowser.FieldByName(SF_ROTATION).AsInteger;
+//  WMIF('  ' + SF_DRAWN + ' Logical ');
+//  S := S + GetBoolStr(MpObj.Drawn);
+  Result.Drawn := memBrowser.FieldByName(SF_DRAWN).AsInteger = 1;
+//  WMIF('  ' + SF_CONFIRMED + ' Logical ');
+//  S := S + GetBoolStr(MpObj.Confirmed);
+  Result.Confirmed := memBrowser.FieldByName(SF_CONFIRMED).AsInteger = 1;
+//  WMIF('  ' + SF_DISMANTLED + ' Logical ');
+//  S := S + GetBoolStr(MpObj.Dismantled);
+  Result.Dismantled := memBrowser.FieldByName(SF_DISMANTLED).AsInteger = 1;
+//  WMIF('  ' + SF_ARCHIVED + ' Logical ');
+//  S := S + GetBoolStr(MpObj.Archived);
+  Result.Archived := memBrowser.FieldByName(SF_ARCHIVED).AsInteger = 1;
+//  WMIF('  ' + SF_UNDERGROUND + ' Logical ');
+//  S := S + GetBoolStr(MpObj.Underground);
+  Result.Underground := memBrowser.FieldByName(SF_UNDERGROUND).AsInteger = 1;
+//  WMIF('  ' + SF_DIAMETER + ' Integer ');
+//  S := S + IntToStr(MpObj.Diameter) + ',';
+  Result.Diameter := memBrowser.FieldByName(SF_DIAMETER).AsInteger;
+//  WMIF('  ' + SF_VOLTAGE + ' Integer ');
+//  S := S + IntToStr(MpObj.Voltage) + ',';
+  Result.Voltage := memBrowser.FieldByName(SF_VOLTAGE).AsInteger;
+//  WMIF('  ' + SF_PIPE_COUNT + ' Integer ');
+//  S := S + IntToStr(MpObj.PipeCount) + ',';
+  Result.PipeCount := memBrowser.FieldByName(SF_PIPE_COUNT).AsInteger;
+//  WMIF('  ' + SF_MATERIAL + ' Char(255) ');
+//  S := S + DecorateFieldValue(MpObj.Material, 255) + ',';
+  Result.Material := memBrowser.FieldByName(SF_MATERIAL).AsString;
+//  WMIF('  ' + SF_TOP + ' Char(255) ');
+//  S := S + DecorateFieldValue(MpObj.Top, 255) + ',';
+  Result.Top := memBrowser.FieldByName(SF_TOP).AsString;
+//  WMIF('  ' + SF_BOTTOM + ' Char(255) ');
+//  S := S + DecorateFieldValue(MpObj.Bottom, 255) + ',';
+  Result.Bottom := memBrowser.FieldByName(SF_BOTTOM).AsString;
+//  WMIF('  ' + SF_FLOOR + ' Char(255) ');
+//  S := S + DecorateFieldValue(MpObj.Floor, 255) + ',';
+  Result.Floor := memBrowser.FieldByName(SF_FLOOR).AsString;
+//  WMIF('  ' + SF_PROJECTED + ' Logical ');
+//  S := S + GetBoolStr(MpObj.Projected);
+  Result.Projected := memBrowser.FieldByName(SF_PROJECTED).AsInteger = 1;
+//  WMIF('  ' + SF_HAS_CERTIF + ' Logical ');
+//  S := S + GetBoolStr(MpObj.HasCertif);
+  Result.HasCertif := memBrowser.FieldByName(SF_HAS_CERTIF).AsInteger = 1;
+//  WMIF('  ' + SF_CERTIF_NUMBER + ' Char(12) ');
+//  S := S + DecorateFieldValue(MpObj.CertifNumber, 12) + ',';
+  Result.CertifNumber := memBrowser.FieldByName(SF_CERTIF_NUMBER).AsString;
+//  WMIF('  ' + SF_CERTIF_DATE + ' Char(10) ');
+//  S := S + DecorateFieldValue(GetDateStr(MpObj.CertifDate), 10) + ',';
+  Result.CertifDate := memBrowser.FieldByName(SF_CERTIF_DATE).AsDateTime;
+
+  Result.MpClassId := memBrowser.FieldByName(SF_MASTER_PLAN_CLASS_ID).AsInteger;
+  Result.IsLine := memBrowser.FieldByName(SF_IS_LINE).AsInteger = 1;
 //  Result.CK36 := memBrowser.FieldByName(SF_CK36).AsInteger = 1;
   Result.CustomerOrgId := memBrowser.FieldByName(SF_CUSTOMER_ORGS_ID).AsInteger;
   Result.ExecutorOrgId := memBrowser.FieldByName(SF_EXECUTOR_ORGS_ID).AsInteger;
@@ -695,11 +804,6 @@ begin
   Result.MinY := memBrowser.FieldByName(SF_MINY).AsFloat;
   Result.MaxX := memBrowser.FieldByName(SF_MAXY).AsFloat;
   Result.MaxY := memBrowser.FieldByName(SF_MAXY).AsFloat;
-  Result.Drawn := memBrowser.FieldByName(SF_DRAWN).AsInteger = 1;
-  Result.Projected := memBrowser.FieldByName(SF_PROJECTED).AsInteger = 1;
-  Result.HasCertif := memBrowser.FieldByName(SF_HAS_CERTIF).AsInteger = 1;
-  Result.CertifNumber := memBrowser.FieldByName(SF_CERTIF_NUMBER).AsString;
-  Result.CertifDate := memBrowser.FieldByName(SF_CERTIF_DATE).AsDateTime;
   Result.CheckState := TmstMPObjectCheckState(memBrowser.FieldByName(SF_CHECK_STATE).AsInteger);
   //
   Result.UpdateObjState();
@@ -742,6 +846,30 @@ begin
     memBrowser.Post;
   finally
     Conn.Commit;
+  end;
+end;
+
+function TmstMasterPlanModule.HasLoaded: Boolean;
+var
+  Ent: TEzEntity;
+  Layer: TEzBaseLayer;
+  ObjId: Integer;
+begin
+  Result := FEzAdapter.Loaded;
+  if not Result then
+  begin
+    memEzData.First;
+    Layer := GetMPLayer();
+    if Layer = nil then
+      Exit;
+    Layer.First;
+    while not Layer.Eof do
+    begin
+      Result := not Layer.RecIsDeleted;
+      if Result then
+        Exit;
+      Layer.Next;
+    end;
   end;
 end;
 

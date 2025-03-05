@@ -104,7 +104,8 @@ uses
   uMStKernelAppSettings in 'Source\uMStKernelAppSettings.pas',
   uMStClassesMPObjectAdapter in 'Source\uMStClassesMPObjectAdapter.pas',
   uMStDialogMPLineColors in 'Source\uMStDialogMPLineColors.pas' {mstMPLineColorsDialog},
-  uMStDialogCertifNumber in 'Source\uMStDialogCertifNumber.pas' {mstMPCertifDialog};
+  uMStDialogCertifNumber in 'Source\uMStDialogCertifNumber.pas' {mstMPCertifDialog},
+  uMStClassesMPMIFExport in 'Source\uMStClassesMPMIFExport.pas';
 
 {$R *.RES}
 
@@ -115,8 +116,8 @@ begin
   Application.Title := 'Планшетохранилище 3.1';
   try
     Application.CreateForm(TmstClientAppModule, mstClientAppModule);
-    Application.CreateForm(TmstPrintModule, mstPrintModule);
-    Application.CreateForm(TmstClientMainForm, mstClientMainForm);
+  Application.CreateForm(TmstPrintModule, mstPrintModule);
+  Application.CreateForm(TmstClientMainForm, mstClientMainForm);
   except
     on E: Exception do
     begin

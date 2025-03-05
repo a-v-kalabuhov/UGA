@@ -482,7 +482,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Style = csDropDownList
       Anchors = [akTop, akRight]
       Enabled = False
-      ItemHeight = 0
+      ItemHeight = 13
       TabOrder = 1
       Items.Strings = (
         #1087#1088#1086#1077#1082#1090#1080#1088#1091#1077#1084#1099#1081

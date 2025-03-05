@@ -73,6 +73,11 @@ type
     FHasCertif: Boolean;
     FMPObjectGuid: string;
     FLinkedObjectGuid: string;
+    FClassGuid: string;
+    FMpClassName: string;
+    FDrawOrg: string;
+    FCustomerOrg: string;
+    FExecutorOrg: string;
     procedure SetClassId(const Value: Integer);
     procedure SetAddress(const Value: string);
     procedure SetArchived(const Value: Boolean);
@@ -118,6 +123,11 @@ type
     procedure SetHasCertif(const Value: Boolean);
     procedure SetMPObjectGuid(const Value: string);
     procedure SetLinkedObjectGuid(const Value: string);
+    procedure SetClassGuid(const Value: string);
+    procedure SetCustomerOrg(const Value: string);
+    procedure SetDrawOrg(const Value: string);
+    procedure SetExecutorOrg(const Value: string);
+    procedure SetMpClassName(const Value: string);
   protected
     function GetObjectId: Integer; override;
     function GetText: String; override;
@@ -138,7 +148,12 @@ type
     property Address: string read FAddress write SetAddress;
     property Archived: Boolean read FArchived write SetArchived;
     property Bottom: string read FBottom write SetBottom;
-    property ClassId: Integer read FClassId write SetClassId;
+    property MpClassId: Integer read FClassId write SetClassId;
+    // для экспорта
+    property MpClassGuid: string read FClassGuid write SetClassGuid;
+    // для экспорта
+    property MpClassName: string read FMpClassName write SetMpClassName;
+    //
     property Confirmed: Boolean read FConfirmed write SetConfirmed;
     property Diameter: Integer read FDiameter write SetDiameter;
     property Dismantled: Boolean read FDismantled write SetDismantled;
@@ -162,9 +177,15 @@ type
     property ExchangeXY: Boolean read FExchangeXY write SetExchangeXY;
     property MPLayerId: Integer read FMPLayerId write SetMPLayerId;
     property CustomerOrgId: Integer read FCustomerOrgId write SetCustomerOrgId;
+    // для экспорта
+    property CustomerOrg: string read FCustomerOrg write SetCustomerOrg;
     property ExecutorOrgId: Integer read FExecutorOrgId write SetExecutorOrgId;
+    // для экспорта
+    property ExecutorOrg: string read FExecutorOrg write SetExecutorOrg;
     property OwnerOrgId: Integer read FOwnerOrgId write SetOwnerOrgId;
     property DrawOrgId: Integer read FDrawOrgId write SetDrawOrgId;
+    // для экспорта
+    property DrawOrg: string read FDrawOrg write SetDrawOrg;
     // используются местная СК: Х - вверх, Y - вправо (геодезические кооринаты)
     property MinX: Double read FMinX write SetMinX;
     // используются местная СК: Х - вверх, Y - вправо (геодезические кооринаты)
@@ -479,7 +500,7 @@ begin
   //OBJ_ID,
   Conn.SetParam(DsMain, SF_OBJ_ID, aObj.MPObjectGuid);
   //MASTER_PLAN_CLASS_ID,
-  Conn.SetNullableParam(DsMain, SF_MASTER_PLAN_CLASS_ID, aObj.ClassId, 0);
+  Conn.SetNullableParam(DsMain, SF_MASTER_PLAN_CLASS_ID, aObj.MpClassId, 0);
   //STATUS,
   Conn.SetParam(DsMain, SF_STATUS, aObj.Status);
   //DISMANTLED,
@@ -816,6 +837,11 @@ begin
     Self.FEzData.Position := 0;
     Tgt.FEzId := Self.FEzId;
     //
+    Tgt.FMpClassName := FMpClassName;
+    Tgt.FDrawOrg := FDrawOrg;
+    Tgt.FCustomerOrg := FCustomerOrg;
+    Tgt.FExecutorOrg := FExecutorOrg;
+    //
     Tgt.DatabaseId := Self.DatabaseId;
   end;
 end;
@@ -882,6 +908,11 @@ begin
   FCK36 := Value;
 end;
 
+procedure TmstMPObject.SetClassGuid(const Value: string);
+begin
+  FClassGuid := Value;
+end;
+
 procedure TmstMPObject.SetClassId(const Value: Integer);
 begin
   FClassId := Value;
@@ -890,6 +921,11 @@ end;
 procedure TmstMPObject.SetConfirmed(const Value: Boolean);
 begin
   FConfirmed := Value;
+end;
+
+procedure TmstMPObject.SetCustomerOrg(const Value: string);
+begin
+  FCustomerOrg := Value;
 end;
 
 procedure TmstMPObject.SetCustomerOrgId(const Value: Integer);
@@ -927,6 +963,11 @@ begin
   FDrawn := Value;
 end;
 
+procedure TmstMPObject.SetDrawOrg(const Value: string);
+begin
+  FDrawOrg := Value;
+end;
+
 procedure TmstMPObject.SetDrawOrgId(const Value: Integer);
 begin
   FDrawOrgId := Value;
@@ -940,6 +981,11 @@ end;
 procedure TmstMPObject.SetExchangeXY(const Value: Boolean);
 begin
   FExchangeXY := Value;
+end;
+
+procedure TmstMPObject.SetExecutorOrg(const Value: string);
+begin
+  FExecutorOrg := Value;
 end;
 
 procedure TmstMPObject.SetExecutorOrgId(const Value: Integer);
@@ -1000,6 +1046,11 @@ end;
 procedure TmstMPObject.SetMinY(const Value: Double);
 begin
   FMinY := Value;
+end;
+
+procedure TmstMPObject.SetMpClassName(const Value: string);
+begin
+  FMpClassName := Value;
 end;
 
 procedure TmstMPObject.SetMPLayerId(const Value: Integer);
@@ -1270,7 +1321,7 @@ begin
   //LINKED_OBJ_ID,
   Conn.SetParam(DsMain, SF_LINKED_OBJ_ID, aObj.LinkedObjectGuid);
   //MASTER_PLAN_CLASS_ID,
-  Conn.SetNullableParam(DsMain, SF_MASTER_PLAN_CLASS_ID, aObj.ClassId, 0);
+  Conn.SetNullableParam(DsMain, SF_MASTER_PLAN_CLASS_ID, aObj.MpClassId, 0);
   //STATUS,
   Conn.SetParam(DsMain, SF_STATUS, aObj.Status);
   //DISMANTLED,

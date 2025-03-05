@@ -262,7 +262,7 @@ begin
       if FExchangeXY then
         TEzCSConverter.ExchangeXY(Ent);
       MPObj := MPPrj.Objects.Add();
-      MPObj.ClassId := aLayer.DatabaseId;
+      MPObj.MpClassId := aLayer.DatabaseId;
       MPObj.MpLayerId := aLayer.MPLayerId;
       Ent.SaveToStream(MPObj.EzData);
       MPObj.EzId := Integer(Ent.EntityID);

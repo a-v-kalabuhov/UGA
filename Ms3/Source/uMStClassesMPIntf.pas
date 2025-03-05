@@ -28,6 +28,7 @@ type
     function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
     procedure UpdateLayersVisibility(aLayers: TmstLayerList);
     //
+    function HasLoaded(): Boolean;
     function IsLoaded(const ObjId: Integer): Boolean;
     procedure LoadAllToGIS();
     procedure LoadToGis(const ObjId: Integer; const Display: Boolean);
@@ -36,6 +37,8 @@ type
     //
     procedure CopyToDrawn(const ObjId: Integer);
     procedure GiveOutCertif(const ObjId: Integer; CertifNumber: string; CertifDate: TDateTime);
+    //
+    procedure ExportToMif(const aMifFileName: string);
   end;
 
   ImstMPModuleObjList = interface

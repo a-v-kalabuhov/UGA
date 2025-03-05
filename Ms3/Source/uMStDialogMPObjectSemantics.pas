@@ -305,9 +305,9 @@ begin
   end
   else
   begin
-    S := FMPModule.Classifier.GetClassName(FObject.ClassId);
+    S := FMPModule.Classifier.GetClassName(FObject.MpClassId);
     cbClass.Items.Clear;
-    cbClass.Items.AddObject(S, TObject(FObject.ClassId));
+    cbClass.Items.AddObject(S, TObject(FObject.MpClassId));
     cbClass.ItemIndex := 0;
   end;
   //
@@ -385,7 +385,7 @@ begin
   //
   if FCanChangeClass then
   begin
-    FObject.ClassId := Integer(cbClass.Items.Objects[cbClass.ItemIndex]);
+    FObject.MpClassId := Integer(cbClass.Items.Objects[cbClass.ItemIndex]);
   end;
 end;
 
