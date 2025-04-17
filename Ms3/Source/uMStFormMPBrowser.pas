@@ -3,82 +3,122 @@ unit uMStFormMPBrowser;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs,
-  EzBaseGIS, IBSQL, Menus, IBCustomDataSet, IBUpdateSQL, ActnList, IBDatabase, DB, IBQuery, Grids, DBGrids, uDBGrid,
-  ComCtrls, StdCtrls, DBCtrls, Buttons, ExtCtrls, ShellAPI, Clipbrd,
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs, DB,
+  EzBaseGIS, IBSQL, Menus, IBCustomDataSet, IBUpdateSQL, ActnList, IBDatabase, IBQuery, Grids, DBGrids,
+  ComCtrls, StdCtrls, DBCtrls, Buttons, ExtCtrls, ShellAPI, Clipbrd, ImgList,
   //
+  RxMemDS,
   EzLib,
   //
+  uDBGrid,
   uGC, uFileUtils,
   uMStKernelIBX,
   uMStClassesProjectsMP, uMStClassesMPIntf, uMStKernelAppSettings,
-  uMStKernelClassesQueryIndex, uMStClassesProjectsUtils, uMStClassesProjectsBrowserMP, uMStClassesMPStatuses;
+  uMStKernelClassesQueryIndex, uMStClassesProjectsUtils, uMStClassesProjectsBrowserMP, uMStClassesMPStatuses,
+  uMStClassesProjectsMPIntersect;
   //
 //  uMStModuleApp;
 
 type
-  TmstMPBrowserForm = class(TForm)
+  TmstMPBrowserForm = class(TForm, ImstMPObjEventSubscriber)
     Panel1: TPanel;
     btnClose: TSpeedButton;
-    btnLoadToLayer: TSpeedButton;
-    btnLoadAll: TSpeedButton;
-    btnRemoveFromMap: TSpeedButton;
-    btnRemoveAllFromMap: TSpeedButton;
     DBNavigator1: TDBNavigator;
-    Panel3: TPanel;
-    btnCoords: TSpeedButton;
-    btnZone: TSpeedButton;
-    btnRemoveZone: TSpeedButton;
-    btnDisplay: TSpeedButton;
-    chbTransparency: TCheckBox;
-    trackAlpha: TTrackBar;
-    PageControl1: TPageControl;
-    tabData: TTabSheet;
-    Panel2: TPanel;
-    btnFilterStart: TSpeedButton;
-    btnFilterClear: TSpeedButton;
-    btnProperties: TSpeedButton;
-    sbtnDeleteProject: TSpeedButton;
+    tabData: TPanel;
     kaDBGrid1: TkaDBGrid;
     DataSource1: TDataSource;
     ActionList1: TActionList;
-    btnSpravka: TSpeedButton;
-    acGiveOutCertif: TAction;
-    acLoadToGis: TAction;
+    acObjGiveOutCertif: TAction;
+    acObjLoadToGis: TAction;
     PopupMenu1: TPopupMenu;
-    acCopyObjId: TAction;
+    acObjCopyId: TAction;
     ID1: TMenuItem;
-    acProjectedToDrawn: TAction;
+    acObjProjectedToDrawn: TAction;
     N1: TMenuItem;
+    memBrowser2: TRxMemoryData;
+    acListRefresh: TAction;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    ImageList1: TImageList;
+    MainMenu1: TMainMenu;
+    FF1: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
+    N7: TMenuItem;
+    N8: TMenuItem;
+    acFilterSet: TAction;
+    acFilterClear: TAction;
+    acObjProperties: TAction;
+    N9: TMenuItem;
+    N10: TMenuItem;
+    N11: TMenuItem;
+    N12: TMenuItem;
+    N13: TMenuItem;
+    acObjRemove: TAction;
+    N14: TMenuItem;
+    acListLoadToGis: TAction;
+    acListLoadToGis1: TMenuItem;
+    N15: TMenuItem;
+    acObjUnloadFromGis: TAction;
+    N16: TMenuItem;
+    acListUnloadFromGis: TAction;
+    N17: TMenuItem;
+    acObjExportCoords: TAction;
+    ID2: TMenuItem;
+    N18: TMenuItem;
+    acObjDisplay: TAction;
+    N19: TMenuItem;
+    N20: TMenuItem;
+    N21: TMenuItem;
+    btnDisplay: TSpeedButton;
+    trackAlpha: TTrackBar;
+    chbTransparency: TCheckBox;
+    N22: TMenuItem;
+    acTransparency: TAction;
+    btnZone: TSpeedButton;
+    btnRemoveZone: TSpeedButton;
+    acTransparency1: TMenuItem;
+    N23: TMenuItem;
+    N24: TMenuItem;
+    N25: TMenuItem;
+    N26: TMenuItem;
+    N27: TMenuItem;
+    N28: TMenuItem;
+    acObjCheck: TAction;
+    N29: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure chbTransparencyClick(Sender: TObject);
     procedure trackAlphaChange(Sender: TObject);
-    procedure btnDisplayClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
-    procedure btnFilterStartClick(Sender: TObject);
-    procedure btnFilterClearClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure kaDBGrid1CellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor;
       State: TGridDrawState; var FontStyle: TFontStyles);
-    procedure btnLoadAllClick(Sender: TObject);
-    procedure btnCoordsClick(Sender: TObject);
-    procedure btnRemoveAllFromMapClick(Sender: TObject);
-    procedure btnRemoveFromMapClick(Sender: TObject);
-    procedure ibqObjectsAfterScroll(DataSet: TDataSet);
-    procedure ibqObjectsAfterClose(DataSet: TDataSet);
-    procedure btnPropertiesClick(Sender: TObject);
-    procedure sbtnDeleteProjectClick(Sender: TObject);
     procedure kaDBGrid1GetLogicalValue(Sender: TObject; Column: TColumn; var Value: Boolean);
     procedure kaDBGrid1LogicalColumn(Sender: TObject; Column: TColumn; var Value: Boolean);
-    procedure acGiveOutCertifExecute(Sender: TObject);
-    procedure acGiveOutCertifUpdate(Sender: TObject);
-    procedure acLoadToGisExecute(Sender: TObject);
-    procedure acLoadToGisUpdate(Sender: TObject);
+    procedure acObjGiveOutCertifExecute(Sender: TObject);
+    procedure acObjGiveOutCertifUpdate(Sender: TObject);
     procedure kaDBGrid1MouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-    procedure acCopyObjIdExecute(Sender: TObject);
-    procedure acProjectedToDrawnExecute(Sender: TObject);
-    procedure acProjectedToDrawnUpdate(Sender: TObject);
+    procedure acObjCopyIdExecute(Sender: TObject);
+    procedure acObjProjectedToDrawnExecute(Sender: TObject);
+    procedure acObjProjectedToDrawnUpdate(Sender: TObject);
+    procedure acListRefreshExecute(Sender: TObject);
+    procedure acFilterSetExecute(Sender: TObject);
+    procedure acFilterClearExecute(Sender: TObject);
+    procedure acObjPropertiesExecute(Sender: TObject);
+    procedure acObjRemoveExecute(Sender: TObject);
+    procedure acListLoadToGisExecute(Sender: TObject);
+    procedure acObjUnloadFromGisExecute(Sender: TObject);
+    procedure acListUnloadFromGisExecute(Sender: TObject);
+    procedure acObjExportCoordsExecute(Sender: TObject);
+    procedure acObjDisplayExecute(Sender: TObject);
+    procedure acTransparencyExecute(Sender: TObject);
+    procedure acTransparencyUpdate(Sender: TObject);
+    procedure acObjLoadToGisExecute(Sender: TObject);
+    procedure acObjLoadToGisUpdate(Sender: TObject);
+    procedure kaDBGrid1DblClick(Sender: TObject);
+    procedure acObjCheckExecute(Sender: TObject);
   private
     FDrawBox: TEzBaseDrawBox;
     procedure SetDrawBox(const Value: TEzBaseDrawBox);
@@ -92,7 +132,13 @@ type
     procedure ClearFilter();
     procedure ShowFilterDialog();
     procedure LoadAndDisplayCurrentObj();
+    procedure LoadFilteredToGis();
     procedure SetAppSettings(const Value: ImstAppSettings);
+    procedure FilterRecord(DataSet: TDataSet; var Accept: Boolean);
+    procedure RefreshDataSet();
+    procedure RefreshCurrentRow(); 
+  private
+    procedure Notify(const ObjId: Integer; Op: TRowOperation);
   public
     procedure Browse();
     //
@@ -115,7 +161,36 @@ uses
 
 { TmstMPBrowserForm }
 
-procedure TmstMPBrowserForm.acCopyObjIdExecute(Sender: TObject);
+procedure TmstMPBrowserForm.acObjCheckExecute(Sender: TObject);
+var
+  Found: TmpIntersectionInfo;
+  ObjId: Integer;
+  Ds: TDataSet;
+begin
+  Ds := DataSource1.DataSet;
+  ObjId := Ds.FieldByName(SF_ID).AsInteger;
+  // ищем список объектов
+  // - архив не ищем
+  // - ищем среди всех, а не только загуженных
+  Found := FMP.FindIntersects(ObjId);
+  try
+    if Found.Count = 0 then
+    begin
+      // если не нашли, то показываем сообщение
+      ShowMessage('Пересечения не обнаружены!');
+      FMP.SetObjCheckState(ObjId, ocsChecked);
+    end
+    else
+    begin
+      // если нашли, то показываем окно
+      FMP.IntersectDialog(ObjId, Found);
+    end;
+  finally
+    FreeAndNil(Found);
+  end;
+end;
+
+procedure TmstMPBrowserForm.acObjCopyIdExecute(Sender: TObject);
 var
   ObjGuid: string;
 begin
@@ -123,105 +198,18 @@ begin
   Clipboard.AsText := ObjGuid;
 end;
 
-procedure TmstMPBrowserForm.acGiveOutCertifExecute(Sender: TObject);
-var
-  Dlg: TmstMPCertifDialog;
-  CertifNumber: string;
-  CertifDate: TDateTime;
-  ObjId: Integer;
+procedure TmstMPBrowserForm.acFilterClearExecute(Sender: TObject);
 begin
-  // показывается окно для ввода номера и даты справки,
-  Dlg := TmstMPCertifDialog.Create(Self);
-  try
-    CertifNumber := DataSource1.DataSet.FieldByName(SF_CERTIF_NUMBER).AsString;
-    CertifDate := DataSource1.DataSet.FieldByName(SF_CERTIF_DATE).AsDateTime;
-    if Dlg.Execute(CertifNumber, CertifDate) then
-    begin
-      // сеть помечается как "Справка выдана" и переносится в другую группу слоёв.
-      ObjId := DataSource1.DataSet.FieldByName(SF_ID).AsInteger;
-      FMP.GiveOutCertif(ObjId, CertifNumber, CertifDate);
-      DrawBox.RegenDrawing;
-    end;
-  finally
-    Dlg.Free;
-  end;
+  ClearFilter();
+//  ApplyFilter();
 end;
 
-procedure TmstMPBrowserForm.acGiveOutCertifUpdate(Sender: TObject);
-var
-  HasCertif: Boolean;
-  Status: Integer;
-begin
-  HasCertif := DataSource1.DataSet.FieldByName(SF_HAS_CERTIF).AsInteger = 1;
-  Status := DataSource1.DataSet.FieldByName(SF_STATUS).AsInteger;
-  acGiveOutCertif.Enabled := not HasCertif or (Status <> TmstMPStatuses.Drawn);
-end;
-
-procedure TmstMPBrowserForm.acLoadToGisExecute(Sender: TObject);
+procedure TmstMPBrowserForm.acObjDisplayExecute(Sender: TObject);
 begin
   LoadAndDisplayCurrentObj();
 end;
 
-procedure TmstMPBrowserForm.acLoadToGisUpdate(Sender: TObject);
-var
-  ObjLoaded: Boolean;
-begin
-  ObjLoaded := DataSource1.DataSet.FieldByName(SF_LOADED).AsInteger = 1;
-  acLoadToGis.Enabled := not ObjLoaded;
-end;
-
-procedure TmstMPBrowserForm.acProjectedToDrawnExecute(Sender: TObject);
-var
-  ObjId: Integer;
-begin
-  ObjId := DataSource1.DataSet.FieldByName(SF_ID).AsInteger;
-  FMP.CopyToDrawn(ObjId);
-  kaDBGrid1.Refresh;
-end;
-
-procedure TmstMPBrowserForm.acProjectedToDrawnUpdate(Sender: TObject);
-var
-  Drawn: Boolean;
-begin
-  Drawn := DataSource1.DataSet.FieldByName(SF_DRAWN).AsInteger = 1;
-  acProjectedToDrawn.Enabled := not Drawn;
-end;
-
-procedure TmstMPBrowserForm.ApplyFilter;
-var
-  Id: Integer;
-begin
-  // если запрос открыт, то запоминаем ID
-  if DataSource1.DataSet.Active then
-    Id := DataSource1.DataSet.FieldByName(SF_ID).AsInteger
-  else
-    Id := -1;
-  // Применить параметры фильтра на DataSet
-  //Sql := PrepareSql();
-  if Id >= 0 then
-    DataSource1.DataSet.Locate(SF_ID, Id, []);
-end;
-
-procedure TmstMPBrowserForm.Browse;
-begin
-  if not Visible then
-  begin
-    DataSource1.DataSet := FObjList.BrowserDataSet();
-    FAppSettings.ReadFormPosition(Application, Self);
-    FAppSettings.ReadGridProperties(Self, kaDBGrid1);
-    ApplyFilter();
-    Show;
-  end
-  else
-    BringToFront;
-end;
-
-procedure TmstMPBrowserForm.btnCloseClick(Sender: TObject);
-begin
-  Close;
-end;
-
-procedure TmstMPBrowserForm.btnCoordsClick(Sender: TObject);
+procedure TmstMPBrowserForm.acObjExportCoordsExecute(Sender: TObject);
 var
   ObjId: Integer;
   MpObj: TmstMPObject;
@@ -269,29 +257,65 @@ begin
   end;
 end;
 
-procedure TmstMPBrowserForm.btnDisplayClick(Sender: TObject);
+procedure TmstMPBrowserForm.acObjGiveOutCertifExecute(Sender: TObject);
+var
+  Dlg: TmstMPCertifDialog;
+  CertifNumber: string;
+  CertifDate: TDateTime;
+  ObjId: Integer;
 begin
-  LoadAndDisplayCurrentObj();
+  // показывается окно для ввода номера и даты справки,
+  Dlg := TmstMPCertifDialog.Create(Self);
+  try
+    CertifNumber := DataSource1.DataSet.FieldByName(SF_CERTIF_NUMBER).AsString;
+    CertifDate := DataSource1.DataSet.FieldByName(SF_CERTIF_DATE).AsDateTime;
+    if Dlg.Execute(CertifNumber, CertifDate) then
+    begin
+      // сеть помечается как "Справка выдана" и переносится в другую группу слоёв.
+      ObjId := DataSource1.DataSet.FieldByName(SF_ID).AsInteger;
+      FMP.GiveOutCertif(ObjId, CertifNumber, CertifDate);
+      DrawBox.RegenDrawing;
+    end;
+  finally
+    Dlg.Free;
+  end;
 end;
 
-procedure TmstMPBrowserForm.btnFilterClearClick(Sender: TObject);
+procedure TmstMPBrowserForm.acObjGiveOutCertifUpdate(Sender: TObject);
+var
+  HasCertif: Boolean;
+  Status: Integer;
 begin
-  ClearFilter();
-  ApplyFilter();
+  HasCertif := DataSource1.DataSet.FieldByName(SF_HAS_CERTIF).AsInteger = 1;
+  Status := DataSource1.DataSet.FieldByName(SF_STATUS).AsInteger;
+  acObjGiveOutCertif.Enabled := not HasCertif or (Status <> TmstMPStatuses.Drawn);
 end;
 
-procedure TmstMPBrowserForm.btnFilterStartClick(Sender: TObject);
+procedure TmstMPBrowserForm.acObjLoadToGisExecute(Sender: TObject);
+var
+  ObjId: Integer;
+  Ds: TDataSet;
 begin
-  ShowFilterDialog();
+  Ds := DataSource1.DataSet;
+  if Ds.Active then
+  begin
+    ObjId := Ds.FieldByName(SF_ID).AsInteger;
+    FMP.LoadToGis(ObjId, False);
+    kaDBGrid1.Refresh;
+  end;
 end;
 
-procedure TmstMPBrowserForm.btnLoadAllClick(Sender: TObject);
+procedure TmstMPBrowserForm.acObjLoadToGisUpdate(Sender: TObject);
+var
+  ObjLoaded: Boolean;
+  ObjId: Integer;
 begin
-  FMP.LoadAllToGIS();
-  kaDBGrid1.Refresh;
+  ObjId := DataSource1.DataSet.FieldByName(SF_ID).AsInteger;
+  ObjLoaded := FMP.IsLoaded(ObjId); //DataSource1.DataSet.FieldByName(SF_LOADED).AsInteger = 1;
+  acObjLoadToGis.Enabled := not ObjLoaded;
 end;
 
-procedure TmstMPBrowserForm.btnPropertiesClick(Sender: TObject);
+procedure TmstMPBrowserForm.acObjPropertiesExecute(Sender: TObject);
 var
   ObjId: Integer;
   Ds: TDataSet;
@@ -300,8 +324,150 @@ begin
   if not Ds.Active then
     Exit;
   ObjId := Ds.FieldByName(SF_ID).AsInteger;
-  if FMP.EditObjProperties(ObjId) then
-     Ds.Refresh;
+  FMP.EditObjProperties(ObjId);
+end;
+
+procedure TmstMPBrowserForm.acObjRemoveExecute(Sender: TObject);
+var
+  ObjId: Integer;
+  Ds: TDataSet;
+begin
+  Ds := DataSource1.DataSet;
+  if Ds.Active and not Ds.IsEmpty then
+  begin
+    ObjId := Ds.FieldByName(SF_ID).AsInteger;
+    // удаляем объект из проекта
+    FMP.DeleteObj(ObjId);
+    // удаляем текущую строку в браузере
+    Ds.Delete;
+    DrawBox.RegenDrawing;
+  end;
+end;
+
+procedure TmstMPBrowserForm.acObjUnloadFromGisExecute(Sender: TObject);
+var
+  ObjId: Integer;
+  Ds: TDataSet;
+begin
+  Ds := DataSource1.DataSet;
+  if Ds.Active then
+  begin
+    ObjId := Ds.FieldByName(SF_ID).AsInteger;
+    if FMP.UnloadFromGis(ObjId) then
+    begin
+      DrawBox.RegenDrawing;
+      kaDbGrid1.Refresh;
+    end;
+  end;
+end;
+
+procedure TmstMPBrowserForm.acTransparencyExecute(Sender: TObject);
+begin
+  chbTransparency.Checked := not chbTransparency.Checked;
+end;
+
+procedure TmstMPBrowserForm.acTransparencyUpdate(Sender: TObject);
+begin
+  acTransparency.Checked := chbTransparency.Checked;
+end;
+
+procedure TmstMPBrowserForm.acObjProjectedToDrawnExecute(Sender: TObject);
+var
+  ObjId: Integer;
+begin
+  ObjId := DataSource1.DataSet.FieldByName(SF_ID).AsInteger;
+  FMP.CopyToDrawn(ObjId);
+  kaDBGrid1.Refresh;
+end;
+
+procedure TmstMPBrowserForm.acObjProjectedToDrawnUpdate(Sender: TObject);
+var
+  Drawn: Boolean;
+begin
+  Drawn := DataSource1.DataSet.FieldByName(SF_DRAWN).AsInteger = 1;
+  acObjProjectedToDrawn.Enabled := not Drawn;
+end;
+
+procedure TmstMPBrowserForm.acListLoadToGisExecute(Sender: TObject);
+begin
+  if FFilter.IsEmpty then
+    FMP.LoadAllToGIS()
+  else
+    LoadFilteredToGis();
+  kaDBGrid1.Refresh;
+  DrawBox.RegenDrawing;
+end;
+
+procedure TmstMPBrowserForm.acListRefreshExecute(Sender: TObject);
+begin
+  RefreshDataSet();
+end;
+
+procedure TmstMPBrowserForm.acListUnloadFromGisExecute(Sender: TObject);
+begin
+  FMP.UnloadAllFromGis();
+  kaDbGrid1.Refresh;
+  DrawBox.RegenDrawing;
+end;
+
+procedure TmstMPBrowserForm.acFilterSetExecute(Sender: TObject);
+begin
+  ShowFilterDialog();
+end;
+
+procedure TmstMPBrowserForm.ApplyFilter;
+var
+  Id: Integer;
+begin
+  if DataSource1.DataSet.Active then
+  begin
+    if FFilter.IsEmpty() then
+    begin
+      DataSource1.DataSet.Filtered := False;
+      DataSource1.DataSet.Filter := '';
+      DataSource1.DataSet.OnFilterRecord := nil;
+    end
+    else
+    begin
+      DataSource1.DataSet.Filtered := True;
+      DataSource1.DataSet.OnFilterRecord := FilterRecord;
+    end;
+  end;
+
+  // если запрос открыт, то запоминаем ID
+  if DataSource1.DataSet.Active then
+    Id := DataSource1.DataSet.FieldByName(SF_ID).AsInteger
+  else
+    Id := -1;
+  // Применить параметры фильтра на DataSet
+  //Sql := PrepareSql();
+  if Id >= 0 then
+    DataSource1.DataSet.Locate(SF_ID, Id, []);
+end;
+
+procedure TmstMPBrowserForm.Browse;
+begin
+  if not Visible then
+  begin
+    memBrowser2.LoadFromDataSet(FObjList.BrowserDataSet(), 0, lmCopy);
+//    memBrowser2.CopyStructure(FObjList.BrowserDataSet());
+    DataSource1.DataSet := memBrowser2;
+    FAppSettings.ReadFormPosition(Application, Self);
+    FAppSettings.ReadGridProperties(Self, kaDBGrid1);
+    ApplyFilter();
+    memBrowser2.Active := True;
+    //
+    FObjList.Subscribe(Self as ImstMPObjEventSubscriber);
+    //
+    Show;
+  end
+  else
+    BringToFront;
+end;
+
+procedure TmstMPBrowserForm.btnCloseClick(Sender: TObject);
+begin
+  Close;
 end;
 
 procedure TmstMPBrowserForm.chbTransparencyClick(Sender: TObject);
@@ -313,6 +479,95 @@ end;
 procedure TmstMPBrowserForm.ClearFilter;
 begin
   FFilter.Clear();
+  ApplyFilter()
+end;
+
+procedure TmstMPBrowserForm.FilterRecord(DataSet: TDataSet; var Accept: Boolean);
+var
+  S: string;
+  S1: string;
+  B: Boolean;
+  DateVal: TDateTime;
+begin
+  if FFilter.IsEmpty then
+    Exit;
+//  FFilter.Address := edAddress.Text;
+//  FFilter.DocNumber := edDocNumber.Text;
+//  FFilter.DocDateStart := dtpDateProject1.DateTime;
+//  FFilter.DocDateEnd := dtpDateProject2.DateTime;
+//  FFilter.Archived := chbArchived.Checked;
+//  FFilter.Confirmed := chbConfirmed.Checked;
+//  FFilter.Dismantled := chbDismantled.Checked;
+//  FFilter.Underground := chbUndergroud.Checked;
+  if FFilter.Archived <> boolAll then
+  begin
+    B := DataSet.FieldByName(SF_ARCHIVED).AsInteger = 1;
+    Accept := ((FFilter.Archived = boolTrue) and B)
+              or
+              ((FFilter.Archived = boolFalse) and not B);
+  end;
+  if not Accept then
+    Exit;
+  //
+  if FFilter.Confirmed <> boolAll then
+  begin
+    B := DataSet.FieldByName(SF_CONFIRMED).AsInteger = 1;
+    Accept := ((FFilter.Confirmed = boolTrue) and B)
+              or
+              ((FFilter.Confirmed = boolFalse) and not B);
+  end;
+  if not Accept then
+    Exit;
+  //
+  if FFilter.Dismantled <> boolAll then
+  begin
+    B := DataSet.FieldByName(SF_DISMANTLED).AsInteger = 1;
+    Accept := ((FFilter.Dismantled = boolTrue) and B)
+              or
+              ((FFilter.Dismantled = boolFalse) and not B);
+  end;
+  if not Accept then
+    Exit;
+  //
+  if FFilter.Underground <> boolAll then
+  begin
+    B := DataSet.FieldByName(SF_UNDERGROUND).AsInteger = 1;
+    Accept := ((FFilter.Underground = boolTrue) and B)
+              or
+              ((FFilter.Underground = boolFalse) and not B);
+  end;
+  if not Accept then
+    Exit;
+  //
+  if FFilter.Address <> '' then
+  begin
+    S := DataSet.FieldByName(SF_ADDRESS).AsString;
+    Accept := Pos(AnsiUpperCase(FFilter.Address), AnsiUpperCase(S)) > 0;
+  end;
+  if not Accept then
+    Exit;
+  //
+  if FFilter.DocNumber <> '' then
+  begin
+    S := DataSet.FieldByName(SF_DOC_NUMBER).AsString;
+    Accept := Pos(AnsiUpperCase(FFilter.DocNumber), AnsiUpperCase(S)) > 0;
+  end;
+  if not Accept then
+    Exit;
+  //
+  if FFilter.UseDocDateStart then
+  begin
+    DateVal := DataSet.FieldByName(SF_DOC_DATE).AsDateTime;
+    Accept := FFilter.DocDateStart > DateVal;
+  end;
+  if not Accept then
+    Exit;
+  //
+  if FFilter.UseDocDateEnd then
+  begin
+    DateVal := DataSet.FieldByName(SF_DOC_DATE).AsDateTime;
+    Accept := FFilter.DocDateEnd < DateVal;
+  end;
 end;
 
 procedure TmstMPBrowserForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -322,6 +577,7 @@ begin
   TMPSettings.SetCurrentMPObj(-1, -1);
   FAppSettings.WriteFormPosition(Application, Self);
   FAppSettings.WriteGridProperties(Self, kaDBGrid1);
+  memBrowser2.Close;
   FMP.NavigatorClosed();
 end;
 
@@ -336,33 +592,13 @@ begin
   FFilter.Free;
 end;
 
-procedure TmstMPBrowserForm.ibqObjectsAfterClose(DataSet: TDataSet);
-begin
-  TMPSettings.SetCurrentMPObj(-1, -1);
-end;
-
-procedure TmstMPBrowserForm.ibqObjectsAfterScroll(DataSet: TDataSet);
-var
-//  OldPrjId, PrjId: Integer;
-  ObjId: Integer;
-//  OldLoaded, NewLoaded: Boolean;
-  Ds: TDataSet;
-begin
-  if FHighlightEnabled then
-  begin
-    Ds := DataSource1.DataSet;
-    ObjId := Ds.FieldByName(SF_ID).AsInteger;
-    if FMP.IsLoaded(ObjId) then
-      FDrawBox.RegenDrawing;
-  end;
-end;
-
 procedure TmstMPBrowserForm.kaDBGrid1CellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor;
   State: TGridDrawState; var FontStyle: TFontStyles);
 var
   ObjId: Integer;
   Loaded: Boolean;
   Ds: TDataSet;
+  NeedCheck: Boolean;
 begin
   Ds := DataSource1.DataSet;
   ObjId := Ds.FieldByName(SF_ID).AsInteger;
@@ -372,6 +608,28 @@ begin
     FontColor := clGreen;
     if State = [] then
       Background := clYellow;
+  end;
+  NeedCheck := TmstMPObjectCheckState(Ds.FieldByName(SF_CHECK_STATE).AsInteger) > ocsChecked;
+  if NeedCheck then
+    FontColor := clRed;
+end;
+
+procedure TmstMPBrowserForm.kaDBGrid1DblClick(Sender: TObject);
+var
+  aRow, aCol: Integer;
+  Pt: TPoint;
+  ObjId: Integer;
+  GridPt: TGridCoord;
+begin
+  aRow := kaDBGrid1.Row;
+  aCol := kaDBGrid1.Col;
+  Pt := Mouse.CursorPos;
+  Pt := kaDBGrid1.ScreenToClient(Pt);
+  GridPt := kaDBGrid1.MouseCoord(Pt.X, Pt.Y);
+  if (GridPt.X = aCol) and (GridPt.Y = aRow) then
+  begin
+    ObjId := DataSource1.DataSet.FieldByName(SF_ID).AsInteger;
+    FMP.EditObjProperties(ObjId);
   end;
 end;
 
@@ -429,18 +687,92 @@ begin
   end;
 end;
 
-procedure TmstMPBrowserForm.sbtnDeleteProjectClick(Sender: TObject);
+procedure TmstMPBrowserForm.LoadFilteredToGis;
+var
+  Bkm: Pointer;
+  ObjId: Integer;
+begin
+  Bkm := DataSource1.DataSet.GetBookmark;
+  try
+    DataSource1.DataSet.DisableControls;
+    try
+      DataSource1.DataSet.First;
+      while not DataSource1.DataSet.Eof do
+      begin
+        ObjId := DataSource1.DataSet.FieldByName(SF_ID).AsInteger;
+        FMP.LoadToGis(ObjId, False);
+        DataSource1.DataSet.Next;
+      end;
+    finally
+      DataSource1.DataSet.EnableControls;
+    end;
+  finally
+    DataSource1.DataSet.GotoBookmark(Bkm);
+  end;
+end;
+
+procedure TmstMPBrowserForm.Notify(const ObjId: Integer; Op: TRowOperation);
+var
+  RowObjId: Integer;
+begin
+  if not memBrowser2.Active then
+    Exit;
+  //
+  RowObjId := memBrowser2.FieldByName(SF_ID).AsInteger;
+  if RowObjId <> ObjId then
+  begin
+
+  end;
+  //
+  case Op of
+    rowInsert:
+      begin
+        memBrowser2.Append;
+        memBrowser2.FieldByName(SF_ID).AsInteger := ObjId;
+        memBrowser2.Post;
+        RefreshCurrentRow();
+      end;
+    rowUpdate: 
+      begin
+        RefreshCurrentRow();
+      end;
+    rowDelete:
+      begin
+        memBrowser2.Delete;
+      end;
+  end;
+end;
+
+procedure TmstMPBrowserForm.RefreshCurrentRow;
 var
   ObjId: Integer;
-  Ds: TDataSet;
 begin
-  Ds := DataSource1.DataSet;
-  if Ds.Active and not Ds.IsEmpty then
+  ObjId := memBrowser2.FieldByName(SF_ID).AsInteger;
+  FObjList.RefreshBrowseDataSetRow(ObjId, memBrowser2);
+end;
+
+procedure TmstMPBrowserForm.RefreshDataSet;
+var
+  SaveGUI: Boolean;
+  ObjId: Integer;
+begin
+  SaveGUI := memBrowser2.Active;
+  if SaveGUI then
   begin
-    ObjId := Ds.FieldByName(SF_ID).AsInteger;
-    FMP.DeleteObj(ObjId);
-    // удаляем объект из проекта
-    DrawBox.RegenDrawing;
+    memBrowser2.DisableControls;
+    ObjId := memBrowser2.FieldByName(SF_ID).AsInteger;
+  end;
+  try
+    memBrowser2.LoadFromDataSet(FObjList.BrowserDataSet(), 0, lmCopy);
+    DataSource1.DataSet := memBrowser2;
+    memBrowser2.Active := True;
+  finally
+    if SaveGUI then
+    begin
+      if not memBrowser2.Locate(SF_ID, ObjId, []) then
+        memBrowser2.First;
+      memBrowser2.EnableControls;
+    end;
   end;
 end;
 
@@ -462,40 +794,16 @@ begin
   if mstMPBrowserFilterDialog = nil then
   begin
     mstMPBrowserFilterDialog := TmstMPBrowserFilterDialog.Create(Self);
-    Pt.X := 0;
-    Pt.Y := btnFilterClear.Height + 1;
-    Pt := btnFilterClear.ClientToScreen(Pt);
-    mstMPBrowserFilterDialog.Left := Pt.X;
-    mstMPBrowserFilterDialog.Top := Pt.Y;
+//    Pt.X := 0;
+//    Pt.Y := btnFilterClear.Height + 1;
+//    Pt := btnFilterClear.ClientToScreen(Pt);
+//    mstMPBrowserFilterDialog.Left := Pt.X;
+//    mstMPBrowserFilterDialog.Top := Pt.Y;
   end;
   if mstMPBrowserFilterDialog.Execute(FFilter) then
   begin
     ApplyFilter();
   end;
-end;
-
-procedure TmstMPBrowserForm.btnRemoveFromMapClick(Sender: TObject);
-var
-  ObjId: Integer;
-  Ds: TDataSet;
-begin
-  Ds := DataSource1.DataSet;
-  if Ds.Active then
-  begin
-    ObjId := Ds.FieldByName(SF_ID).AsInteger;
-    if FMP.UnloadFromGis(ObjId) then
-    begin
-      DrawBox.RegenDrawing;
-      kaDbGrid1.Refresh;
-    end;
-  end;
-end;
-
-procedure TmstMPBrowserForm.btnRemoveAllFromMapClick(Sender: TObject);
-begin
-  FMP.UnloadAllFromGis();
-//  DrawBox.RegenDrawing;
-  kaDbGrid1.Refresh;
 end;
 
 procedure TmstMPBrowserForm.trackAlphaChange(Sender: TObject);

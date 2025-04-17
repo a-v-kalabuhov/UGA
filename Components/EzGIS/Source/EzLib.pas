@@ -452,7 +452,8 @@ Function ClipLine2D( Const Clip: TEzRect; Var X1, Y1, X2, Y2: Double ): TEzClipC
 Function ClipLineLeftRight2D( Const Clip: TEzRect; Var X1, Y1, X2, Y2: Double ): TEzClipCodes;
 Function ClipLineUpBottom2D( Const Clip: TEzRect; Var X1, Y1, X2, Y2: Double ): TEzClipCodes;
 Function IsNearPoint2D( Const RP, P: TEzPoint; Const Aperture: Double; Var Dist: Double ): Boolean;
-Function Dist2D( Const Pt1, Pt2: TEzPoint ): Double;
+Function Dist2D( Const Pt1, Pt2: TEzPoint ): Double; overload;
+Function Dist2D( Const X1, Y1, X2, Y2: Double ): Double; overload;
 Function Area2D( Vector: TEzVector ): Double;
 Function Angle2D( Const P1, P2: TEzPoint ): Double;
 
@@ -3639,6 +3640,11 @@ End;
 Function Dist2D( Const Pt1, Pt2: TEzPoint ): Double;
 Begin
   Result := Sqrt( Sqr( Pt1.X - Pt2.X ) + Sqr( Pt1.Y - Pt2.Y ) );
+End;
+
+Function Dist2D( Const X1, Y1, X2, Y2: Double ): Double;
+Begin
+  Result := Sqrt( Sqr( X1 - X2 ) + Sqr( Y1 - Y2 ) );
 End;
 
 Function Area2D( Vector: TEzVector ): Double;

@@ -8,15 +8,17 @@ uses
   EzBaseGIS, EzLib, EzBase,
   RxMemDS,
   uCommonUtils, uGC,
-  uEzEntityCSConvert,
+  uEzEntityCSConvert, uEzIntersection, uEzGeometry,
   uMStConsts,
   uMStClassesProjects, uMStClassesProjectsMP, uMStKernelGISUtils, uMStClassesMasterPlan, uMStKernelIBX,
   uMStModuleProjectImport, uMStClassesProjectsEz, uMStClassesMPClassif, uMStClassesMPIntf, uMStKernelClasses,
   uMStFormMPBrowser, uMStKernelClassesQueryIndex, uMStKernelAppSettings, uMStClassesMPObjectAdapter,
-  uMStDialogMPObjectSemantics, uMStClassesMPMIFExport;
+  uMStDialogMPObjectSemantics, uMStClassesMPMIFExport, uEzRectRelation, uMStModuleMPImportExcel,
+  uMStClassesProjectsMPIntersect;
 
 type
   TObjIdEvent = procedure (ObjId: Integer) of object;
+
   TmstMasterPlanModule = class(TDataModule, ImstMPModule, ImstMPModuleObjList)
     memObjects: TRxMemoryData;
     memBrowser: TRxMemoryData;
@@ -24,6 +26,7 @@ type
   private
     FDrawBox: TEzBaseDrawBox;
     FImport: TmstProjectImportModule;
+    FImportExcel: ImstMPExcelImport;
     FImportObjState: TmstMPObjectState;
     FImportLayerName: string;
     procedure GetImportLayer(Sender: TObject; out Layer: TEzBaseLayer);
@@ -53,6 +56,8 @@ type
     function GetMPTableVersion(Conn: IIBXConnection): Integer;
     procedure ReloadObjectToGis(ObjId: Integer);
     function GetMPLayer: TEzBaseLayer;
+    procedure ProcessRowListener(RowList: TIntegerList; Op: TRowOperation);
+    procedure SendRowNotification(const ObjId: Integer; Op: TRowOperation);
   protected
     procedure SetAppSettingsEvent(aEvent: TGetAppSettingsEvent);
     procedure SetDbEvent(Value: TGetDbEvent);
@@ -60,12 +65,13 @@ type
     function Classifier: TmstMPClassifier;
     procedure DisplayNavigator(aDrawBox: TEzBaseDrawBox);
     procedure NavigatorClosed();
-    procedure ImportDXF(const aObjState: TmstMPObjectState);
+    procedure ImportFile(Source: TmstImportSource; const aObjState: TmstMPObjectState);
   private
     FIdxObjects: TQueryRowIndex;
     FIdxBrowser: TQueryRowIndex;
     FIdxEz: TQueryRowIndex;
     FTableVersion: Integer;
+    FSubscribers: TInterfaceList;
     /// <summary>
     /// Загружает данные по сводному плану в память из базы данных.
     /// </summary>
@@ -75,7 +81,10 @@ type
     procedure DeleteObj(const ObjId: Integer);
     function EditObjProperties(const ObjId: Integer): Boolean;
     function EditNewObject(const MpObj: TmstMPObject): Boolean;
+    function FindIntersects(const ObjId: Integer): TmpIntersectionInfo;
+    procedure IntersectDialog(const ObjId: Integer; Found: TmpIntersectionInfo);
     function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
+    procedure SetObjCheckState(const ObjId: Integer; CheckState: TmstMPObjectCheckState);
     procedure UpdateLayersVisibility(aLayers: TmstLayerList);
     //
     function HasLoaded(): Boolean;
@@ -87,14 +96,22 @@ type
     //
     procedure GiveOutCertif(const ObjId: Integer; CertifNumber: string; CertifDate: TDateTime);
     procedure CopyToDrawn(const ObjId: Integer);
-    function BrowserDataSet(): TDataSet;
     procedure ExportToMif(const aMifFileName: string);
+    procedure LoadMPObjects(const aLeftGeo, aTopGeo, aRightGeo, aBottomGeo: Double);
+  private
+    function BrowserDataSet(): TDataSet;
+    procedure RefreshBrowseDataSetRow(const ObjId: Integer; TargetDataSet: TDataSet);
+    procedure Subscribe(Subscriber: ImstMPObjEventSubscriber);
+    procedure UnSubscribe(Subscriber: ImstMPObjEventSubscriber);
   private
     FMPAdapter: TmstMPObjectAdapter;
     FEzAdapter: TmstMPObjectEzAdapter;
+    FBrowserAdapter: TmstMPObjectBrowserAdapter;
+    function GetDateDbValue(const aDate: TDateTime): Variant;
     procedure GetDateTimeText(Sender: TField; var Text: string; DisplayText: Boolean);
     // обновляет данные в детальном датасете
-    procedure RefreshMPObjectData(aObj: TmstMPObject);
+    procedure RefreshMPObjectData(aObj: TmstMPObject; TargetDataSet: TDataSet);
+    procedure RefreshMPObjectDataInDs(aObj: TmstMPObject; Ds: TDataSet);
     // сохраняет в базу
     procedure SaveMPObjectCoords(aObj: TmstMPObject);
     procedure SaveMPObjectSemantics(aObj: TmstMPObject);
@@ -145,6 +162,7 @@ const
 //    'SELECT PL.ID, PL.NAME, PL.CLASS_ID, PL.MP_NET_TYPES_ID AS MP_CATEGORY_ID,  '
 //  + 'FROM PROJECT_LAYERS PL '
 //  + 'ORDER BY PL.NAME ';
+  SQL_GET_MP_LAYERS = 'SELECT * FROM MASTER_PLAN_LAYERS ORDER BY ID, GROUP_ID';
 
   SQL_GET_MP_OBJECTS_LIST_UPDATED =
     'SELECT '
@@ -341,6 +359,9 @@ const
   + 'FROM MASTER_PLAN_OBJECTS '
   + 'WHERE ID=:ID';
 
+  SQL_UPDATE_MP_OBJECT_CHECK_STATE =
+    'UPDATE MASTER_PLAN_OBJECTS SET CHECK_STATE=:CHECK_STATE ';
+
 
 { TmstMasterPlanModule }
 
@@ -390,6 +411,8 @@ begin
   FIdxEz.UseBinarySearch := True;
   FMPAdapter := TmstMPObjectAdapter.Create(memObjects);
   FEzAdapter := TmstMPObjectEzAdapter.Create(memEzData);
+  FBrowserAdapter := TmstMPObjectBrowserAdapter.Create(memBrowser);
+  FSubscribers := TInterfaceList.Create;
 end;
 
 procedure TmstMasterPlanModule.DeleteMpObjFromDb(ObjId: Integer);
@@ -422,6 +445,8 @@ begin
   DeleteRow(memEzData, ObjId);
   DeleteRow(memBrowser, ObjId);
   DeleteRow(memObjects, ObjId);
+  //
+  SendRowNotification(ObjId, rowDelete);
 end;
 
 procedure TmstMasterPlanModule.DeleteRow(Ds: TDataSet; const ObjId: Integer);
@@ -443,6 +468,8 @@ end;
 
 destructor TmstMasterPlanModule.Destroy;
 begin
+  FSubscribers.Free;
+  FBrowserAdapter.Free;
   FEzAdapter.Free;
   FMPAdapter.Free;
   FIdxEz.Free;
@@ -562,7 +589,8 @@ begin
     begin
       Result := True;
       SaveMPObjectSemantics(MpObj);
-      RefreshMPObjectData(MpObj);
+      RefreshMPObjectData(MpObj, memBrowser);
+      SendRowNotification(ObjId, rowUpdate);
     end;
   end;
 end;
@@ -570,7 +598,6 @@ end;
 procedure TmstMasterPlanModule.ExportToMif(const aMifFileName: string);
 var
   Exp: TmstMPMIFExport;
-  Ent: TEzEntity;
   Layer: TEzBaseLayer;
   ObjId: Integer;
   MpObj: TmstMPObject;
@@ -631,6 +658,85 @@ begin
     Idx.Add(Id, Ds.RecNo);
     Ds.Next;
   end;
+end;
+
+function TmstMasterPlanModule.FindIntersects(const ObjId: Integer): TmpIntersectionInfo;
+var
+  IdxEz: TQueryRowIndex;
+  IdxBr: TQueryRowIndex;
+  Row: Integer;
+  EzObjId: Integer;
+  Ent: TEzEntity;
+  Finder: IEzFindIntersections;
+  BoxOriginal: TEzRect;
+  BoxEnt: TEzRect;
+  IntList: TEzIntersectionList;
+begin
+  Result := TmpIntersectionInfo.Create;
+  Result.ObjId := ObjId;
+  // перебираем все объекты
+  // кроме архива и текущего и тех, кто нуждается в проверке
+  IdxBr := GetIdx(memBrowser);
+  IdxEz := GetIdx(memEzData);
+  Row := IdxEz.GetFirstRow(ObjId);
+  memEzData.RecNo := Row;
+  Ent := FEzAdapter.GetEntity;
+  if not (Ent is TEzOpenedEntity) then
+    Exit;
+  Result.OriginalEnt := TEzOpenedEntity(Ent);
+  if Result.OriginalEnt.Points.Count < 2 then
+    Exit;
+  BoxOriginal := Result.OriginalEnt.FBox;
+  //
+  Row := IdxBr.GetFirstRow(ObjId);
+  memBrowser.RecNo := Row;
+  Result.MpClassId := FBrowserAdapter.MpClassId;
+  //
+  Finder := TEzFindIntersections.Create(FiveMm);
+  //
+  memEzData.First;
+  while not memEzData.Eof do
+  begin
+    // что надо
+    //
+    EzObjId := FEzAdapter.Id;
+    Ent := FEzAdapter.GetEntity();
+    if Ent is TEzOpenedEntity then
+    if Ent.Points.Count > 1 then
+    begin
+      BoxEnt := Ent.FBox;
+      if TEzRectGeometry.IsRectsIntersect(BoxOriginal, BoxEnt) then
+      begin
+        Row := IdxBr.GetFirstRow(EzObjId);
+        memBrowser.RecNo := Row;
+        if EzObjId <> ObjId then // с самим собой не сравниваем
+        if not FBrowserAdapter.Archived then // с архивом не сравниваем
+        if not (FBrowserAdapter.CheckState in [ocsNone, ocsChecked]) then //с теми кто нуждается в проверке - не сравниваем
+        if FBrowserAdapter.MpClassId = Result.MpClassId then // сравниваем только со совим классом
+        begin
+          // надо написать функцию проверки/сравнения объектов
+          // возможны вещи какие - пересечение, частичное совпадение, полное совпадение
+          IntList := Finder.FindPolyIntersect(Result.OriginalEnt, TEzOpenedEntity(Ent));
+          if IntList.Count > 0 then
+            Result.AddIntersect(EzObjId, Ent, IntList)
+          else
+            FreeAndNil(IntList);
+//          if OriginalEnt.IntersectEntity(Ent, False) then
+//            Result.Add(EzObjId);
+        end;
+      end;
+    end;
+    //
+    memEzData.Next;
+  end;
+end;
+
+function TmstMasterPlanModule.GetDateDbValue(const aDate: TDateTime): Variant;
+begin
+  if aDate = 0 then
+    Result := Null
+  else
+    Result := aDate;
 end;
 
 procedure TmstMasterPlanModule.GetDateTimeText(Sender: TField; var Text: string; DisplayText: Boolean);
@@ -847,13 +953,13 @@ begin
   finally
     Conn.Commit;
   end;
+  //
+  SendRowNotification(ObjId, rowUpdate);
 end;
 
 function TmstMasterPlanModule.HasLoaded: Boolean;
 var
-  Ent: TEzEntity;
   Layer: TEzBaseLayer;
-  ObjId: Integer;
 begin
   Result := FEzAdapter.Loaded;
   if not Result then
@@ -873,20 +979,58 @@ begin
   end;
 end;
 
-procedure TmstMasterPlanModule.ImportDXF;
+procedure TmstMasterPlanModule.ImportFile;
 begin
-  FImport := TmstProjectImportModule.Create(Self);
-  FImportObjState := aObjState;
-  // выбрать файл
-  if not FImport.BeginImport(FDrawBox,
-                             GetImportLayer,
-                             DoImportExecuted,
-                             DoCreateProject,
-                             DoCreatePrjReader
-                             )
-  then
-    Exit;
-  FImport.DisplayImportDialog();
+  case Source of
+    srcDXF:
+      begin
+        FreeAndNil(FImport);
+        FImport := TmstProjectImportModule.Create(Self);
+        FImportObjState := aObjState;
+        // выбрать файл
+        if not FImport.BeginImport(FDrawBox,
+                                   GetImportLayer,
+                                   DoImportExecuted,
+                                   DoCreateProject,
+                                   DoCreatePrjReader
+                                   )
+        then
+          Exit;
+        FImport.DisplayImportDialog();
+      end;
+    srcExcel:
+      begin
+        if FImportExcel = nil then
+          FImportExcel := TmstMPImportExcelModule.Create(Self) as ImstMPExcelImport;
+        // показываем диалог
+        if FImportExcel.DoImport(Self as ImstMPModule) then
+        // в диалоге всё что надо
+        // после показа диалога получаем готовый проект
+        // останется его только сохранить
+          DoImportExecuted(nil, False, FImportExcel.GetProject(aObjState));
+      end;
+  end;
+end;
+
+procedure TmstMasterPlanModule.IntersectDialog(const ObjId: Integer; Found: TmpIntersectionInfo);
+begin
+  raise Exception.Create('TmstMasterPlanModule.IntersectDialog');
+  // тут показываем окно
+  // в окно передаём Found
+  // в окне должен быть список найдённых объектов
+  // кнопка показать проверяемый объект - моргание
+  // показать пересечение - моргание
+  // по каждому пересекающемуся объекту показываем детали
+  // в деталях показываем список пересечений и т.п.
+  // по каждому пересечению показываем точку/точки и тип отношения
+  // по каждому пересечению предлагаем действия :
+  // - разбить проверяемый объект
+  // - разбить найденный объект
+  // - и т.д. по т.з.
+  // также на окне долна быть кнопка - установить статус что объект проверен
+
+  // кстати надо учесть, что при удалении объекта теперьнадо проверять
+  // если открыто окно с проверкой
 end;
 
 function TmstMasterPlanModule.IsLoaded(const ObjId: Integer): Boolean;
@@ -938,6 +1082,13 @@ begin
     Ds.Open;
     try
       Classifier.LoadFromDataSet(Ds);
+    finally
+      Ds.Close;
+    end;
+    Ds := Conn.GetDataSet(SQL_GET_MP_LAYERS);
+    Ds.Open;
+    try
+      Classifier.LoadCategoriesFromDataSet(Ds);
     finally
       Ds.Close;
     end;
@@ -998,65 +1149,132 @@ begin
   FillQueryIndex(FIdxEz, memEzData);
 end;
 
-procedure TmstMasterPlanModule.RefreshMPObjectData(aObj: TmstMPObject);
+procedure TmstMasterPlanModule.LoadMPObjects(const aLeftGeo, aTopGeo, aRightGeo, aBottomGeo: Double);
+var
+  Ent: TEzEntity;
+//  EntLeft: Double;
+//  EntRight: Double;
+//  EntTop: Double;
+//  EntBottom: Double;
+  aBox: TEzRect;
+  Skip: Boolean;
+  WasLoaded: Boolean;
+begin
+  WasLoaded := False;
+  aBox := Rect2D(aLeftGeo, aBottomGeo, aRightGeo, aTopGeo);
+  // перебираем все объекты
+  memEzData.First;
+  while not memEzData.Eof do
+  begin
+    // каждый смотрим попал внутрь квадрата или нет
+    if not FEzAdapter.Loaded then
+    begin
+      Ent := FEzAdapter.GetEntity();
+      try
+        // если попал хоть частично и не был загружен, то загружаем
+//        EntLeft := Ent.FBox.xmin;
+//        EntRight := Ent.FBox.xmax;
+//        EntBottom := Ent.FBox.ymin;
+//        EntTop := Ent.FBox.ymax;
+        //
+        Skip := TEzRectRelation.RectsNotIntersects(aBox, Ent.FBox);
+        if not Skip then
+        begin
+          LoadToGis(FEzAdapter.Id, False);
+          WasLoaded := True;
+        end;
+      finally
+        Ent.Free;   
+      end;
+    end;
+    memEzData.Next;
+  end;
+  //
+  if WasLoaded then
+  if Assigned(FBrowserForm) then  
+  begin
+    FBrowserForm.kaDBGrid1.Refresh;
+  end; 
+end;
+
+procedure TmstMasterPlanModule.RefreshBrowseDataSetRow(const ObjId: Integer; TargetDataSet: TDataSet);
+var
+  MpObj: TmstMPObject;
+begin
+  if LocateObj(ObjId, memBrowser) then
+  begin
+    MpObj := GetObjByDbId(ObjId, False);
+    if Assigned(MpObj) then
+      RefreshMPObjectData(MpObj, TargetDataSet);
+  end;
+end;
+
+procedure TmstMasterPlanModule.RefreshMPObjectData(aObj: TmstMPObject; TargetDataSet: TDataSet);
 begin
   if not LocateObj(aObj.DatabaseId, memBrowser) then
     Exit;
-  memBrowser.Edit;
-  memBrowser.FieldByName(SF_TABLE_VERSION).AsInteger := FTableVersion;
-  memBrowser.FieldByName(SF_OBJ_ID).AsString := aObj.MPObjectGuid;
-  memBrowser.FieldByName(SF_LINKED_OBJ_ID).AsString := aObj.LinkedObjectGuid;
-  memBrowser.FieldByName(SF_ADDRESS).AsString := aObj.Address;
-  memBrowser.FieldByName(SF_ARCHIVED).AsInteger := IfThen(aObj.Archived, 1, 0);
-  memBrowser.FieldByName(SF_BOTTOM).AsString := aObj.Bottom;
-//  memBrowser.FieldByName(SF_MASTER_PLAN_CLASS_ID).AsInteger := aObj.ClassId;
-  memBrowser.FieldByName(SF_CONFIRMED).AsInteger := IfThen(aObj.Confirmed, 1, 0);
-  memBrowser.FieldByName(SF_DIAMETER).AsInteger := aObj.Diameter;
-  memBrowser.FieldByName(SF_DISMANTLED).AsInteger := IfThen(aObj.Dismantled, 1, 0);
-  memBrowser.FieldByName(SF_DOC_NUMBER).AsString := aObj.DocNumber;
-  memBrowser.FieldByName(SF_DOC_DATE).Value := aObj.DocDate;
-  memBrowser.FieldByName(SF_DRAW_DATE).Value := aObj.DrawDate;
-  memBrowser.FieldByName(SF_FLOOR).AsString := aObj.Floor;
-  memBrowser.FieldByName(SF_IS_LINE).AsInteger := IfThen(aObj.IsLine, 1, 0);
-  memBrowser.FieldByName(SF_MATERIAL).AsString := aObj.Material;
-  memBrowser.FieldByName(SF_OWNER).AsString := aObj.Owner;
-  memBrowser.FieldByName(SF_PIPE_COUNT).AsInteger := aObj.PipeCount;
-  memBrowser.FieldByName(SF_REQUEST_NUMBER).AsString := aObj.RequestNumber;
-  memBrowser.FieldByName(SF_REQUEST_DATE).Value := aObj.RequestDate;
-  memBrowser.FieldByName(SF_ROTATION).AsInteger := aObj.Rotation;
-  memBrowser.FieldByName(SF_STATUS).AsInteger := aObj.Status;
-  memBrowser.FieldByName(SF_TOP).AsString := aObj.Top;
-  memBrowser.FieldByName(SF_UNDERGROUND).AsInteger := IfThen(aObj.Underground, 1, 0);
-  memBrowser.FieldByName(SF_VOLTAGE).AsInteger := aObj.Voltage;
+  RefreshMPObjectDataInDs(aObj, TargetDataSet);
+end;
+
+procedure TmstMasterPlanModule.RefreshMPObjectDataInDs(aObj: TmstMPObject; Ds: TDataSet);
+begin
+  if not Ds.Active then
+    Exit;
+  Ds.Edit;
+  Ds.FieldByName(SF_TABLE_VERSION).AsInteger := FTableVersion;
+  Ds.FieldByName(SF_OBJ_ID).AsString := aObj.MPObjectGuid;
+  Ds.FieldByName(SF_LINKED_OBJ_ID).AsString := aObj.LinkedObjectGuid;
+  Ds.FieldByName(SF_ADDRESS).AsString := aObj.Address;
+  Ds.FieldByName(SF_ARCHIVED).AsInteger := IfThen(aObj.Archived, 1, 0);
+  Ds.FieldByName(SF_BOTTOM).AsString := aObj.Bottom;
+//  Ds.FieldByName(SF_MASTER_PLAN_CLASS_ID).AsInteger := aObj.ClassId;
+  Ds.FieldByName(SF_CONFIRMED).AsInteger := IfThen(aObj.Confirmed, 1, 0);
+  Ds.FieldByName(SF_DIAMETER).AsInteger := aObj.Diameter;
+  Ds.FieldByName(SF_DISMANTLED).AsInteger := IfThen(aObj.Dismantled, 1, 0);
+  Ds.FieldByName(SF_DOC_NUMBER).AsString := aObj.DocNumber;
+  Ds.FieldByName(SF_DOC_DATE).Value := GetDateDbValue(aObj.DocDate);
+  Ds.FieldByName(SF_DRAW_DATE).Value := GetDateDbValue(aObj.DrawDate);
+  Ds.FieldByName(SF_FLOOR).AsString := aObj.Floor;
+  Ds.FieldByName(SF_IS_LINE).AsInteger := IfThen(aObj.IsLine, 1, 0);
+  Ds.FieldByName(SF_MATERIAL).AsString := aObj.Material;
+  Ds.FieldByName(SF_OWNER).AsString := aObj.Owner;
+  Ds.FieldByName(SF_PIPE_COUNT).AsInteger := aObj.PipeCount;
+  Ds.FieldByName(SF_REQUEST_NUMBER).AsString := aObj.RequestNumber;
+  Ds.FieldByName(SF_REQUEST_DATE).Value := GetDateDbValue(aObj.RequestDate);
+  Ds.FieldByName(SF_ROTATION).AsInteger := aObj.Rotation;
+  Ds.FieldByName(SF_STATUS).AsInteger := aObj.Status;
+  Ds.FieldByName(SF_TOP).AsString := aObj.Top;
+  Ds.FieldByName(SF_UNDERGROUND).AsInteger := IfThen(aObj.Underground, 1, 0);
+  Ds.FieldByName(SF_VOLTAGE).AsInteger := aObj.Voltage;
   // импорт
-  memBrowser.FieldByName(SF_PROJECT_NAME).AsString := aObj.ProjectName;
-//  memBrowser.FieldByName(SF_CK36).AsInteger := IfThen(aObj.CK36, 0, 1);
-  //memBrowser.FieldByName(SF_).As := IfThen(aObj.ExchangeXY).As := 0).As := 1));
-  memBrowser.FieldByName(SF_CUSTOMER_ORGS_ID).AsInteger := aObj.CustomerOrgId;
-  memBrowser.FieldByName(SF_EXECUTOR_ORGS_ID).AsInteger := aObj.ExecutorOrgId;
-  memBrowser.FieldByName(SF_DRAW_ORGS_ID).AsInteger := aObj.DrawOrgId;
+  Ds.FieldByName(SF_PROJECT_NAME).AsString := aObj.ProjectName;
+//  Ds.FieldByName(SF_CK36).AsInteger := IfThen(aObj.CK36, 0, 1);
+  //Ds.FieldByName(SF_).As := IfThen(aObj.ExchangeXY).As := 0).As := 1));
+  Ds.FieldByName(SF_CUSTOMER_ORGS_ID).AsInteger := aObj.CustomerOrgId;
+  Ds.FieldByName(SF_EXECUTOR_ORGS_ID).AsInteger := aObj.ExecutorOrgId;
+  Ds.FieldByName(SF_DRAW_ORGS_ID).AsInteger := aObj.DrawOrgId;
   // используются местная СК: Х - вверх).As := Y - вправо (геодезические кооринаты)
-  memBrowser.FieldByName(SF_MINX).AsFloat := aObj.MinX;
+  Ds.FieldByName(SF_MINX).AsFloat := aObj.MinX;
   // используются местная СК: Х - вверх).As := Y - вправо (геодезические кооринаты)
-  memBrowser.FieldByName(SF_MINY).AsFloat := aObj.MinY;
+  Ds.FieldByName(SF_MINY).AsFloat := aObj.MinY;
   // используются местная СК: Х - вверх).As := Y - вправо (геодезические кооринаты)
-  memBrowser.FieldByName(SF_MAXY).AsFloat := aObj.MaxX;
-  memBrowser.FieldByName(SF_MAXY).AsFloat := aObj.MaxY;
+  Ds.FieldByName(SF_MAXY).AsFloat := aObj.MaxX;
+  Ds.FieldByName(SF_MAXY).AsFloat := aObj.MaxY;
   // используются местная СК: Х - вверх).As := Y - вправо (геодезические кооринаты)
   //
-  memBrowser.FieldByName(SF_CHECK_STATE).AsInteger := Integer(aObj.CheckState);
-//    memBrowser.FieldByName(SF_).As := aObj.ObjState);
+  Ds.FieldByName(SF_CHECK_STATE).AsInteger := Integer(aObj.CheckState);
+//    Ds.FieldByName(SF_).As := aObj.ObjState);
   // нанесён
-  memBrowser.FieldByName(SF_DRAWN).AsInteger := IfThen(aObj.Drawn, 1, 0);
+  Ds.FieldByName(SF_DRAWN).AsInteger := IfThen(aObj.Drawn, 1, 0);
   // проектируемый
-  memBrowser.FieldByName(SF_PROJECTED).AsInteger := IfThen(aObj.Projected, 1, 0);
+  Ds.FieldByName(SF_PROJECTED).AsInteger := IfThen(aObj.Projected, 1, 0);
   // справка выдана
-  memBrowser.FieldByName(SF_HAS_CERTIF).AsInteger := IfThen(aObj.HasCertif, 1, 0);
+  Ds.FieldByName(SF_HAS_CERTIF).AsInteger := IfThen(aObj.HasCertif, 1, 0);
   // номер справки
-  memBrowser.FieldByName(SF_CERTIF_NUMBER).AsString := aObj.CertifNumber;
+  Ds.FieldByName(SF_CERTIF_NUMBER).AsString := aObj.CertifNumber;
   // дата справки
-  memBrowser.FieldByName(SF_CERTIF_DATE).Value := aObj.CertifDate;
-  memBrowser.Post;
+  Ds.FieldByName(SF_CERTIF_DATE).Value := GetDateDbValue(aObj.CertifDate);
+  Ds.Post;
 end;
 
 function TmstMasterPlanModule.RefreshObjList: Boolean;
@@ -1251,9 +1469,12 @@ begin
       Layer.Recno := FEzAdapter.EzRecno;
     end;
     //
-    memBrowser.Edit;
-    memBrowser.FieldByName(SF_LOADED).AsInteger := 1;
-    memBrowser.Post;
+    if LocateObj(FEzAdapter.Id, memBrowser) then
+    begin
+      memBrowser.Edit;
+      memBrowser.FieldByName(SF_LOADED).AsInteger := 1;
+      memBrowser.Post;
+    end;
     //
     if Display then
     begin
@@ -1302,9 +1523,6 @@ var
   ObjId: Integer;
   I, J: Integer;
   ToInsert: TIntegerList;
-  RowsToDelete1: TIntegerList;
-  RowsToDelete2: TIntegerList;
-  RowsToDelete3: TIntegerList;
 begin
   NeedRedrawMap := False;
   CurrId := -1;
@@ -1317,46 +1535,22 @@ begin
     Bkm := memBrowser.GetBookmark();
     memBrowser.DisableControls;
   end;
-  //
-  RowsToDelete1 := TIntegerList.Create;
-  RowsToDelete2 := TIntegerList.Create;
-  RowsToDelete3 := TIntegerList.Create;
-  try
-    // удаляем устаревшие записи
-    for I := 0 to ToDelete.Count - 1 do
+  // удаляем устаревшие записи
+  for I := 0 to ToDelete.Count - 1 do
+  begin
+    ObjId := ToDelete[I];
+    if IsLoaded(ObjId) then
     begin
-      ObjId := ToDelete[I];
-      if IsLoaded(ObjId) then
-      begin
-        UnloadFromGis(ObjId);
-        NeedRedrawMap := True;
-      end;
-      J := FIdxObjects.GetFirstRow(ObjId);
-      RowsToDelete1.Add(J);
-      J := FIdxBrowser.GetFirstRow(ObjId);
-      RowsToDelete2.Add(J);
-      J := FIdxEz.GetFirstRow(ObjId);
-      RowsToDelete3.Add(J);
-      DeleteRow(memObjects, ObjId);
-      DeleteRow(memBrowser, ObjId);
-      DeleteRow(memEzData, ObjId);
-      if ObjId = CurrId then
-        CurrIdDeleted := True;
+      UnloadFromGis(ObjId);
+      NeedRedrawMap := True;
     end;
-    //
-    RowsToDelete3.Sort;
-    RowsToDelete2.Sort;
-    RowsToDelete1.Sort;
-    for I := RowsToDelete3.Count - 1 downto 0 do
-    begin
-
-    end;
-  finally
-    RowsToDelete3.Free;
-    RowsToDelete2.Free;
-    RowsToDelete1.Free;
+    DeleteRow(memObjects, ObjId);
+    DeleteRow(memBrowser, ObjId);
+    DeleteRow(memEzData, ObjId);
+    if ObjId = CurrId then
+      CurrIdDeleted := True;
   end;
-    //
+  //
   try
     ToInsert := TIntegerList.Create;
     try
@@ -1378,10 +1572,14 @@ begin
       //
       RefreshRows(DsChanges, memEzData, ToUpdate, ReloadObjectToGis);
       AppendNewRows(DsChanges, memEzData, ToInsert, FIdxEz);
+      //
+      ProcessRowListener(ToUpdate, rowUpdate);
+      ProcessRowListener(ToInsert, rowInsert);
+      ProcessRowListener(ToDelete, rowDelete);
     finally
       ToInsert.Free;
     end;
-    // 
+    //
     if not NeedRedrawMap then
     begin
       for I := 0 to ToUpdate.Count - 1 do
@@ -1417,6 +1615,18 @@ end;
 procedure TmstMasterPlanModule.PrepareBrowserDataSet;
 begin
 
+end;
+
+procedure TmstMasterPlanModule.ProcessRowListener(RowList: TIntegerList; Op: TRowOperation);
+var
+  I: Integer;
+  ObjId: Integer;
+begin
+  for I := 0 to RowList.Count - 1 do
+  begin
+    ObjId := RowList[I];
+    SendRowNotification(ObjId, Op);
+  end;
 end;
 
 procedure TmstMasterPlanModule.SaveMPObjectCoords;
@@ -1508,6 +1718,18 @@ begin
   end;
 end;
 
+procedure TmstMasterPlanModule.SendRowNotification(const ObjId: Integer; Op: TRowOperation);
+var
+  I: Integer;
+  Subscriber: ImstMPObjEventSubscriber;
+begin
+  for I := 0 to FSubscribers.Count - 1 do
+  begin
+    Subscriber := ImstMPObjEventSubscriber(FSubscribers[I]);
+    Subscriber.Notify(ObjId, Op);
+  end;
+end;
+
 procedure TmstMasterPlanModule.SetAppSettingsEvent(aEvent: TGetAppSettingsEvent);
 begin
   FOnGetAppSettings := aEvent;
@@ -1521,6 +1743,37 @@ end;
 procedure TmstMasterPlanModule.SetDrawBox(aDrawBox: TEzBaseDrawBox);
 begin
   FDrawBox := aDrawBox;
+end;
+
+procedure TmstMasterPlanModule.SetObjCheckState(const ObjId: Integer; CheckState: TmstMPObjectCheckState);
+var
+  Db: IDb;
+  Conn: IIBXConnection;
+  Ds: TDataSet;
+  Sql: string;
+begin
+  DoGetDb(Db);
+  //
+  Conn := Db.GetConnection(cmReadWrite, dmKis);
+  try
+    // генерируем новое значение TableVersion
+    FTableVersion := Conn.GenNextValue(SG_MP_OBJECTS_TABLE_VERSION);
+    //
+    Sql := SQL_UPDATE_MP_OBJECT_CHECK_STATE;
+    // создаём запрос на сохранение
+    Ds := Conn.GetDataSet(Sql);
+    Conn.SetParam(Ds, SF_ID, ObjId);
+    Conn.SetParam(Ds, SF_CHECK_STATE, Integer(CheckState));
+    //
+    Ds.Open;
+  finally
+    Conn.Commit; 
+  end;
+end;
+
+procedure TmstMasterPlanModule.Subscribe(Subscriber: ImstMPObjEventSubscriber);
+begin
+  FSubscribers.Add(Subscriber);
 end;
 
 procedure TmstMasterPlanModule.UnloadAllFromGis;
@@ -1547,6 +1800,11 @@ begin
     FEzAdapter.Loaded := False;
     FEzAdapter.EzRecno := -1;
   end;
+end;
+
+procedure TmstMasterPlanModule.UnSubscribe(Subscriber: ImstMPObjEventSubscriber);
+begin
+  FSubscribers.Remove(Subscriber); 
 end;
 
 procedure TmstMasterPlanModule.UpdateLayersVisibility(aLayers: TmstLayerList);

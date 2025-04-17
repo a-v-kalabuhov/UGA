@@ -105,7 +105,10 @@ uses
   uMStClassesMPObjectAdapter in 'Source\uMStClassesMPObjectAdapter.pas',
   uMStDialogMPLineColors in 'Source\uMStDialogMPLineColors.pas' {mstMPLineColorsDialog},
   uMStDialogCertifNumber in 'Source\uMStDialogCertifNumber.pas' {mstMPCertifDialog},
-  uMStClassesMPMIFExport in 'Source\uMStClassesMPMIFExport.pas';
+  uMStClassesMPMIFExport in 'Source\uMStClassesMPMIFExport.pas',
+  uMStDialogImportMPfromExcel in 'Source\uMStDialogImportMPfromExcel.pas' {mstMPExcelDialogForm},
+  uMStModuleMPImportExcel in 'Source\uMStModuleMPImportExcel.pas' {mstMPImportExcelModule: TDataModule},
+  uMStClassesProjectsMPIntersect in 'Source\uMStClassesProjectsMPIntersect.pas';
 
 {$R *.RES}
 

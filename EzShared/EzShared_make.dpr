@@ -7,7 +7,10 @@ uses
   uEzActionsAutoScroll in 'uEzActionsAutoScroll.pas',
   uEzEntityCSConvert in 'uEzEntityCSConvert.pas',
   uEzAutoCADImport in 'uEzAutoCADImport.pas' {EzAutoCADImport: TDataModule},
-  uEzBufferZone in 'uEzBufferZone.pas';
+  uEzBufferZone in 'uEzBufferZone.pas',
+  uEzRectRelation in 'uEzRectRelation.pas',
+  uEzIntersection in 'uEzIntersection.pas',
+  uEzGeometry in 'uEzGeometry.pas';
 
 begin
   try

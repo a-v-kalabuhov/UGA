@@ -48,9 +48,11 @@ type
     procedure SetPassword(const Value: string);
     procedure SetInitialName(const Value: String);
     procedure SetCanManageProjects(const Value: Boolean);
+    function GetCanManageMP: Boolean;
   public
     constructor Create;
     //
+    property CanManageMP: Boolean read GetCanManageMP;
     property CanManageProjects: Boolean read FCanManageProjects write SetCanManageProjects;
     property CanPrint: Boolean read FCanPrint write SetCanPrint;
     property IsAdministrator: Boolean read FIsAdministrator write SetIsAdministrtor;
@@ -1507,6 +1509,11 @@ constructor TmstUser.Create;
 begin
   FUserName := S_GUEST;
   FPassword := AnsiLowerCase(S_GUEST);
+end;
+
+function TmstUser.GetCanManageMP: Boolean;
+begin
+  Result := True;
 end;
 
 procedure TmstUser.SetCanManageProjects(const Value: Boolean);

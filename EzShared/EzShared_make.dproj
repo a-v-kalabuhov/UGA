@@ -45,5 +45,8 @@
     </DCCReference>
     <DCCReference Include="uEzBufferZone.pas" />
     <DCCReference Include="uEzEntityCSConvert.pas" />
+    <DCCReference Include="uEzGeometry.pas" />
+    <DCCReference Include="uEzIntersection.pas" />
+    <DCCReference Include="uEzRectRelation.pas" />
   </ItemGroup>
 </Project>

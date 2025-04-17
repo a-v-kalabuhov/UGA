@@ -19,7 +19,7 @@ uses
   uGeoUtils, uGeoTypes, uCK36, uEzEntityCSConvert,
   // Project
   uMStKernelTypes, uMStKernelClasses, uMStKernelClassesSelection, uMStKernelInterfaces, uMStKernelStack,
-  uMStKernelStackConsts, uMStKernelIBX, uMStConsts,
+  uMStKernelStackConsts, uMStKernelIBX, uMStConsts, uMStClassesMPIntf,
   uMStImport, uMstImportFactory, uMStClassesProjectsEz,
   uMStClassesWatermarkDraw, uMstClassesLots, uMStClassesProjects, uMStClassesProjectsSearch, uMStClassesProjectsMIFExport,
   uMstDialogFactory, uMStClassesProjectsMP, 
@@ -61,7 +61,8 @@ type
     csCoord,
     csLoadLots,
     csPrintPrepare,
-    csPrint);
+    csPrint,
+    csLoadMP);
 
   TEntityState = (esNone, esResizePointFound, esResizing);
 
@@ -359,6 +360,8 @@ type
     N61: TMenuItem;
     acMPExportMidMif: TAction;
     midmif2: TMenuItem;
+    acMPLoadRect: TAction;
+    N62: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -530,6 +533,9 @@ type
     procedure acSavePointListExecute(Sender: TObject);
     procedure acMPExportMidMifUpdate(Sender: TObject);
     procedure acMPExportMidMifExecute(Sender: TObject);
+    procedure acMPLoadRectUpdate(Sender: TObject);
+    procedure acMPLoadRectExecute(Sender: TObject);
+    procedure XLS2Click(Sender: TObject);
   private
     FPoints: TMstPointArray;
     FCursorState: TCursorState;
@@ -557,6 +563,8 @@ type
     procedure LoadLots(const ALeft, ATop, ARight, ABottom: Double); overload;
     procedure LoadProjects(const ALeft, ATop, ARight, ABottom: Double);
     procedure LoadProjectsClick(Sender: TObject);
+    procedure LoadMPObjects(const aGeoLeft, aGeoTop, aGeoRight, aGeoBottom: Double);
+    procedure LoadMPClick(Sender: TObject);
     procedure SetCursorState(const Value: TCursorState);
     procedure ShowCoord(Vector: TEzVector);
     function CalcAzimuth(P1X, P1Y, P2X, P2Y: Double): Extended;
@@ -1141,12 +1149,12 @@ end;
 
 procedure TmstClientMainForm.DXF3Click(Sender: TObject);
 begin
-  mstClientAppModule.MP.ImportDXF(mstProjected);
+  mstClientAppModule.MP.ImportFile(srcDXF, mstProjected);
 end;
 
 procedure TmstClientMainForm.DXF4Click(Sender: TObject);
 begin
-  mstClientAppModule.MP.ImportDXF(mstDrawn);
+  mstClientAppModule.MP.ImportFile(srcDXF, mstDrawn);
 end;
 
 procedure TmstClientMainForm.edtFastFindLotEnter(Sender: TObject);
@@ -1451,6 +1459,51 @@ begin
   ABottom := FdWX - 100;
   LoadLots(ALeft, ATop, ARight, ABottom);
   DrawBox.RegenDrawing;
+end;
+
+procedure TmstClientMainForm.LoadMPClick(Sender: TObject);
+var
+  I: Integer;
+  TmpMap: TmstMap;
+  aTop, aLeft: Integer;
+  N: TNomenclature;
+  R: TRect;
+  LayerMaps: TEzBaseLayer;
+begin
+  I := TMenuItem(Sender).Tag;
+  LayerMaps := mstClientAppModule.LayerMaps;
+  if Assigned(LayerMaps) then
+  begin
+    TmpMap := mstClientAppModule.Maps.GetByMapEntityId(I);
+    if not Assigned(TmpMap) then
+      Exit;
+    N := TGeoUtils.GetNomenclature(TmpMap.MapName, False);
+    if N.Valid then
+    begin
+      R := N.Bounds;
+      LoadMPObjects(R.Left, R.Top, R.Right, R.Bottom);
+      DrawBox.RegenDrawing;
+    end;
+//      if TGeoUtils.MapTopLeft(TmpMap.MapName, aTop, aLeft) then
+//      begin
+//        LoadMPObjects(aLeft, aTop, aLeft + 250, aTop - 250);
+//      end;
+  end;
+end;
+
+procedure TmstClientMainForm.LoadMPObjects(const aGeoLeft, aGeoTop, aGeoRight, aGeoBottom: Double);
+var
+  Frm: TmstLoadLotProgressForm;
+begin
+//  Frm := TmstLoadLotProgressForm.Create(Self);
+//  Enabled := False;
+  try
+//    Frm.Show;
+    mstClientAppModule.MP.LoadMPObjects(aGeoLeft, aGeoTop, aGeoRight, aGeoBottom);//, Frm.OnProgress2);
+  finally
+//    Enabled := True;
+//    Frm.Free;
+  end;
 end;
 
 procedure TmstClientMainForm.LoadNetTypes;
@@ -2111,6 +2164,19 @@ begin
   acMPExportMidMif.Enabled := mstClientAppModule.MP.HasLoaded();
 end;
 
+procedure TmstClientMainForm.acMPLoadRectExecute(Sender: TObject);
+begin
+  LastLayerName := GIS.CurrentLayerName;
+  CursorState := csLoadMP;
+  GIS.CurrentLayerName := 'MEASURES';
+  CmdLine.DoCommand('RECTANGLE', 'LOAD_MP');
+end;
+
+procedure TmstClientMainForm.acMPLoadRectUpdate(Sender: TObject);
+begin
+  acMPLoadRect.Enabled := CursorState in [csNone, csArrow];
+end;
+
 procedure TmstClientMainForm.acMPPickupPointsExecute(Sender: TObject);
 var
   Act: TmstMeasureAction;
@@ -2341,7 +2407,12 @@ end;
 
 procedure TmstClientMainForm.XLS1Click(Sender: TObject);
 begin
-  ;
+  mstClientAppModule.MP.ImportFile(srcExcel, mstProjected);
+end;
+
+procedure TmstClientMainForm.XLS2Click(Sender: TObject);
+begin
+  mstClientAppModule.MP.ImportFile(srcExcel, mstDrawn);
 end;
 
 procedure TmstClientMainForm.SetGIS(const Value: TEzBaseGIS);
@@ -2371,15 +2442,6 @@ begin
   MenuItem.Tag := REG_LOTS;
   MenuItem.OnClick := LoadLotsClick;
   //
-  if mstClientAppModule.User.CanManageProjects then
-  begin
-    MenuItem := TMenuItem.Create(Self);
-    AMenu.Items.Add(MenuItem);
-    MenuItem.Caption := 'Загрузить проекты';
-    MenuItem.Tag := Recno;
-    MenuItem.OnClick := LoadProjectsClick;
-  end;
-  //
   if GIS.Layers.LayerByName('M500').LayerInfo.Visible then
   begin
     List := TStringList.Create;
@@ -2408,7 +2470,24 @@ begin
           MenuItem.Caption := 'Загрузить планшет ' + Map.MapName;
           MenuItem.OnClick := LoadImage;
         end;
-
+        //
+        if mstClientAppModule.User.CanManageProjects then
+        begin
+          MenuItem := TMenuItem.Create(Self);
+          AMenu.Items.Add(MenuItem);
+          MenuItem.Caption := 'Загрузить проекты на планшете ' + Map.MapName;
+          MenuItem.Tag := Recno;
+          MenuItem.OnClick := LoadProjectsClick;
+        end;
+        //
+        if mstClientAppModule.User.CanManageMP then
+        begin
+          MenuItem := TMenuItem.Create(Self);
+          AMenu.Items.Add(MenuItem);
+          MenuItem.Caption := 'Загрузить сводный план на планшете ' + Map.MapName;
+          MenuItem.Tag := Recno;
+          MenuItem.OnClick := LoadMPClick;
+        end;
 //        MenuItem := TMenuItem.Create(Self);
 //        AMenu.Items.Add(MenuItem);
 //        MenuItem.Tag := Recno;
@@ -2538,15 +2617,34 @@ begin
             DrawBox.RegenDrawing;
           end;
         end;
-    else
-      if Layer.Name <> SL_REPORT then
-        if Entity.EntityID = idTrueTypeText then
+      csLoadMP:
         begin
-          Accept := False;
-          ShowMessage('Текст можно вставлять только в слой [Отчет]!');
-        end
-        else
-          Accept := False;
+          if Assigned(Entity) then
+          begin
+            FCursorState := csArrow;
+            Accept := False;
+            Entity.MaxMinExtents(Rect.xmin, Rect.ymin, Rect.xmax, Rect.ymax);
+            LoadMPObjects(Rect.xmin, Rect.ymax, Rect.xmax, Rect.ymin);
+            GIS.CurrentLayerName := LastLayerName;
+            DrawBox.RegenDrawing;
+          end;
+        end;
+    else
+        begin
+          if Layer.Name <> SL_REPORT then
+            if Entity.EntityID = idTrueTypeText then
+            begin
+              Accept := False;
+              ShowMessage('Текст можно вставлять только в слой [Отчет]!');
+            end
+            else
+              Accept := False;
+          //
+          if Accept then
+          begin
+          
+          end;
+        end;
     end;
   except
 //    DebugMessage(Self.Handle, Self.Name, 'DrawBoxAfterInsert');

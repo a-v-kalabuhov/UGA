@@ -78,6 +78,11 @@ type
     FDrawOrg: string;
     FCustomerOrg: string;
     FExecutorOrg: string;
+    FTempPoints: TEzVector;
+    FTempLayer: string;
+    FTempLayerId: Integer;
+    FTempCategoryId: Integer;
+    FTempÑaåtegory: string;
     procedure SetClassId(const Value: Integer);
     procedure SetAddress(const Value: string);
     procedure SetArchived(const Value: Boolean);
@@ -128,6 +133,10 @@ type
     procedure SetDrawOrg(const Value: string);
     procedure SetExecutorOrg(const Value: string);
     procedure SetMpClassName(const Value: string);
+    procedure SetTempLayer(const Value: string);
+    procedure SetTempLayerId(const Value: Integer);
+    procedure SetTempCategoryId(const Value: Integer);
+    procedure SetTempÑaåtegory(const Value: string);
   protected
     function GetObjectId: Integer; override;
     function GetText: String; override;
@@ -212,6 +221,9 @@ type
     property EzId: Integer read FEzId write SetEzId;
     property EzLayerRecno: Integer read FEzLayerRecno write SetEzLayerRecno;
     property EzLayerName: string read FEzLayerName write SetEzLayerName;
+    //
+    property TempPoints: TEzVector read FTempPoints;
+    property TempÑategory: string read FTempÑaåtegory write SetTempÑaåtegory;
   end;
 
   TmstProjectObjects = class(TObjectList)
@@ -849,6 +861,8 @@ end;
 constructor TmstMPObject.Create;
 begin
   inherited;
+  FTempPoints := TEzVector.Create(1);
+  FTempPoints.CanGrow := True;
   FEzData := TMemoryStream.Create;
   FEzId := -1;
   FGuid := GetUniqueString(False, True);
@@ -860,6 +874,7 @@ end;
 destructor TmstMPObject.Destroy;
 begin
   FreeAndNil(FEzData);
+  FreeAndNil(FTempPoints);
   inherited;
 end;
 
@@ -1106,6 +1121,26 @@ end;
 procedure TmstMPObject.SetRotation(const Value: Integer);
 begin
   FRotation := Value;
+end;
+
+procedure TmstMPObject.SetTempCategoryId(const Value: Integer);
+begin
+  FTempCategoryId := Value;
+end;
+
+procedure TmstMPObject.SetTempLayer(const Value: string);
+begin
+  FTempLayer := Value;
+end;
+
+procedure TmstMPObject.SetTempLayerId(const Value: Integer);
+begin
+  FTempLayerId := Value;
+end;
+
+procedure TmstMPObject.SetTempÑaåtegory(const Value: string);
+begin
+  FTempÑaåtegory := Value;
 end;
 
 procedure TmstMPObject.SetTop(const Value: string);

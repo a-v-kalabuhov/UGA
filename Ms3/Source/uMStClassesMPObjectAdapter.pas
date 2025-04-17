@@ -5,7 +5,7 @@ interface
 uses
   Classes, DB, Math,
   EzBase, EzBaseGIS,
-  uMStConsts;
+  uMStConsts, uMStClassesProjectsMP;
 
 type
   TmstMPObjectEzAdapter = class
@@ -30,6 +30,22 @@ type
     property EzEntityId: TEzEntityID read GetEzEntityId;
     property EzData: TStream read GetEzData;
     property EzRecno: Integer read GetEzRecno write SetEzRecno;
+  end;
+
+  TmstMPObjectBrowserAdapter = class
+  private
+    FDataSet: TDataSet;
+    function GetId: Integer;
+    function GetArchived: Boolean;
+    function GetCheckState: TmstMPObjectCheckState;
+    function GetMpClassId: Integer;
+  public
+    constructor Create(aBrowserDs: TDataSet);
+    //
+    property Id: Integer read GetId;
+    property Archived: Boolean read GetArchived;
+    property CheckState: TmstMPObjectCheckState read GetCheckState;
+    property MpClassId: Integer read GetMpClassId;
   end;
 
   TmstMPObjectAdapter = class
@@ -153,6 +169,33 @@ end;
 function TmstMPObjectAdapter.GetTableVersion: Integer;
 begin
   Result := FDataSet.FieldByName(SF_TABLE_VERSION).AsInteger;
+end;
+
+{ TmstMPObjectBrowserAdapter }
+
+constructor TmstMPObjectBrowserAdapter.Create(aBrowserDs: TDataSet);
+begin
+  FDataSet := aBrowserDs;
+end;
+
+function TmstMPObjectBrowserAdapter.GetArchived: Boolean;
+begin
+  Result := FDataSet.FieldByName(SF_ARCHIVED).AsInteger = 1;
+end;
+
+function TmstMPObjectBrowserAdapter.GetCheckState: TmstMPObjectCheckState;
+begin
+  Result := TmstMPObjectCheckState(FDataSet.FieldByName(SF_CHECK_STATE).AsInteger);
+end;
+
+function TmstMPObjectBrowserAdapter.GetId: Integer;
+begin
+  Result := FDataSet.FieldByName(SF_ID).AsInteger;
+end;
+
+function TmstMPObjectBrowserAdapter.GetMpClassId: Integer;
+begin
+  Result := FDataSet.FieldByName(SF_MASTER_PLAN_CLASS_ID).AsInteger;
 end;
 
 end.

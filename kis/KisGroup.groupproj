@@ -14,6 +14,7 @@
     <Projects Include="..\Components\FastReport\source\fr7.dproj" />
     <Projects Include="..\Components\FastReport\source\ibx\FRIBX7.dproj" />
     <Projects Include="..\Components\TDBF\Source\tdbf_d7d.dproj" />
+    <Projects Include="..\DbFilterTest\DbFilterTestPrj.dproj" />
     <Projects Include="..\EzShared\EzShared_make.dproj">
       <Dependencies>..\shared\Source\shared_make.dproj</Dependencies>
     </Projects>
@@ -187,14 +188,23 @@
   <Target Name="CADImporterDLL:Make">
     <MSBuild Projects="..\Components\CadDll\Demos\Import\DemoDelphi\CADImporterDLL.dproj" Targets="Make" />
   </Target>
+  <Target Name="DbFilterTestPrj">
+    <MSBuild Projects="..\DbFilterTest\DbFilterTestPrj.dproj" Targets="" />
+  </Target>
+  <Target Name="DbFilterTestPrj:Clean">
+    <MSBuild Projects="..\DbFilterTest\DbFilterTestPrj.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="DbFilterTestPrj:Make">
+    <MSBuild Projects="..\DbFilterTest\DbFilterTestPrj.dproj" Targets="Make" />
+  </Target>
   <Target Name="Build">
-    <CallTarget Targets="fr7;FRIBX7;tdbf_d7d;EcwCL;EzGISD7;shared_make;EzShared_make;MyVCL;Kis;mfTest1;Ms3;KisTestsProject;NewMain;Ms3Tests;KisTestDwgCom;DemoDelphi;CADImporterDLL" />
+    <CallTarget Targets="fr7;FRIBX7;tdbf_d7d;EcwCL;EzGISD7;shared_make;EzShared_make;MyVCL;Kis;mfTest1;Ms3;KisTestsProject;NewMain;Ms3Tests;KisTestDwgCom;DemoDelphi;CADImporterDLL;DbFilterTestPrj" />
   </Target>
   <Target Name="Clean">
-    <CallTarget Targets="fr7:Clean;FRIBX7:Clean;tdbf_d7d:Clean;EcwCL:Clean;EzGISD7:Clean;shared_make:Clean;EzShared_make:Clean;MyVCL:Clean;Kis:Clean;mfTest1:Clean;Ms3:Clean;KisTestsProject:Clean;NewMain:Clean;Ms3Tests:Clean;KisTestDwgCom:Clean;DemoDelphi:Clean;CADImporterDLL:Clean" />
+    <CallTarget Targets="fr7:Clean;FRIBX7:Clean;tdbf_d7d:Clean;EcwCL:Clean;EzGISD7:Clean;shared_make:Clean;EzShared_make:Clean;MyVCL:Clean;Kis:Clean;mfTest1:Clean;Ms3:Clean;KisTestsProject:Clean;NewMain:Clean;Ms3Tests:Clean;KisTestDwgCom:Clean;DemoDelphi:Clean;CADImporterDLL:Clean;DbFilterTestPrj:Clean" />
   </Target>
   <Target Name="Make">
-    <CallTarget Targets="fr7:Make;FRIBX7:Make;tdbf_d7d:Make;EcwCL:Make;EzGISD7:Make;shared_make:Make;EzShared_make:Make;MyVCL:Make;Kis:Make;mfTest1:Make;Ms3:Make;KisTestsProject:Make;NewMain:Make;Ms3Tests:Make;KisTestDwgCom:Make;DemoDelphi:Make;CADImporterDLL:Make" />
+    <CallTarget Targets="fr7:Make;FRIBX7:Make;tdbf_d7d:Make;EcwCL:Make;EzGISD7:Make;shared_make:Make;EzShared_make:Make;MyVCL:Make;Kis:Make;mfTest1:Make;Ms3:Make;KisTestsProject:Make;NewMain:Make;Ms3Tests:Make;KisTestDwgCom:Make;DemoDelphi:Make;CADImporterDLL:Make;DbFilterTestPrj:Make" />
   </Target>
   <Import Condition="Exists('$(MSBuildBinPath)\Borland.Group.Targets')" Project="$(MSBuildBinPath)\Borland.Group.Targets" />
 </Project>

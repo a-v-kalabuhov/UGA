@@ -56,6 +56,7 @@ type
     property Row;
     property CurrentCol: TColumn read GetCurrentCol;
     property InplaceEditor;
+    property VisibleRowCount;
   published
     property Multyline: Boolean read FMultyline write FMultyline default False;
     property CaptionLineCount: Integer read FLineCount write SetLineCount default 1;

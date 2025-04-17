@@ -101,6 +101,7 @@ type
   function GetUniqueString(RemoveDash: Boolean = True; RemoveBrackets: Boolean = True): String;
   function ColorToHex(Color: TColor): string;
   function HexToColor(Hex: string): TColor;
+  function StrIsFloat(Value: string; var FloatVal: Double): Boolean;
 
 type
   TGetValueFunc = function (Item: Pointer): Boolean of object;
@@ -109,6 +110,18 @@ type
   function DoBinarySearch(aList: TList; CheckValue: TGetValueFunc; CompareValue: TCompareValueFunc): Integer;
 
 implementation
+
+function StrIsFloat(Value: string; var FloatVal: Double): Boolean;
+var
+  Sep: Char;
+begin
+  if DecimalSeparator = '.' then
+    Sep := ','
+  else
+    Sep := '.';
+  Value := StringReplace(Value, Sep, DecimalSeparator, [rfReplaceAll]);
+  Result := TryStrToFloat(Value, FloatVal);
+end;
 
 function DoBinarySearch(aList: TList; CheckValue: TGetValueFunc; CompareValue: TCompareValueFunc): Integer;
 var

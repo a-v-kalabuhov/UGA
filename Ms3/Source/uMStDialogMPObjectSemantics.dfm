@@ -12,6 +12,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poMainFormCenter
   DesignSize = (
     995
     541)
@@ -514,7 +515,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Style = csDropDownList
       Anchors = [akTop, akRight]
       Enabled = False
-      ItemHeight = 0
+      ItemHeight = 13
       TabOrder = 4
     end
     object chbUnderground: TCheckBox
@@ -606,6 +607,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
     Height = 25
     Anchors = [akTop, akRight]
     Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+    Default = True
     TabOrder = 2
     OnClick = btnOKClick
   end
@@ -615,6 +617,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
     Width = 75
     Height = 25
     Anchors = [akTop, akRight]
+    Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     TabOrder = 3
     OnClick = btnCancelClick

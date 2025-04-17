@@ -2,7 +2,7 @@ object mstClientMainForm: TmstClientMainForm
   Left = 35
   Top = 238
   Caption = #1055#1083#1072#1085#1096#1077#1090#1086#1093#1088#1072#1085#1080#1083#1080#1097#1077' 2.2'
-  ClientHeight = 656
+  ClientHeight = 756
   ClientWidth = 1055
   Color = clBtnFace
   Constraints.MinHeight = 300
@@ -29,9 +29,10 @@ object mstClientMainForm: TmstClientMainForm
     Left = 850
     Top = 0
     Width = 5
-    Height = 637
+    Height = 737
     Align = alRight
     ExplicitLeft = 876
+    ExplicitHeight = 637
   end
   object Label3: TLabel
     Left = 488
@@ -42,7 +43,7 @@ object mstClientMainForm: TmstClientMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 637
+    Top = 737
     Width = 1055
     Height = 19
     Panels = <
@@ -60,7 +61,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 0
     Top = 0
     Width = 850
-    Height = 637
+    Height = 737
     Align = alClient
     Caption = 'pnMain'
     TabOrder = 1
@@ -68,8 +69,9 @@ object mstClientMainForm: TmstClientMainForm
       Left = 251
       Top = 52
       Width = 6
-      Height = 560
+      Height = 660
       OnMoved = Splitter1Moved
+      ExplicitHeight = 560
     end
     object ToolBar1: TToolBar
       Left = 1
@@ -216,7 +218,7 @@ object mstClientMainForm: TmstClientMainForm
     end
     object CmdLine: TEzCmdLine
       Left = 1
-      Top = 612
+      Top = 712
       Width = 848
       Height = 24
       DrawBoxList = <
@@ -243,7 +245,7 @@ object mstClientMainForm: TmstClientMainForm
       Left = 1
       Top = 52
       Width = 250
-      Height = 560
+      Height = 660
       Align = alLeft
       TabOrder = 2
       object Splitter2: TSplitter
@@ -284,7 +286,7 @@ object mstClientMainForm: TmstClientMainForm
         Left = 1
         Top = 353
         Width = 248
-        Height = 206
+        Height = 306
         Align = alClient
         BevelEdges = []
         BorderStyle = bsNone
@@ -422,7 +424,7 @@ object mstClientMainForm: TmstClientMainForm
       Left = 257
       Top = 52
       Width = 592
-      Height = 560
+      Height = 660
       Align = alClient
       Caption = 'pnCenter'
       TabOrder = 3
@@ -430,7 +432,7 @@ object mstClientMainForm: TmstClientMainForm
         Left = 1
         Top = 52
         Width = 590
-        Height = 507
+        Height = 607
         BorderStyle = bsNone
         UseThread = False
         Align = alClient
@@ -822,7 +824,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 855
     Top = 0
     Width = 200
-    Height = 637
+    Height = 737
     Align = alRight
     TabOrder = 2
     object LayersListBox: TCheckListBox
@@ -840,7 +842,7 @@ object mstClientMainForm: TmstClientMainForm
       Left = 1
       Top = 233
       Width = 198
-      Height = 403
+      Height = 503
       Align = alClient
       CheckImageKind = ckSystemFlat
       Color = clInfoBk
@@ -989,6 +991,7 @@ object mstClientMainForm: TmstClientMainForm
           end
           object XLS2: TMenuItem
             Caption = #1092#1072#1081#1083' XLS...'
+            OnClick = XLS2Click
           end
         end
       end
@@ -1005,6 +1008,9 @@ object mstClientMainForm: TmstClientMainForm
       end
       object N59: TMenuItem
         Caption = '-'
+      end
+      object N62: TMenuItem
+        Action = acMPLoadRect
       end
       object N58: TMenuItem
         Action = acMPPickupPoints
@@ -1560,7 +1566,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 80
     Top = 256
     Bitmap = {
-      494C010155007801140210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010155007801240210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000006001000001002000000000000060
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4537,7 +4543,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 460
     Top = 224
     Bitmap = {
-      494C010112001300040210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010112001300140210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -5395,6 +5401,12 @@ object mstClientMainForm: TmstClientMainForm
       Hint = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1079#1072#1075#1088#1091#1078#1077#1085#1085#1099#1077' '#1089#1077#1090#1080' '#1074' '#1092#1072#1081#1083' mid/mif'
       OnExecute = acMPExportMidMifExecute
       OnUpdate = acMPExportMidMifUpdate
+    end
+    object acMPLoadRect: TAction
+      Category = 'MP'
+      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1089#1077#1090#1080' '#1087#1086' '#1086#1073#1083#1072#1089#1090#1080
+      OnExecute = acMPLoadRectExecute
+      OnUpdate = acMPLoadRectUpdate
     end
   end
   object MidMifDialog: TOpenDialog

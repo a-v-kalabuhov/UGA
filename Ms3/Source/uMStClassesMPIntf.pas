@@ -4,16 +4,18 @@ interface
 
 uses
   DB, Graphics,
-  EzBaseGIS,
+  EzBaseGIS, EzLib,
   uMStKernelClasses, uMStKernelIBX, uMStKernelAppSettings,
-  uMStClassesMPClassif, uMStClassesProjectsMP;
+  uMStClassesMPClassif, uMStClassesProjectsMP, uMStClassesProjectsMPIntersect;
 
 type
+  TmstImportSource = (srcDXF, srcExcel);
+
   ImstMPModule = interface
     ['{9950B1D8-F72C-409E-BEE9-A06839D82445}']
     function Classifier: TmstMPClassifier;
     procedure DisplayNavigator(aDrawBox: TEzBaseDrawBox);
-    procedure ImportDXF(const aObjState: TmstMPObjectState);
+    procedure ImportFile(Source: TmstImportSource; const aObjState: TmstMPObjectState);
     procedure SetAppSettingsEvent(aEvent: TGetAppSettingsEvent);
     procedure SetDbEvent(aDbEvent: TGetDbEvent);
     procedure SetDrawBox(aDrawBox: TEzBaseDrawBox);
@@ -25,7 +27,10 @@ type
     function EditNewObject(const Obj: TmstMPObject): Boolean;
     function EditObjProperties(const ObjId: Integer): Boolean;
 //    function EditObjectProps(const Obj: TmstMPObject): Boolean;
+    function FindIntersects(const ObjId: Integer): TmpIntersectionInfo;
+    procedure IntersectDialog(const ObjId: Integer; Found: TmpIntersectionInfo);
     function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
+    procedure SetObjCheckState(const ObjId: Integer; CheckState: TmstMPObjectCheckState);
     procedure UpdateLayersVisibility(aLayers: TmstLayerList);
     //
     function HasLoaded(): Boolean;
@@ -39,16 +44,35 @@ type
     procedure GiveOutCertif(const ObjId: Integer; CertifNumber: string; CertifDate: TDateTime);
     //
     procedure ExportToMif(const aMifFileName: string);
+    procedure LoadMPObjects(const aGeoLeft, aGeoTop, aGeoRight, aGeoBottom: Double);
+  end;
+
+  TRowOperation = (rowInsert, rowUpdate, rowDelete);
+
+  ImstMPObjEventSubscriber = interface
+    ['{0B49BDED-2078-4D92-8140-21EBF3F65809}']
+    procedure Notify(const ObjId: Integer; Op: TRowOperation);
   end;
 
   ImstMPModuleObjList = interface
     ['{353E66CC-A116-430A-A842-4DF7B91ADE5F}']
     function BrowserDataSet(): TDataSet;
+    procedure RefreshBrowseDataSetRow(const ObjId: Integer; TargetDataSet: TDataSet);
+    procedure Subscribe(Subscriber: ImstMPObjEventSubscriber);
+    procedure UnSubscribe(Subscriber: ImstMPObjEventSubscriber);
   end;
 
   ImstMPObjectSaver = interface
     ['{37CC5354-D092-4A5E-9E28-D361C9C8921C}']
     function SaveMPObject(aDb: IDb; MPObject: TmstMPObject): Boolean;
+  end;
+
+  ImstMPExcelImport = interface
+    ['{32113B54-A166-4FDC-907F-AC83EF6DB3A1}']
+    function  DoImport(MP: ImstMPModule): Boolean;
+    function GetMPObjectCount: Integer;
+    function GetMPObjects(Index: Integer): TmstMPObject;
+    function GetProject(const aObjState: TmstMPObjectState): TmstProjectMP;
   end;
 
 implementation

@@ -346,7 +346,7 @@ var
 begin
   FObject.RequestDate := GetDate(edRequestDate.Text);
   FObject.DocDate := GetDate(edDocDate.Text);
-  edDocNumber.Text := FObject.DocNumber;
+  FObject.DocNumber := edDocNumber.Text;
   FObject.Address := edAddress.Text;
   FObject.ProjectName := edProjectName.Text;
   FObject.RequestNumber := edRequestNumber.Text;

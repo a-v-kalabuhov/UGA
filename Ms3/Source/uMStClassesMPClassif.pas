@@ -50,6 +50,7 @@ type
     procedure Reindex();
     function Find(const DbId: Integer; const BinSearch: Boolean): TMPObjClassEntry;
     procedure GetClassDbIds(IdList: TIntegerList);
+    procedure GetCategoryClasses(CatId: Integer; IdList: TIntegerList);
   end;
 
   TmstMPClassifier = class
@@ -57,6 +58,7 @@ type
     FClasses: TMPObjClassesList;
     FStatusArr: array[0..Kb16] of TMPClassEntry;
     FMPVisible: Boolean;
+    FCategoryNames: TStrings;
 //    FCacheStatusId: Integer;
 //    FCacheEntry: TMPClassEntry;
     procedure SetMPVisible(const Value: Boolean);
@@ -65,18 +67,21 @@ type
     destructor Destroy; override;
     //
     procedure LoadFromDataSet(DataSet: TDataSet);
+    procedure LoadCategoriesFromDataSet(DataSet: TDataSet);
     //
     function GetMPStatusVisible(MpStatusId: Integer): Boolean;
     procedure SetMPStatusVisible(MpStatusId: Integer; Visible: Boolean);
     function GetMPCategoryVisible(MpStatusId, MpCategoryId: Integer): Boolean;
     procedure SetMPCategoryVisible(MpStatusId, MpCategoryId: Integer; Visible: Boolean);
     //
-    function GetClassIdList(): TIntegerList;
+    function GetClassIdList(): TIntegerList; overload;
+    function GetClassIdList(CategoryId: Integer): TIntegerList; overload;
     function GetClassName(const aClassId: Integer): string;
     function GetClassCategoryId(const aClassId: Integer): Integer;
     function GetClassCategoryColor(const aClassId: Integer): TColor;
     //
     property MPVisible: Boolean read FMPVisible write SetMPVisible;
+    property CategoryNames: TStrings read FCategoryNames;
   end;
 
 implementation
@@ -96,6 +101,7 @@ var
   I: Integer;
 begin
   FClasses := TMPObjClassesList.Create;
+  FCategoryNames := TStringList.Create;
   for I := 0 to 255 do
     FStatusArr[I] := nil;
   FMPVisible := True;
@@ -109,6 +115,7 @@ begin
     if FStatusArr[I] <> nil then
       FStatusArr[I].Free;
   FClasses.Free;
+  FCategoryNames.Free;
   inherited;
 end;
 
@@ -132,6 +139,12 @@ begin
     Result := Entry.fCatId
   else
     Result := -1;
+end;
+
+function TmstMPClassifier.GetClassIdList(CategoryId: Integer): TIntegerList;
+begin
+  Result := TIntegerList.Create;
+  FClasses.GetCategoryClasses(CategoryId, Result);
 end;
 
 function TmstMPClassifier.GetClassIdList: TIntegerList;
@@ -163,6 +176,27 @@ begin
   Result := False;
   if FStatusArr[MpStatusId] <> nil then
     Result := FStatusArr[MpStatusId].FVisible;
+end;
+
+procedure TmstMPClassifier.LoadCategoriesFromDataSet(DataSet: TDataSet);
+var
+  CatName: string;
+  DbId: Integer;
+const
+  SQL_GET_MP_LAYERS = 'SELECT * FROM MASTER_PLAN_LAYERS ORDER BY ID, GROUP_ID';
+begin
+  if not DataSet.Active then
+    Exit;
+  FCategoryNames.Clear;
+  DataSet.First;
+  while not DataSet.Eof do
+  begin
+    DbId := DataSet.FieldByName(SF_ID).AsInteger;
+    CatName := DataSet.FieldByName(SF_NAME).AsString;
+    FCategoryNames.AddObject(CatName, TObject(DbId));
+    DataSet.Next;
+  end;
+  TStringList(FCategoryNames).Sorted := True;
 end;
 
 procedure TmstMPClassifier.LoadFromDataSet(DataSet: TDataSet);
@@ -345,6 +379,19 @@ begin
         Exit;
       end;
     end;
+  end;
+end;
+
+procedure TMPObjClassesList.GetCategoryClasses(CatId: Integer; IdList: TIntegerList);
+var
+  I: Integer;
+  Entry: TMPObjClassEntry;
+begin
+  for I := 0 to FList.Count - 1 do
+  begin
+    Entry := TMPObjClassEntry(FList[I]);
+    if Entry.fCatId = CatId then
+      IdList.Add(Entry.fDbId);
   end;
 end;
 
