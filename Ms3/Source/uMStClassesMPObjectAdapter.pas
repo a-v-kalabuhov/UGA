@@ -20,6 +20,7 @@ type
     procedure SaveValue(const FieldName: string; const Value: Variant);
     function GetEzEntityId: TEzEntityID;
     function GetId: Integer;
+    function GetEzId: Integer;
   public
     constructor Create(EzDataSet: TDataSet);
     //
@@ -28,6 +29,7 @@ type
     property Id: Integer read GetId;
     property Loaded: Boolean read GetLoaded write SetLoaded;
     property EzEntityId: TEzEntityID read GetEzEntityId;
+    property EzId: Integer read GetEzId;
     property EzData: TStream read GetEzData;
     property EzRecno: Integer read GetEzRecno write SetEzRecno;
   end;
@@ -39,6 +41,7 @@ type
     function GetArchived: Boolean;
     function GetCheckState: TmstMPObjectCheckState;
     function GetMpClassId: Integer;
+    function GetTableVersion: Integer;
   public
     constructor Create(aBrowserDs: TDataSet);
     //
@@ -46,6 +49,7 @@ type
     property Archived: Boolean read GetArchived;
     property CheckState: TmstMPObjectCheckState read GetCheckState;
     property MpClassId: Integer read GetMpClassId;
+    property TableVersion: Integer read GetTableVersion;
   end;
 
   TmstMPObjectAdapter = class
@@ -104,6 +108,11 @@ end;
 function TmstMPObjectEzAdapter.GetEzEntityId: TEzEntityID;
 begin
   Result := TEzEntityID(FEzDataSet.FieldByName(SF_EZ_ID).AsInteger);
+end;
+
+function TmstMPObjectEzAdapter.GetEzId: Integer;
+begin
+  Result := FEzDataSet.FieldByName(SF_EZ_ID).AsInteger;
 end;
 
 function TmstMPObjectEzAdapter.GetEzRecno: Integer;
@@ -196,6 +205,11 @@ end;
 function TmstMPObjectBrowserAdapter.GetMpClassId: Integer;
 begin
   Result := FDataSet.FieldByName(SF_MASTER_PLAN_CLASS_ID).AsInteger;
+end;
+
+function TmstMPObjectBrowserAdapter.GetTableVersion: Integer;
+begin
+  Result := FDataSet.FieldByName(SF_TABLE_VERSION).AsInteger;
 end;
 
 end.

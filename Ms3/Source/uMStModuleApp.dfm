@@ -7,6 +7,7 @@ object MStClientAppModule: TMStClientAppModule
   object GIS: TEzGIS
     Active = False
     LayersSubdir = 'C:\temp\mst3\layers\'
+    OnBeforePaintLayer = GISBeforePaintLayer
     OnBeforePaintEntity = GISBeforePaintEntity
     OnAfterPaintEntity = GISAfterPaintEntity
     OnCurrentLayerChange = GISCurrentLayerChange

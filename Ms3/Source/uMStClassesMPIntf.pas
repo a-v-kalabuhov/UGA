@@ -54,8 +54,15 @@ type
     procedure Notify(const ObjId: Integer; Op: TRowOperation);
   end;
 
+  ImstMPBrowser = interface
+    ['{FF25E26F-1B7D-43D7-BF45-332C9841AABC}']
+    procedure Browse();
+    procedure LocateObj(const ObjId: Integer);
+  end;
+
   ImstMPModuleObjList = interface
     ['{353E66CC-A116-430A-A842-4DF7B91ADE5F}']
+    function Browser: ImstMPBrowser;
     function BrowserDataSet(): TDataSet;
     procedure RefreshBrowseDataSetRow(const ObjId: Integer; TargetDataSet: TDataSet);
     procedure Subscribe(Subscriber: ImstMPObjEventSubscriber);

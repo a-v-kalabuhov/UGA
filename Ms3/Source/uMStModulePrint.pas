@@ -240,22 +240,22 @@ end;
 
 procedure TmstPrintModule.UnprepareReport;
 var
-  I: Integer;
+  L: TmstLayer;
 begin
   FPages.Clear;
   FLotTexts.Clear;
   FLotPoints.Clear;
   with mstClientAppModule do
   begin
-    I := Layers.IndexOfName(SL_REPORT);
-    if I >= 0 then
-      Layers.Delete(I);
-    I := Layers.IndexOfName(SL_PAGES);
-    if I >= 0 then
-      Layers.Delete(I);
-    I := Layers.IndexOfName(SL_WATERMARKS);
-    if I >= 0 then
-      Layers.Delete(I);
+    L := Layers.GetByName(SL_REPORT, False);
+    if L <> nil then
+      Layers.Remove(L);
+    L := Layers.GetByName(SL_PAGES, False);
+    if L <> nil then
+      Layers.Remove(L);
+    L := Layers.GetByName(SL_WATERMARKS, False);
+    if L <> nil then
+      Layers.Remove(L);
   end;
   FPrintAreaId := -1;
   FPrintArea := INVALID_EXTENSION;

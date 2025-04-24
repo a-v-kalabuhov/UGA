@@ -29,7 +29,8 @@ type
       State: TGridDrawState; var FontStyle: TFontStyles);
     procedure ibqLineColorsLINE_COLORGetText(Sender: TField; var Text: string; DisplayText: Boolean);
   private
-    { Private declarations }
+    function GetColorHex(Dollar: Boolean): string;
+    procedure UpdateCustomColors;
   public
     procedure Execute();
   end;
@@ -48,10 +49,11 @@ var
   ClrHex: string;
   ClrInt: Integer;
 begin
+  UpdateCustomColors;
+  //
   ibqLineColors.Edit;
-  ClrHex := ibqLineColorsLINE_COLOR.Value;
-  if not TryStrToInt(ClrHex, ClrInt) then
-    ClrInt := clBlack;
+  ClrHex := GetColorHex(True);
+  ClrInt := StrToInt(ClrHex);
   ColorDialog1.Color := ClrInt;
   if ColorDialog1.Execute(Self.Handle) then
   begin
@@ -81,12 +83,35 @@ begin
   Action := caFree;
 end;
 
-procedure TmstMPLineColorsDialog.ibqLineColorsLINE_COLORGetText(Sender: TField; var Text: string; DisplayText: Boolean);
+function TmstMPLineColorsDialog.GetColorHex(Dollar: Boolean): string;
 var
+  ColorHex: string;
   ColorInt: Integer;
 begin
-  if not TryStrToInt(Text, ColorInt) then
-    Text := '$000000';
+  ColorHex := ibqLineColorsLINE_COLOR.Value;
+  if TryStrToInt(ColorHex, ColorInt) then
+  begin
+    Result := ColorHex;
+    if Length(Result) > 0 then
+    begin
+      if (not Dollar) and (Result[1] = '$') then
+      begin
+        Result[1] := ' ';
+        Result := Trim(Result);
+      end;
+    end;
+  end
+  else
+  begin
+    Result := '000000';
+    if Dollar then
+      Result := '$' + Result;
+  end;
+end;
+
+procedure TmstMPLineColorsDialog.ibqLineColorsLINE_COLORGetText(Sender: TField; var Text: string; DisplayText: Boolean);
+begin
+  Text := GetColorHex(True);
 end;
 
 procedure TmstMPLineColorsDialog.kaDBGrid1CellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor;
@@ -108,10 +133,55 @@ begin
     G := GetGValue(Background);
     B := GetBValue(Background);
     V := Round((R + G + B) / 3);
-    if V < 120 then
+    if V < 140 then
       FontColor := clWhite
     else
       FontColor := clBlack;
+  end;
+end;
+
+procedure TmstMPLineColorsDialog.UpdateCustomColors;
+var
+  Bkm: Pointer;
+  ColorList: TStringList;
+  ColorHex: string;
+  ColorName: string;
+  I: Integer;
+begin
+  ColorList := TStringList.Create;
+  try
+    Bkm := ibqLineColors.GetBookmark;
+    ibqLineColors.DisableControls;
+    try
+      ibqLineColors.First;
+      while not ibqLineColors.Eof do
+      begin
+        ColorHex := GetColorHex(False);
+        if ColorList.IndexOfName(ColorHex) < 0 then
+        begin
+          ColorName := ibqLineColorsNAME.AsString;
+          ColorList.Add(ColorHex + '=' + ColorName);
+        end;
+        ibqLineColors.Next;
+      end;
+    finally
+      ibqLineColors.EnableControls;
+      ibqLineColors.GotoBookmark(Bkm);
+    end;
+    //
+    ColorList.Sort;
+    for I := 0 to ColorList.Count - 1 do
+    begin
+      ColorHex := ColorList.Names[I];
+      ColorName := ColorList.ValueFromIndex[I];
+      ColorList.Strings[I] := 'Color' + Char(Ord('A') + I) + '=' + ColorHex;
+    end;
+    //
+    ColorDialog1.CustomColors.Clear;
+    for I := 0 to ColorList.Count - 1 do
+      ColorDialog1.CustomColors.Add(ColorList[I]);
+  finally
+    ColorList.Free;
   end;
 end;
 

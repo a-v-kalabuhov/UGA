@@ -1705,6 +1705,8 @@ end;
 procedure TmstClientMainForm.SavePointListToMPObject;
 var
   Obj: TmstMPObject;
+  ObjList: ImstMPModuleObjList;
+  Browser: ImstMPBrowser;
 begin
   // прерываем действие в CmdLine
   CursorState := csNone;
@@ -1715,9 +1717,14 @@ begin
     try
       if mstClientAppModule.MP.EditNewObject(Obj) then
       begin
+        Obj.CheckState := ocsEdited;
         mstClientAppModule.MP.LoadToGis(Obj.DatabaseId, False);
         ListView.Clear;
         DrawBox.RegenDrawing();
+        //
+        ObjList := mstClientAppModule.MP as ImstMPModuleObjList;
+        Browser := ObjList.Browser();
+        Browser.LocateObj(Obj.DatabaseId);
       end;
     finally
       Obj.Free;
@@ -3223,7 +3230,7 @@ var
 begin
   FDragText := False;
   ActId := CmdLine.CurrentAction.ActionID;
-  if ActId <> 'SCROLL' then
+  if (ActId <> 'SCROLL') and (ActId <> 'CALC') then
   begin
     CursorState := csReadyToDrag;
     CmdLine.Clear;

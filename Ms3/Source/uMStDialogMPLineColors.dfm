@@ -3,7 +3,7 @@ object mstMPLineColorsDialog: TmstMPLineColorsDialog
   Top = 0
   BorderStyle = bsDialog
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1094#1074#1077#1090#1072' '#1083#1080#1085#1080#1081
-  ClientHeight = 289
+  ClientHeight = 430
   ClientWidth = 417
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -14,13 +14,17 @@ object mstMPLineColorsDialog: TmstMPLineColorsDialog
   OldCreateOrder = False
   Position = poOwnerFormCenter
   OnClose = FormClose
+  DesignSize = (
+    417
+    430)
   PixelsPerInch = 96
   TextHeight = 13
   object kaDBGrid1: TkaDBGrid
     Left = 8
     Top = 8
     Width = 320
-    Height = 273
+    Height = 417
+    Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = DataSource1
     TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
@@ -61,23 +65,29 @@ object mstMPLineColorsDialog: TmstMPLineColorsDialog
   end
   object btnClose: TButton
     Left = 334
-    Top = 256
+    Top = 400
     Width = 75
     Height = 25
+    Anchors = [akRight, akBottom]
     Caption = #1047#1072#1082#1088#1099#1090#1100
     TabOrder = 2
     OnClick = btnCloseClick
+    ExplicitTop = 256
   end
   object btnEdit: TButton
     Left = 334
     Top = 8
     Width = 75
     Height = 25
+    Anchors = [akTop, akRight]
     Caption = #1048#1079#1084#1077#1085#1080#1090#1100'...'
     TabOrder = 1
     OnClick = btnEditClick
   end
   object ColorDialog1: TColorDialog
+    CustomColors.Strings = (
+      'aaa')
+    Options = [cdFullOpen, cdAnyColor]
     Left = 344
     Top = 64
   end
@@ -100,6 +110,7 @@ object mstMPLineColorsDialog: TmstMPLineColorsDialog
   object ibqLineColors: TIBQuery
     Database = MStIBXMapMngr.dbKis
     Transaction = ibtLineColors
+    AutoCalcFields = False
     SQL.Strings = (
       'SELECT *'
       'FROM '

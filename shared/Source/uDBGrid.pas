@@ -43,7 +43,7 @@ type
     function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
     function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
     procedure DrawCell(ACol, ARow: Longint; ARect: TRect; AState: TGridDrawState); override;
-    procedure DrawColumnCell(const Rect: TRect; DataCol: Integer;
+    procedure DrawColumnCell(const aRect: TRect; DataCol: Integer;
       Column: TColumn; State: TGridDrawState); override;
     procedure MultylineDrawText(const Rect: TRect; const AText: String);
     procedure LayoutChanged; override;
@@ -147,7 +147,7 @@ begin
     inherited;
 end;
 
-procedure TkaDBGrid.DrawColumnCell(const Rect: TRect; DataCol: Integer;
+procedure TkaDBGrid.DrawColumnCell(const aRect: TRect; DataCol: Integer;
   Column: TColumn; State: TGridDrawState);
 var
   OldColor, OldFntColor, BkCol, FontCol: TColor;
@@ -156,6 +156,7 @@ var
   IsLogic, LogicValue: Boolean;
   BtnState: Cardinal;
   CheckBoxRect: TRect;
+  DrawFocus: Boolean;
 begin
   OldColor := Canvas.Brush.Color;
   OldFntColor := Canvas.Font.Color;
@@ -183,8 +184,8 @@ begin
       end;
       if IsLogic then
       begin
-        Canvas.FillRect(Rect);
-        CheckBoxRect := Rect;
+        Canvas.FillRect(aRect);
+        CheckBoxRect := aRect;
         InflateRect(CheckBoxRect, -1, -1);
         OffsetRect(CheckBoxRect, 1, 1);
         BtnState := DFCS_BUTTONCHECK;
@@ -195,12 +196,12 @@ begin
       else
       if (Column.Field.DataType = ftMemo) or (Column.Field.DataType = ftFmtMemo) then
       begin
-        Canvas.FillRect(Rect);
-        Canvas.Draw(Rect.Left + (Rect.Right - Rect.Left - FMemoGlyph.Width) div 2,
-          Rect.Top + (Rect.Bottom - Rect.Top - FMemoGlyph.Height) div 2, FMemoGlyph);
+        Canvas.FillRect(aRect);
+        Canvas.Draw(aRect.Left + (aRect.Right - aRect.Left - FMemoGlyph.Width) div 2,
+          aRect.Top + (aRect.Bottom - aRect.Top - FMemoGlyph.Height) div 2, FMemoGlyph);
       end
       else
-        DefaultDrawDataCell(Rect, Column.Field, State);
+        DefaultDrawDataCell(aRect, Column.Field, State);
     end;
   finally
     Canvas.Brush.Color := OldColor;
@@ -208,9 +209,27 @@ begin
     Canvas.Font.Style := OldFs;
     Canvas.CopyMode := CM;
   end;
-  inherited;
-  if (gdSelected in State) or (gdFocused in State) then
-    Canvas.DrawFocusRect(Rect);
+  if (DataLink <> nil) and DataLink.Active then
+  begin
+//    if Columns.State = csDefault then
+//      DrawDataCell(ARect, DrawColumn.Field, AState);
+//    DrawColumnCell(ARect, ACol, DrawColumn, AState);
+    if DefaultDrawing and (gdSelected in State)
+        and ((dgAlwaysShowSelection in Options) or Focused)
+        and not (csDesigning in ComponentState)
+        and not (dgRowSelect in Options)
+        and (UpdateLock = 0)
+//        and (ValidParentForm(Self).ActiveControl = Self)
+    then
+      //  Windows.DrawFocusRect(Handle, ARect);
+      DrawFocus := False
+    else
+      DrawFocus := True;
+    if DrawFocus then
+    if (gdSelected in State) or (gdFocused in State) then
+      Canvas.DrawFocusRect(aRect);
+  end;
+  inherited DrawColumnCell(aRect, DataCol, Column, State);
 end;
 
 procedure TkaDBGrid.LayoutChanged;

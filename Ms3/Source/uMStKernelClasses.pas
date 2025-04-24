@@ -174,6 +174,7 @@ type
     //
     function AddChild(): TmstLayer;
     procedure AppendChild(aLayer: TmstLayer);
+    procedure ExtractChild(aLayer: TmstLayer);
     //
     property Id: Integer read FId write SetId;
     property Name: String read FName write SetName;
@@ -197,10 +198,41 @@ type
     property MpStatusId: Integer read FMpStateId write SetMpStateId;
   end;
 
+  ILayerComparer = interface
+    ['{DFC053EA-8F46-4411-9C6D-E333C86EDF05}']
+    function Compare(aLayer: TmstLayer): Boolean;
+  end;
+
+  TLayerComparerByName = class(TInterfacedObject, ILayerComparer)
+  private
+    FCaseSensetive: Boolean;
+    FName: string;
+    function Compare(aLayer: TmstLayer): Boolean;
+  public
+    constructor Create(const aName: string; aCaseSensetive: Boolean);
+  end;
+
+  TLayerComparerById = class(TInterfacedObject, ILayerComparer)
+  private
+    FId: Integer;
+    function Compare(aLayer: TmstLayer): Boolean;
+  public
+    constructor Create(const aId: Integer);
+  end;
+
+  TLayerComparerPlainList = class(TInterfacedObject, ILayerComparer)
+  private
+    FList: TList;
+    function Compare(aLayer: TmstLayer): Boolean;
+  public
+    constructor Create(aList: TList);
+  end;
+
   TmstLayerEvent = procedure (Sender: TObject; Layer: TmstLayer) of object;
 
-  TmstLayerList = class(TObjectList)
+  TmstLayerList = class
   private
+    FItems: TObjectList;
     FReading: Boolean;
     FLayerControl: TControl;
     FOnLayerChanged: TmstLayerEvent;
@@ -224,7 +256,7 @@ type
     procedure VStChecked(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure VSTAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure ReadStateFromVST;
-    procedure ReadLayerStateFromVST(VST: TVirtualStringTree; aLayer: TmstLayer);
+    procedure ReadLayerStateFromVST(Sender: TObject; aLayer: TmstLayer);
     //
     procedure CaptureCheckListBox;
     procedure FreeCheckListBox;
@@ -236,24 +268,33 @@ type
     procedure BeginUpdate();
     procedure EndUpdate();
     function InUpdate(): Boolean;
+    //
+    function FindChildLayer(aParent: TmstLayer; Comparer: ILayerComparer): TmstLayer;
+    procedure RemoveChilds(aLayer: TmstLayer);
   protected
     function GetItem(Index: Integer): TmstLayer;
     procedure SetItem(Index: Integer; ALayer: TmstLayer);
-    procedure Notify(Ptr: Pointer; Action: TListNotification); override;
+    procedure Notify(aLayer: TmstLayer; Action: TListNotification);
   public
+    constructor Create;
     destructor Destroy; override;
+    //
+    procedure Add(aLayer: TmstLayer);
+    procedure Clear;
+//    function Count: Integer;
+    procedure Extract(aLayer: TmstLayer);
+    procedure Remove(aLayer: TmstLayer);
+    //
     function AddLayer: TmstLayer;
     function GetById(const aId: Integer): TmstLayer;
     function GetByName(const AName: String; CaseSensetive: Boolean): TmstLayer;
-    function IndexOfName(const aName: String): Integer;
-    function FirstByPosition: TmstLayer;
-    function LastByPosition: TmstLayer;
-    function NextByPosition(FromLayer: TmstLayer): TmstLayer;
     function GetMaxPosition(): Integer;
-    function FindLayerByName(const aLayerName: string): TmstLayer;
+    //
     procedure Connect(aLayer: TmstLayer; ParentLayerId: Integer);
-
-    property Items[Index: Integer]: TmstLayer read GetItem write SetItem; default;
+    procedure EnumerateLayers(Callback: TmstLayerEvent);
+    function GetPlainList(): TList;
+    //
+    property Items[Index: Integer]: TmstLayer read GetItem{ write SetItem}; default;
     property LayerControl: TControl read FLayerControl write SetLayerControl;
     property OnLayerChanged: TmstLayerEvent read FOnLayerChanged write FOnLayerChanged;
     property OnDeleteLayer: TmstLayerEvent read FOnDeleteLayer write FOnDeleteLayer;
@@ -628,6 +669,11 @@ begin
   inherited;
 end;
 
+procedure TmstLayer.ExtractChild(aLayer: TmstLayer);
+begin
+  FChildLayers.Extract(aLayer);
+end;
+
 function TmstLayer.GetChild(Index: Integer): TmstLayer;
 begin
   Result := TmstLayer(FChildLayers[Index]);
@@ -695,10 +741,15 @@ end;
 
 { TmstLayerList }
 
+procedure TmstLayerList.Add(aLayer: TmstLayer);
+begin
+  FItems.Add(aLayer);
+end;
+
 function TmstLayerList.AddLayer: TmstLayer;
 begin
   Result := TmstLayer.Create;
-  Self.Add(Result); 
+  Self.Add(Result);
 end;
 
 procedure TmstLayerList.BeginUpdate;
@@ -736,30 +787,48 @@ begin
   VST.OnAddToSelection := VSTAddToSelection;
 end;
 
+procedure TmstLayerList.Clear;
+var
+  L: TmstLayer;
+begin
+  while FItems.Count > 0 do
+  begin
+    L := Items[0];
+    RemoveChilds(L);
+  end; 
+end;
+
 procedure TmstLayerList.Connect(aLayer: TmstLayer; ParentLayerId: Integer);
 var
   aParent: TmstLayer;
-  OldOwnObjects: Boolean;
+//  OldOwnObjects: Boolean;
 begin
   aParent := GetById(ParentLayerId);
   if Assigned(aParent) and (aParent <> aLayer) then
   begin
-    OldOwnObjects := Self.OwnsObjects;
-    try
-      Self.OwnsObjects := False;
+//    OldOwnObjects := Self.OwnsObjects;
+//    try
+//      Self.OwnsObjects := False;
       //
       Self.Extract(aLayer);
       aParent.AppendChild(aLayer);
-    finally
-      Self.OwnsObjects := OldOwnObjects;
-    end;
+//    finally
+//      Self.OwnsObjects := OldOwnObjects;
+//    end;
   end; 
+end;
+
+constructor TmstLayerList.Create;
+begin
+  FItems := TObjectList.Create;
+//  FItems.;
 end;
 
 destructor TmstLayerList.Destroy;
 begin
   if Assigned(FLayerControl) then
     FreeControl;
+  FItems.Free;
   inherited;
 end;
 
@@ -770,34 +839,49 @@ begin
     FUpdateCount := 0;
 end;
 
-function TmstLayerList.FindLayerByName(const aLayerName: string): TmstLayer;
+procedure TmstLayerList.EnumerateLayers(Callback: TmstLayerEvent);
 var
+  Lst: TList;
   I: Integer;
 begin
-  for I := 0 to Count - 1 do
-  begin
-    if Items[I].Name = aLayerName then
-    begin
-      Result := Items[I];
-      Exit;
-    end;
+  if not Assigned(Callback) then
+    Exit;
+  Lst := GetPlainList();
+  try
+    for I := 0 to Lst.Count - 1 do
+      try
+        Callback(Self, Lst[I]);
+      except
+      end;
+  finally
+    Lst.Free;
   end;
-  Result := nil;
 end;
 
-function TmstLayerList.FirstByPosition: TmstLayer;
-var
-  I, Pos, LayerIndex: Integer;
+procedure TmstLayerList.Extract(aLayer: TmstLayer);
 begin
-  Pos := MaxInt;
-  LayerIndex := -1;
-  for I := 0 to Pred(Count) do
-  if Items[I].Position < Pos then
+  FItems.Extract(aLayer);
+  Notify(aLayer, lnExtracted);
+end;
+
+function TmstLayerList.FindChildLayer(aParent: TmstLayer; Comparer: ILayerComparer): TmstLayer;
+var
+  I: Integer;
+  ChildLayer: TmstLayer;
+begin
+  Result := nil;
+  for I := 0 to aParent.ChildCount - 1 do
   begin
-    Pos := Items[I].Position;
-    LayerIndex := I;
+    ChildLayer := aParent.Child[I];
+    if Comparer.Compare(ChildLayer) then
+    begin
+      Result := ChildLayer;
+      Exit;
+    end;
+    Result := FindChildLayer(ChildLayer, Comparer);
+    if Result <> nil then
+      Exit;
   end;
-  Result := Items[LayerIndex];
 end;
 
 procedure TmstLayerList.FreeCheckListBox;
@@ -828,88 +912,111 @@ end;
 function TmstLayerList.GetById(const aId: Integer): TmstLayer;
 var
   I: Integer;
+  LComp: ILayerComparer;
 begin
-  for I := 0 to Count - 1 do
-    if aId = Items[I].Id then
+  LComp := TLayerComparerById.Create(aId);
+  for I := 0 to FItems.Count - 1 do
+  begin
+    if LComp.Compare(Items[I]) then
     begin
       Result := Items[I];
       Exit;
+    end
+    else
+    begin
+      Result := FindChildLayer(Items[I], LComp);
+      if Assigned(Result) then
+        Exit;
     end;
+  end;
   Result := nil;
 end;
 
 function TmstLayerList.GetByName(const AName: String; CaseSensetive: Boolean): TmstLayer;
 var
   I: Integer;
+  LComp: ILayerComparer;
 begin
-  if CaseSensetive then
+  LComp := TLayerComparerByName.Create(AName, CaseSensetive);
+  for I := 0 to FItems.Count - 1 do
   begin
-    I := IndexOfName(aName);
-    if I >= 0 then
-      Result := Items[I]
-    else
-      Result := nil;
-  end
-  else
-  begin
-    for I := 0 to Count - 1 do
+    if LComp.Compare(Items[I]) then
     begin
-      if AnsiUpperCase(Items[I].Name) = AnsiUpperCase(AName) then
-      begin
-        Result := Items[I];
+      Result := Items[I];
+      Exit;
+    end
+    else
+    begin
+      Result := FindChildLayer(Items[I], LComp);
+      if Assigned(Result) then
         Exit;
-      end;
     end;
-    Result := nil;
   end;
+  Result := nil;
+
+//  if CaseSensetive then
+//  begin
+//    I := IndexOfName(aName);
+//    if I >= 0 then
+//      Result := Items[I]
+//    else
+//      Result := nil;
+//  end
+//  else
+//  begin
+//    for I := 0 to Count - 1 do
+//    begin
+//      if AnsiUpperCase(Items[I].Name) = AnsiUpperCase(AName) then
+//      begin
+//        Result := Items[I];
+//        Exit;
+//      end;
+//      Result := FindChildLayer(Items[I], AName, CaseSensetive);
+//      if Assigned(Result) then
+//        Exit;
+//    end;
+//    Result := nil;
+//  end;
 end;
 
 function TmstLayerList.GetItem(Index: Integer): TmstLayer;
 begin
-  Result := TmstLayer(inherited Items[Index]);
+  Result := TmstLayer(FItems[Index]);
 end;
 
 function TmstLayerList.GetMaxPosition: Integer;
 var
   I: Integer;
+  Lst: TList;
+  L: TmstLayer;
 begin
   Result := 0;
-  for I := 0 to Count - 1 do
-    if Items[I].Position > Result then
-      Result := Items[I].Position;
+  Lst := GetPlainList();
+  for I := 0 to Lst.Count - 1 do
+  begin
+    L := Lst[I];
+    if L.Position > Result   then
+      Result := L.Position;
+  end;
 end;
 
-function TmstLayerList.IndexOfName(const aName: String): Integer;
+function TmstLayerList.GetPlainList: TList;
 var
   I: Integer;
+  LComp: ILayerComparer;
 begin
-  for I := 0 to Pred(Count) do
-    if Items[I].Name = AName then
-    begin
-      Result := I;
-      Exit;
-    end;
-  Result := -1;
+  Result := TList.Create;
+  LComp := TLayerComparerPlainList.Create(Result);
+  for I := 0 to FItems.Count - 1 do
+  begin
+    Result.Add(FItems[I]);
+    FindChildLayer(Items[I], LComp);
+  end;
 end;
 
 function TmstLayerList.InUpdate: Boolean;
 begin
   Result := FUpdateCount > 0;
-end;
-
-function TmstLayerList.LastByPosition: TmstLayer;
-var
-  I, Pos, LayerIndex: Integer;
-begin
-  Pos := -MaxInt;
-  LayerIndex := -1;
-  for I := 0 to Pred(Count) do
-  if Items[I].Position > Pos then
-  begin
-    Pos := Items[I].Position;
-    LayerIndex := I;
-  end;
-  Result := Items[LayerIndex];
 end;
 
 procedure TmstLayerList.LayerClick(Sender: TObject);
@@ -936,35 +1043,24 @@ begin
   end;
 end;
 
-function TmstLayerList.NextByPosition(FromLayer: TmstLayer): TmstLayer;
-var
-  I, Pos: Integer;
-begin
-  Pos := MaxInt;
-  Result := nil;
-  for I := 0 to Pred(Count) do
-  if (Items[I].Position > FromLayer.Position) and (Items[I].Position < Pos) then
-  begin
-    Pos := Items[I].Position;
-    Result := Items[I];
-  end;
-end;
-
-procedure TmstLayerList.Notify(Ptr: Pointer; Action: TListNotification);
+procedure TmstLayerList.Notify(aLayer: TmstLayer; Action: TListNotification);
 begin
   if Action = lnDeleted then
     if Assigned(FOnDeleteLayer) then
-      FOnDeleteLayer(Self, Ptr);
-  inherited Notify(Ptr, Action);
+      FOnDeleteLayer(Self, aLayer);
+//  inherited Notify(Ptr, Action);
   UpdateControl;
 end;
 
-procedure TmstLayerList.ReadLayerStateFromVST(VST: TVirtualStringTree; aLayer: TmstLayer);
+procedure TmstLayerList.ReadLayerStateFromVST(Sender: TObject; aLayer: TmstLayer);
 var
   N: PVirtualNode;
   NodeChecked: Boolean;
   NodeSelected: Boolean;
+  I: Integer;
+  VST: TVirtualStringTree;
 begin
+  VST := TVirtualStringTree(FLayerControl);
   // ищем слой в дереве
   N := VSTFindNode(VST, aLayer, nil);
   if Assigned(N) then
@@ -989,7 +1085,7 @@ var
 begin
   FReading := True;
   try
-    for I := 0 to Pred(Self.Count) do
+    for I := 0 to Pred(FItems.Count) do
     begin
       J := TCheckListBox(FLayerControl).Items.IndexOf(Self[I].Caption);
       if J >= 0 then
@@ -1011,29 +1107,39 @@ begin
 end;
 
 procedure TmstLayerList.ReadStateFromVST;
-var
-  I, J: Integer;
-  VST: TVirtualStringTree;
-  Layer: TmstLayer;
 begin
   FReading := True;
   try
-    VST := TVirtualStringTree(FLayerControl);
-    for I := 0 to Pred(Self.Count) do
-    begin
-      Layer := Self[I];
-      ReadLayerStateFromVST(VST, Layer);
-      for J := 0 to Layer.ChildCount - 1 do
-        ReadLayerStateFromVST(VST, Layer.Child[J]);
-    end;
+    EnumerateLayers(ReadLayerStateFromVST);
   finally
     FReading := False; 
   end;
 end;
 
+procedure TmstLayerList.Remove(aLayer: TmstLayer);
+begin
+  RemoveChilds(aLayer);
+  //
+  if aLayer.Parent <> nil then
+  begin
+    aLayer.Parent.ExtractChild(aLayer);
+    Notify(aLayer, lnExtracted);
+  end;
+end;
+
+procedure TmstLayerList.RemoveChilds(aLayer: TmstLayer);
+begin
+  while aLayer.ChildCount > 0 do
+  begin
+    RemoveChilds(aLayer.Child[0]);
+    Notify(aLayer, lnDeleted);
+    aLayer.Free;
+  end;
+end;
+
 procedure TmstLayerList.SetItem(Index: Integer; ALayer: TmstLayer);
 begin
-  inherited Items[Index] := ALayer;
+  FItems[Index] := ALayer;
   if not FReading then
     UpdateControl;
 end;
@@ -1055,9 +1161,9 @@ begin
   AControl := FLayerControl as TCheckListBox;
   begin
     AControl.Items.Clear;
-    if Self.Count > 0 then
+    if FItems.Count > 0 then
 //    begin
-      for I := 0 to Pred(Self.Count) do
+      for I := 0 to Pred(FItems.Count) do
         if not Self[I].Hidden then
         begin
           J := AControl.Items.Add(Self[I].Caption);
@@ -1096,8 +1202,8 @@ begin
   BeginUpdate;
   try
     VST.Clear();
-    if Self.Count > 0 then
-      for I := 0 to Pred(Self.Count) do
+    if FItems.Count > 0 then
+      for I := 0 to Pred(FItems.Count) do
       begin
         Layer := Self[I];
         VSTAddLayer(VST, Layer);
@@ -1571,7 +1677,11 @@ begin
   -2 : Result := SL_ANNULLED_LOTS;
   -1 : Result := SL_ACTUAL_LOTS;
   else
-       Result := SL_LOTS + '_' + IntToStr(Id);
+    begin
+//       Result := SL_LOTS + '_' + IntToStr(Id);
+//       Result := SL_LOTS + '_Отводы_' + Self.Name;
+      Result := StringReplace(Result, ' ', '_', [rfReplaceAll]);
+    end;
   end;
 end;
 
@@ -1695,6 +1805,51 @@ end;
 procedure TmstMPLayer.SetName(const Value: String);
 begin
   FName := Value;
+end;
+
+{ TLayerComparerByName }
+
+function TLayerComparerByName.Compare(aLayer: TmstLayer): Boolean;
+begin
+  if FCaseSensetive then
+    Result := aLayer.Name = FName
+  else
+    Result := AnsiUpperCase(aLayer.Name) = FName;
+end;
+
+constructor TLayerComparerByName.Create(const aName: string; aCaseSensetive: Boolean);
+begin
+  FName := aName;
+  FCaseSensetive := aCaseSensetive;
+  if not FCaseSensetive then
+    FName := AnsiUpperCase(FName);
+end;
+
+{ TLayerComparerById }
+
+function TLayerComparerById.Compare(aLayer: TmstLayer): Boolean;
+begin
+  Result := aLayer.Id = FId;
+end;
+
+constructor TLayerComparerById.Create(const aId: Integer);
+begin
+  inherited Create;
+  FId := aId;
+end;
+
+{ TLayerComparerPlainList }
+
+function TLayerComparerPlainList.Compare(aLayer: TmstLayer): Boolean;
+begin
+  Result := False;
+  FList.Add(aLayer);
+end;
+
+constructor TLayerComparerPlainList.Create(aList: TList);
+begin
+  inherited Create;
+  FList := aList;
 end;
 
 initialization

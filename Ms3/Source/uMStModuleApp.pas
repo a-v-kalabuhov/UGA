@@ -47,6 +47,8 @@ type
     procedure ApplicationEventsException(Sender: TObject; E: Exception);
     procedure GISAfterPaintEntity(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer; Entity: TEzEntity;
       Grapher: TEzGrapher; Canvas: TCanvas; const Clip: TEzRect; DrawMode: TEzDrawMode);
+    procedure GISBeforePaintLayer(Sender: TObject; Layer: TEzBaseLayer; Grapher: TEzGrapher; var CanShow,
+      WasFiltered: Boolean; var EntList: TEzEntityList; var AutoFree: Boolean);
   private
     FMainWorkDir: String;
     FSessionDir: String;
@@ -156,6 +158,7 @@ type
       const Clip: TEzRect; var EntList: TEzEntityList);
     function IntLoadMapImage(aMap: TmstMap): Boolean;  // MapId = Entity.ID
     procedure LoadLayersVisibility();
+    procedure TurnOffLayer(Sender: TObject; aLayer: TmstLayer);
   private
     function IsMPLayer(aLayer: TEzBaseLayer): Boolean;
     function GetMPObjectisVisible(aLayer: TEzBaseLayer; aRecNo: Integer; var LineColor: TColor): Boolean;
@@ -355,12 +358,15 @@ var
   Lst: TmstLotListEz;
   LayerName: string;
   aLayer: TEzBaseLayer;
+  LayerLst: TList;
 begin
   GIS.Active := True;
   // Подключение слоев
   LoadLayersVisibility();
-  for I := 0 to Pred(FLayers.Count) do
-    ConnectLayerToGIS(FLayers[I], True);
+  LayerLst := FLayers.GetPlainList();
+  LayerLst.Forget();
+  for I := 0 to Pred(LayerLst.Count) do
+    ConnectLayerToGIS(LayerLst[I], True);
   //
   for I := 0 to FMapMngr.LotCategoriesCount - 1 do
   begin
@@ -1054,14 +1060,11 @@ begin
     Ini.ReadSection('Layers', LayerNames);
     if LayerNames.Count > 0 then
     begin
-      for I := 0 to FLayers.Count - 1 do
-      begin
-        FLayers.Items[I].Visible := False;
-      end;
+      FLayers.EnumerateLayers(TurnOffLayer);
       // теперь надо найти слой и его пометить как видимый, а остальные как невидимые
       for I := 0 to LayerNames.Count - 1 do
       begin
-        L := FLayers.FindLayerByName(LayerNames[I]);
+        L := FLayers.GetByName(LayerNames[I], False);
         if L <> nil then
         begin
           LayerVisible := Ini.ReadBool('Layers', LayerNames[I], False);
@@ -1226,6 +1229,11 @@ begin
     FSplash.Show;
   end;
   ProgressInit('', 0, 300);
+end;
+
+procedure TMStClientAppModule.TurnOffLayer(Sender: TObject; aLayer: TmstLayer);
+begin
+  aLayer.Visible := False;
 end;
 
 function TMStClientAppModule.UnLoadMap(MapId: Integer): string;
@@ -1870,6 +1878,24 @@ begin
     PrepareEntityToNormalMode(Layer, Entity, EntList, CanShow);
 end;
 
+procedure TMStClientAppModule.GISBeforePaintLayer(Sender: TObject; Layer: TEzBaseLayer; Grapher: TEzGrapher;
+  var CanShow, WasFiltered: Boolean; var EntList: TEzEntityList; var AutoFree: Boolean);
+var
+  L: TmstLayer;
+  LayerIsVisible: Boolean;
+begin
+  // проверяем есть ли у слоя родитель
+  // если есть, то проверяем его видимость
+  L := FLayers.GetByName(Layer.Name, False);
+  LayerIsVisible := Layer.LayerInfo.Visible;
+  while Assigned(L) do
+  begin
+    LayerIsVisible := LayerIsVisible and L.Visible;
+    L := L.Parent;
+  end;
+  CanShow := LayerIsVisible;
+end;
+
 procedure TMStClientAppModule.DataModuleCreate(Sender: TObject);
 var
   aSymbol: TEzSymbol;
@@ -1990,8 +2016,8 @@ begin
     Layer.LayerInfo.Visible := LayerVisible;
   end;
   //
-  for I := 0 to aLayer.ChildCount - 1 do
-    ConnectLayerToGIS(aLayer.Child[I], UseLayerVisibility);
+//  for I := 0 to aLayer.ChildCount - 1 do
+//    ConnectLayerToGIS(aLayer.Child[I], UseLayerVisibility);
 end;
 
 procedure TMStClientAppModule.OnDeleteLayer(Sender: TObject; aLayer: TmstLayer);
@@ -2402,15 +2428,21 @@ var
   IniFileName: string;
   Ini: TIniFile;
   I: Integer;
+  LayerLst: TList;
+  L: TmstLayer;
 begin
   IniFileName := TPath.Finish(ExtractFilePath(ParamStr(0)), 'ms2.ini');
   if not FileExists(IniFileName) then
     IniFileName := 'ms2.ini';
   Ini := TIniFile.Create(IniFileName);
   try
-    for I := 0 to FLayers.Count - 1 do
+    Ini.EraseSection('Layers');
+    LayerLst := fLayers.GetPlainList();
+    LayerLst.Forget();
+    for I := 0 to LayerLst.Count - 1 do
     begin
-      Ini.WriteBool('Layers', FLayers.Items[I].Name, FLayers.Items[I].Visible);
+      L := LayerLst[I];
+      Ini.WriteBool('Layers', L.Name, L.Visible);
     end;
     Ini.UpdateFile();
   finally

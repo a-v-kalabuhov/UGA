@@ -103,6 +103,7 @@ type
     procedure RefreshBrowseDataSetRow(const ObjId: Integer; TargetDataSet: TDataSet);
     procedure Subscribe(Subscriber: ImstMPObjEventSubscriber);
     procedure UnSubscribe(Subscriber: ImstMPObjEventSubscriber);
+    function Browser: ImstMPBrowser;
   private
     FMPAdapter: TmstMPObjectAdapter;
     FEzAdapter: TmstMPObjectEzAdapter;
@@ -793,6 +794,8 @@ begin
 end;
 
 function TmstMasterPlanModule.GetObjByDbId(const ObjId: Integer; LoadEzData: Boolean): TmstMPObject;
+var
+  Stream: TStream;
 begin
   Result := nil;
   if not memBrowser.Active then
@@ -916,7 +919,16 @@ begin
   //
   if LoadEzData then
   begin
-    raise Exception.Create('TmstMasterPlanModule.GetObjByDbId');
+    if not LocateObj(ObjId, memEzData) then
+      Exit;
+    Stream := FEzAdapter.EzData;
+    try
+      Stream.Position := 0;
+      Result.EzData.CopyFrom(Stream, Stream.Size);
+      Result.EzId := FEzAdapter.EzId;
+    finally
+      Stream.Free;
+    end;
   end;
 end;
 
@@ -1122,8 +1134,8 @@ begin
       memBrowser.First;
       while not memBrowser.Eof do
       begin
-        if FTableVersion < FMPAdapter.TableVersion then
-          FTableVersion := FMPAdapter.TableVersion;
+        if FTableVersion < FBrowserAdapter.TableVersion then
+          FTableVersion := FBrowserAdapter.TableVersion;
         memBrowser.Next;
       end;
       memBrowser.First;
@@ -1198,15 +1210,9 @@ begin
 end;
 
 procedure TmstMasterPlanModule.RefreshBrowseDataSetRow(const ObjId: Integer; TargetDataSet: TDataSet);
-var
-  MpObj: TmstMPObject;
 begin
   if LocateObj(ObjId, memBrowser) then
-  begin
-    MpObj := GetObjByDbId(ObjId, False);
-    if Assigned(MpObj) then
-      RefreshMPObjectData(MpObj, TargetDataSet);
-  end;
+    RefreshSingleRow(memBrowser, TargetDataSet);
 end;
 
 procedure TmstMasterPlanModule.RefreshMPObjectData(aObj: TmstMPObject; TargetDataSet: TDataSet);
@@ -1324,6 +1330,7 @@ begin
         finally
           Ds.Close;
         end;
+        FTableVersion := TableVrs;
       end;
     finally
       ToUpdate.Free;
@@ -1605,6 +1612,11 @@ begin
   //
   if NeedRedrawMap then
     FDrawBox.RegenDrawing;
+end;
+
+function TmstMasterPlanModule.Browser: ImstMPBrowser;
+begin
+  Result := FBrowserForm as ImstMPBrowser;
 end;
 
 function TmstMasterPlanModule.BrowserDataSet: TDataSet;

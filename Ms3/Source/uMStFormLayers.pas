@@ -73,7 +73,7 @@ implementation
 
 function CompareLayers(Item1, Item2: Pointer): Integer;
 begin
-  Result := TmstLayer(Item1).Position - TmstLayer(Item2).Position; 
+  Result := TmstLayer(Item1).Position - TmstLayer(Item2).Position;
 end;
 
 procedure TMStFormLayers.acDeleteExecute(Sender: TObject);
@@ -448,15 +448,9 @@ var
   S: string;
   LayerList: TList;
 begin
-  LayerList := TList.Create;
+  LayerList := mstClientAppModule.Layers.GetPlainList();
   LayerList.Forget();
   //
-  for I := 0 to mstClientAppModule.Layers.Count - 1 do
-  begin
-    mstLayer := mstClientAppModule.Layers[I];
-    S := mstLayer.Caption;
-    LayerList.Add(mstLayer);
-  end;
   LayerList.Sort(CompareLayers);
   //
   lvLayers.Items.BeginUpdate;

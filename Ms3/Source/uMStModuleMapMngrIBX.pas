@@ -148,7 +148,7 @@ uses
 
 const
   SQ_GET_LAYERS = 'SELECT * FROM LAYERS ORDER BY LAYER_POSITION';
-  SQ_GET_LAYERS_BY_PARENT = 'SELECT ID, PARENT_ID FROM LAYERS ORDER BY PARENT_ID DESC';
+  SQ_GET_LAYERS_BY_PARENT = 'SELECT ID, PARENT_ID FROM LAYERS WHERE NOT PARENT_ID IS NULL ORDER BY PARENT_ID DESC';
   SQ_GET_STREETS = 'SELECT ID, NAME, STREET_MARKING_NAME FROM STREETS ORDER BY ID';
   SQ_GET_ADDRESSES = 'SELECT * FROM ADDRESSES';
   SQ_GET_MAPS = 'SELECT ID, NOMENCLATURE FROM MAP_IMAGES';
@@ -192,6 +192,7 @@ const
   SQL_GET_ALLOTMENT_POINTS = 'SELECT * FROM GET_POINTS_BY_RECT(:MINX, :MAXX, :MINY, :MAXY, :CHECKED, :CANCELLED) ORDER BY ALLOTMENTS_ID, CONTOURS_ID, ID';
   SQL_GET_ALLOTMENT_MAIN_DATA = 'GET_ALLOTMENT_MAIN_DATA';
   SQL_GET_CURRENT_ID = 'SELECT GEN_ID(%s_GEN, 0) FROM RDB$DATABASE';
+  SQL_GET_NEXT_ID = 'SELECT GEN_ID(%s_GEN, 1) FROM RDB$DATABASE';
   SQL_GET_LAYER_HAS_SEMANTIC = 'SELECT FIRST 1 ID FROM LAYERS_SEMANTIC WHERE LAYERS_ID=:LAYERS_ID';
 //  SQL_GET_LAYER_HAS_SEMANTIC = 'SELECT COUNT(ID) FROM LAYERS_SEMANTIC WHERE LAYERS_ID=:LAYERS_ID';
   SQL_GET_OBJECT_SEMANTIC = 'SELECT * FROM LAYERS_SEMANTIC WHERE OBJECT_ID=:OBJECT_ID';
@@ -616,7 +617,7 @@ end;
 
 procedure TMStIBXMapMngr.LoadMasterPlanLayers(aLayerList: TmstLayerList);
 var
-  LLayer, LastLayer: TmstLayer;
+  LLayer: TmstLayer;
   LayerId: Integer;
   Position: Integer;
   I: Integer;
@@ -624,21 +625,21 @@ begin
   LoadMPLayers(); // зарузка из БД
   if Assigned(aLayerList) then
   begin
-    LastLayer := aLayerList.LastByPosition;
-    if Assigned(LastLayer) then
-      Position := LastLayer.Position + 1
-    else
-      Position := 1;
-    //
-    LLayer := aLayerList.AddLayer();
-    LLayer.Caption := 'Сводный план';
-    LLayer.Position := Position;
+    Position := aLayerList.GetMaxPosition + 1;
+    LLayer := aLayerList.GetByName(SL_MASTER_PLAN, False);
+    if LLayer = nil then
+    begin
+      //
+      LLayer := aLayerList.AddLayer();
+      LLayer.Caption := 'Сводный план';
+      LLayer.Position := Position;
+      LLayer.Id := LayerId;
+      LLayer.Name := SL_MASTER_PLAN;//TProjectUtils.GetMPLayerName(0, 0);
+    end;
     Inc(Position);
     LLayer.LayerType := 2;
     LLayer.Visible := True;
     LayerId := TProjectUtils.GetMPLayerCode(0, 0);//50000000;
-    LLayer.Id := LayerId;
-    LLayer.Name := SL_MASTER_PLAN;//TProjectUtils.GetMPLayerName(0, 0);
     LLayer.IsMP := True;
     LLayer.MpStatusId := 0;
     LLayer.MpCategoryId := 0;
@@ -1075,7 +1076,7 @@ end;
 
 procedure TMStIBXMapMngr.LoadLotCategoriesLayers(aLayerList: TmstLayerList);
 var
-  LLayer, Layer, LastLayer: TmstLayer;
+  LLayer, Layer: TmstLayer;
   I, LayerId: Integer;
   Category: TmstLotCategory;
   Position: Integer;
@@ -1083,15 +1084,11 @@ begin
   LoadLotCategories();
   if Assigned(aLayerList) then
   begin
-    LastLayer := aLayerList.LastByPosition;
-    if Assigned(LastLayer) then
-      Position := LastLayer.Position + 1
-    else
-      Position := 1;
+    Position := aLayerList.GetMaxPosition + 1;
     if FLotCategories.Count > 0 then
     begin
       LLayer := aLayerList.AddLayer();
-      LLayer.Name := SL_LOTS + GetUniqueString();
+      LLayer.Name := SL_LOTS + '_Отводы';//GetUniqueString();
       LLayer.Caption := 'Отводы';
       LLayer.Position := Position;
       Inc(Position);
@@ -1108,7 +1105,7 @@ begin
           Layer := LLayer.AddChild();
           LayerId := LayerId + 1;
           Layer.Id := LayerId;
-          Layer.Name := Category.GetLayerName();
+          Layer.Name := SL_LOTS + '_Отводы_' + Category.Name;//Category.GetLayerName();
           Layer.Caption := 'Отводы - ' + Category.Name;
           Layer.Position := Position;
           Layer.LayerType := 2;
@@ -1671,7 +1668,8 @@ var
   dsGetNewId: TDataSet;
   Sql: string;
 begin
-  Sql := 'SELECT GEN_ID(' + GenName + '_GEN, 1) FROM RDB$DATABASE';
+  Sql := Format(SQL_GET_NEXT_ID, [GenName]);
+//  Sql := 'SELECT GEN_ID(' + GenName + '_GEN, 1) FROM RDB$DATABASE';
   dsGetNewId := GetDataSet(Sql);
   dsGetNewId.Open;
   Result := dsGetNewId.Fields[0].AsInteger;

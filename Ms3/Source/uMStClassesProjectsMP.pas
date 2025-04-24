@@ -18,10 +18,10 @@ type
   );
 
   TmstMPObjectCheckState = (
-    ocsNone = 0, // проверен
+    ocsNone = 0, // неизвестно
     ocsChecked = 1, // проверен
-    ocsImported = 2, // проверен
-    ocsEdited = 3 // проверен
+    ocsImported = 2, // нужно проверить после импорта
+    ocsEdited = 3 // нужно проверить после редактировани€
   );
 
   TmstMPObject = class(TmstObject)
@@ -1308,7 +1308,7 @@ begin
   // создаЄм соединение
   Conn := aDb.GetConnection(cmReadWrite, dmKis);
   try
-    FTableVersion := Conn.GetGenValue(SG_MP_OBJECTS_TABLE_VERSION);
+    FTableVersion := Conn.GenNextValue(SG_MP_OBJECTS_TABLE_VERSION);
     //
     SaveObj(Conn, Obj);
     //

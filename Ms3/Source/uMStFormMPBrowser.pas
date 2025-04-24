@@ -20,7 +20,7 @@ uses
 //  uMStModuleApp;
 
 type
-  TmstMPBrowserForm = class(TForm, ImstMPObjEventSubscriber)
+  TmstMPBrowserForm = class(TForm, ImstMPObjEventSubscriber, ImstMPBrowser)
     Panel1: TPanel;
     btnClose: TSpeedButton;
     DBNavigator1: TDBNavigator;
@@ -139,6 +139,8 @@ type
     procedure RefreshCurrentRow(); 
   private
     procedure Notify(const ObjId: Integer; Op: TRowOperation);
+  private
+    procedure LocateObj(const ObjId: Integer);
   public
     procedure Browse();
     //
@@ -236,8 +238,8 @@ begin
           for I := 0 to Ent.Points.Count - 1 do
           begin
             Coords.Add(IntToStr(Succ(I)) + ';' +
-                       FormatFloat('#0.00', Ent.Points[I].X) + ';' +
-                       FormatFloat('#0.00', Ent.Points[I].Y));
+                       FormatFloat('#0.00', Ent.Points[I].Y) + ';' +
+                       FormatFloat('#0.00', Ent.Points[I].X));
           end;
         finally
           FreeAndNil(Ent);
@@ -578,6 +580,7 @@ begin
   FAppSettings.WriteFormPosition(Application, Self);
   FAppSettings.WriteGridProperties(Self, kaDBGrid1);
   memBrowser2.Close;
+  FObjList.UnSubscribe(Self as ImstMPObjEventSubscriber);
   FMP.NavigatorClosed();
 end;
 
@@ -708,6 +711,20 @@ begin
     end;
   finally
     DataSource1.DataSet.GotoBookmark(Bkm);
+  end;
+end;
+
+procedure TmstMPBrowserForm.LocateObj(const ObjId: Integer);
+var
+  Bkm: Pointer;
+begin
+  memBrowser2.DisableControls;
+  try
+    Bkm := memBrowser2.GetBookmark();
+    if not memBrowser2.Locate(SF_ID, ObjId, []) then
+      memBrowser2.GotoBookmark(Bkm);
+  finally
+    memBrowser2.EnableControls;
   end;
 end;
 
