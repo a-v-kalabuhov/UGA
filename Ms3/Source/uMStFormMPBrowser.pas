@@ -340,8 +340,9 @@ begin
     ObjId := Ds.FieldByName(SF_ID).AsInteger;
     // удаляем объект из проекта
     FMP.DeleteObj(ObjId);
-    // удаляем текущую строку в браузере
-    Ds.Delete;
+    // --удаляем текущую строку в браузере
+    // строка удалистя через увдомление от МР модуля
+//    Ds.Delete;
     DrawBox.RegenDrawing;
   end;
 end;

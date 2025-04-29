@@ -437,7 +437,7 @@ begin
   // создаём соединение
   Conn := aDb.GetConnection(cmReadWrite, dmKis);
   try
-    FTableVersion := Conn.GetGenValue(SG_MP_OBJECTS_TABLE_VERSION);
+    FTableVersion := Conn.GenNextValue(SG_MP_OBJECTS_TABLE_VERSION);
     //
     SaveObjState.Ds2 := nil;
     SaveObjState.DsMain1 := nil;
@@ -449,6 +449,8 @@ begin
     begin
       Obj := Prj.Objects[I];
       Obj.ProjectName := Prj.Name;
+      Obj.DocNumber := Prj.DocNumber;
+      Obj.DocDate := Prj.DocDate;
       Obj.Address := Prj.Address;
       Obj.CK36 := Prj.CK36;
       Obj.ExchangeXY := Prj.ExchangeXY;

@@ -108,7 +108,8 @@ uses
   uMStClassesMPMIFExport in 'Source\uMStClassesMPMIFExport.pas',
   uMStDialogImportMPfromExcel in 'Source\uMStDialogImportMPfromExcel.pas' {mstMPExcelDialogForm},
   uMStModuleMPImportExcel in 'Source\uMStModuleMPImportExcel.pas' {mstMPImportExcelModule: TDataModule},
-  uMStClassesProjectsMPIntersect in 'Source\uMStClassesProjectsMPIntersect.pas';
+  uMStClassesProjectsMPIntersect in 'Source\uMStClassesProjectsMPIntersect.pas',
+  uMStModuleDefaultActions in 'Source\uMStModuleDefaultActions.pas' {mstDefaultActionsModule: TDataModule};
 
 {$R *.RES}
 
@@ -121,6 +122,7 @@ begin
     Application.CreateForm(TmstClientAppModule, mstClientAppModule);
   Application.CreateForm(TmstPrintModule, mstPrintModule);
   Application.CreateForm(TmstClientMainForm, mstClientMainForm);
+  Application.CreateForm(TmstDefaultActionsModule, mstDefaultActionsModule);
   except
     on E: Exception do
     begin

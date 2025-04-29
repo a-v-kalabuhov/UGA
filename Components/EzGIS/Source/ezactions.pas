@@ -565,6 +565,8 @@ Type
     Procedure MyKeyPress( Sender: TObject; Var Key: Char );
   Public
     Constructor CreateAction( CmdLine: TEzCmdLine; Action: TEzZoomAction );
+    //
+    property ZoomAction: TEzZoomAction read FAction;
   End;
 
   {----------------------------------------------------------------------------}

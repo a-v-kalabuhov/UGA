@@ -4,14 +4,17 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ComCtrls, ExtCtrls, ActnList, EzBaseGIS, EzCtrls, DB, StdCtrls,
+  Dialogs, ComCtrls, ExtCtrls, ActnList, EzBaseGIS, EzCtrls, DB, StdCtrls, Grids,
+  DBGrids, DBCtrls, ImgList,
+  //
   RxMemDS,
   //
   EzEntities, EzSystem, EzCmdLine, EzBasicCtrls, EzLib, EzBase,
   //
+  uDBGrid, uMStGISEzActions,
   uMStKernelIBX, uMStConsts, uEzEntityCSConvert,
   //
-  uMStClassesProjectsMP, Grids, DBGrids, DBCtrls, uDBGrid;
+  uMStClassesProjectsMP, uMStModuleDefaultActions, ToolWin;
 
 type
   TmstEditProjectMPDialog = class(TForm)
@@ -82,6 +85,17 @@ type
     DBNavigator1: TDBNavigator;
     btnLocate: TButton;
     btnProperties: TButton;
+    lXY: TLabel;
+    ToolBar1: TToolBar;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    ToolButton8: TToolButton;
+    ToolButton9: TToolButton;
     procedure btnCustomerClick(Sender: TObject);
     procedure btnExecutorClick(Sender: TObject);
     procedure btnDrawerClick(Sender: TObject);
@@ -105,6 +119,14 @@ type
     procedure dbgNavCellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor; State: TGridDrawState;
       var FontStyle: TFontStyles);
     procedure btnPropertiesClick(Sender: TObject);
+    procedure MapDrawBoxMouseDown2D(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer; const WX,
+      WY: Double);
+    procedure MapDrawBoxMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint;
+      var Handled: Boolean);
+    procedure MapDrawBoxMouseMove2D(Sender: TObject; Shift: TShiftState; X, Y: Integer; const WX, WY: Double);
+    procedure FormCreate(Sender: TObject);
+    procedure mdNavAfterScroll(DataSet: TDataSet);
+    procedure MapDrawBoxAfterSelect(Sender: TObject; Layer: TEzBaseLayer; RecNo: Integer);
   private
     FOriginal: TmstProjectMP;
     FTempProject: TmstProjectMP;
@@ -136,6 +158,11 @@ type
     procedure NeedToFillField(aControl: TEdit; const aFieldName: string);
     function GetCurrentMpObj(): TmstMPObject;
     procedure LoadDataFromNavDataSet(MpObj: TmstMPObject);
+  private
+    FActionsModule: TmstDefaultActionsModule;
+    procedure ConnectDefaultActions;
+    procedure DoSwitchScrollCommand();
+    procedure DoRunAutoScroll(Shift: TShiftState; const X, Y: Integer; const WX, WY: Double);
   private
     function GetCanSave: Boolean;
     procedure SetCanSave(const Value: Boolean);
@@ -336,6 +363,20 @@ begin
   end;
 end;
 
+procedure TmstEditProjectMPDialog.ConnectDefaultActions;
+begin
+  FActionsModule.CmdLine := EzCmdLine1;
+  FActionsModule.GIS := EzGIS1;
+  ToolBar1.Images := FActionsModule.ZoomImageList;
+  ToolButton1.Action := FActionsModule.acZoomIn;
+  ToolButton2.Action := FActionsModule.acZoomOut;
+  ToolButton3.Action := FActionsModule.acZoomRect;
+  ToolButton4.Action := FActionsModule.acZoomPrev;
+  ToolButton5.Action := FActionsModule.acZoomAll;
+  ToolButton7.Action := FActionsModule.acZoomScroll;
+  ToolButton8.Action := FActionsModule.acZoomClearAction;
+end;
+
 procedure TmstEditProjectMPDialog.dbgNavCellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor;
   State: TGridDrawState; var FontStyle: TFontStyles);
 begin
@@ -373,6 +414,32 @@ end;
 procedure TmstEditProjectMPDialog.dbgNavLogicalColumn(Sender: TObject; Column: TColumn; var IsLogical: Boolean);
 begin
   IsLogical := Column.Field.DataType = ftBoolean;
+end;
+
+procedure TmstEditProjectMPDialog.DoRunAutoScroll(Shift: TShiftState; const X, Y: Integer; const WX, WY: Double);
+var
+  ScrollAction: TmstAutoHandScrollAction;
+begin
+  ScrollAction := TmstAutoHandScrollAction.CreateAction(EzCmdLine1);
+  ScrollAction.OnMouseDown(Self, mbLeft, Shift, X, Y, WX, WY);
+  EzCmdLine1.Push(TmstAutoHandScrollAction.CreateAction(EzCmdLine1), False, 'AUTOSCROLL', '');
+end;
+
+procedure TmstEditProjectMPDialog.DoSwitchScrollCommand;
+var
+  ActId: string;
+begin
+  ActId := EzCmdLine1.CurrentAction.ActionID;
+  if (ActId <> 'SCROLL') and (ActId <> 'CALC') then
+  begin
+    EzCmdLine1.Clear;
+    EzCmdLine1.DoCommand('SCROLL', 'SCROLL');
+  end
+  else
+  begin
+    EzCmdLine1.Clear;
+    MapDrawBox.Cursor := crDefault;
+  end;
 end;
 
 procedure TmstEditProjectMPDialog.edCustomerKeyPress(Sender: TObject; var Key: Char);
@@ -414,6 +481,7 @@ begin
   FTempProject := TmstProjectMP.Create;
   FTempProject.Assign(FOriginal);
   LoadProject();
+  lXY.Caption := '   ';
   Result := ShowModal = mrOK;
   if Result then
   begin
@@ -425,7 +493,7 @@ end;
 procedure TmstEditProjectMPDialog.EzGIS1AfterPaintEntity(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer;
   Entity: TEzEntity; Grapher: TEzGrapher; Canvas: TCanvas; const Clip: TEzRect; DrawMode: TEzDrawMode);
 begin
-  if DrawMode = dmNormal then
+//  if DrawMode = dmNormal then
   if mdNav.Active then
   begin
     if mdNavENT_ID.AsInteger = Entity.ID then
@@ -498,6 +566,12 @@ end;
 procedure TmstEditProjectMPDialog.FindFirstLineLayer;
 begin
 
+end;
+
+procedure TmstEditProjectMPDialog.FormCreate(Sender: TObject);
+begin
+  FActionsModule := TmstDefaultActionsModule.Create(Self);
+  ConnectDefaultActions;
 end;
 
 procedure TmstEditProjectMPDialog.FormShow(Sender: TObject);
@@ -651,6 +725,50 @@ begin
     edDrawDate.Text := DateToStr(FTempProject.DrawDate);
 end;
 
+procedure TmstEditProjectMPDialog.MapDrawBoxAfterSelect(Sender: TObject; Layer: TEzBaseLayer; RecNo: Integer);
+var
+  Bkm: TBookmark;
+begin
+  if not mdNav.Active then
+    Exit;
+  Bkm := mdNav.GetBookmark();
+  mdNav.DisableControls;
+  try
+    if not mdNav.Locate('ENT_ID;LAYER_NAME',VarArrayOf([RecNo, Layer.Name]), []) then
+    begin
+      mdNav.GotoBookmark(Bkm);
+      Exit;
+    end;
+  finally
+    mdNav.EnableControls;
+  end;
+end;
+
+procedure TmstEditProjectMPDialog.MapDrawBoxMouseDown2D(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X,
+  Y: Integer; const WX, WY: Double);
+begin
+  if (Button = mbMiddle) then
+  begin
+    DoSwitchScrollCommand();
+  end;
+end;
+
+procedure TmstEditProjectMPDialog.MapDrawBoxMouseMove2D(Sender: TObject; Shift: TShiftState; X, Y: Integer; const WX,
+  WY: Double);
+begin
+  lXY.Caption := 'X: ' + FloatToStrF(WY, ffFixed, 10, 2) + '; Y: ' + FloatToStrF(WX, ffFixed, 10, 2);
+end;
+
+procedure TmstEditProjectMPDialog.MapDrawBoxMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer;
+  MousePos: TPoint; var Handled: Boolean);
+begin
+  Handled := True;
+  if WheelDelta > 0 then
+    MapDrawBox.ZoomIn(90)
+  else
+    MapDrawBox.ZoomOut(90);
+end;
+
 procedure TmstEditProjectMPDialog.mdNavAfterEdit(DataSet: TDataSet);
 var
   Frm: TmstEditMPObjSemanticsDialog;
@@ -676,6 +794,11 @@ begin
   begin
     LoadDataFromNavDataSet(MpObj);
   end;
+end;
+
+procedure TmstEditProjectMPDialog.mdNavAfterScroll(DataSet: TDataSet);
+begin
+  MapDrawBox.RegenDrawing;
 end;
 
 procedure TmstEditProjectMPDialog.mdNavCalcFields(DataSet: TDataSet);

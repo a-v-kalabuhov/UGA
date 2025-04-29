@@ -1570,6 +1570,7 @@ begin
           ToUpdate.Delete(I);
         end;
       end;
+      ToInsert.Sort;
       //
       RefreshRows(DsChanges, memObjects, ToUpdate, nil);
       AppendNewRows(DsChanges, memObjects, ToInsert, FIdxObjects);

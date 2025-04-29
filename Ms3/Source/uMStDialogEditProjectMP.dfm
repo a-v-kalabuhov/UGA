@@ -11,6 +11,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
   OnShow = FormShow
   DesignSize = (
     1182
@@ -31,15 +32,11 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
     Top = 11
     Width = 1182
     Height = 651
-    ActivePage = tsSemantics
+    ActivePage = tsMap
     Align = alClient
     TabOrder = 0
     object tsSemantics: TTabSheet
       Caption = #1044#1072#1085#1085#1099#1077' '#1087#1088#1086#1077#1082#1090#1072
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 103
         Top = 78
@@ -144,7 +141,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Top = 74
         Width = 921
         Height = 21
-        MaxLength = 120
+        MaxLength = 1000
         TabOrder = 3
         Text = 'edAddress'
       end
@@ -153,7 +150,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Top = 101
         Width = 177
         Height = 21
-        MaxLength = 120
+        MaxLength = 12
         TabOrder = 4
         Text = 'edDocNum'
       end
@@ -162,7 +159,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Top = 128
         Width = 116
         Height = 21
-        MaxLength = 120
+        MaxLength = 10
         TabOrder = 5
         Text = 'edDocDate'
       end
@@ -171,7 +168,6 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Top = 182
         Width = 840
         Height = 21
-        MaxLength = 120
         ParentColor = True
         ReadOnly = True
         TabOrder = 7
@@ -192,7 +188,6 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Top = 209
         Width = 840
         Height = 21
-        MaxLength = 120
         ParentColor = True
         ReadOnly = True
         TabOrder = 9
@@ -222,7 +217,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Top = 47
         Width = 921
         Height = 21
-        MaxLength = 120
+        MaxLength = 1000
         TabOrder = 2
         Text = 'edName'
       end
@@ -233,7 +228,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Height = 21
         Style = csDropDownList
         Enabled = False
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
       end
       object edDrawer: TEdit
@@ -241,7 +236,6 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Top = 263
         Width = 840
         Height = 21
-        MaxLength = 120
         ParentColor = True
         ReadOnly = True
         TabOrder = 13
@@ -262,7 +256,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Top = 290
         Width = 116
         Height = 21
-        MaxLength = 120
+        MaxLength = 10
         TabOrder = 15
         Text = 'edDrawDate'
       end
@@ -271,7 +265,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Top = 155
         Width = 177
         Height = 21
-        MaxLength = 120
+        MaxLength = 12
         TabOrder = 6
         Text = 'edRequestNumber'
       end
@@ -280,7 +274,6 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Top = 236
         Width = 840
         Height = 21
-        MaxLength = 120
         ParentColor = True
         ReadOnly = True
         TabOrder = 11
@@ -300,10 +293,6 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
     object tsMap: TTabSheet
       Caption = #1050#1072#1088#1090#1072
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Splitter1: TSplitter
         Left = 0
         Top = 423
@@ -323,6 +312,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         UseThread = False
         Align = alClient
         TabOrder = 0
+        OnMouseWheel = MapDrawBoxMouseWheel
         GIS = EzGIS1
         SnapToGuidelinesDist = 1.000000000000000000
         ScreenGrid.Step.X = 1.000000000000000000
@@ -338,6 +328,9 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         RubberPen.Color = clRed
         RubberPen.Mode = pmXor
         FlatScrollBar = False
+        OnMouseMove2D = MapDrawBoxMouseMove2D
+        OnMouseDown2D = MapDrawBoxMouseDown2D
+        OnAfterSelect = MapDrawBoxAfterSelect
       end
       object EzCmdLine1: TEzCmdLine
         Left = 0
@@ -369,6 +362,87 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Align = alTop
         Caption = ' '
         TabOrder = 2
+        object lXY: TLabel
+          Left = 1159
+          Top = 1
+          Width = 14
+          Height = 21
+          Align = alRight
+          Alignment = taRightJustify
+          Caption = 'lXY'
+          Layout = tlCenter
+          ExplicitHeight = 13
+        end
+        object ToolBar1: TToolBar
+          Left = 1
+          Top = 1
+          Width = 1158
+          Height = 21
+          Align = alClient
+          Caption = 'ToolBar1'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          object ToolButton1: TToolButton
+            Left = 0
+            Top = 0
+            Hint = #1059#1074#1077#1083#1080#1095#1080#1090#1100
+            Caption = #1059#1074#1077#1083#1080#1095#1080#1090#1100
+            ImageIndex = 1
+          end
+          object ToolButton2: TToolButton
+            Left = 23
+            Top = 0
+            Caption = 'ToolButton2'
+            ImageIndex = 1
+          end
+          object ToolButton3: TToolButton
+            Left = 46
+            Top = 0
+            Caption = 'ToolButton3'
+            ImageIndex = 2
+          end
+          object ToolButton4: TToolButton
+            Left = 69
+            Top = 0
+            Caption = 'ToolButton4'
+            ImageIndex = 3
+          end
+          object ToolButton5: TToolButton
+            Left = 92
+            Top = 0
+            Caption = 'ToolButton5'
+            ImageIndex = 4
+          end
+          object ToolButton6: TToolButton
+            Left = 115
+            Top = 0
+            Width = 8
+            Caption = 'ToolButton6'
+            ImageIndex = 5
+            Style = tbsSeparator
+          end
+          object ToolButton7: TToolButton
+            Left = 123
+            Top = 0
+            Caption = 'ToolButton7'
+            ImageIndex = 5
+          end
+          object ToolButton8: TToolButton
+            Left = 146
+            Top = 0
+            Caption = 'ToolButton8'
+            ImageIndex = 6
+          end
+          object ToolButton9: TToolButton
+            Left = 169
+            Top = 0
+            Width = 8
+            Caption = 'ToolButton9'
+            ImageIndex = 7
+            Style = tbsSeparator
+          end
+        end
       end
       object Panel3: TPanel
         Left = 0
@@ -419,7 +493,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
             Width = 285
             Height = 21
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 13
             TabOrder = 0
             OnChange = cbLayersChange
           end
@@ -546,6 +620,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
       end>
     AfterEdit = mdNavAfterEdit
     AfterPost = mdNavAfterPost
+    AfterScroll = mdNavAfterScroll
     OnCalcFields = mdNavCalcFields
     Left = 144
     Top = 104

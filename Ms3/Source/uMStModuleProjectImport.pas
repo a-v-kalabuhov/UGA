@@ -227,7 +227,8 @@ begin
   for I := 0 to FDxfImport.CAD.Layers.Count - 1 do
   begin
     Layer := FDxfImport.CAD.Layers[I];
-    FRecordCount := FRecordCount + Layer.RecordCount;
+    if Layer.Name <> '0' then
+      FRecordCount := FRecordCount + Layer.RecordCount;
   end;
   //
   FRecordToImport := 0;
@@ -514,6 +515,7 @@ begin
   PrjReader := FGetProjectReaderFunc();
   PrjReader.SetExchangeXY(FExchangeXY);
   PrjReader.Read(FProject, TmpLayers, FDxfImport.CAD);
+  FProject.CalcExtent();
 end;
 
 procedure TmstProjectImportModule.ReadProjectLayers;

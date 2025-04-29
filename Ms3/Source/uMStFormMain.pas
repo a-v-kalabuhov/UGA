@@ -3221,7 +3221,8 @@ var
 begin
   ScrollAction := TmstAutoHandScrollAction.CreateAction(CmdLine);
   ScrollAction.OnMouseDown(Self, mbLeft, Shift, X, Y, WX, WY);
-  CmdLine.Push(TmstAutoHandScrollAction.CreateAction(CmdLine), False, 'AUTOSCROLL', '');
+  CmdLine.Push(ScrollAction, False, 'AUTOSCROLL', '');
+//  CmdLine.Push(TmstAutoHandScrollAction.CreateAction(CmdLine), False, 'AUTOSCROLL', '');
 end;
 
 procedure TmstClientMainForm.DoSwitchScrollCommand;
