@@ -22,6 +22,7 @@ uses
 type
   TmstMPBrowserForm = class(TForm, ImstMPObjEventSubscriber, ImstMPBrowser)
     Panel1: TPanel;
+    Panel2: TPanel;
     btnClose: TSpeedButton;
     DBNavigator1: TDBNavigator;
     tabData: TPanel;
@@ -87,6 +88,9 @@ type
     N28: TMenuItem;
     acObjCheck: TAction;
     N29: TMenuItem;
+    N30: TMenuItem;
+    N31: TMenuItem;
+    N33: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure chbTransparencyClick(Sender: TObject);
     procedure trackAlphaChange(Sender: TObject);
@@ -119,6 +123,8 @@ type
     procedure acObjLoadToGisUpdate(Sender: TObject);
     procedure kaDBGrid1DblClick(Sender: TObject);
     procedure acObjCheckExecute(Sender: TObject);
+    procedure memBrowser2AfterScroll(DataSet: TDataSet);
+    procedure memBrowser2AfterClose(DataSet: TDataSet);
   private
     FDrawBox: TEzBaseDrawBox;
     procedure SetDrawBox(const Value: TEzBaseDrawBox);
@@ -136,7 +142,7 @@ type
     procedure SetAppSettings(const Value: ImstAppSettings);
     procedure FilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure RefreshDataSet();
-    procedure RefreshCurrentRow(); 
+    procedure RefreshCurrentRow();
   private
     procedure Notify(const ObjId: Integer; Op: TRowOperation);
   private
@@ -171,9 +177,14 @@ var
 begin
   Ds := DataSource1.DataSet;
   ObjId := Ds.FieldByName(SF_ID).AsInteger;
+  if not FMP.CanFindIntersections(ObjId) then
+  begin
+    ShowMessage('Поиск пересечений не доступен для объектов данного типа!');
+    Exit;
+  end;
   // ищем список объектов
   // - архив не ищем
-  // - ищем среди всех, а не только загуженных
+  // - ищем среди всех, а не только загруженных
   Found := FMP.FindIntersects(ObjId);
   try
     if Found.Count = 0 then
@@ -482,7 +493,7 @@ end;
 procedure TmstMPBrowserForm.ClearFilter;
 begin
   FFilter.Clear();
-  ApplyFilter()
+  ApplyFilter();
 end;
 
 procedure TmstMPBrowserForm.FilterRecord(DataSet: TDataSet; var Accept: Boolean);
@@ -491,6 +502,7 @@ var
   S1: string;
   B: Boolean;
   DateVal: TDateTime;
+  CheckState: TmstMPObjectCheckState;
 begin
   if FFilter.IsEmpty then
     Exit;
@@ -542,6 +554,16 @@ begin
   if not Accept then
     Exit;
   //
+  if FFilter.NeedCheck <> boolAll then
+  begin
+    CheckState := TmstMPObjectCheckState(DataSet.FieldByName(SF_CHECK_STATE).AsInteger);
+    Accept := ((FFilter.NeedCheck = boolTrue) and (CheckState in [ocsImported, ocsEdited]))
+              or
+              ((FFilter.Underground = boolFalse) and (CheckState in [ocsNone, ocsChecked]));
+  end;
+  if not Accept then
+    Exit;
+  //
   if FFilter.Address <> '' then
   begin
     S := DataSet.FieldByName(SF_ADDRESS).AsString;
@@ -577,7 +599,7 @@ procedure TmstMPBrowserForm.FormClose(Sender: TObject; var Action: TCloseAction)
 begin
   mstMPBrowserForm := nil;
   Action := caFree;
-  TMPSettings.SetCurrentMPObj(-1, -1);
+  TMPSettings.SetCurrentMPObj(-1);
   FAppSettings.WriteFormPosition(Application, Self);
   FAppSettings.WriteGridProperties(Self, kaDBGrid1);
   memBrowser2.Close;
@@ -729,6 +751,27 @@ begin
   end;
 end;
 
+procedure TmstMPBrowserForm.memBrowser2AfterClose(DataSet: TDataSet);
+begin
+  TMPSettings.SetCurrentMPObj(-1);
+  DrawBox.Repaint;
+end;
+
+procedure TmstMPBrowserForm.memBrowser2AfterScroll(DataSet: TDataSet);
+var
+  RowObjId: Integer;
+begin
+  if DataSet.ControlsDisabled then
+    Exit;
+  if DataSet.RecordCount = 0 then
+    Exit;
+  RowObjId := memBrowser2.FieldByName(SF_ID).AsInteger;
+  TMPSettings.SetCurrentMPObj(RowObjId);
+//  DrawBox.Refresh;
+  DrawBox.Repaint;
+//  DrawBox.RegenDrawing;
+end;
+
 procedure TmstMPBrowserForm.Notify(const ObjId: Integer; Op: TRowOperation);
 var
   RowObjId: Integer;
@@ -774,12 +817,10 @@ var
   SaveGUI: Boolean;
   ObjId: Integer;
 begin
+  ObjId := memBrowser2.FieldByName(SF_ID).AsInteger;
   SaveGUI := memBrowser2.Active;
   if SaveGUI then
-  begin
     memBrowser2.DisableControls;
-    ObjId := memBrowser2.FieldByName(SF_ID).AsInteger;
-  end;
   try
     memBrowser2.LoadFromDataSet(FObjList.BrowserDataSet(), 0, lmCopy);
     DataSource1.DataSet := memBrowser2;

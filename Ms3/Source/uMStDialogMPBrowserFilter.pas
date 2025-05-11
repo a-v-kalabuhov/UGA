@@ -29,6 +29,8 @@ type
     ComboBox2: TComboBox;
     ComboBox3: TComboBox;
     ComboBox4: TComboBox;
+    Label2: TLabel;
+    ComboBox5: TComboBox;
   private
     FFilter: TmstProjectsBrowserFilterMP;
     procedure DisplayFilter();
@@ -56,6 +58,7 @@ begin
   ComboBox2.ItemIndex := Integer(FFilter.Confirmed);
   ComboBox3.ItemIndex := Integer(FFilter.Dismantled);
   ComboBox4.ItemIndex := Integer(FFilter.Underground);
+  ComboBox5.ItemIndex := Integer(FFilter.NeedCheck);
 end;
 
 function TmstMPBrowserFilterDialog.Execute(aFilter: TmstProjectsBrowserFilterMP): Boolean;
@@ -79,6 +82,7 @@ begin
   FFilter.Confirmed := TBoolValue(ComboBox2.ItemIndex);
   FFilter.Dismantled := TBoolValue(ComboBox3.ItemIndex);
   FFilter.Underground := TBoolValue(ComboBox4.ItemIndex);
+  FFilter.NeedCheck := TBoolValue(ComboBox5.ItemIndex);
 //  FFilter.Customer := edCustomer.Text;
 //  FFilter.Executor := edExecutor.Text;
 //  FFilter.Diameter := edDiameter.Text;

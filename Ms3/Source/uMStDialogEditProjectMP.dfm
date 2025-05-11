@@ -32,7 +32,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
     Top = 11
     Width = 1182
     Height = 651
-    ActivePage = tsMap
+    ActivePage = tsSemantics
     Align = alClient
     TabOrder = 0
     object tsSemantics: TTabSheet

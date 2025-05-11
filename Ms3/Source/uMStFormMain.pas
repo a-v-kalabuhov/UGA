@@ -1750,6 +1750,11 @@ begin
     Ent.SaveToStream(Result.EzData);
     Result.EzId := Integer(Ent.EntityID);
     Result.EzData.Position := 0;
+    //
+    Result.MinX := Ent.FBox.ymin;
+    Result.MinY := Ent.FBox.xmin;
+    Result.MaxX := Ent.FBox.ymax;
+    Result.MaxY := Ent.FBox.xmax;
   end;
 end;
 

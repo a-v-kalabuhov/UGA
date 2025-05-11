@@ -396,12 +396,11 @@ type
 
   TMPSettings = class
   public
-    class var FMPPrjId: Integer;
     class var FObjId: Integer;
   public
     class var PenWidth: Double;
-    class function EntityIsCurrent(const Layer: TEzBaseLayer; const Recno: Integer): Boolean;
-    class procedure SetCurrentMPObj(aMPPrjId, aObjId: Integer);
+    class procedure SetCurrentMPObj(const aObjId: Integer);
+    class function IsCurrentObj(const aObjId: Integer): Boolean;
   end;
 
   IProjectSaver = interface
@@ -1960,38 +1959,13 @@ end;
 
 { TMPSettings }
 
-class function TMPSettings.EntityIsCurrent(const Layer: TEzBaseLayer; const Recno: Integer): Boolean;
-var
-  Idx1, Idx2: Integer;
-  PrjId, ObjId: Integer;
+class function TMPSettings.IsCurrentObj(const aObjId: Integer): Boolean;
 begin
-  Result := False;
-  if FMPPrjId < 0 then
-    Exit;
-  if FObjId < 0 then
-    Exit;
-  if Assigned(Layer.DBTable) then
-  begin
-    Idx1 := Layer.DBTable.FieldNo(SF_PROJECT_ID);
-    if Idx1 > 0 then
-    begin
-      PrjId := Layer.DBTable.IntegerGet(SF_PROJECT_ID);
-      if PrjId = FMPPrjId then
-      begin
-        Idx2 := Layer.DBTable.FieldNo(SF_OBJ_ID);
-        if Idx2 > 0 then
-        begin
-          ObjId := Layer.DBTable.IntegerGet(SF_OBJ_ID);
-          Result := ObjId = FObjId;
-        end;
-      end;
-    end;
-  end;
+  Result := FObjId = aObjId;
 end;
 
-class procedure TMPSettings.SetCurrentMPObj(aMPPrjId, aObjId: Integer);
+class procedure TMPSettings.SetCurrentMPObj(const aObjId: Integer);
 begin
-  FMPPrjId := aMPPrjId;
   FObjId := aObjId;
 end;
 

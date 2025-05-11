@@ -81,6 +81,7 @@ type
     procedure DeleteObj(const ObjId: Integer);
     function EditObjProperties(const ObjId: Integer): Boolean;
     function EditNewObject(const MpObj: TmstMPObject): Boolean;
+    function CanFindIntersections(const ObjId: Integer): Boolean;
     function FindIntersects(const ObjId: Integer): TmpIntersectionInfo;
     procedure IntersectDialog(const ObjId: Integer; Found: TmpIntersectionInfo);
     function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
@@ -365,6 +366,23 @@ const
 
 
 { TmstMasterPlanModule }
+
+function TmstMasterPlanModule.CanFindIntersections(const ObjId: Integer): Boolean;
+var
+  IdxEz: TQueryRowIndex;
+  IdxBr: TQueryRowIndex;
+  Row: Integer;
+  EzObjId: Integer;
+  Ent: TEzEntity;
+  Finder: IEzFindIntersections;
+  BoxOriginal: TEzRect;
+  BoxEnt: TEzRect;
+  IntList: TEzIntersectionList;
+begin
+  LocateObj(Objid, memEzData);
+  // работает только для полилиний и полигонов.
+  Result := FEzAdapter.EzEntityId in [idPolyline, idPolygon]; 
+end;
 
 function TmstMasterPlanModule.Classifier: TmstMPClassifier;
 begin
@@ -702,7 +720,8 @@ begin
     //
     EzObjId := FEzAdapter.Id;
     Ent := FEzAdapter.GetEntity();
-    if Ent is TEzOpenedEntity then
+//    if Ent is TEzOpenedEntity then
+    if Ent.EntityId in [idPolyline, idPolygon] then
     if Ent.Points.Count > 1 then
     begin
       BoxEnt := Ent.FBox;
@@ -722,8 +741,6 @@ begin
             Result.AddIntersect(EzObjId, Ent, IntList)
           else
             FreeAndNil(IntList);
-//          if OriginalEnt.IntersectEntity(Ent, False) then
-//            Result.Add(EzObjId);
         end;
       end;
     end;
@@ -1028,6 +1045,7 @@ procedure TmstMasterPlanModule.IntersectDialog(const ObjId: Integer; Found: TmpI
 begin
   raise Exception.Create('TmstMasterPlanModule.IntersectDialog');
   // тут показываем окно
+
   // в окно передаём Found
   // в окне должен быть список найдённых объектов
   // кнопка показать проверяемый объект - моргание

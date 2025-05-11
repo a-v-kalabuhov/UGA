@@ -3,7 +3,7 @@ object mstMPBrowserFilterDialog: TmstMPBrowserFilterDialog
   Top = 0
   BorderIcons = [biSystemMenu]
   Caption = #1060#1080#1083#1100#1090#1088' '#1089#1077#1090#1077#1081
-  ClientHeight = 303
+  ClientHeight = 334
   ClientWidth = 328
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -15,7 +15,7 @@ object mstMPBrowserFilterDialog: TmstMPBrowserFilterDialog
   Position = poOwnerFormCenter
   DesignSize = (
     328
-    303)
+    334)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -33,17 +33,19 @@ object mstMPBrowserFilterDialog: TmstMPBrowserFilterDialog
     Caption = #1053#1086#1084#1077#1088' '#1087#1088#1086#1077#1082#1090#1072':'
   end
   object chbArchived: TLabel
-    Left = 8
+    Left = 31
     Top = 187
     Width = 51
     Height = 13
+    Alignment = taRightJustify
     Caption = #1040#1088#1093#1080#1074#1085#1099#1081
   end
   object chbConfirmed: TLabel
-    Left = 8
+    Left = 23
     Top = 218
     Width = 59
     Height = 13
+    Alignment = taRightJustify
     Caption = #1057#1086#1075#1083#1072#1089#1086#1074#1072#1085
   end
   object chbDismantled: TLabel
@@ -51,14 +53,24 @@ object mstMPBrowserFilterDialog: TmstMPBrowserFilterDialog
     Top = 249
     Width = 74
     Height = 13
+    Alignment = taRightJustify
     Caption = #1044#1077#1084#1086#1085#1090#1080#1088#1086#1074#1072#1085
   end
   object chbUndergroud: TLabel
-    Left = 8
+    Left = 25
     Top = 278
     Width = 57
     Height = 13
+    Alignment = taRightJustify
     Caption = #1055#1086#1076#1079#1077#1084#1085#1099#1081
+  end
+  object Label2: TLabel
+    Left = 34
+    Top = 299
+    Width = 48
+    Height = 26
+    Alignment = taRightJustify
+    Caption = #1058#1088#1077#1073#1091#1077#1090#13#10#1087#1088#1086#1074#1077#1088#1082#1080
   end
   object edAddress: TEdit
     Left = 8
@@ -77,7 +89,7 @@ object mstMPBrowserFilterDialog: TmstMPBrowserFilterDialog
     Caption = 'OK'
     Default = True
     ModalResult = 1
-    TabOrder = 7
+    TabOrder = 8
   end
   object btnCancel: TButton
     Left = 245
@@ -88,7 +100,7 @@ object mstMPBrowserFilterDialog: TmstMPBrowserFilterDialog
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 8
+    TabOrder = 9
   end
   object gbDateProject: TGroupBox
     Left = 8
@@ -146,7 +158,7 @@ object mstMPBrowserFilterDialog: TmstMPBrowserFilterDialog
     Width = 134
     Height = 21
     Style = csDropDownList
-    ItemHeight = 0
+    ItemHeight = 13
     TabOrder = 3
     Items.Strings = (
       #1085#1077' '#1074#1072#1078#1085#1086
@@ -159,7 +171,7 @@ object mstMPBrowserFilterDialog: TmstMPBrowserFilterDialog
     Width = 134
     Height = 21
     Style = csDropDownList
-    ItemHeight = 0
+    ItemHeight = 13
     TabOrder = 4
     Items.Strings = (
       #1085#1077' '#1074#1072#1078#1085#1086
@@ -172,7 +184,7 @@ object mstMPBrowserFilterDialog: TmstMPBrowserFilterDialog
     Width = 134
     Height = 21
     Style = csDropDownList
-    ItemHeight = 0
+    ItemHeight = 13
     TabOrder = 5
     Items.Strings = (
       #1085#1077' '#1074#1072#1078#1085#1086
@@ -185,8 +197,21 @@ object mstMPBrowserFilterDialog: TmstMPBrowserFilterDialog
     Width = 134
     Height = 21
     Style = csDropDownList
-    ItemHeight = 0
+    ItemHeight = 13
     TabOrder = 6
+    Items.Strings = (
+      #1085#1077' '#1074#1072#1078#1085#1086
+      #1076#1072
+      #1085#1077#1090)
+  end
+  object ComboBox5: TComboBox
+    Left = 88
+    Top = 304
+    Width = 134
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 13
+    TabOrder = 7
     Items.Strings = (
       #1085#1077' '#1074#1072#1078#1085#1086
       #1076#1072

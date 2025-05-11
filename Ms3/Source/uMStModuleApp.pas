@@ -1810,9 +1810,13 @@ procedure TMStClientAppModule.GISAfterPaintEntity(Sender: TObject; Layer: TEzBas
 var
   NetId: Integer;
   Nt: TmstProjectNetType;
+  DrawCP: Boolean;
+  ObjList: ImstMPModuleObjList;
+  ObjId: Integer;
 begin
   if DrawMode = dmNormal then
-  begin                           
+  begin
+    DrawCP := False;
     Layer.Recno := Recno;
     if (Layer.DBTable <> nil) and (Layer.Name = SL_PROJECT_OPEN) or (Layer.Name = SL_PROJECT_CLOSED) then
     begin
@@ -1821,13 +1825,18 @@ begin
       Nt := FNetTypes.ById(NetId);
       if Assigned(Nt) and Nt.Visible then
         if TProjectsSettings.EntityIsCurrent(Layer, Recno) then
-        begin
-          Entity.DrawControlPoints(Grapher, Canvas, Grapher.CurrentParams.VisualWindow, False);
-        end;
+          DrawCp := True;
     end
     else
+    if IsMPLayer(Layer) then
     begin
+      ObjId := Entity.ExtID;
+      if TMPSettings.IsCurrentObj(ObjId) then
+        DrawCP := True;
     end;
+    //
+    if DrawCP then
+      Entity.DrawControlPoints(Grapher, Canvas, Grapher.CurrentParams.VisualWindow, False);
   end;
 end;
 

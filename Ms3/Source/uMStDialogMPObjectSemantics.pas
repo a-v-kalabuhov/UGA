@@ -79,6 +79,8 @@ type
     edLinkedGuid: TEdit;
     Label27: TLabel;
     edObjGuid: TEdit;
+    Label28: TLabel;
+    cbCheckState: TComboBox;
     procedure btnCancelClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure btnSelectCustomerClick(Sender: TObject);
@@ -333,6 +335,8 @@ begin
     edCertifDate.Text := FormatDateTime('dd.mm.yyyy', FObject.CertifDate);
   edLinkedGuid.Text := FObject.LinkedObjectGuid;
   edObjGuid.Text := FObject.MPObjectGuid;
+  //
+  cbCheckState.ItemIndex := Integer(FObject.CheckState);
 end;
 
 function TmstEditMPObjectSemanticsDialog.SelectOrg(var Id: Integer; out OrgName: string): Boolean;
@@ -387,6 +391,8 @@ begin
   begin
     FObject.MpClassId := Integer(cbClass.Items.Objects[cbClass.ItemIndex]);
   end;
+  //
+  FObject.CheckState := TmstMPObjectCheckState(cbCheckState.ItemIndex);
 end;
 
 end.

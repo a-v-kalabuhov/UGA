@@ -351,7 +351,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
     Top = 8
     Width = 444
     Height = 467
-    Caption = #1057#1074#1086#1081#1089#1074#1072
+    Caption = #1057#1074#1086#1081#1089#1090#1074#1072
     TabOrder = 1
     DesignSize = (
       444
@@ -466,6 +466,21 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Anchors = [akTop, akRight]
       Caption = #1044#1085#1086':'
     end
+    object Label28: TLabel
+      Left = 37
+      Top = 430
+      Width = 58
+      Height = 26
+      Alignment = taRightJustify
+      Anchors = [akTop, akRight]
+      Caption = #1057#1090#1072#1090#1091#1089#13#10#1087#1088#1086#1074#1077#1088#1082#1080':'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
     object chbArchived: TCheckBox
       Left = 101
       Top = 76
@@ -473,7 +488,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Height = 17
       Anchors = [akTop, akRight]
       Caption = #1040#1088#1093#1080#1074#1085#1099#1081
-      TabOrder = 0
+      TabOrder = 2
     end
     object cbProjected: TComboBox
       Left = 101
@@ -484,7 +499,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Anchors = [akTop, akRight]
       Enabled = False
       ItemHeight = 13
-      TabOrder = 1
+      TabOrder = 0
       Items.Strings = (
         #1087#1088#1086#1077#1082#1090#1080#1088#1091#1077#1084#1099#1081
         #1085#1072#1085#1077#1089#1105#1085#1085#1099#1081)
@@ -496,7 +511,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Height = 17
       Anchors = [akTop, akRight]
       Caption = #1057#1086#1075#1083#1072#1089#1086#1074#1072#1085#1085#1099#1081
-      TabOrder = 2
+      TabOrder = 3
     end
     object chbDismantled: TCheckBox
       Left = 101
@@ -505,7 +520,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Height = 17
       Anchors = [akTop, akRight]
       Caption = #1044#1077#1084#1086#1085#1090#1080#1088#1086#1074#1072#1085#1085#1099#1081
-      TabOrder = 3
+      TabOrder = 4
     end
     object cbClass: TComboBox
       Left = 101
@@ -516,7 +531,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Anchors = [akTop, akRight]
       Enabled = False
       ItemHeight = 13
-      TabOrder = 4
+      TabOrder = 1
     end
     object chbUnderground: TCheckBox
       Left = 101
@@ -598,6 +613,21 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       MaxLength = 255
       TabOrder = 13
       Text = 'edFloor'
+    end
+    object cbCheckState: TComboBox
+      Left = 101
+      Top = 435
+      Width = 332
+      Height = 21
+      Style = csDropDownList
+      Anchors = [akTop, akRight]
+      ItemHeight = 13
+      TabOrder = 14
+      Items.Strings = (
+        #1085#1077' '#1087#1088#1086#1074#1077#1088#1103#1083#1089#1103
+        #1087#1088#1086#1074#1077#1088#1077#1085
+        #1085#1072' '#1087#1088#1086#1074#1077#1088#1082#1077' '#1087#1086#1089#1083#1077' '#1080#1084#1087#1086#1088#1090#1072
+        #1085#1072' '#1087#1088#1086#1074#1077#1088#1082#1077' '#1087#1086#1089#1083#1077' '#1088#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1085#1080#1103)
     end
   end
   object btnOK: TButton

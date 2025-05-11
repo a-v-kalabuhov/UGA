@@ -28,6 +28,7 @@ type
     FArchived: TBoolValue;
     FUnderground: TBoolValue;
     FDismantled: TBoolValue;
+    FNeedCheck: TBoolValue;
     procedure SetAddress(const Value: string);
     procedure SetConfirmDateEnd(const Value: TDateTime);
     procedure SetConfirmDateStart(const Value: TDateTime);
@@ -43,6 +44,7 @@ type
     procedure SetArchived(const Value: TBoolValue);
     procedure SetDismantled(const Value: TBoolValue);
     procedure SetUnderground(const Value: TBoolValue);
+    procedure SetNeedCheck(const Value: TBoolValue);
   public
     constructor Create;
     //
@@ -67,6 +69,7 @@ type
     property Archived: TBoolValue read FArchived write SetArchived;
     property Dismantled: TBoolValue read FDismantled write SetDismantled;
     property Underground: TBoolValue read FUnderground write SetUnderground;
+    property NeedCheck: TBoolValue read FNeedCheck write SetNeedCheck;
   end;
 
 implementation
@@ -90,6 +93,7 @@ begin
   FArchived := boolAll;
   FDismantled := boolAll;
   FUnderground := boolAll;
+  FNeedCheck := boolAll;
 end;
 
 constructor TmstProjectsBrowserFilterMP.Create;
@@ -114,7 +118,8 @@ begin
     (FDocDateEnd = EncodeDate(2100, 1, 1)) and
     (FArchived = boolAll) and
     (FDismantled = boolAll) and
-    (FUnderground = boolAll) 
+    (FUnderground = boolAll) and
+    (FNeedCheck = boolAll)
     ;
 end;
 
@@ -181,6 +186,11 @@ end;
 procedure TmstProjectsBrowserFilterMP.SetInfo(const Value: string);
 begin
   FInfo := Value;
+end;
+
+procedure TmstProjectsBrowserFilterMP.SetNeedCheck(const Value: TBoolValue);
+begin
+  FNeedCheck := Value;
 end;
 
 procedure TmstProjectsBrowserFilterMP.SetUnderground(const Value: TBoolValue);

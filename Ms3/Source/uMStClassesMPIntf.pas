@@ -27,6 +27,7 @@ type
     function EditNewObject(const Obj: TmstMPObject): Boolean;
     function EditObjProperties(const ObjId: Integer): Boolean;
 //    function EditObjectProps(const Obj: TmstMPObject): Boolean;
+    function CanFindIntersections(const ObjId: Integer): Boolean;
     function FindIntersects(const ObjId: Integer): TmpIntersectionInfo;
     procedure IntersectDialog(const ObjId: Integer; Found: TmpIntersectionInfo);
     function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
