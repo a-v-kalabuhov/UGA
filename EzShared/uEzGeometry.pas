@@ -15,7 +15,17 @@ type
     saTouch,         // один конец отрезка А лежит на отрезке B
     saConnect        // отрезки соединяются одним из концов
   );
+const
+  SegmentsArrangementNames : array[TSegmentsArrangement] of string = (
+    'нет пересечения',
+    'есть общая часть',
+    'отрезки эквивалентны',
+    'точка пересечения',
+    'один конец отрезка А лежит на отрезке B',
+    'отрезки соединяются'
+  );
 
+type
   TGeometry = class
   public
     class function BetweenOrEqual(aValue, aMin, aMax: Integer): Boolean; overload;

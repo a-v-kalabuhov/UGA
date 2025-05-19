@@ -3,18 +3,18 @@ unit uMStModuleMasterPlan;
 interface
 
 uses
-  SysUtils, Classes, Windows, Dialogs, Math, Variants, Graphics,
+  SysUtils, Classes, Windows, Dialogs, Math, Variants, Graphics, Forms,
   IBCustomDataSet, IBUpdateSQL, DB, IBQuery, IBDatabase,
   EzBaseGIS, EzLib, EzBase,
   RxMemDS,
   uCommonUtils, uGC,
-  uEzEntityCSConvert, uEzIntersection, uEzGeometry,
+  uEzEntityCSConvert, uEzIntersection, uEzGeometry, uEzRectRelation,
   uMStConsts,
   uMStClassesProjects, uMStClassesProjectsMP, uMStKernelGISUtils, uMStClassesMasterPlan, uMStKernelIBX,
   uMStModuleProjectImport, uMStClassesProjectsEz, uMStClassesMPClassif, uMStClassesMPIntf, uMStKernelClasses,
   uMStFormMPBrowser, uMStKernelClassesQueryIndex, uMStKernelAppSettings, uMStClassesMPObjectAdapter,
-  uMStDialogMPObjectSemantics, uMStClassesMPMIFExport, uEzRectRelation, uMStModuleMPImportExcel,
-  uMStClassesProjectsMPIntersect;
+  uMStDialogMPObjectSemantics, uMStClassesMPMIFExport, uMStModuleMPImportExcel,
+  uMStClassesProjectsMPIntersect, uMStDialogMPIntersections;
 
 type
   TObjIdEvent = procedure (ObjId: Integer) of object;
@@ -72,6 +72,7 @@ type
     FIdxEz: TQueryRowIndex;
     FTableVersion: Integer;
     FSubscribers: TInterfaceList;
+    FIntersectDialog: TForm;
     /// <summary>
     /// Загружает данные по сводному плану в память из базы данных.
     /// </summary>
@@ -83,7 +84,8 @@ type
     function EditNewObject(const MpObj: TmstMPObject): Boolean;
     function CanFindIntersections(const ObjId: Integer): Boolean;
     function FindIntersects(const ObjId: Integer): TmpIntersectionInfo;
-    procedure IntersectDialog(const ObjId: Integer; Found: TmpIntersectionInfo);
+    procedure IntersectDialog(Found: TmpIntersectionInfo);
+    procedure IntersectionsDialogClosed(Dlg: TObject);
     function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
     procedure SetObjCheckState(const ObjId: Integer; CheckState: TmstMPObjectCheckState);
     procedure UpdateLayersVisibility(aLayers: TmstLayerList);
@@ -91,7 +93,7 @@ type
     function HasLoaded(): Boolean;
     function IsLoaded(const ObjId: Integer): Boolean;
     procedure LoadAllToGIS();
-    procedure LoadToGis(const ObjId: Integer; const Display: Boolean);
+    procedure LoadToGis(const ObjId: Integer; const Display: Boolean; const ZoomIfVisible: Boolean);
     procedure UnloadAllFromGis();
     function UnloadFromGis(const ObjId: Integer): Boolean;
     //
@@ -117,7 +119,7 @@ type
     // сохраняет в базу
     procedure SaveMPObjectCoords(aObj: TmstMPObject);
     procedure SaveMPObjectSemantics(aObj: TmstMPObject);
-    procedure AddCurrentObjToLayer(const Display: Boolean);
+    procedure AddCurrentObjToLayer(const Display: Boolean; const ZoomIfVisible: Boolean);
     function LocateObj(ObjId: Integer; Ds: TDataSet): Boolean;
     procedure DeleteMpObjFromDb(ObjId: Integer);
   public
@@ -154,6 +156,7 @@ const
     '    EZ_RECNO ' +
     'FROM ' +
     '    MASTER_PLAN_OBJECTS ' +
+    'WHERE DELETED = 0 ' +
     'ORDER BY ID';
 
   SQL_GET_MP_CLASSIFIER =
@@ -362,24 +365,14 @@ const
   + 'WHERE ID=:ID';
 
   SQL_UPDATE_MP_OBJECT_CHECK_STATE =
-    'UPDATE MASTER_PLAN_OBJECTS SET CHECK_STATE=:CHECK_STATE ';
+    'UPDATE MASTER_PLAN_OBJECTS SET CHECK_STATE=:CHECK_STATE WHERE ID=:ID';
 
 
 { TmstMasterPlanModule }
 
 function TmstMasterPlanModule.CanFindIntersections(const ObjId: Integer): Boolean;
-var
-  IdxEz: TQueryRowIndex;
-  IdxBr: TQueryRowIndex;
-  Row: Integer;
-  EzObjId: Integer;
-  Ent: TEzEntity;
-  Finder: IEzFindIntersections;
-  BoxOriginal: TEzRect;
-  BoxEnt: TEzRect;
-  IntList: TEzIntersectionList;
 begin
-  LocateObj(Objid, memEzData);
+  LocateObj(ObjId, memEzData);
   // работает только для полилиний и полигонов.
   Result := FEzAdapter.EzEntityId in [idPolyline, idPolygon]; 
 end;
@@ -572,7 +565,7 @@ begin
       for I := 0 to Prj.Objects.Count - 1 do
       begin
         Obj := Prj.Objects[I];
-        LoadToGis(Obj.DatabaseId, False);
+        LoadToGis(Obj.DatabaseId, False, True);
       end;
       View := Rect2D(aProject.MinX, aProject.MinY, aProject.MaxX, aProject.MaxY);
       if aProject.CK36 then
@@ -759,7 +752,9 @@ end;
 
 procedure TmstMasterPlanModule.GetDateTimeText(Sender: TField; var Text: string; DisplayText: Boolean);
 begin
-  DisplayText := Sender.AsDateTime = 0;
+  if DisplayText then
+    if Sender.AsDateTime = 0 then
+      Text := '';
 end;
 
 function TmstMasterPlanModule.GetIdx(Ds: TDataSet): TQueryRowIndex;
@@ -1041,11 +1036,20 @@ begin
   end;
 end;
 
-procedure TmstMasterPlanModule.IntersectDialog(const ObjId: Integer; Found: TmpIntersectionInfo);
+procedure TmstMasterPlanModule.IntersectDialog(Found: TmpIntersectionInfo);
+var
+  Dlg: TMStMPIntersectionsDialog;
 begin
-  raise Exception.Create('TmstMasterPlanModule.IntersectDialog');
   // тут показываем окно
-
+  // - создаём окно
+  Dlg := TMStMPIntersectionsDialog.Create(Self);
+  FIntersectDialog := Dlg;
+  // - загружаем туда Found
+  Dlg.Prepare(Self as ImstMPModule, Found);
+  // - показываем список
+//  Dlg.ShowModal;
+  Dlg.Show;
+  // -
   // в окно передаём Found
   // в окне должен быть список найдённых объектов
   // кнопка показать проверяемый объект - моргание
@@ -1061,6 +1065,13 @@ begin
 
   // кстати надо учесть, что при удалении объекта теперьнадо проверять
   // если открыто окно с проверкой
+  //
+//  raise Exception.Create('TmstMasterPlanModule.IntersectDialog');
+end;
+
+procedure TmstMasterPlanModule.IntersectionsDialogClosed(Dlg: TObject);
+begin
+  FIntersectDialog := nil;
 end;
 
 function TmstMasterPlanModule.IsLoaded(const ObjId: Integer): Boolean;
@@ -1092,7 +1103,7 @@ begin
   while not memEzData.Eof do
   begin
     if not FEzAdapter.Loaded then
-      LoadToGis(FEzAdapter.Id, False);
+      LoadToGis(FEzAdapter.Id, False, False);
     memEzData.Next;
   end;
 end;
@@ -1210,7 +1221,7 @@ begin
         Skip := TEzRectRelation.RectsNotIntersects(aBox, Ent.FBox);
         if not Skip then
         begin
-          LoadToGis(FEzAdapter.Id, False);
+          LoadToGis(FEzAdapter.Id, False, True);
           WasLoaded := True;
         end;
       finally
@@ -1411,7 +1422,6 @@ begin
   finally
     DsData.Post;
   end;
-
 end;
 
 procedure TmstMasterPlanModule.ReloadObjectToGis(ObjId: Integer);
@@ -1430,12 +1440,12 @@ begin
   end;
 end;
 
-procedure TmstMasterPlanModule.LoadToGis(const ObjId: Integer; const Display: Boolean);
+procedure TmstMasterPlanModule.LoadToGis(const ObjId: Integer; const Display: Boolean; const ZoomIfVisible: Boolean);
 begin
   // есть ли такой объект
   if LocateObj(ObjId, memEzData) then
     // грузим
-    AddCurrentObjToLayer(Display);
+    AddCurrentObjToLayer(Display, ZoomIfVisible);
 end;
 
 function TmstMasterPlanModule.LocateObj(ObjId: Integer; Ds: TDataSet): Boolean;
@@ -1466,10 +1476,11 @@ begin
   FBrowserForm := nil;
 end;
 
-procedure TmstMasterPlanModule.AddCurrentObjToLayer(const Display: Boolean);
+procedure TmstMasterPlanModule.AddCurrentObjToLayer(const Display: Boolean; const ZoomIfVisible: Boolean);
 var
   Ent: TEzEntity;
   Layer: TEzBaseLayer;
+  EntRect: TRect;
 begin
   Layer := GetMPLayer();
   if Layer = nil then
@@ -1503,6 +1514,9 @@ begin
     //
     if Display then
     begin
+//      EntRect := FDrawBox.Grapher.RealToRect(Ent.FBox);
+//      if EntRec then
+      
       FDrawBox.SetEntityInViewEx(Layer.Name, Layer.Recno, True);
       FDrawBox.BlinkEntityEx(Layer.Name, Layer.Recno);
     end;
@@ -1546,7 +1560,7 @@ var
   Bkm: Pointer;
   CurrIdDeleted: Boolean;
   ObjId: Integer;
-  I, J: Integer;
+  I: Integer;
   ToInsert: TIntegerList;
 begin
   NeedRedrawMap := False;
@@ -1800,6 +1814,13 @@ begin
   finally
     Conn.Commit; 
   end;
+  //
+  if LocateObj(ObjId, memBrowser) then
+  begin
+    memBrowser.Edit;
+    memBrowser.FieldByName(SF_CHECK_STATE).Value := Integer(CheckState);
+    memBrowser.Post;
+  end;
 end;
 
 procedure TmstMasterPlanModule.Subscribe(Subscriber: ImstMPObjEventSubscriber);
@@ -1822,6 +1843,7 @@ function TmstMasterPlanModule.UnloadFromGis(const ObjId: Integer): Boolean;
 var
   Layer: TEzBaseLayer;
 begin
+  Result := False;
   if not LocateObj(ObjId, memEzData) then
     Exit;
   if IsLoaded(ObjId) then
@@ -1830,6 +1852,7 @@ begin
     Layer.DeleteEntity(FEzAdapter.EzRecno);
     FEzAdapter.Loaded := False;
     FEzAdapter.EzRecno := -1;
+    Result := True;
   end;
 end;
 

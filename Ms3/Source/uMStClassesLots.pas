@@ -397,7 +397,7 @@ begin
       except
         Result := False;
       end;
-   end;
+    end;
   finally
     ClipBoard.Close;
   end;

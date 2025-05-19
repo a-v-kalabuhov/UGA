@@ -2716,6 +2716,10 @@ Procedure TEzGrapher.SetViewTo( Const ViewWin: TEzRect );
 Var
   f1, f2, Dx, Dy, Hx, Hy, Factor: Double;
   TmpWin: TEzRect;
+  OldWin: TEzRect;
+  NewWin: TEzRect;
+  NewHx, NewHy: Double;
+  NewMidPoint: TEzPoint;
 Begin
   TmpWin := ReOrderRect2D( ViewWin );
 
@@ -2733,28 +2737,54 @@ Begin
 
   Dx := TmpWin.X2 - TmpWin.X1; 
   Dy := TmpWin.Y2 - TmpWin.Y1;
-  With CurrentParams.VisualWindow Do
-  Begin
-    Hx := Abs( Emax.X - Emin.X );
-    Hy := Abs( Emax.Y - Emin.Y );
-    f1 := Dx / Hx;
-    f2 := Dy / Hy;
-    If f1 > f2 Then
-      Factor := f1
-    Else
-      Factor := f2;
-    Emin.X := TmpWin.X1 - ( Hx * Factor - Dx ) / 2;
-    Emax.Y := TmpWin.Y2;
-    Emax.X := Emin.X + Hx * Factor;
-    Emin.Y := Emax.Y - Hy * Factor;
-    With CurrentParams Do
-    Begin
-      MidPoint.X := ( Emin.X + Emax.X ) / 2;
-      MidPoint.Y := ( Emin.Y + Emax.Y ) / 2;
-      Xscale := Xscale / Factor;
-      Yscale := Yscale / Factor;
-    End;
-  End;
+  OldWin := CurrentParams.VisualWindow;
+  Hx := Abs( OldWin.Emax.X - OldWin.Emin.X );
+  Hy := Abs( OldWin.Emax.Y - OldWin.Emin.Y );
+  f1 := Dx / Hx;
+  f2 := Dy / Hy;
+  If f1 > f2 Then
+    Factor := f1
+  Else
+    Factor := f2;
+  NewWin := CurrentParams.VisualWindow;
+  NewWin.Emin.X := TmpWin.X1 - ( Hx * Factor - Dx ) / 2;
+  NewWin.Emax.Y := TmpWin.Y2;
+  NewWin.Emax.Y := TmpWin.Y2 + ( Hy * Factor - Dy ) / 2;
+  NewWin.Emax.X := NewWin.Emin.X + Hx * Factor;
+  NewWin.Emin.Y := NewWin.Emax.Y - Hy * Factor;
+  NewMidPoint.X := ( NewWin.Emin.X + NewWin.Emax.X ) / 2;
+  NewMidPoint.Y := ( NewWin.Emin.Y + NewWin.Emax.Y ) / 2;
+  //
+  NewHx := NewWin.Emax.X - NewWin.Emin.X;
+  NewHy := NewWin.Emax.Y - NewWin.Emin.Y;
+  //
+  CurrentParams.MidPoint := NewMidPoint;
+  CurrentParams.VisualWindow := NewWin;
+  CurrentParams.Xscale := CurrentParams.Xscale / Factor;
+  CurrentParams.Yscale := CurrentParams.Yscale / Factor;
+  //
+//  With CurrentParams.VisualWindow Do
+//  Begin
+//    Hx := Abs( Emax.X - Emin.X );
+//    Hy := Abs( Emax.Y - Emin.Y );
+//    f1 := Dx / Hx;
+//    f2 := Dy / Hy;
+//    If f1 > f2 Then
+//      Factor := f1
+//    Else
+//      Factor := f2;
+//    Emin.X := TmpWin.X1 - ( Hx * Factor - Dx ) / 2;
+//    Emax.Y := TmpWin.Y2;
+//    Emax.X := Emin.X + Hx * Factor;
+//    Emin.Y := Emax.Y - Hy * Factor;
+//    With CurrentParams Do
+//    Begin
+//      MidPoint.X := ( Emin.X + Emax.X ) / 2;
+//      MidPoint.Y := ( Emin.Y + Emax.Y ) / 2;
+//      Xscale := Xscale / Factor;
+//      Yscale := Yscale / Factor;
+//    End;
+//  End;
   If Assigned( FOnChange ) Then
     FOnChange( Self );
 End;

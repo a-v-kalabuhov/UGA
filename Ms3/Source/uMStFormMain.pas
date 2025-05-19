@@ -1571,10 +1571,15 @@ end;
 procedure TmstClientMainForm.LoadSessionOptions;
 var
   S: string;
+  I: Integer;
 begin
   S := mstClientAppModule.GetOption('Session', 'Map500Search', '');
   if S <> '' then
     edtFastFindMap.Text := S;
+  S := mstClientAppModule.GetOption('Session', 'ViewInCK36', '0');
+  if not TryStrToInt(S, I) then
+    I := 0;
+  mstClientAppModule.ViewInMCK36 := I <> 0;
 end;
 
 procedure TmstClientMainForm.LoadWatermark(aMapMngr: TMStIBXMapMngr);
@@ -1658,8 +1663,16 @@ begin
 end;
 
 procedure TmstClientMainForm.N361Click(Sender: TObject);
+var
+  S: string;
 begin
   N361.Checked := not N361.Checked;
+  mstClientAppModule.ViewInMCK36 := not mstClientAppModule.ViewInMCK36;
+  if mstClientAppModule.ViewInMCK36 then
+    S := '1'
+  else
+    S := '0';
+  mstClientAppModule.SetOption('Session', 'ViewInCK36', S);
 end;
 
 procedure TmstClientMainForm.ReleaseImage(Sender: TObject);
@@ -1718,13 +1731,14 @@ begin
       if mstClientAppModule.MP.EditNewObject(Obj) then
       begin
         Obj.CheckState := ocsEdited;
-        mstClientAppModule.MP.LoadToGis(Obj.DatabaseId, False);
+        mstClientAppModule.MP.LoadToGis(Obj.DatabaseId, False, False);
         ListView.Clear;
         DrawBox.RegenDrawing();
         //
-        ObjList := mstClientAppModule.MP as ImstMPModuleObjList;
+        ObjList := mstClientAppModule.ObjList;
         Browser := ObjList.Browser();
-        Browser.LocateObj(Obj.DatabaseId);
+        if Assigned(Browser) then
+          Browser.LocateObj(Obj.DatabaseId);
       end;
     finally
       Obj.Free;
@@ -1968,13 +1982,11 @@ begin
 //work with clipboard
   if Length(s) > 0 then
   begin
-    Clipboard.Open;
     try
-      Clipboard.SetTextBuf(PChar(s));
+      Clipboard.AsText := s;
     except
       MessageBox(Handle, PChar('Не удалось скопировать данные!'), PChar('Ошибка!'), MB_OK);
     end;
-    Clipboard.Close;
   end
   else
     raise EAbort.Create('Нет точек для копирования!');

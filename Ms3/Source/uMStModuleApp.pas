@@ -144,7 +144,7 @@ type
     procedure SetShowInvisibleLots(const Value: Boolean);
     procedure BeforeAddLotToList(aList: TmstLotList; var aLot: TmstLot);
     procedure SetMode(const Value: TmstAppMode);
-    procedure PrepareEntityToNormalMode(Layer: TEzBaseLayer;
+    procedure PrepareLotEntityToNormalMode(Layer: TEzBaseLayer;
       Entity: TEzEntity; var EntList: TEzEntityList; var CanShow: Boolean);
     procedure PrepareEntityToPrintMode(Layer: TEzBaseLayer;
       Entity: TEzEntity; var EntList: TEzEntityList; var CanShow: Boolean);
@@ -164,9 +164,12 @@ type
     function GetMPObjectisVisible(aLayer: TEzBaseLayer; aRecNo: Integer; var LineColor: TColor): Boolean;
   private
     FMasterPlan: ImstMPModule;
+    FViewInMCK36: Boolean;
     function GetMP: ImstMPModule;
     procedure GetAppSettingsForMP(Sender: TObject; out aAppSettings: ImstAppSettings);
     procedure GetDbForMP(Sender: TObject; out aDb: IDb);
+    procedure SetViewInMCK36(const Value: Boolean);
+    function GetObjList: ImstMPModuleObjList;
   protected
     function GetLotLayer(const LotCategoryId: Integer): TEzBaseLayer;
     procedure LoadLotFromDataSets(ALot: TmstLot; MainDataSet, ContoursDataSet, PointsDataSet: TDataSet);
@@ -256,6 +259,7 @@ type
     property Addresses: TmstAddressList read FAddresses;
     property NetTypes: TmstProjectNetTypes read FNetTypes;
     property MP: ImstMPModule read GetMP;
+    property ObjList: ImstMPModuleObjList read GetObjList;
 
     property Finder: TmstFinder read FFinder;
     property Stack: TmstObjectStack read FStack;
@@ -265,6 +269,7 @@ type
     property Mode: TmstAppMode read FMode write SetMode;
     property MapMngr: TMStIBXMapMngr read FMapMngr;
     property User: TmstUser read FUser;
+    property ViewInMCK36: Boolean read FViewInMCK36 write SetViewInMCK36;
   end;
 
 var
@@ -577,7 +582,7 @@ begin
   if FMasterPlan = nil then
   begin
     FMasterPlan := TmstMasterPlanModule.Create(Self) as ImstMPModule;
-    FMasterPlan.SetAppSettingsEvent(GetAppSettingsForMP); 
+    FMasterPlan.SetAppSettingsEvent(GetAppSettingsForMP);
     FMasterPlan.SetDbEvent(GetDbForMP);
   end;
   Result := FMasterPlan;
@@ -597,6 +602,17 @@ begin
     DbId := aLayer.RecEntity().ExtID;
     Result := MP.IsObjectVisible(DbId, LineColor);
   end;
+end;
+
+function TMStClientAppModule.GetObjList: ImstMPModuleObjList;
+begin
+  if FMasterPlan = nil then
+  begin
+    FMasterPlan := TmstMasterPlanModule.Create(Self) as ImstMPModule;
+    FMasterPlan.SetAppSettingsEvent(GetAppSettingsForMP);
+    FMasterPlan.SetDbEvent(GetDbForMP);
+  end;
+  Result := FMasterPlan as ImstMPModuleObjList;
 end;
 
 function TMStClientAppModule.GetOption(const Section, Option, NoValue: String): String;
@@ -1663,6 +1679,11 @@ begin
   FShowInvisibleLots := Value;
 end;
 
+procedure TMStClientAppModule.SetViewInMCK36(const Value: Boolean);
+begin
+  FViewInMCK36 := Value;
+end;
+
 procedure TMStClientAppModule.PrepareCadastralBlock(Layer: TEzBaseLayer;
   Entity: TEzEntity; const Clip: TEzRect; var EntList: TEzEntityList);
 var
@@ -1693,7 +1714,7 @@ begin
   end;
 end;
 
-procedure TMStClientAppModule.PrepareEntityToNormalMode(Layer: TEzBaseLayer;
+procedure TMStClientAppModule.PrepareLotEntityToNormalMode(Layer: TEzBaseLayer;
   Entity: TEzEntity; var EntList: TEzEntityList; var CanShow: Boolean);
 var
   aLot: TmstLot;
@@ -1811,12 +1832,14 @@ var
   NetId: Integer;
   Nt: TmstProjectNetType;
   DrawCP: Boolean;
-  ObjList: ImstMPModuleObjList;
   ObjId: Integer;
+  MPLayer: Boolean;
 begin
+  ObjId := MaxInt;
   if DrawMode = dmNormal then
   begin
     DrawCP := False;
+    MPLayer := False;
     Layer.Recno := Recno;
     if (Layer.DBTable <> nil) and (Layer.Name = SL_PROJECT_OPEN) or (Layer.Name = SL_PROJECT_CLOSED) then
     begin
@@ -1830,6 +1853,7 @@ begin
     else
     if IsMPLayer(Layer) then
     begin
+      MPLayer := True;
       ObjId := Entity.ExtID;
       if TMPSettings.IsCurrentObj(ObjId) then
         DrawCP := True;
@@ -1847,7 +1871,9 @@ procedure TMStClientAppModule.GISBeforePaintEntity(Sender: TObject;
   var AutoFree: Boolean);
 var
   Clr: TColor;
+  MPLayer: Boolean;
 begin
+  MPLayer := False;
   Layer.Recno := Recno;
   if Pos('CADASTR_', Layer.Name) = 1 then
     PrepareCadastralBlock(Layer, Entity, Clip, EntList)
@@ -1863,10 +1889,32 @@ begin
   else
   if IsMPLayer(Layer) then
   begin
+    MPLayer := True;
     CanShow := GetMPObjectisVisible(Layer, Recno, Clr);
     if CanShow then
       if Entity is TEzOpenedEntity then
         TEzOpenedEntity(Entity).PenTool.Color := Clr;
+    if Entity.ExtID = TMPSettings.FIntersectObjId then
+    begin
+      if not TMPSettings.FIntersectPt1Empty then
+        AddPointMarker(
+          EntList,
+          TMPSettings.FIntersectPt1.x,
+          TMPSettings.FIntersectPt1.y,
+          mstClientMainForm.DrawBox.CurrentScale,
+          'Точка 1',
+          clPurple
+        );
+      if not TMPSettings.FIntersectPt2Empty then
+        AddPointMarker(
+          EntList,
+          TMPSettings.FIntersectPt2.x,
+          TMPSettings.FIntersectPt2.y,
+          mstClientMainForm.DrawBox.CurrentScale,
+          'Точка 2',
+          clPurple
+        );
+    end;
   end
   else
   if Mode = amPrint then
@@ -1884,7 +1932,9 @@ begin
       PrepareEntityToPrintMode(Layer, Entity, EntList, CanShow);
   end
   else
-    PrepareEntityToNormalMode(Layer, Entity, EntList, CanShow);
+  begin
+    PrepareLotEntityToNormalMode(Layer, Entity, EntList, CanShow);
+  end;
 end;
 
 procedure TMStClientAppModule.GISBeforePaintLayer(Sender: TObject; Layer: TEzBaseLayer; Grapher: TEzGrapher;

@@ -184,7 +184,7 @@ begin
   end;
   // ищем список объектов
   // - архив не ищем
-  // - ищем среди всех, а не только загруженных
+  // - ищем среди всех, а не только загhуженных
   Found := FMP.FindIntersects(ObjId);
   try
     if Found.Count = 0 then
@@ -192,14 +192,15 @@ begin
       // если не нашли, то показываем сообщение
       ShowMessage('Пересечения не обнаружены!');
       FMP.SetObjCheckState(ObjId, ocsChecked);
+      RefreshCurrentRow();
     end
     else
     begin
       // если нашли, то показываем окно
-      FMP.IntersectDialog(ObjId, Found);
+      FMP.IntersectDialog(Found);
     end;
   finally
-    FreeAndNil(Found);
+//    FreeAndNil(Found);
   end;
 end;
 
@@ -313,7 +314,7 @@ begin
   if Ds.Active then
   begin
     ObjId := Ds.FieldByName(SF_ID).AsInteger;
-    FMP.LoadToGis(ObjId, False);
+    FMP.LoadToGis(ObjId, False, True);
     kaDBGrid1.Refresh;
   end;
 end;
@@ -708,7 +709,7 @@ begin
   if Ds.Active then
   begin
     ObjId := Ds.FieldByName(SF_ID).AsInteger;
-    FMP.LoadToGis(ObjId, True);
+    FMP.LoadToGis(ObjId, True, False);
     kaDBGrid1.Refresh;
   end;
 end;
@@ -726,7 +727,7 @@ begin
       while not DataSource1.DataSet.Eof do
       begin
         ObjId := DataSource1.DataSet.FieldByName(SF_ID).AsInteger;
-        FMP.LoadToGis(ObjId, False);
+        FMP.LoadToGis(ObjId, False, False);
         DataSource1.DataSet.Next;
       end;
     finally
@@ -740,6 +741,7 @@ end;
 procedure TmstMPBrowserForm.LocateObj(const ObjId: Integer);
 var
   Bkm: Pointer;
+  RowObjId: Integer;
 begin
   memBrowser2.DisableControls;
   try
@@ -749,6 +751,10 @@ begin
   finally
     memBrowser2.EnableControls;
   end;
+  //
+  RowObjId := memBrowser2.FieldByName(SF_ID).AsInteger;
+  TMPSettings.SetCurrentMPObj(RowObjId);
+  DrawBox.Repaint;
 end;
 
 procedure TmstMPBrowserForm.memBrowser2AfterClose(DataSet: TDataSet);

@@ -397,10 +397,16 @@ type
   TMPSettings = class
   public
     class var FObjId: Integer;
+    class var FIntersectPt1Empty: Boolean;
+    class var FIntersectPt1: TEzPoint;
+    class var FIntersectPt2Empty: Boolean;
+    class var FIntersectPt2: TEzPoint;
+    class var FIntersectObjId: Integer;
   public
     class var PenWidth: Double;
     class procedure SetCurrentMPObj(const aObjId: Integer);
     class function IsCurrentObj(const aObjId: Integer): Boolean;
+    class procedure ClearIntersection();
   end;
 
   IProjectSaver = interface
@@ -1958,6 +1964,13 @@ begin
 end;
 
 { TMPSettings }
+
+class procedure TMPSettings.ClearIntersection;
+begin
+  FIntersectPt1Empty := True;
+  FIntersectPt2Empty := True;
+  FIntersectObjId := -1;
+end;
 
 class function TMPSettings.IsCurrentObj(const aObjId: Integer): Boolean;
 begin

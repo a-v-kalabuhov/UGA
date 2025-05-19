@@ -109,7 +109,9 @@ uses
   uMStDialogImportMPfromExcel in 'Source\uMStDialogImportMPfromExcel.pas' {mstMPExcelDialogForm},
   uMStModuleMPImportExcel in 'Source\uMStModuleMPImportExcel.pas' {mstMPImportExcelModule: TDataModule},
   uMStClassesProjectsMPIntersect in 'Source\uMStClassesProjectsMPIntersect.pas',
-  uMStModuleDefaultActions in 'Source\uMStModuleDefaultActions.pas' {mstDefaultActionsModule: TDataModule};
+  uMStModuleDefaultActions in 'Source\uMStModuleDefaultActions.pas' {mstDefaultActionsModule: TDataModule},
+  uMStDialogMPIntersections in 'Source\uMStDialogMPIntersections.pas' {MStMPIntersectionsDialog},
+  uMStFramesMPIntersectItem in 'Source\uMStFramesMPIntersectItem.pas' {mstMPIntersectItemFrame: TFrame};
 
 {$R *.RES}
 

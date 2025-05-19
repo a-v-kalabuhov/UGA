@@ -59,6 +59,9 @@ type
   procedure AddLotMarkers(EntList: TEzEntityList; aLot: TmstLot; Scale: Double);
   function ContourRect(aLotContour: TmstLotContour): TEzRect;
   procedure MoveRect2D(var Rect: TEzRect; const dX, dY: Double);
+  //
+  procedure AddPointMarker(var EntList: TEzEntityList; const X, Y, Scale: Double; const LabelText: string;
+    const MarkerColor: TColor = clRed; const TextColor: TColor = clPurple);
   // in pixels
   function GetPageRectWithoutMargins: TEzRect;
   // in mms
@@ -356,6 +359,38 @@ begin
     aText := TEzTrueTypeText.CreateEntity(
       Marker.FBox.Emin,
       aContour.Points[I].Name,
+      H2 * 1.5,
+      0);
+    aText.FontTool.Color := clPurple;
+    EntList.Add(aText);
+  end;
+end;
+
+procedure AddPointMarker(var EntList: TEzEntityList; const X, Y, Scale: Double; const LabelText: string;
+  const MarkerColor: TColor = clRed; const TextColor: TColor = clPurple);
+var
+  Marker: TEzRectangle;
+  aText: TezTrueTypeText;
+  P1, P2: TEzPoint;
+  H1, H2: Double;
+begin
+  if not Assigned(EntList) then
+    EntList := TEzEntityList.Create;
+  H1 := Scale{ / 20};
+  H2 := H1 * 2;
+  P1 := Point2D(X, Y);
+  P1.x := P1.x - H1;
+  P1.y := P1.y + H1;
+  P2.x := P1.x + H2;
+  P2.y := P1.y - H2;
+  Marker := TEzRectangle.CreateEntity(P1, P2);
+  Marker.PenTool.Color := clRed;
+  EntList.Add(Marker);
+  if Trim(LabelText) <> '' then
+  begin
+    aText := TEzTrueTypeText.CreateEntity(
+      Marker.FBox.Emin,
+      LabelText,
       H2 * 1.5,
       0);
     aText.FontTool.Color := clPurple;

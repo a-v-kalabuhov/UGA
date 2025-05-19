@@ -29,7 +29,8 @@ type
 //    function EditObjectProps(const Obj: TmstMPObject): Boolean;
     function CanFindIntersections(const ObjId: Integer): Boolean;
     function FindIntersects(const ObjId: Integer): TmpIntersectionInfo;
-    procedure IntersectDialog(const ObjId: Integer; Found: TmpIntersectionInfo);
+    procedure IntersectDialog(Found: TmpIntersectionInfo);
+    procedure IntersectionsDialogClosed(Dlg: TObject);
     function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
     procedure SetObjCheckState(const ObjId: Integer; CheckState: TmstMPObjectCheckState);
     procedure UpdateLayersVisibility(aLayers: TmstLayerList);
@@ -37,7 +38,7 @@ type
     function HasLoaded(): Boolean;
     function IsLoaded(const ObjId: Integer): Boolean;
     procedure LoadAllToGIS();
-    procedure LoadToGis(const ObjId: Integer; const Display: Boolean);
+    procedure LoadToGis(const ObjId: Integer; const Display: Boolean; const ZoomIfVisible: Boolean);
     procedure UnloadAllFromGis();
     function UnloadFromGis(const ObjId: Integer): Boolean;
     //
