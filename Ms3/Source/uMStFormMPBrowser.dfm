@@ -2,7 +2,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
   Left = 0
   Top = 0
   Caption = #1057#1074#1086#1076#1085#1099#1081' '#1087#1083#1072#1085
-  ClientHeight = 390
+  ClientHeight = 430
   ClientWidth = 1161
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -136,23 +136,25 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Left = 0
     Top = 29
     Width = 1161
-    Height = 361
+    Height = 401
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitHeight = 381
     object tabData: TPanel
       Left = 0
       Top = 0
       Width = 1161
-      Height = 361
+      Height = 401
       Align = alClient
       Caption = #1055#1088#1086#1077#1082#1090#1099
       TabOrder = 0
+      ExplicitHeight = 381
       object kaDBGrid1: TkaDBGrid
         Left = 1
         Top = 1
         Width = 1159
-        Height = 359
+        Height = 399
         Align = alClient
         DataSource = DataSource1
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
@@ -551,7 +553,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Left = 128
     Top = 136
     Bitmap = {
-      494C010109004800640010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101090048006C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

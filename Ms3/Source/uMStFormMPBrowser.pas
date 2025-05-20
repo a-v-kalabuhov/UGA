@@ -11,7 +11,7 @@ uses
   EzLib,
   //
   uDBGrid,
-  uGC, uFileUtils,
+  uGC, uFileUtils, uGeoTypes, uCK36, 
   uMStKernelIBX,
   uMStClassesProjectsMP, uMStClassesMPIntf, uMStKernelAppSettings,
   uMStKernelClassesQueryIndex, uMStClassesProjectsUtils, uMStClassesProjectsBrowserMP, uMStClassesMPStatuses,
@@ -162,7 +162,7 @@ var
 implementation
 
 uses
-  uMStConsts, uMStClassesProjects, uMStDialogCertifNumber,
+  uMStConsts, uMStClassesProjects, uMStDialogCertifNumber, uMStModuleApp,
   uMStDialogMPBrowserFilter;
 
 {$R *.dfm}
@@ -233,6 +233,7 @@ var
   CoordsFile: string;
   Ent: TEzEntity;
   Ds: TDataSet;
+  X, Y: Double;
 begin
   Ds := DataSource1.DataSet;
   // получаем текущую линию
@@ -249,14 +250,18 @@ begin
         try
           for I := 0 to Ent.Points.Count - 1 do
           begin
+            X := Ent.Points[I].Y;
+            Y := Ent.Points[I].X;
+            if mstClientAppModule.ViewCoordSystem = csMCK36 then
+              uCK36.ToCK36(X, Y);
+            //
             Coords.Add(IntToStr(Succ(I)) + ';' +
-                       FormatFloat('#0.00', Ent.Points[I].Y) + ';' +
-                       FormatFloat('#0.00', Ent.Points[I].X));
+                       FormatFloat('#0.00', X) + ';' +
+                       FormatFloat('#0.00', Y));
           end;
         finally
           FreeAndNil(Ent);
         end;
-
         // пишем его в файл
         TmpFile := TFileUtils.CreateTempFile(FAppSettings.SessionDir);
         CoordsFile := ChangeFileExt(TmpFile, '.txt');

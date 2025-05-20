@@ -9,7 +9,7 @@ uses
   // System
   SysUtils, Windows, Classes, Contnrs, Controls, CheckLst, StrUtils, 
   // Common
-  uCommonUtils,  
+  uCommonUtils, uGeoTypes,  
   //
   uMStConsts, uMStKernelTypes, uMStKernelSemantic, uMStKernelStackConsts,
   VirtualTrees;
@@ -28,6 +28,17 @@ const
   S_GUEST = 'GUEST';
 
 type
+  ImstCoordView = interface
+    ['{2F1406AB-C4B4-468A-9273-B774BBC6F69D}']
+    procedure CoordSystemChanged(const Value: TCoordSystem);
+  end;
+
+  ImstCoordViewList = interface
+    ['{6F48A014-ECA7-464D-9C80-06DD483B376F}']
+    procedure Subscribe(aView: ImstCoordView);
+    procedure UnSubscribe(aView: ImstCoordView);
+  end;
+
   TmstUser = class
   private
     FIsAdministrator: Boolean;
@@ -1057,7 +1068,6 @@ var
   N: PVirtualNode;
   NodeChecked: Boolean;
   NodeSelected: Boolean;
-  I: Integer;
   VST: TVirtualStringTree;
 begin
   VST := TVirtualStringTree(FLayerControl);

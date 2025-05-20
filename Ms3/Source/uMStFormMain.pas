@@ -1579,7 +1579,10 @@ begin
   S := mstClientAppModule.GetOption('Session', 'ViewInCK36', '0');
   if not TryStrToInt(S, I) then
     I := 0;
-  mstClientAppModule.ViewInMCK36 := I <> 0;
+  if I <> 0 then
+    mstClientAppModule.ViewCoordSystem := csMCK36
+  else
+    mstClientAppModule.ViewCoordSystem := csVrn;
 end;
 
 procedure TmstClientMainForm.LoadWatermark(aMapMngr: TMStIBXMapMngr);
@@ -1667,11 +1670,16 @@ var
   S: string;
 begin
   N361.Checked := not N361.Checked;
-  mstClientAppModule.ViewInMCK36 := not mstClientAppModule.ViewInMCK36;
-  if mstClientAppModule.ViewInMCK36 then
-    S := '1'
+  if mstClientAppModule.ViewCoordSystem = csVrn then
+  begin
+    mstClientAppModule.ViewCoordSystem := csMCK36;
+    S := '1';
+  end
   else
+  begin
+    mstClientAppModule.ViewCoordSystem := csVrn;
     S := '0';
+  end;
   mstClientAppModule.SetOption('Session', 'ViewInCK36', S);
 end;
 

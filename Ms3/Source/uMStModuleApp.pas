@@ -17,7 +17,7 @@ uses
   // EzGIS
   EzEntities, EzERMapper, EzGraphics, EzBaseGIS, EzBasicCtrls, EzCtrls, EzLib, EzBase, EzSystem,
   // Shared
-  uGC, uCommonUtils, uVCLUtils, uFileUtils, uGeoUtils,
+  uGC, uCommonUtils, uVCLUtils, uFileUtils, uGeoUtils, uGeoTypes,
   // Project
   uMStKernelTypes, uMStKernelClasses, uMStKernelClassesSearch, uMStKernelInterfaces, uMStKernelAppModule,
   uMStKernelStack, uMStKernelIBX, uMStKernelAppSettings,
@@ -34,7 +34,7 @@ type
   TmstProgressEvent = procedure (const Message: String; Percent: Byte;
     Delay: Integer; Ticks: Integer = -1) of object;
 
-  TMStClientAppModule = class(TDataModule, ImstAppModule, ImstLotController, ImstAppSettings)
+  TMStClientAppModule = class(TDataModule, ImstAppModule, ImstLotController, ImstAppSettings, ImstCoordViewList)
     GIS: TEzGIS;
     ApplicationEvents: TApplicationEvents;
     procedure DataModuleDestroy(Sender: TObject);
@@ -164,12 +164,19 @@ type
     function GetMPObjectisVisible(aLayer: TEzBaseLayer; aRecNo: Integer; var LineColor: TColor): Boolean;
   private
     FMasterPlan: ImstMPModule;
-    FViewInMCK36: Boolean;
+    FViewCoordSystem: TCoordSystem;
     function GetMP: ImstMPModule;
     procedure GetAppSettingsForMP(Sender: TObject; out aAppSettings: ImstAppSettings);
     procedure GetDbForMP(Sender: TObject; out aDb: IDb);
-    procedure SetViewInMCK36(const Value: Boolean);
+    procedure SetViewCoordSystem(const Value: TCoordSystem);
     function GetObjList: ImstMPModuleObjList;
+    function GetCoordViews: ImstCoordViewList;
+    procedure NotifyCoordViews();
+  private
+    FCoordViews: TInterfaceList;
+    // ImstCoordViewList
+    procedure Subscribe(aView: ImstCoordView);
+    procedure UnSubscribe(aView: ImstCoordView);
   protected
     function GetLotLayer(const LotCategoryId: Integer): TEzBaseLayer;
     procedure LoadLotFromDataSets(ALot: TmstLot; MainDataSet, ContoursDataSet, PointsDataSet: TDataSet);
@@ -258,8 +265,10 @@ type
 //    property Lots: TmstLotList read FLots;
     property Addresses: TmstAddressList read FAddresses;
     property NetTypes: TmstProjectNetTypes read FNetTypes;
+    //
     property MP: ImstMPModule read GetMP;
     property ObjList: ImstMPModuleObjList read GetObjList;
+    property CoordViews: ImstCoordViewList read GetCoordViews;
 
     property Finder: TmstFinder read FFinder;
     property Stack: TmstObjectStack read FStack;
@@ -269,7 +278,7 @@ type
     property Mode: TmstAppMode read FMode write SetMode;
     property MapMngr: TMStIBXMapMngr read FMapMngr;
     property User: TmstUser read FUser;
-    property ViewInMCK36: Boolean read FViewInMCK36 write SetViewInMCK36;
+    property ViewCoordSystem: TCoordSystem read FViewCoordSystem write SetViewCoordSystem;
   end;
 
 var
@@ -445,6 +454,7 @@ begin
     FreeAndNil(FLayers);
     FreeAndNil(FLotRegistry);
     FreeAndNil(FMapMngr);
+    FreeAndNil(FCoordViews);
 //    FreeAndNil(FMPRegistry);
   finally
     ClearTempFolder;
@@ -490,6 +500,11 @@ end;
 procedure TMStClientAppModule.GetAppSettingsForMP(Sender: TObject; out aAppSettings: ImstAppSettings);
 begin
   aAppSettings := Self as ImstAppSettings;
+end;
+
+function TMStClientAppModule.GetCoordViews: ImstCoordViewList;
+begin
+  Result := Self as ImstCoordViewList;
 end;
 
 procedure TMStClientAppModule.GetDbForMP(Sender: TObject; out aDb: IDb);
@@ -1247,6 +1262,11 @@ begin
   ProgressInit('', 0, 300);
 end;
 
+procedure TMStClientAppModule.Subscribe(aView: ImstCoordView);
+begin
+  FCoordViews.Add(aView);
+end;
+
 procedure TMStClientAppModule.TurnOffLayer(Sender: TObject; aLayer: TmstLayer);
 begin
   aLayer.Visible := False;
@@ -1269,6 +1289,11 @@ begin
     TmpMap.FileName := '';
     TmpMap.ImageLoaded := False;
   end;
+end;
+
+procedure TMStClientAppModule.UnSubscribe(aView: ImstCoordView);
+begin
+  FCoordViews.Remove(aView);
 end;
 
 procedure TMStClientAppModule.UpdateLotEntity(Sender: TObject; AObject: TmstObject);
@@ -1679,9 +1704,10 @@ begin
   FShowInvisibleLots := Value;
 end;
 
-procedure TMStClientAppModule.SetViewInMCK36(const Value: Boolean);
+procedure TMStClientAppModule.SetViewCoordSystem(const Value: TCoordSystem);
 begin
-  FViewInMCK36 := Value;
+  FViewCoordSystem := Value;
+  NotifyCoordViews();
 end;
 
 procedure TMStClientAppModule.PrepareCadastralBlock(Layer: TEzBaseLayer;
@@ -1964,6 +1990,7 @@ var
 begin
   FLoadedProjects := TIntegerList.Create;
   FNetTypes := TmstProjectNetTypes.Create;
+  FCoordViews := TInterfaceList.Create;
   // создаем симовл для точки выбранного отвода
   aSymbol := TEzSymbol.Create(Ez_Symbols);
   aPoint := TEzEllipse.CreateEntity(Point2D(-1, 1), Point2D(1, -1));
@@ -2440,6 +2467,27 @@ begin
     MP.Classifier.SetMPCategoryVisible(ALayer.MpStatusId, ALayer.MpCategoryId, ALayer.Visible);
   //
   GIS.RepaintViewports;
+end;
+
+procedure TMStClientAppModule.NotifyCoordViews;
+var
+  I: Integer;
+  S: string;
+  TheView: ImstCoordView;
+begin
+  for I := 0 to FCoordViews.Count - 1 do
+  begin
+    try
+      TheView := ImstCoordView(FCoordViews[I]);
+      TheView.CoordSystemChanged(FViewCoordSystem);
+    except
+      on E: Exception do
+      begin
+        S := 'I = ' + IntToStr(I);
+        LogError(E, S);
+      end;
+    end;
+  end;
 end;
 
 function TMStClientAppModule.GetLastUserId: Integer;

@@ -1040,6 +1040,8 @@ procedure TmstMasterPlanModule.IntersectDialog(Found: TmpIntersectionInfo);
 var
   Dlg: TMStMPIntersectionsDialog;
 begin
+  if Assigned(FIntersectDialog) then
+    FIntersectDialog.Close;
   // тут показываем окно
   // - создаём окно
   Dlg := TMStMPIntersectionsDialog.Create(Self);
@@ -1063,7 +1065,7 @@ begin
   // - и т.д. по т.з.
   // также на окне долна быть кнопка - установить статус что объект проверен
 
-  // кстати надо учесть, что при удалении объекта теперьнадо проверять
+  // кстати надо учесть, что при удалении объекта теперь надо проверять
   // если открыто окно с проверкой
   //
 //  raise Exception.Create('TmstMasterPlanModule.IntersectDialog');
@@ -1480,7 +1482,7 @@ procedure TmstMasterPlanModule.AddCurrentObjToLayer(const Display: Boolean; cons
 var
   Ent: TEzEntity;
   Layer: TEzBaseLayer;
-  EntRect: TRect;
+//  EntRect: TRect;
 begin
   Layer := GetMPLayer();
   if Layer = nil then

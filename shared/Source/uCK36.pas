@@ -63,7 +63,8 @@ const
    Cosn2 = 2.15622669e4;
    Cosn3 = 6.3675584969e6;
 
-  procedure ToCK36(const _X, _Y: double; var X, Y: double; DoRound: boolean = false);
+  procedure ToCK36(const _X, _Y: double; var X, Y: double; DoRound: boolean = false); overload;
+  procedure ToCK36(var X, Y: double; DoRound: boolean = false); overload;
   procedure ToVRN(const _X, _Y: double; var X, Y: double; DoRound: boolean = false);
 
 implementation
@@ -85,6 +86,15 @@ begin {GeoRound}
     End;
   Result := SimpleRoundTo(A,-2);
 end;{GeoRound}
+
+procedure ToCK36(var X, Y: double; DoRound: boolean = false); overload;
+var
+  X1, Y1: Double;
+begin
+  ToCK36(X, Y, X1, Y1, DoRound);
+  X := X1;
+  Y := Y1;
+end;
 
 // пересчет из местной в СК-36
 procedure ToCK36(const _X, _Y: double; var X, Y: double; DoRound: boolean = false);
