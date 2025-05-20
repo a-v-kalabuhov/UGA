@@ -8,7 +8,7 @@ uses
   JvExControls, JvSpeedButton,
   EzLib,
   uCK36, uGeoTypes,
-  uEzGeometry, StdActns, ActnList;
+  uEzGeometry, StdActns, ActnList, ExtCtrls;
 
 type
   TmstMPIntersectItemFrame = class;
@@ -41,6 +41,7 @@ type
     PopupMenu2: TPopupMenu;
     N4: TMenuItem;
     acCopyPoint: TAction;
+    Image1: TImage;
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure btnCopyPoint1Click(Sender: TObject);
@@ -121,6 +122,7 @@ begin
   inherited;
   FPoint1Empty := True;
   FPoint2Empty := True;
+  FDisplaying := False;
 end;
 
 function TmstMPIntersectItemFrame.GetAddress: string;
@@ -235,6 +237,7 @@ end;
 procedure TmstMPIntersectItemFrame.SetDisplaying(const Value: Boolean);
 begin
   FDisplaying := Value;
+  Image1.Visible := FDisplaying;
 end;
 
 procedure TmstMPIntersectItemFrame.SetObjId(const Value: Integer);
