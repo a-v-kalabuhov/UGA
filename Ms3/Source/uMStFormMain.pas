@@ -586,6 +586,7 @@ type
     function FindLot(const Address: string): Boolean;
     function FindProject(const Address: string): Boolean;
     procedure LocateProjectLine(const ClickPoint: TEzPoint);
+    procedure LocateMPLine(const ClickPoint: TEzPoint);
     function GetProjectToExport(Sender: TObject; const ProjectId: Integer): TmstProject;
     procedure LoadSessionOptions();
     procedure RestorePanelsWidth();
@@ -722,14 +723,22 @@ end;
 
 procedure TmstClientMainForm.acGoToPointExecute(Sender: TObject);
 var
-  p: TEzPoint;
+  P: TEzPoint;
   x1, x2, y1, y2: Double;
   b: Boolean;
+  Tmp: Double;
 begin
-  if ShowTargetPoint(p, b) then
+  if TmstPointForm.ShowTargetPoint(P, b) then
   begin
+    if mstClientAppModule.ViewCoordSystem = csMCK36 then
+      ToCK36(P.x, P.y, False);
+    //
+    Tmp := P.y;
+    P.y := P.x;
+    P.x := Tmp;
+    //
     DrawBox.CurrentExtents(x1, y1, x2, y2);
-    DrawBox.MoveWindow(p.x - (x2 - x1) / 2, p.y - (y2 - y1) / 2);
+    DrawBox.MoveWindow(P.x - (x2 - x1) / 2, P.y - (y2 - y1) / 2);
     if b then
       DrawBox.ZoomToScale(5, suInches);
   end;
@@ -1088,6 +1097,7 @@ begin
         LoadLotInfoToTree(WX, WY);
       DoLocateEntityInLayerBrowser(WX, WY);
       LocateProjectLine(Point2D(WX, WY));
+      LocateMPLine(Point2D(WX, WY));
       //
 //      if FPickPanel <> nil then
 //        if FPickPanel.Visible then
@@ -1465,7 +1475,7 @@ procedure TmstClientMainForm.LoadMPClick(Sender: TObject);
 var
   I: Integer;
   TmpMap: TmstMap;
-  aTop, aLeft: Integer;
+//  aTop, aLeft: Integer;
   N: TNomenclature;
   R: TRect;
   LayerMaps: TEzBaseLayer;
@@ -1492,8 +1502,8 @@ begin
 end;
 
 procedure TmstClientMainForm.LoadMPObjects(const aGeoLeft, aGeoTop, aGeoRight, aGeoBottom: Double);
-var
-  Frm: TmstLoadLotProgressForm;
+//var
+//  Frm: TmstLoadLotProgressForm;
 begin
 //  Frm := TmstLoadLotProgressForm.Create(Self);
 //  Enabled := False;
@@ -1616,6 +1626,36 @@ begin
 //    FWatermark.FontColorB := Params.GetWatermarkParameter(WMP_FONT_COLOR_B);
   finally
     Params.Close;
+  end;
+end;
+
+procedure TmstClientMainForm.LocateMPLine(const ClickPoint: TEzPoint);
+var
+  Layer: TEzBaseLayer;
+  NRecNo: Integer;
+  PrjId, LineId: Integer;
+  Ent: TEzEntity;
+begin
+  if Assigned(mstClientAppModule.ObjList.Browser) then
+  begin
+    // выбираем слой на карте
+    // чпокаем в нём объекты
+    // первый чпокнутый показываем в браузере
+    Layer := GIS.Layers.LayerByName(SL_MASTER_PLAN);
+    if Assigned(Layer) and Layer.LayerInfo.Visible then
+    begin
+      NRecNo := PickSingleEntity(Layer, DrawBox, ClickPoint, 10);
+      if NRecNo > 0 then
+      begin
+        Layer.Recno := NRecNo;
+        Ent := Layer.RecLoadEntity();
+        try
+          mstClientAppModule.ObjList.Browser.LocateObj(Ent.ExtID);
+        finally
+          Ent.Free;
+        end;
+      end;
+    end;
   end;
 end;
 
@@ -2032,8 +2072,9 @@ var
 begin
   Pt.x := 0;
   Pt.y := 0;
-  if EditPoint(Pt) then
+  if TmstPointForm.NewPoint(Pt) then
   begin
+    Pt := CityToDecartPoint(Pt);
     TmstMeasureAction(CmdLine.CurrentAction).InsertPoint(Pt, ListView.Selected.Index + 1);
     TmstMeasureAction(CmdLine.CurrentAction).OnPaint(DrawBox);
   end;
@@ -2082,15 +2123,21 @@ var
   X, Y: Double;
 begin
   if tbMeasures.Down and (ListView.SelCount = 1) then
-    if TryStrToFloat(ListView.Selected.SubItems[0], Y) and TryStrToFloat(ListView.Selected.SubItems[1], X) then
+  begin
+    if TryStrToFloat(ListView.Selected.SubItems[0], X)
+       and
+       TryStrToFloat(ListView.Selected.SubItems[1], Y)
+    then
     begin
       Pt := Point2D(X, Y);
-      if EditPoint(Pt) then
+      if TmstPointForm.EditPoint(Pt) then
       begin
+        Pt := CityToDecartPoint(Pt);
         TmstMeasureAction(CmdLine.CurrentAction).ReplacePoint(Pt, ListView.Selected.Index);
         TmstMeasureAction(CmdLine.CurrentAction).OnPaint(DrawBox);
       end;
     end;
+  end;
 end;
 
 procedure TmstClientMainForm.acShowMapHistoryExecute(Sender: TObject);
@@ -3180,7 +3227,8 @@ end;
 
 procedure TmstClientMainForm.DoLocateEntityInLayerBrowser;
 var
-  ActId, ObjId: string;
+  //ActId,
+  ObjId: string;
   NRecNo: Integer;
   Layer: TEzBaseLayer;
 begin

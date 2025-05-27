@@ -530,7 +530,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       Style = csDropDownList
       Anchors = [akTop, akRight]
       Enabled = False
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 1
     end
     object chbUnderground: TCheckBox

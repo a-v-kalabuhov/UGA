@@ -1861,7 +1861,6 @@ var
   ObjId: Integer;
   MPLayer: Boolean;
 begin
-  ObjId := MaxInt;
   if DrawMode = dmNormal then
   begin
     DrawCP := False;
@@ -1929,6 +1928,7 @@ begin
           TMPSettings.FIntersectPt1.y,
           mstClientMainForm.DrawBox.CurrentScale,
           'Точка 1',
+          mpTop,
           clPurple
         );
       if not TMPSettings.FIntersectPt2Empty then
@@ -1938,6 +1938,7 @@ begin
           TMPSettings.FIntersectPt2.y,
           mstClientMainForm.DrawBox.CurrentScale,
           'Точка 2',
+          mpTop,
           clPurple
         );
     end;
@@ -2062,7 +2063,7 @@ end;
 
 procedure TMStClientAppModule.ConnectLayerToGIS(aLayer: TmstLayer; UseLayerVisibility: Boolean);
 var
-  I, J: Integer;
+  J: Integer;
   Layer: TEzBaseLayer;
   LayerVisible: Boolean;
 begin

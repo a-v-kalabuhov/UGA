@@ -345,8 +345,6 @@ begin
 end;
 
 procedure TmstEditMPObjectSemanticsDialog.WriteToObject;
-var
-  StatusId: Integer;
 begin
   FObject.RequestDate := GetDate(edRequestDate.Text);
   FObject.DocDate := GetDate(edDocDate.Text);

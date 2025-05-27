@@ -633,13 +633,13 @@ begin
       LLayer := aLayerList.AddLayer();
       LLayer.Caption := 'Сводный план';
       LLayer.Position := Position;
+      LayerId := TProjectUtils.GetMPLayerCode(0, 0);//50000000;
       LLayer.Id := LayerId;
       LLayer.Name := SL_MASTER_PLAN;//TProjectUtils.GetMPLayerName(0, 0);
     end;
     Inc(Position);
     LLayer.LayerType := 2;
     LLayer.Visible := True;
-    LayerId := TProjectUtils.GetMPLayerCode(0, 0);//50000000;
     LLayer.IsMP := True;
     LLayer.MpStatusId := 0;
     LLayer.MpCategoryId := 0;
@@ -648,14 +648,6 @@ begin
     begin
       LoadMasterPlanSubLayers(LLayer, I, LayerId, Position);
     end;
-//    LayerId := LayerId + 10000;
-//    LoadProjectPlanSubLayers(LLayer, 'проектные', LayerId, Position);
-//    LayerId := LayerId + 10000;
-//    LoadProjectPlanSubLayers(LLayer, 'проектные демонтируемые', LayerId, Position);
-//    LayerId := LayerId + 10000;
-//    LoadProjectPlanSubLayers(LLayer, 'проектные - выдана справка', LayerId, Position);
-//    LayerId := LayerId + 10000;
-//    LoadProjectPlanSubLayers(LLayer, 'нанесённые', LayerId, Position);
   end;
 end;
 
@@ -692,127 +684,6 @@ begin
   finally
     Added.Free;
   end;
-
-//  Layer := LLayer.AddChild();
-//  LayerId := LayerId + 100;
-//  Layer.Id := LayerId;
-//  Layer.Name := 'ProjectPlanSub' + IntToStr(LayerId);
-//  Layer.Caption := 'Газ';
-//  Layer.Position := Position;
-//  Layer.LayerType := 2;
-//  Layer.Visible := True;
-//  Inc(Position);
-//  //
-//  Layer := LLayer.AddChild();
-//  LayerId := LayerId + 100;
-//  Layer.Id := LayerId;
-//  Layer.Name := 'ProjectPlanSub' + IntToStr(LayerId);
-//  Layer.Caption := 'Вода';
-//  Layer.Position := Position;
-//  Layer.LayerType := 2;
-//  Layer.Visible := True;
-//  Inc(Position);
-//  //
-//  Layer := LLayer.AddChild();
-//  LayerId := LayerId + 100;
-//  Layer.Id := LayerId;
-//  Layer.Name := 'ProjectPlanSub' + IntToStr(LayerId);
-//  Layer.Caption := 'Канализация';
-//  Layer.Position := Position;
-//  Layer.LayerType := 2;
-//  Layer.Visible := True;
-//  Inc(Position);
-//  //
-//  Layer := LLayer.AddChild();
-//  LayerId := LayerId + 100;
-//  Layer.Id := LayerId;
-//  Layer.Name := 'ProjectPlanSub' + IntToStr(LayerId);
-//  Layer.Caption := 'Канализация ливнёвая';
-//  Layer.Position := Position;
-//  Layer.LayerType := 2;
-//  Layer.Visible := True;
-//  Inc(Position);
-//  //
-//  Layer := LLayer.AddChild();
-//  LayerId := LayerId + 100;
-//  Layer.Id := LayerId;
-//  Layer.Name := 'ProjectPlanSub' + IntToStr(LayerId);
-//  Layer.Caption := 'Электричество';
-//  Layer.Position := Position;
-//  Layer.LayerType := 2;
-//  Layer.Visible := True;
-//  Inc(Position);
-//  //
-//  ElLayerId := LayerId;
-//  ElLayer := Layer.AddChild();
-//  ElLayerId := ElLayerId + 1;
-//  ElLayer.Id := ElLayerId;
-//  ElLayer.Name := 'ProjectPlanSub' + IntToStr(ElLayerId);
-//  ElLayer.Caption := 'Кабели';
-//  ElLayer.Position := Position;
-//  ElLayer.LayerType := 2;
-//  ElLayer.Visible := True;
-//  Inc(Position);
-//  //
-//  ElLayer := Layer.AddChild();
-//  ElLayerId := ElLayerId + 1;
-//  ElLayer.Id := ElLayerId;
-//  ElLayer.Name := 'ProjectPlanSub' + IntToStr(ElLayerId);
-//  ElLayer.Caption := 'ЛЭП';
-//  ElLayer.Position := Position;
-//  ElLayer.LayerType := 2;
-//  ElLayer.Visible := True;
-//  Inc(Position);
-//  //
-//  ElLayer := Layer.AddChild();
-//  ElLayerId := ElLayerId + 1;
-//  ElLayer.Id := ElLayerId;
-//  ElLayer.Name := 'ProjectPlanSub' + IntToStr(ElLayerId);
-//  ElLayer.Caption := 'Подзем/метал защита';
-//  ElLayer.Position := Position;
-//  ElLayer.LayerType := 2;
-//  ElLayer.Visible := True;
-//  Inc(Position);
-//  //
-//  Layer := LLayer.AddChild();
-//  LayerId := LayerId + 100;
-//  Layer.Id := LayerId;
-//  Layer.Name := 'ProjectPlanSub' + IntToStr(LayerId);
-//  Layer.Caption := 'Теплосети';
-//  Layer.Position := Position;
-//  Layer.LayerType := 2;
-//  Layer.Visible := True;
-//  Inc(Position);
-//  //
-//  Layer := LLayer.AddChild();
-//  LayerId := LayerId + 100;
-//  Layer.Id := LayerId;
-//  Layer.Name := 'ProjectPlanSub' + IntToStr(LayerId);
-//  Layer.Caption := 'Прочее';
-//  Layer.Position := Position;
-//  Layer.LayerType := 2;
-//  Layer.Visible := True;
-//  Inc(Position);
-//  //
-//  Layer := LLayer.AddChild();
-//  LayerId := LayerId + 100;
-//  Layer.Id := LayerId;
-//  Layer.Name := 'ProjectPlanSub' + IntToStr(LayerId);
-//  Layer.Caption := 'Столбы';
-//  Layer.Position := Position;
-//  Layer.LayerType := 2;
-//  Layer.Visible := True;
-//  Inc(Position);
-//  //
-//  Layer := LLayer.AddChild();
-//  LayerId := LayerId + 100;
-//  Layer.Id := LayerId;
-//  Layer.Name := 'ProjectPlanSub' + IntToStr(LayerId);
-//  Layer.Caption := 'Связь';
-//  Layer.Position := Position;
-//  Layer.LayerType := 2;
-//  Layer.Visible := True;
-//  Inc(Position);
 end;
 
 procedure TMStIBXMapMngr.LoadProjects(const Rect: TEzRect; aList: TmstObjectList; CallBack: TProgressEvent2);

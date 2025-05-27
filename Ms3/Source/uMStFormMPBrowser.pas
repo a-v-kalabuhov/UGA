@@ -91,6 +91,9 @@ type
     N30: TMenuItem;
     N31: TMenuItem;
     N33: TMenuItem;
+    acObjDivideByPoint: TAction;
+    N32: TMenuItem;
+    N34: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure chbTransparencyClick(Sender: TObject);
     procedure trackAlphaChange(Sender: TObject);
@@ -125,6 +128,8 @@ type
     procedure acObjCheckExecute(Sender: TObject);
     procedure memBrowser2AfterScroll(DataSet: TDataSet);
     procedure memBrowser2AfterClose(DataSet: TDataSet);
+    procedure acObjDivideByPointUpdate(Sender: TObject);
+    procedure acObjDivideByPointExecute(Sender: TObject);
   private
     FDrawBox: TEzBaseDrawBox;
     procedure SetDrawBox(const Value: TEzBaseDrawBox);
@@ -163,7 +168,7 @@ implementation
 
 uses
   uMStConsts, uMStClassesProjects, uMStDialogCertifNumber, uMStModuleApp,
-  uMStDialogMPBrowserFilter;
+  uMStDialogMPBrowserFilter, uMStDialogPoint;
 
 {$R *.dfm}
 
@@ -221,6 +226,22 @@ end;
 procedure TmstMPBrowserForm.acObjDisplayExecute(Sender: TObject);
 begin
   LoadAndDisplayCurrentObj();
+end;
+
+procedure TmstMPBrowserForm.acObjDivideByPointExecute(Sender: TObject);
+var
+  ObjId: Integer;
+begin
+  ObjId := DataSource1.DataSet.FieldByName(SF_ID).AsInteger;
+  FMP.DivideObj(ObjId);
+end;
+
+procedure TmstMPBrowserForm.acObjDivideByPointUpdate(Sender: TObject);
+var
+  ObjId: Integer;
+begin
+  ObjId := DataSource1.DataSet.FieldByName(SF_ID).AsInteger;
+  acObjDivideByPoint.Enabled := FObjList.CanDivide(ObjId);
 end;
 
 procedure TmstMPBrowserForm.acObjExportCoordsExecute(Sender: TObject);
@@ -505,7 +526,6 @@ end;
 procedure TmstMPBrowserForm.FilterRecord(DataSet: TDataSet; var Accept: Boolean);
 var
   S: string;
-  S1: string;
   B: Boolean;
   DateVal: TDateTime;
   CheckState: TmstMPObjectCheckState;
@@ -857,23 +877,11 @@ begin
 end;
 
 procedure TmstMPBrowserForm.ShowFilterDialog;
-var
-  Pt: TPoint;
-//  Dlg: TmstProjectBrowserFilterMpDialog;
 begin
   if mstMPBrowserFilterDialog = nil then
-  begin
     mstMPBrowserFilterDialog := TmstMPBrowserFilterDialog.Create(Self);
-//    Pt.X := 0;
-//    Pt.Y := btnFilterClear.Height + 1;
-//    Pt := btnFilterClear.ClientToScreen(Pt);
-//    mstMPBrowserFilterDialog.Left := Pt.X;
-//    mstMPBrowserFilterDialog.Top := Pt.Y;
-  end;
   if mstMPBrowserFilterDialog.Execute(FFilter) then
-  begin
     ApplyFilter();
-  end;
 end;
 
 procedure TmstMPBrowserForm.trackAlphaChange(Sender: TObject);

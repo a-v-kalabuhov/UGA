@@ -2,12 +2,17 @@ unit uStringUtils;
 
 interface
 
-function CheckStringFormat(const Format, Str: String): Boolean;
+type
+  TStringConverter = class
+  public
+    class var FloatValue: Double;
+    class function StrToFloat(S: string): Boolean;
+  end;
 
 implementation
 
 uses
-  Classes;
+  SysUtils, Classes;
 
 type
   TFormatComparer = class
@@ -61,6 +66,14 @@ begin
   begin
     I := Pos('%', FFormat);
   end;
+end;
+
+{ TStringConverter }
+
+class function TStringConverter.StrToFloat(S: string): Boolean;
+begin
+  S := StringReplace(StringReplace(Trim(S), '.', DecimalSeparator, [rfReplaceAll]), ',', DecimalSeparator, [rfReplaceAll]);
+  Result := TryStrToFloat(S, FloatValue);
 end;
 
 end.

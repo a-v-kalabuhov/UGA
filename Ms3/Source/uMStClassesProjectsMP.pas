@@ -157,6 +157,7 @@ type
     property Address: string read FAddress write SetAddress;
     property Archived: Boolean read FArchived write SetArchived;
     property Bottom: string read FBottom write SetBottom;
+    // Id в классификаторе
     property MpClassId: Integer read FClassId write SetClassId;
     // для экспорта
     property MpClassGuid: string read FClassGuid write SetClassGuid;
@@ -224,6 +225,12 @@ type
     //
     property TempPoints: TEzVector read FTempPoints;
     property TempСategory: string read FTempСaеtegory write SetTempСaеtegory;
+  public
+    /// <summary>
+    /// Заменяет данные о координатах на данные из Ent.    
+    /// </summary>
+    procedure ReplaceEntity(Ent: TEzEntity; ClearLoadedData: Boolean);
+    procedure RestoreGuid();
   end;
 
   TmstProjectObjects = class(TObjectList)
@@ -888,6 +895,24 @@ end;
 function TmstMPObject.GetText: String;
 begin
   Result := '';
+end;
+
+procedure TmstMPObject.ReplaceEntity(Ent: TEzEntity; ClearLoadedData: Boolean);
+begin
+  FEzId := Integer(Ent.EntityID);
+  FEzData.Size := 0;
+  Ent.SaveToStream(FEzData);
+  FEzData.Position := 0;
+  if ClearLoadedData then
+  begin
+    FEzLayerRecno := 0;
+    FEzLayerName := '';
+  end;
+end;
+
+procedure TmstMPObject.RestoreGuid;
+begin
+  FMPObjectGuid := FGuid;
 end;
 
 procedure TmstMPObject.SetAddress(const Value: string);

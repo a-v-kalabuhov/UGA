@@ -9,7 +9,7 @@ uses
 type
   TmstDialogFactory = class
   public
-    class function NewImportLayerDialog(): ImstImportLayerDialog; 
+    class function NewImportLayerDialog(): ImstImportLayerDialog;
   end;
 
 implementation

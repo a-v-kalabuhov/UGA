@@ -24,6 +24,7 @@ type
     //
     function GetObjByDbId(const ObjId: Integer; LoadEzData: Boolean): TmstMPObject;
     procedure DeleteObj(const ObjId: Integer);
+    procedure DivideObj(const ObjId: Integer);
     function EditNewObject(const Obj: TmstMPObject): Boolean;
     function EditObjProperties(const ObjId: Integer): Boolean;
 //    function EditObjectProps(const Obj: TmstMPObject): Boolean;
@@ -69,6 +70,7 @@ type
     procedure RefreshBrowseDataSetRow(const ObjId: Integer; TargetDataSet: TDataSet);
     procedure Subscribe(Subscriber: ImstMPObjEventSubscriber);
     procedure UnSubscribe(Subscriber: ImstMPObjEventSubscriber);
+    function CanDivide(const ObjId: Integer): Boolean;
   end;
 
   ImstMPObjectSaver = interface

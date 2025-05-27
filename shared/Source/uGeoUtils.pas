@@ -101,7 +101,6 @@ type
     procedure Convert(ToCs: TCoordSystem);
   end;
 
-
   function GetNomenclatureCoords500(var aNomenclature: String; var aTop, aLeft: Integer): Boolean;
 
 implementation

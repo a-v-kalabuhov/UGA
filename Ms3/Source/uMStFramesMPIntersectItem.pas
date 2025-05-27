@@ -4,11 +4,16 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, 
-  Dialogs, StdCtrls, ImgList, Menus, Clipbrd,
+  Dialogs, StdCtrls, ImgList, Menus, Clipbrd, StdActns, ActnList, ExtCtrls,
+  //
   JvExControls, JvSpeedButton,
+  //
   EzLib,
+  //
   uCK36, uGeoTypes,
-  uEzGeometry, StdActns, ActnList, ExtCtrls;
+  uEzGeometry,
+  //
+  uMStKernelUtils, uMStKernelGISUtils;
 
 type
   TmstMPIntersectItemFrame = class;
@@ -54,7 +59,6 @@ type
     FPoint1: TEzPoint;
     FPoint1Empty: Boolean;
     FCoordSystem: TCoordSystem;
-    FKind: TSegmentsArrangement;
     FObjId: Integer;
     FOnItemProperties: TIntersectItemEvent;
     FOnDisplayItem: TIntersectItemEvent;
@@ -71,7 +75,7 @@ type
     procedure SetOnItemProperties(const Value: TIntersectItemEvent);
     procedure SetOnDisplayItem(const Value: TIntersectItemEvent);
     procedure SetDisplaying(const Value: Boolean);
-    procedure CopyPointToClipboard(const aPt: TEzPoint);
+    procedure CopyPointToClipboard(aPt: TEzPoint);
     procedure SetOnLocateItem(const Value: TIntersectItemEvent);
     procedure SetAddress(const Value: string);
     procedure SetProjectNumber(const Value: string);
@@ -103,18 +107,10 @@ implementation
 
 { TFrame1 }
 
-procedure TmstMPIntersectItemFrame.CopyPointToClipboard(const aPt: TEzPoint);
-var
-  S: string;
+procedure TmstMPIntersectItemFrame.CopyPointToClipboard(aPt: TEzPoint);
 begin
-  S := Format('%0.2f', [aPt.Y]) + #9 +
-       Format('%0.9f', [aPt.X]) + #9;
-  if FCoordSystem = csMCK36 then
-    S := S + 'MSK36'
-  else
-    S := S + 'VRN';
-  S := S + #9;
-  Clipboard.AsText := S;
+  aPt := DecartToCityPoint(aPt);
+  TPointUtils.PointToClipboard(aPt.X, aPt.Y, FCoordSystem = csMCK36);
 end;
 
 constructor TmstMPIntersectItemFrame.Create(AOwner: TComponent);

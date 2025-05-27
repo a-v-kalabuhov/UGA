@@ -274,7 +274,6 @@ end;
 
 procedure TmstMPMIFExport.WriteEntity;
 var
-  OldSep: Char;
   AddFields: Boolean;
 begin
   AddFields := True;

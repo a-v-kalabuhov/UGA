@@ -8,7 +8,7 @@ uses
   EzBaseGIS, EzLib, EzBase,
   RxMemDS,
   uCommonUtils, uGC,
-  uEzEntityCSConvert, uEzIntersection, uEzGeometry, uEzRectRelation,
+  uEzEntityCSConvert, uEzIntersection, uEzGeometry, uEzRectRelation, uEzEntityDivide,
   uMStConsts,
   uMStClassesProjects, uMStClassesProjectsMP, uMStKernelGISUtils, uMStClassesMasterPlan, uMStKernelIBX,
   uMStModuleProjectImport, uMStClassesProjectsEz, uMStClassesMPClassif, uMStClassesMPIntf, uMStKernelClasses,
@@ -73,6 +73,8 @@ type
     FTableVersion: Integer;
     FSubscribers: TInterfaceList;
     FIntersectDialog: TForm;
+    procedure UpdateIntersectListAfterDivision(const ObjId: Integer; Obj1, Obj2: TmstMPObject);
+  private
     /// <summary>
     /// «агружает данные по сводному плану в пам€ть из базы данных.
     /// </summary>
@@ -80,6 +82,7 @@ type
     //
     function GetObjByDbId(const ObjId: Integer; LoadEzData: Boolean): TmstMPObject;
     procedure DeleteObj(const ObjId: Integer);
+    procedure DivideObj(const ObjId: Integer);
     function EditObjProperties(const ObjId: Integer): Boolean;
     function EditNewObject(const MpObj: TmstMPObject): Boolean;
     function CanFindIntersections(const ObjId: Integer): Boolean;
@@ -102,11 +105,13 @@ type
     procedure ExportToMif(const aMifFileName: string);
     procedure LoadMPObjects(const aLeftGeo, aTopGeo, aRightGeo, aBottomGeo: Double);
   private
+    // ImstMPModuleObjList
     function BrowserDataSet(): TDataSet;
     procedure RefreshBrowseDataSetRow(const ObjId: Integer; TargetDataSet: TDataSet);
     procedure Subscribe(Subscriber: ImstMPObjEventSubscriber);
     procedure UnSubscribe(Subscriber: ImstMPObjEventSubscriber);
     function Browser: ImstMPBrowser;
+    function CanDivide(const ObjId: Integer): Boolean;
   private
     FMPAdapter: TmstMPObjectAdapter;
     FEzAdapter: TmstMPObjectEzAdapter;
@@ -117,7 +122,7 @@ type
     procedure RefreshMPObjectData(aObj: TmstMPObject; TargetDataSet: TDataSet);
     procedure RefreshMPObjectDataInDs(aObj: TmstMPObject; Ds: TDataSet);
     // сохран€ет в базу
-    procedure SaveMPObjectCoords(aObj: TmstMPObject);
+    procedure SaveMPObjectAndCoords(aObj: TmstMPObject);
     procedure SaveMPObjectSemantics(aObj: TmstMPObject);
     procedure AddCurrentObjToLayer(const Display: Boolean; const ZoomIfVisible: Boolean);
     function LocateObj(ObjId: Integer; Ds: TDataSet): Boolean;
@@ -132,7 +137,7 @@ implementation
 {$R *.dfm}
 
 uses
-  uMStClassesProjectsUtils;
+  uMStClassesProjectsUtils, uMStDialogPoint;
 
 const
   SQL_GET_MP_OBJECTS_LIST =
@@ -370,11 +375,20 @@ const
 
 { TmstMasterPlanModule }
 
+function TmstMasterPlanModule.CanDivide(const ObjId: Integer): Boolean;
+begin
+  Result := False;
+  if LocateObj(ObjId, memEzData) then
+    // работает только дл€ полилиний и полигонов.
+    Result := FEzAdapter.EzEntityId in [idPolyline, idPolygon];
+end;
+
 function TmstMasterPlanModule.CanFindIntersections(const ObjId: Integer): Boolean;
 begin
-  LocateObj(ObjId, memEzData);
-  // работает только дл€ полилиний и полигонов.
-  Result := FEzAdapter.EzEntityId in [idPolyline, idPolygon]; 
+  Result := False;
+  if LocateObj(ObjId, memEzData) then
+    // работает только дл€ полилиний и полигонов.
+    Result := FEzAdapter.EzEntityId in [idPolyline, idPolygon];
 end;
 
 function TmstMasterPlanModule.Classifier: TmstMPClassifier;
@@ -509,6 +523,56 @@ begin
   // если окно открыто, то назначаем в него слой
   FBrowserForm.DrawBox := aDrawBox;
   FBrowserForm.Browse();
+end;
+
+procedure TmstMasterPlanModule.DivideObj(const ObjId: Integer);
+var
+  X, Y: Double;
+  Dummy: Boolean;
+  Ent: TEzEntity;
+  Divider: TEzEntityDivider;
+  TheObj: TmstMPObject;
+  NewObj: TmstMPObject;
+begin
+  X := 0;
+  Y := 0;
+  if TmstPointForm.ShowPointDlg(
+      '“очка разделени€',
+      X, Y, Dummy, False, True, False)
+  then
+  begin
+    // получили точку
+    if not LocateObj(ObjId, memEzData) then
+      raise Exception.Create('TmstMasterPlanModule.DivideObj - LocateObj(ObjId, memEzData)');
+    // - теперь вытаскиваем энтити
+    Ent := FEzAdapter.GetEntity();
+    Divider := TEzEntityDivider.Create(Ent);
+    try
+      // формируем две новых ентити
+      Divider.Divide(Point2D(Y, X), FiveMm);
+      // - после этого вытаскиваем объект из Ѕƒ и замен€ем ему энтити на новую
+      TheObj := GetObjByDbId(ObjId, False);
+      TheObj.ReplaceEntity(Divider.Result1, False);
+      // - потом клонируем объект, создаЄм ему новый ID, назвачаем вторую энтити и сохран€ем
+      NewObj := TmstMPObject.Create;
+      NewObj.Assign(TheObj);
+      NewObj.DatabaseId := 0;
+      NewObj.RestoreGuid();
+      NewObj.ReplaceEntity(Divider.Result2, True);
+      //
+      SaveMPObjectAndCoords(TheObj);
+      SaveMPObjectAndCoords(NewObj);
+      //
+      RefreshObjList();
+      //
+      if IsLoaded(NewObj.DatabaseId) then
+        LoadToGis(NewObj.DatabaseId, False, False);
+      //
+      UpdateIntersectListAfterDivision(ObjId, TheObj, NewObj);
+    finally
+      Divider.Free;
+    end;
+  end;
 end;
 
 function TmstMasterPlanModule.DoCreatePrjReader(): IEzProjectReader;
@@ -653,7 +717,7 @@ begin
     MpObj.CK36 := False;
     MpObj.ExchangeXY := False;
     //
-    SaveMPObjectCoords(MpObj);
+    SaveMPObjectAndCoords(MpObj);
     RefreshObjList();
   end;
 end;
@@ -1047,7 +1111,7 @@ begin
   Dlg := TMStMPIntersectionsDialog.Create(Self);
   FIntersectDialog := Dlg;
   // - загружаем туда Found
-  Dlg.Prepare(Self as ImstMPModule, Found);
+  Dlg.Prepare(Self as ImstMPModule, Self as ImstMPModuleObjList, Found);
   // - показываем список
 //  Dlg.ShowModal;
   Dlg.Show;
@@ -1676,7 +1740,7 @@ begin
   end;
 end;
 
-procedure TmstMasterPlanModule.SaveMPObjectCoords;
+procedure TmstMasterPlanModule.SaveMPObjectAndCoords;
 var
   Db: IDb;
   Saver: ImstObjectSaver;
@@ -1861,6 +1925,16 @@ end;
 procedure TmstMasterPlanModule.UnSubscribe(Subscriber: ImstMPObjEventSubscriber);
 begin
   FSubscribers.Remove(Subscriber); 
+end;
+
+procedure TmstMasterPlanModule.UpdateIntersectListAfterDivision(const ObjId: Integer; Obj1, Obj2: TmstMPObject);
+var
+  Dlg: TMStMPIntersectionsDialog;
+begin
+  if not Assigned(FIntersectDialog) then
+    Exit;
+  Dlg := FIntersectDialog as TMStMPIntersectionsDialog;
+  Dlg.UpdateData(ObjId, Obj1, Obj2);
 end;
 
 procedure TmstMasterPlanModule.UpdateLayersVisibility(aLayers: TmstLayerList);

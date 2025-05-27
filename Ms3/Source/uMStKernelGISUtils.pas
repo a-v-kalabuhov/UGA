@@ -35,6 +35,8 @@ type
       rrIsInside        // один прямоугольник внутри другого
   );
 
+  TMarkerPosition = (mpLeft, mpTop, mpBottom, mpRight);
+
   TPointArray2D = array of TEzPoint;
 
   function IEntity(Entity: TEzEntity): IAutoEntity;
@@ -61,7 +63,7 @@ type
   procedure MoveRect2D(var Rect: TEzRect; const dX, dY: Double);
   //
   procedure AddPointMarker(var EntList: TEzEntityList; const X, Y, Scale: Double; const LabelText: string;
-    const MarkerColor: TColor = clRed; const TextColor: TColor = clPurple);
+    const MarkerPosition: TMarkerPosition; const MarkerColor: TColor = clRed; const TextColor: TColor = clPurple);
   // in pixels
   function GetPageRectWithoutMargins: TEzRect;
   // in mms
@@ -367,11 +369,11 @@ begin
 end;
 
 procedure AddPointMarker(var EntList: TEzEntityList; const X, Y, Scale: Double; const LabelText: string;
-  const MarkerColor: TColor = clRed; const TextColor: TColor = clPurple);
+  const MarkerPosition: TMarkerPosition; const MarkerColor: TColor = clRed; const TextColor: TColor = clPurple);
 var
   Marker: TEzRectangle;
   aText: TezTrueTypeText;
-  P1, P2: TEzPoint;
+  P1, P2, Bp: TEzPoint;
   H1, H2: Double;
 begin
   if not Assigned(EntList) then
@@ -394,6 +396,35 @@ begin
       H2 * 1.5,
       0);
     aText.FontTool.Color := clPurple;
+    aText.UpdateExtension;
+    case MarkerPosition of
+      mpLeft:
+        begin
+          Bp := aText.BasePoint;
+          H1 := aText.FBox.Emax.x - aText.FBox.Emin.x;
+          Bp.x := Bp.x - H1 * 1.05;
+          Bp.y := Marker.FBox.Emax.y;
+          aText.BasePoint := Bp;
+        end;
+      mpTop:
+        begin
+          Bp := aText.BasePoint;
+          H1 := aText.FBox.Emax.y - aText.FBox.Emin.y;
+          Bp.y := Bp.y + H1 * 1.1;
+          aText.BasePoint := Bp;
+        end;
+      mpBottom: ;
+      mpRight:
+        begin
+          Bp := aText.BasePoint;
+          H1 := aText.FBox.Emax.x - aText.FBox.Emin.x;
+          Bp.x := Bp.x - H1 * 1.05;
+          Bp.y := Marker.FBox.Emax.y;
+          aText.BasePoint := Bp;
+        end;
+    end;
+
+    //
     EntList.Add(aText);
   end;
 end;

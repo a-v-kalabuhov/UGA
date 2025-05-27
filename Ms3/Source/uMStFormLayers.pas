@@ -444,8 +444,8 @@ end;
 procedure TMStFormLayers.LoadLayers;
 var
   I: Integer;
-  mstLayer: TmstLayer;
-  S: string;
+//  mstLayer: TmstLayer;
+//  S: string;
   LayerList: TList;
 begin
   LayerList := mstClientAppModule.Layers.GetPlainList();

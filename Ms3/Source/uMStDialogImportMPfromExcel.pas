@@ -402,9 +402,6 @@ var
   I, J: Integer;
   MpObj: TmstMPObject;
   IdList: TIntegerList;
-  LayerNames: TStringList;
-  S: string;
-  FoundMIssingLayers: Boolean;
   CatId: Integer;
 begin
   Result := False;
@@ -779,8 +776,6 @@ begin
 end;
 
 procedure TmstMPExcelDialogForm.spnSkipRowsChange(Sender: TObject);
-var
-  SkipRows: Integer;
 begin
   FSkipRows := Round(spnSkipRows.Value);
   ReloadGrid();

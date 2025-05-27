@@ -71,6 +71,7 @@ type
     constructor Create(const A1, A2, B1, B2: TEzPoint);
   end;
 
+  // проверка взаимного расположения двух отрезков
   ISegmentGeometry = interface
     ['{3872815A-EB89-464D-9F62-D89DC7C9F747}']
     procedure Process(const AA1, AA2, BB1, BB2: TEzPoint);
@@ -105,8 +106,8 @@ type
     function GetArrangement: TSegmentsArrangement;
     //
     property A1: TEzPoint read FA1;
-    property B1: TEzPoint read FA2;
-    property A2: TEzPoint read FB1;
+    property A2: TEzPoint read FA2;
+    property B1: TEzPoint read FB1;
     property B2: TEzPoint read FB2;
     property Delta: Double read FDelta write SetDelta;
   public
@@ -249,23 +250,37 @@ begin
     begin
       // одна точка совпала
       FCommonPt1 := FA1;
-      Result := DA2B1 < FDelta;
-      if Result then
+      if DA2B1 < FDelta then
       begin
         // вторая точка совпала
         FCommonPt2 := FA2;
         FArrangement := saEqual;
+        Result := True;
         Exit;
       end
       else
+      begin
         FArrangement := saConnect;
+        Result := False;
+      end;
     end
     else
     begin
       if DA2B1 < FDelta then
       begin
-        FCommonPt2 := FA2;
+        FCommonPt1 := FA2;
         FArrangement := saConnect;
+        Result := False;
+      end
+      else
+      begin
+        DA2B2 := Dist2D(FA2, FB2);
+        if DA2B2 < FDelta then
+        begin
+          FCommonPt1 := FA2;
+          FArrangement := saConnect;
+          Result := False;
+        end;
       end;
     end;
   end;

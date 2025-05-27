@@ -4,14 +4,14 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ToolWin,
+  Dialogs, StdCtrls, ToolWin, ImgList, Menus,
   //
-  JvExForms, JvScrollBox, JvScrollPanel,
+  JvExForms, JvScrollBox, JvScrollPanel, JvExControls, JvSpeedButton, JvExStdCtrls, JvGroupBox,
   //
   uGeoTypes,
   uMStFramesMPIntersectItem, uEzIntersection, uEzGeometry, uMStClassesProjectsMP,
   uMStClassesProjectsMPIntersect, uMStModuleApp, uMStClassesMPIntf, uMStKernelClasses,
-  uMStClassesProjects, JvExStdCtrls, JvGroupBox, ImgList, Menus, JvExControls, JvSpeedButton;
+  uMStClassesProjects;
 
 type
   TMStMPIntersectionsDialog = class(TForm, ImstMPObjEventSubscriber, ImstCoordView)
@@ -31,6 +31,7 @@ type
     N3: TMenuItem;
     N2: TMenuItem;
     ImageList1: TImageList;
+    btnRefresh: TJvSpeedButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -39,10 +40,12 @@ type
     procedure N1Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
+    procedure btnRefreshClick(Sender: TObject);
   private
     FFound: TmpIntersectionInfo;
     FFrames: TList;
     FMP: ImstMPModule;
+    FObjList: ImstMPModuleObjList;
     procedure AddListItems(const Idx: Integer);
     function GetObjText(const ObjId: Integer): string;
     procedure GenerateGUI();
@@ -52,9 +55,13 @@ type
     procedure LocateIntersectItem(Sender: TmstMPIntersectItemFrame; const ObjId: Integer);
     procedure SetDisplayingItem(Sender: TmstMPIntersectItemFrame; const ObjId: Integer);
   private
-    procedure Notify(const ObjId: Integer; Op: TRowOperation);
+    procedure ClearFrames();
+    procedure DoFullUpdate();
     procedure RemoveFrame(const ObjId: Integer);
     procedure UpdateSemanticsFrame(const ObjId: Integer);
+  private
+    // ImstMPObjEventSubscriber
+    procedure Notify(const ObjId: Integer; Op: TRowOperation);
   private
     // ImstCoordView
     procedure CoordSystemChanged(const Value: TCoordSystem);
@@ -62,7 +69,8 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     //
-    procedure Prepare(aMP: ImstMPModule; aFound: TmpIntersectionInfo);
+    procedure Prepare(aMP: ImstMPModule; aObjList: ImstMPModuleObjList; aFound: TmpIntersectionInfo);
+    procedure UpdateData(const ObjId: Integer; Obj1, Obj2: TmstMPObject);
   end;
 
 implementation
@@ -163,11 +171,29 @@ begin
   end;
 end;
 
+procedure TMStMPIntersectionsDialog.btnRefreshClick(Sender: TObject);
+begin
+  DoFullUpdate();
+end;
+
 procedure TMStMPIntersectionsDialog.Button1Click(Sender: TObject);
 begin
   TMPSettings.ClearIntersection();
   mstClientAppModule.RepaintViewports;
   Close;
+end;
+
+procedure TMStMPIntersectionsDialog.ClearFrames;
+var
+  I: Integer;
+  Tmp: TObject;
+begin
+  for I := FFrames.Count - 1 downto 0 do
+  begin
+    Tmp := FFrames[I];
+    Tmp.Free;
+  end;
+  FFrames.Clear;
 end;
 
 procedure TMStMPIntersectionsDialog.CoordSystemChanged(const Value: TCoordSystem);
@@ -206,8 +232,61 @@ begin
   FMP.EditObjProperties(ObjId);
 end;
 
+procedure TMStMPIntersectionsDialog.DoFullUpdate;
+var
+  TmpFound: TmpIntersectionInfo;
+  TheObj: TmstMPObject;
+  S: string;
+begin
+  if not FMP.CanFindIntersections(FFound.ObjId) then
+  begin
+    ShowMessage('Поиск пересечений не доступен для объектов данного типа!');
+    // Удалить все фреймы
+    // в панели объекта написать - ошибка
+    Exit;
+  end;
+  // ищем список объектов
+  // - архив не ищем
+  // - ищем среди всех, а не только загруженных
+  TmpFound := FMP.FindIntersects(FFound.ObjId);
+  try
+    if TmpFound.Count = 0 then
+    begin
+      // если не нашли, то показываем сообщение
+      ShowMessage('Пересечения не обнаружены!');
+      // Удалить все фреймы
+      // в панели объекта написать - не обнаружено
+    end
+    else
+    begin
+      // если нашли, то показываем окно
+      FFound.Free;
+      FFound := TmpFound;
+      //
+      TheObj := FMP.GetObjByDbId(FFound.ObjId, False);
+      if TheObj = nil then
+      begin
+        S := 'данные отсутствуют';
+        edAddress.Text := S;
+        edProjectNum.Text := S;
+      end
+      else
+      begin
+        edAddress.Text := TheObj.Address;
+        edProjectNum.Text := TheObj.DocNumber;
+      end;
+      //
+      ClearFrames();
+      GenerateGUI();
+    end;
+  finally
+//    FreeAndNil(Found);
+  end;
+end;
+
 procedure TMStMPIntersectionsDialog.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  FObjList.UnSubscribe(Self as ImstMPObjEventSubscriber);
   mstClientAppModule.CoordViews.UnSubscribe(Self as ImstCoordView);
   FMP.IntersectionsDialogClosed(Self);
   FreeAndNil(FFound);
@@ -288,8 +367,6 @@ begin
 end;
 
 procedure TMStMPIntersectionsDialog.Notify(const ObjId: Integer; Op: TRowOperation);
-var
-  RowObjId: Integer;
 begin
   case Op of
     rowInsert:
@@ -306,12 +383,13 @@ begin
   end;
 end;
 
-procedure TMStMPIntersectionsDialog.Prepare(aMP: ImstMPModule; aFound: TmpIntersectionInfo);
+procedure TMStMPIntersectionsDialog.Prepare;
 var
   TheObj: TmstMPObject;
   S: string;
 begin
   FMP := aMP;
+  FObjList := aObjList;
   FFound := aFound;
   //
   mstClientAppModule.CoordViews.Subscribe(Self as ImstCoordView);
@@ -329,7 +407,8 @@ begin
     edAddress.Text := TheObj.Address;
     edProjectNum.Text := TheObj.DocNumber;
   end;
-//Self.Realign;
+  //
+  FObjList.Subscribe(Self as ImstMPObjEventSubscriber);
 end;
 
 procedure TMStMPIntersectionsDialog.RemoveFrame(const ObjId: Integer);
@@ -381,6 +460,50 @@ begin
   TMPSettings.FIntersectPt2Empty := Sender.IsPoint2Empty;
   if not TMPSettings.FIntersectPt2Empty then
     TMPSettings.FIntersectPt2 := Sender.Point2;
+end;
+
+procedure TMStMPIntersectionsDialog.UpdateData;
+var
+  TmpFound: TmpIntersectionInfo;
+  TheObj: TmstMPObject;
+  S: string;
+  I: Integer;
+begin
+  if ObjId = FFound.ObjId then
+  begin
+    DoFullUpdate();
+    Exit;
+  end;
+  if Assigned(Obj1) and (Obj1.DatabaseId = FFound.ObjId) then
+  begin
+    DoFullUpdate();
+    Exit;
+  end;
+  if Assigned(Obj2) and (Obj2.DatabaseId = FFound.ObjId) then
+  begin
+    DoFullUpdate();
+    Exit;
+  end;
+  //
+  if Assigned(Obj1) then
+  begin
+    I := FFound.IndexOfObjectId(Obj1.DatabaseId);
+    if I >= 0 then
+    begin
+      DoFullUpdate();
+      Exit;
+    end;
+  end;
+  //
+  if Assigned(Obj2) then
+  begin
+    I := FFound.IndexOfObjectId(Obj2.DatabaseId);
+    if I >= 0 then
+    begin
+      DoFullUpdate();
+      Exit;
+    end;
+  end;
 end;
 
 procedure TMStMPIntersectionsDialog.UpdateSemanticsFrame(const ObjId: Integer);

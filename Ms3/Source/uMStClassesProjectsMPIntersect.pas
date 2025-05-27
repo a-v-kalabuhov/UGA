@@ -28,6 +28,7 @@ type
     //
     procedure AddIntersect(aIntersectObjId: Integer; IntersectEnt: TEzEntity; IntList: TEzIntersectionList);
     function Count: Integer;
+    function IndexOfObjectId(const ObjId: Integer): Integer;
     //
     property Entities[const Idx: Integer]: TEzEntity read GetEntities;
     property IntersectLists[const Idx: Integer]: TEzIntersectionList read GetIntersectLists;
@@ -83,6 +84,11 @@ end;
 function TmpIntersectionInfo.GetObjectIds(const Idx: Integer): Integer;
 begin
   Result := FObjIds[Idx];
+end;
+
+function TmpIntersectionInfo.IndexOfObjectId(const ObjId: Integer): Integer;
+begin
+  Result := FObjIds.IndexOfValue(ObjId);
 end;
 
 procedure TmpIntersectionInfo.SetMpClassId(const Value: Integer);

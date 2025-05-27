@@ -35,24 +35,24 @@ object mstPointForm: TmstPointForm
     FocusControl = edtY
   end
   object btnOk: TButton
-    Left = 31
-    Top = 80
+    Left = 8
+    Top = 78
     Width = 66
     Height = 25
     Caption = '&'#1054#1050
     Default = True
-    TabOrder = 2
+    TabOrder = 3
     OnClick = btnOkClick
   end
   object btnCancel: TButton
     Left = 111
-    Top = 80
+    Top = 78
     Width = 66
     Height = 25
     Cancel = True
     Caption = #1054'&'#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 3
+    TabOrder = 4
   end
   object edtX: TEdit
     Left = 8
@@ -76,6 +76,6 @@ object mstPointForm: TmstPointForm
     Caption = #1052#1077#1083#1082#1080#1081' '#1084#1072#1089#1096#1090#1072#1073
     Checked = True
     State = cbChecked
-    TabOrder = 4
+    TabOrder = 2
   end
 end

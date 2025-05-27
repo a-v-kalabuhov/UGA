@@ -111,7 +111,8 @@ uses
   uMStClassesProjectsMPIntersect in 'Source\uMStClassesProjectsMPIntersect.pas',
   uMStModuleDefaultActions in 'Source\uMStModuleDefaultActions.pas' {mstDefaultActionsModule: TDataModule},
   uMStDialogMPIntersections in 'Source\uMStDialogMPIntersections.pas' {MStMPIntersectionsDialog},
-  uMStFramesMPIntersectItem in 'Source\uMStFramesMPIntersectItem.pas' {mstMPIntersectItemFrame: TFrame};
+  uMStFramesMPIntersectItem in 'Source\uMStFramesMPIntersectItem.pas' {mstMPIntersectItemFrame: TFrame},
+  uMStKernelUtils in 'Source\uMStKernelUtils.pas';
 
 {$R *.RES}
 

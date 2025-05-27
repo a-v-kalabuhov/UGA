@@ -2,7 +2,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
   Left = 0
   Top = 0
   Caption = #1057#1074#1086#1076#1085#1099#1081' '#1087#1083#1072#1085
-  ClientHeight = 430
+  ClientHeight = 470
   ClientWidth = 1161
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -136,25 +136,25 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Left = 0
     Top = 29
     Width = 1161
-    Height = 401
+    Height = 441
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitHeight = 381
+    ExplicitHeight = 401
     object tabData: TPanel
       Left = 0
       Top = 0
       Width = 1161
-      Height = 401
+      Height = 441
       Align = alClient
       Caption = #1055#1088#1086#1077#1082#1090#1099
       TabOrder = 0
-      ExplicitHeight = 381
+      ExplicitHeight = 401
       object kaDBGrid1: TkaDBGrid
         Left = 1
         Top = 1
         Width = 1159
-        Height = 399
+        Height = 439
         Align = alClient
         DataSource = DataSource1
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
@@ -497,6 +497,13 @@ object mstMPBrowserForm: TmstMPBrowserForm
       Caption = #1053#1072#1081#1090#1080' '#1087#1077#1088#1077#1089#1077#1095#1077#1085#1080#1103'...'
       OnExecute = acObjCheckExecute
     end
+    object acObjDivideByPoint: TAction
+      Category = 'Object'
+      Caption = #1056#1072#1079#1073#1080#1090#1100' '#1086#1073#1098#1077#1082#1090' '#1085#1072' '#1076#1074#1072'...'
+      Hint = #1056#1072#1079#1076#1077#1083#1080#1090#1100' '#1083#1080#1085#1080#1102' '#1085#1072' '#1076#1074#1077' '#1087#1086' '#1082#1086#1086#1088#1076#1080#1085#1072#1090#1072#1084' '#1090#1086#1095#1082#1080' '#1076#1077#1083#1077#1085#1080#1103
+      OnExecute = acObjDivideByPointExecute
+      OnUpdate = acObjDivideByPointUpdate
+    end
   end
   object PopupMenu1: TPopupMenu
     Images = ImageList1
@@ -516,6 +523,9 @@ object mstMPBrowserForm: TmstMPBrowserForm
     end
     object N30: TMenuItem
       Action = acObjCheck
+    end
+    object N34: TMenuItem
+      Action = acObjDivideByPoint
     end
     object N2: TMenuItem
       Caption = '-'
@@ -553,7 +563,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Left = 128
     Top = 136
     Bitmap = {
-      494C0101090048006C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010109004800740010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -973,6 +983,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
       Caption = #1044#1077#1081#1089#1090#1074#1080#1103
       object N9: TMenuItem
         Action = acObjProperties
+        Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1089#1077#1084#1072#1085#1090#1080#1082#1091' '#1086#1073#1098#1077#1082#1090#1072
       end
       object N10: TMenuItem
         Action = acObjGiveOutCertif
@@ -985,6 +996,9 @@ object mstMPBrowserForm: TmstMPBrowserForm
       end
       object N29: TMenuItem
         Action = acObjCheck
+      end
+      object N32: TMenuItem
+        Action = acObjDivideByPoint
       end
       object N11: TMenuItem
         Caption = '-'
