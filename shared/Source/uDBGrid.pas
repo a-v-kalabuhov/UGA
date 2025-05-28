@@ -20,6 +20,8 @@ type
     var Background, FontColor: TColor; State: TGridDrawState; var FontStyle: TFontStyles) of object;
   TCreateEditorEvent = procedure (Sender: TObject; var aEditor: TInplaceEdit; var DefaultEditor: Boolean) of object;
   TLogicColumnEvent = procedure (Sender: TObject; Column: TColumn; var Value: Boolean) of object;
+  TGetSortColumnEvent = function (Sender: TObject; Column: TColumn; var Desc: Boolean): Boolean of object;
+  TOnDrawSortIcon = procedure (Sender: TObject; aCanvas: TCanvas; const aRect: TRect) of object;
 
   TkaDBGrid = class(TDBGrid)
   private
@@ -34,11 +36,15 @@ type
     FOnLogicalColumn: TLogicColumnEvent;
     FOnGetLogicalValue: TLogicColumnEvent;
     FOnCanShowEdit: TLogicColumnEvent;
+    FOnGetSortColumn: TGetSortColumnEvent;
+    FOnDrawSortIcon: TOnDrawSortIcon;
     procedure SetLineCount(const Value: Integer);
     procedure DrawTitleCell(const ARect: TRect; ACol, ARow: Integer;
       Column: TColumn; var AState: TGridDrawState);
     procedure SetOnCreateEditor(const Value: TCreateEditorEvent);
     function GetCurrentCol: TColumn;
+    procedure SetOnGetSortColumn(const Value: TGetSortColumnEvent);
+    procedure SetOnDrawSortIcon(const Value: TOnDrawSortIcon);
   protected
     function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean; override;
     function DoMouseWheelUp(Shift: TShiftState; MousePos: TPoint): Boolean; override;
@@ -49,6 +55,8 @@ type
     procedure LayoutChanged; override;
     function  CreateEditor: TInplaceEdit; override;
     function CanEditShow: Boolean; override;
+    function DoGetSortColumn(Column: TColumn; var Desc: Boolean): Boolean;
+    procedure DrawSortIcon(aCanvas: TCanvas; ARect: TRect; Column: TColumn; Desc: Boolean);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -69,6 +77,8 @@ type
     property OnEditorExit: TNotifyEvent read FOnEditorExit write FOnEditorExit;
     property OnEditorKeyPress: TKeyPressEvent read FOnEditorKeyPress write FOnEditorKeyPress;
     property OnGetLogicalValue: TLogicColumnEvent read FOnGetLogicalValue write FOnGetLogicalValue;
+    property OnGetSortColumn: TGetSortColumnEvent read FOnGetSortColumn write SetOnGetSortColumn;
+    property OnDrawSortIcon: TOnDrawSortIcon read FOnDrawSortIcon write SetOnDrawSortIcon;
     /// <summary>
     /// Ёто событие определ€ет, €вл€етс€ ли колонка логической.
     /// ≈сли €вл€етс€, то в €чейках колонки рисуетс€ галка.
@@ -110,6 +120,14 @@ begin
   inherited;
 end;
 
+function TkaDBGrid.DoGetSortColumn(Column: TColumn; var Desc: Boolean): Boolean;
+begin
+  if Assigned(FOnGetSortColumn) then
+    Result := FOnGetSortColumn(Self, Column, Desc)
+  else
+    Result := False;
+end;
+
 function TkaDBGrid.DoMouseWheelDown(Shift: TShiftState;
   MousePos: TPoint): Boolean;
 begin
@@ -130,6 +148,7 @@ procedure TkaDBGrid.DrawCell(ACol, ARow: Integer; ARect: TRect;
   AState: TGridDrawState);
 var
   DrawColumn: TColumn;
+  Desc: Boolean;
 begin
   if (ACol > 0) and (gdFixed in AState) and (dgTitles in Options) and (ARow = 0) then
   begin
@@ -139,9 +158,14 @@ begin
     else
       if DrawColumn.Showing then
         if gdFixed in AState then
-          Self.DrawTitleCell(ARect, ACol, ARow, DrawColumn, AState)
+        begin
+          Self.DrawTitleCell(ARect, ACol, ARow, DrawColumn, AState);
+        end
         else
           inherited;
+    Desc := False;
+    if DoGetSortColumn(DrawColumn, Desc) then
+      DrawSortIcon(Canvas, ARect, DrawColumn, Desc);
   end
   else
     inherited;
@@ -232,6 +256,85 @@ begin
   inherited DrawColumnCell(aRect, DataCol, Column, State);
 end;
 
+procedure TkaDBGrid.DrawSortIcon(aCanvas: TCanvas; ARect: TRect; Column: TColumn; Desc: Boolean);
+var
+  PenColor: TColor;
+  Pen1: TPenRecall;
+  X, Y, H: Integer;
+  ArrowWidth: Integer;
+  Triangle: Boolean;
+  TriangleSize: Integer;
+  Icon: Boolean;
+begin
+  Icon := True;
+  Triangle := True;
+  PenColor := clBlue;
+  ArrowWidth := 7 div 2;
+  TriangleSize := 7;
+  if Icon then
+  begin
+    if Assigned(FOnDrawSortIcon) then
+      FOnDrawSortIcon(Self, aCanvas, ARect);
+  end
+  else
+  begin
+  //  if Assigned(FGetSortIconPenColor) then
+  //    FGetSortIconPenColor(Self, );
+    H := ARect.Bottom - ARect.Top - 4;
+    X := ARect.Right - ArrowWidth - 2;
+    Y := ARect.Top + 2;
+    //
+    Pen1 := TPenRecall.Create(aCanvas.Pen);
+    try
+      aCanvas.Pen.Color := PenColor;
+  //    aCanvas.Pen.Width := 2;
+      aCanvas.Pen.Style := psSolid;
+      if Triangle then
+      begin
+        H := ARect.Bottom - ARect.Top;
+        if Desc then
+        begin
+          X := ARect.Right - TriangleSize;
+          Y := ARect.Top + (H - TriangleSize) div 2;
+          aCanvas.MoveTo(X, Y);
+          aCanvas.LineTo(X - TriangleSize, Y);
+          aCanvas.LineTo(X - TriangleSize div 2 + 1, Y + TriangleSize);
+          aCanvas.LineTo(X + 1, Y);
+        end
+        else
+        begin
+          X := ARect.Right - TriangleSize;
+          Y := ARect.Top + H - TriangleSize;
+          aCanvas.MoveTo(X, Y);
+          aCanvas.LineTo(X - TriangleSize, Y);
+          aCanvas.LineTo(X - TriangleSize div 2 + 1, Y - TriangleSize);
+          aCanvas.LineTo(X + 1, Y + 1);
+        end;
+      end
+      else
+      begin
+        aCanvas.MoveTo(X, Y);
+        aCanvas.LineTo(X, Y + H);
+        if Desc then
+        begin
+          aCanvas.MoveTo(X, Y);
+          aCanvas.LineTo(X - ArrowWidth, Y + ArrowWidth);
+          aCanvas.MoveTo(X, Y);
+          aCanvas.LineTo(X + ArrowWidth, Y + ArrowWidth);
+        end
+        else
+        begin
+          aCanvas.LineTo(X - ArrowWidth, Y + H - ArrowWidth);
+          aCanvas.MoveTo(X, Y + H);
+          aCanvas.LineTo(X + ArrowWidth, Y + H - ArrowWidth);
+        end;
+      end;
+    finally
+      Pen1.Free;
+    end;
+  end;
+end;
+
 procedure TkaDBGrid.LayoutChanged;
 begin
   inherited;
@@ -272,6 +375,7 @@ var
   TitleRect, TextRect, ButtonRect: TRect;
   I: Integer;
   InBiDiMode: Boolean;
+  Desc: Boolean;
 begin
   TitleRect := CalcTitleRect(Column, ARow, MasterCol);
 
@@ -357,6 +461,16 @@ end;
 procedure TkaDBGrid.SetOnCreateEditor(const Value: TCreateEditorEvent);
 begin
   FOnCreateEditor := Value;
+end;
+
+procedure TkaDBGrid.SetOnDrawSortIcon(const Value: TOnDrawSortIcon);
+begin
+  FOnDrawSortIcon := Value;
+end;
+
+procedure TkaDBGrid.SetOnGetSortColumn(const Value: TGetSortColumnEvent);
+begin
+  FOnGetSortColumn := Value;
 end;
 
 end.

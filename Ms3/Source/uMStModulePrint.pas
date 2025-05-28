@@ -1064,11 +1064,11 @@ begin
   P2.x := P1.x + 180 / 1000 * ReportScale;
   P2.y := P1.y - 93 / 1000 * ReportScale;
   // грузим в текст данные из файла
-  if FileExists(mstClientAppModule.SessionDir + 'header.rtf') then
+  if FileExists(mstClientAppModule.AppSettings.SessionDir + 'header.rtf') then
   begin
     Text := TStringList.Create;
     try
-      Text.LoadFromFile(mstClientAppModule.SessionDir + 'header.rtf');
+      Text.LoadFromFile(mstClientAppModule.AppSettings.SessionDir + 'header.rtf');
       // заменяем текст
       ReplaceVariables(Text);
       // создаем объект
@@ -1082,11 +1082,11 @@ begin
     end;
   end;
   //
-  if FileExists(mstClientAppModule.SessionDir + 'footer.rtf') then
+  if FileExists(mstClientAppModule.AppSettings.SessionDir + 'footer.rtf') then
   begin
     Text := TStringList.Create;
     try
-      Text.LoadFromFile(mstClientAppModule.SessionDir + 'footer.rtf');
+      Text.LoadFromFile(mstClientAppModule.AppSettings.SessionDir + 'footer.rtf');
       ReplaceVariables(Text);
       with PagesLayer.RecEntity.FBox do
         P1 := Point2D(xmin, ymin);
@@ -1101,11 +1101,11 @@ begin
     end;
   end;
   //
-  if FileExists(mstClientAppModule.SessionDir + 'pz.rtf') then
+  if FileExists(mstClientAppModule.AppSettings.SessionDir + 'pz.rtf') then
   begin
     Text := TStringList.Create;
     try
-      Text.LoadFromFile(mstClientAppModule.SessionDir + 'pz.rtf');
+      Text.LoadFromFile(mstClientAppModule.AppSettings.SessionDir + 'pz.rtf');
       ReplaceVariables(Text);
       with PagesLayer.RecEntity.FBox do
         P1 := Point2D(xmin + (xmax - xmin) / 2, ymin + (ymax - ymin) / 2);

@@ -234,6 +234,8 @@ type
 
     procedure ConnectToDB(Obj: TObject);
     function  Logon: Boolean;
+  private
+    // ImstAppSettings
     procedure ReadFormPosition(AOwner: TComponent; Form: TForm);
     procedure WriteFormPosition(AOwner: TComponent; Form: TForm);
     procedure ReadGridProperties(AOwner: TComponent; Grid: TDBGrid);
@@ -242,6 +244,10 @@ type
       const PropertyName: String; DataType: Integer; UseComponentName: Boolean = False): Variant;
     procedure SaveAppParam(AOwner, Component: TComponent; const PropertyName: String;
       const Value: Variant; UseComponentName: Boolean = False);
+    function SessionDir: String;
+  private
+    function GetAppSettings: ImstAppSettings;
+  public
     procedure SaveLayersVisibility();
     //
     procedure DisplayLayersDialog();
@@ -255,7 +261,6 @@ type
     procedure RemoveLoadedProject(const aId: Integer);
     //
     property MainWorkDir: String read FMainWorkDir;
-    function SessionDir: String;
     // Слои
     property Layers: TmstLayerList read FLayers;
     property LayerMaps: TEzBaseLayer read GetMapLayer; // M500
@@ -266,6 +271,7 @@ type
     property Addresses: TmstAddressList read FAddresses;
     property NetTypes: TmstProjectNetTypes read FNetTypes;
     //
+    property AppSettings: ImstAppSettings read GetAppSettings;
     property MP: ImstMPModule read GetMP;
     property ObjList: ImstMPModuleObjList read GetObjList;
     property CoordViews: ImstCoordViewList read GetCoordViews;
@@ -495,6 +501,11 @@ procedure TMStClientAppModule.DownloadStreets;
 begin
   FStreets.Clear;
   FMapMngr.LoadStreets(FStreets);
+end;
+
+function TMStClientAppModule.GetAppSettings: ImstAppSettings;
+begin
+  Result := Self as ImstAppSettings;
 end;
 
 procedure TMStClientAppModule.GetAppSettingsForMP(Sender: TObject; out aAppSettings: ImstAppSettings);

@@ -823,7 +823,7 @@ begin
   // создаём новую папку
   // заполняем поля гис
   // сохраняем в новый файл в этой папке
-  Path := TPath.Combine(mstClientAppModule.SessionDir, GetUniqueString());
+  Path := TPath.Combine(mstClientAppModule.AppSettings.SessionDir, GetUniqueString());
   ForceDirectories(Path);
   EzGIS1.LayersSubdir := Path;
   GisFileName := 'import';

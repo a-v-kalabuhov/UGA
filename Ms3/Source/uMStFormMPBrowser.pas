@@ -5,13 +5,13 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs, DB,
   EzBaseGIS, IBSQL, Menus, IBCustomDataSet, IBUpdateSQL, ActnList, IBDatabase, IBQuery, Grids, DBGrids,
-  ComCtrls, StdCtrls, DBCtrls, Buttons, ExtCtrls, ShellAPI, Clipbrd, ImgList,
+  ComCtrls, StdCtrls, DBCtrls, Buttons, ExtCtrls, ShellAPI, Clipbrd, ImgList, StrUtils,
   //
   RxMemDS,
   EzLib,
   //
   uDBGrid,
-  uGC, uFileUtils, uGeoTypes, uCK36, 
+  uGC, uFileUtils, uGeoTypes, uCK36, uTypes,
   uMStKernelIBX,
   uMStClassesProjectsMP, uMStClassesMPIntf, uMStKernelAppSettings,
   uMStKernelClassesQueryIndex, uMStClassesProjectsUtils, uMStClassesProjectsBrowserMP, uMStClassesMPStatuses,
@@ -94,6 +94,7 @@ type
     acObjDivideByPoint: TAction;
     N32: TMenuItem;
     N34: TMenuItem;
+    SortImageList: TImageList;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure chbTransparencyClick(Sender: TObject);
     procedure trackAlphaChange(Sender: TObject);
@@ -130,9 +131,17 @@ type
     procedure memBrowser2AfterClose(DataSet: TDataSet);
     procedure acObjDivideByPointUpdate(Sender: TObject);
     procedure acObjDivideByPointExecute(Sender: TObject);
+    procedure kaDBGrid1TitleClick(Column: TColumn);
+    procedure kaDBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    function kaDBGrid1GetSortColumn(Sender: TObject; Column: TColumn; var Desc: Boolean): Boolean;
+    procedure kaDBGrid1DrawSortIcon(Sender: TObject; aCanvas: TCanvas; const aRect: TRect);
   private
     FDrawBox: TEzBaseDrawBox;
     procedure SetDrawBox(const Value: TEzBaseDrawBox);
+  private
+    FSortFieldName: string;
+    FSortDesc: Boolean;
   private
     FFilter: TmstProjectsBrowserFilterMP;
     FHighlightEnabled: Boolean;
@@ -487,6 +496,8 @@ begin
 end;
 
 procedure TmstMPBrowserForm.Browse;
+var
+  V: Variant;
 begin
   if not Visible then
   begin
@@ -495,6 +506,10 @@ begin
     DataSource1.DataSet := memBrowser2;
     FAppSettings.ReadFormPosition(Application, Self);
     FAppSettings.ReadGridProperties(Self, kaDBGrid1);
+    //
+    FSortFieldName := mstClientAppModule.GetOption('MPBrowserForm', 'SortField', '');
+    FSortDesc := mstClientAppModule.GetOption('MPBrowserForm', 'SortFieldOrder', '0') <> '0';
+    //
     ApplyFilter();
     memBrowser2.Active := True;
     //
@@ -628,6 +643,8 @@ begin
   TMPSettings.SetCurrentMPObj(-1);
   FAppSettings.WriteFormPosition(Application, Self);
   FAppSettings.WriteGridProperties(Self, kaDBGrid1);
+  mstClientAppModule.SetOption('MPBrowserForm', 'SortField', FSortFieldName);
+  mstClientAppModule.SetOption('MPBrowserForm', 'SortFieldOrder', IfThen(FSortDesc, '1', '0'));
   memBrowser2.Close;
   FObjList.UnSubscribe(Self as ImstMPObjEventSubscriber);
   FMP.NavigatorClosed();
@@ -685,6 +702,36 @@ begin
   end;
 end;
 
+procedure TmstMPBrowserForm.kaDBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer;
+  Column: TColumn; State: TGridDrawState);
+begin
+  if gdFixed in State then
+    if Column.FieldName = FSortFieldName then
+    begin
+      //DrawSortIcon(Rect, FSortDesc);
+    end;
+end;
+
+procedure TmstMPBrowserForm.kaDBGrid1DrawSortIcon(Sender: TObject; aCanvas: TCanvas; const aRect: TRect);
+var
+  idx: Integer;
+  Hr: Integer;
+  Himg: Integer;
+  Wimg: Integer;
+  X, Y: Integer;
+begin
+  if FSortDesc then
+    Idx := 1
+  else
+    Idx := 0;
+  Hr := aRect.Bottom - aRect.Top;
+  Himg := SortImageList.Height;
+  Y := aRect.Top + (Hr - Himg) div 2;
+  Wimg := SortImageList.Width;
+  X := aRect.Right - Hr + (Hr - Wimg) div 2;
+  SortImageList.Draw(aCanvas, X, Y, idx, dsTransparent, itImage);
+end;
+
 procedure TmstMPBrowserForm.kaDBGrid1GetLogicalValue(Sender: TObject; Column: TColumn; var Value: Boolean);
 begin
 //  if (Column.FieldName = SF_DISMANTLED) or
@@ -696,6 +743,12 @@ begin
 //     (Column.FieldName = SF_HAS_CERTIF)
 //  then
     Value := Column.Field.AsInteger = 1;
+end;
+
+function TmstMPBrowserForm.kaDBGrid1GetSortColumn(Sender: TObject; Column: TColumn; var Desc: Boolean): Boolean;
+begin
+  Result := Column.FieldName = FSortFieldName;
+  Desc := FSortDesc;
 end;
 
 procedure TmstMPBrowserForm.kaDBGrid1LogicalColumn(Sender: TObject; Column: TColumn; var Value: Boolean);
@@ -723,6 +776,21 @@ begin
     Pt := Mouse.CursorPos;
     PopupMenu1.Popup(Pt.X, Pt.Y);
   end;
+end;
+
+procedure TmstMPBrowserForm.kaDBGrid1TitleClick(Column: TColumn);
+begin
+  if FSortFieldName = Column.FieldName then
+  begin
+    FSortDesc := not FSortDesc;
+  end
+  else
+  begin
+    FSortFieldName := Column.FieldName;
+    FSortDesc := False;
+  end;
+  kaDBGrid1.Update();
+  memBrowser2.SortOnFields(FSortFieldName, True, FSortDesc);
 end;
 
 procedure TmstMPBrowserForm.LoadAndDisplayCurrentObj;

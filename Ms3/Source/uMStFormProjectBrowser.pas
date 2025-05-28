@@ -231,8 +231,8 @@ begin
   mstProjectBrowserForm := nil;
   Action := caFree;
   TProjectsSettings.SetCurrentProjectLine(-1, -1);
-  mstClientAppModule.WriteFormPosition(Application, Self);
-  mstClientAppModule.WriteGridProperties(Self, kaDBGrid1);
+  mstClientAppModule.AppSettings.WriteFormPosition(Application, Self);
+  mstClientAppModule.AppSettings.WriteGridProperties(Self, kaDBGrid1);
 end;
 
 procedure TMStProjectBrowserForm.FormCreate(Sender: TObject);
@@ -240,8 +240,8 @@ begin
   FFilter := TmstProjectsBrowserFilter.Create;
   FRowIndex := TQueryRowIndex.Create;
   FHighlightEnabled := True;
-  mstClientAppModule.ReadFormPosition(Application, Self);
-  mstClientAppModule.ReadGridProperties(Self, kaDBGrid1);
+  mstClientAppModule.AppSettings.ReadFormPosition(Application, Self);
+  mstClientAppModule.AppSettings.ReadGridProperties(Self, kaDBGrid1);
 end;
 
 procedure TMStProjectBrowserForm.FormDestroy(Sender: TObject);
@@ -793,7 +793,7 @@ begin
         end;
       end;
       // пишем его в файл
-      TmpFile := TFileUtils.CreateTempFile(mstClientAppModule.SessionDir);
+      TmpFile := TFileUtils.CreateTempFile(mstClientAppModule.AppSettings.SessionDir);
       CoordsFile := ChangeFileExt(TmpFile, '.txt');
       TFileUtils.RenameFile(TmpFile, CoordsFile);
       Coords.SaveToFile(CoordsFile);

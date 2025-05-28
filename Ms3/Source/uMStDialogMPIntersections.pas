@@ -294,12 +294,12 @@ end;
 
 procedure TMStMPIntersectionsDialog.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
-  mstClientAppModule.WriteFormPosition(Application, Self);
+  mstClientAppModule.AppSettings.WriteFormPosition(Application, Self);
 end;
 
 procedure TMStMPIntersectionsDialog.FormCreate(Sender: TObject);
 begin
-  mstClientAppModule.ReadFormPosition(Application, Self);
+  mstClientAppModule.AppSettings.ReadFormPosition(Application, Self);
 end;
 
 procedure TMStMPIntersectionsDialog.FormShow(Sender: TObject);
@@ -464,9 +464,6 @@ end;
 
 procedure TMStMPIntersectionsDialog.UpdateData;
 var
-  TmpFound: TmpIntersectionInfo;
-  TheObj: TmstMPObject;
-  S: string;
   I: Integer;
 begin
   if ObjId = FFound.ObjId then

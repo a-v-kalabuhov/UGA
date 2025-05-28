@@ -262,7 +262,7 @@ begin
   end
   else
   begin
-    TempFile := TFileUtils.CreateTempFile(mstClientAppModule.SessionDir, 'report');
+    TempFile := TFileUtils.CreateTempFile(mstClientAppModule.AppSettings.SessionDir, 'report');
     ReportFile := ChangeFileExt(TempFile, '.txt');
     if TFileUtils.RenameFile(TempFile, ReportFile) then
     begin

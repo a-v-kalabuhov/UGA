@@ -12,6 +12,10 @@ type
     procedure WriteFormPosition(AOwner: TComponent; Form: TForm);
     procedure ReadGridProperties(AOwner: TComponent; Grid: TDBGrid);
     procedure WriteGridProperties(AOwner: TComponent; Grid: TDBGrid);
+    function  ReadAppParam(AOwner, Component: TComponent;
+      const PropertyName: String; DataType: Integer; UseComponentName: Boolean = False): Variant;
+    procedure SaveAppParam(AOwner, Component: TComponent; const PropertyName: String;
+      const Value: Variant; UseComponentName: Boolean = False);
     function SessionDir: string;
   end;
 

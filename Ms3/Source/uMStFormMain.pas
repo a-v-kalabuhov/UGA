@@ -1251,7 +1251,7 @@ begin
   CanClose := Application.MessageBox(PChar('Закрыть приложение?'), PChar('Подтверждение'), MB_YESNO + MB_ICONQUESTION) = mrYes;
   if CanClose then
     Finalize(FPoints);
-  mstClientAppModule.WriteFormPosition(Application, Self);
+  mstClientAppModule.AppSettings.WriteFormPosition(Application, Self);
   mstClientAppModule.SetOption('MainForm', 'LeftPanelWidth', IntToStr(pnLeft.Width));
   mstClientAppModule.SetOption('MainForm', 'RightPanelWidth', IntToStr(pnRight.Width));
   mstClientAppModule.SetOption('Session', 'Map500Search', edtFastFindMap.Text);
@@ -1263,7 +1263,7 @@ procedure TmstClientMainForm.FormCreate(Sender: TObject);
 begin
   FRestored := False;
   FSelector := TmstGUISelector.Create;
-  mstClientAppModule.ReadFormPosition(Application, Self);
+  mstClientAppModule.AppSettings.ReadFormPosition(Application, Self);
   CmdLine.AccuSnap.Enabled := False;
   Caption := Application.Title;
   //
@@ -1308,7 +1308,7 @@ procedure TmstClientMainForm.FormShow(Sender: TObject);
 var
   B: Boolean;
 begin
-  B := mstClientAppModule.ReadAppParam(Application, Self, 'MainFormBigButtons', varBoolean);
+  B := mstClientAppModule.AppSettings.ReadAppParam(Application, Self, 'MainFormBigButtons', varBoolean);
   N44.Checked := B;
   UpdateButtonSize(B);
   //
@@ -1633,7 +1633,7 @@ procedure TmstClientMainForm.LocateMPLine(const ClickPoint: TEzPoint);
 var
   Layer: TEzBaseLayer;
   NRecNo: Integer;
-  PrjId, LineId: Integer;
+//  PrjId, LineId: Integer;
   Ent: TEzEntity;
 begin
   if Assigned(mstClientAppModule.ObjList.Browser) then
@@ -2609,7 +2609,7 @@ procedure TmstClientMainForm.N44Click(Sender: TObject);
 begin
   N44.Checked := not N44.Checked;
   UpdateButtonSize(N44.Checked);
-  mstClientAppModule.SaveAppParam(Application, Self, 'MainFormBigButtons', N44.Checked);
+  mstClientAppModule.AppSettings.SaveAppParam(Application, Self, 'MainFormBigButtons', N44.Checked);
 end;
 
 procedure TmstClientMainForm.N53Click(Sender: TObject);

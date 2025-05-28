@@ -196,7 +196,7 @@ begin
   if not SaveDialogZip.Execute() then
     Exit;
   //
-  S := mstClientAppModule.SessionDir;
+  S := mstClientAppModule.AppSettings.SessionDir;
   Src := TPath.Finish(S, 'data.zip');
   if not FileExists(Src) then
   begin
