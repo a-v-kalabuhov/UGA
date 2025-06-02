@@ -62,6 +62,7 @@ type
     procedure SetUpdateObjectHandler(Value: TmstUpdateObjectEvent);
     //
     property Items[Index: Integer]: TmstLotListEz read GetItems write SetItems; default;
+    function IsEmpty: Boolean;
   end;
 
 implementation
@@ -108,6 +109,20 @@ end;
 function TmstLotRegistry.GetItems(Index: Integer): TmstLotListEz;
 begin
   Result := TmstLotListEz(inherited Items[Index]);
+end;
+
+function TmstLotRegistry.IsEmpty: Boolean;
+var
+  I: Integer;
+begin
+  Result := Count = 0;
+  if not Result then
+  begin
+    for I := 0 to Count - 1 do
+      if Items[I].Count > 0 then
+        Exit;
+  end;
+  Result := False;
 end;
 
 procedure TmstLotRegistry.SetBeforeAddLotHandler(Value: TBeforeAddLotEvent);

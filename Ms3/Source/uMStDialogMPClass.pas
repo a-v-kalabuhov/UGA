@@ -68,12 +68,12 @@ begin
     edLayerName.SetFocus;
     Exit;
   end;
-  if cbProjectLayer.ItemIndex < 0 then
-  begin
-    ShowMessage('Нужно указать слой для проектов!');
-    cbProjectLayer.SetFocus;
-    Exit;
-  end;
+//  if cbProjectLayer.ItemIndex < 0 then
+//  begin
+//    ShowMessage('Нужно указать слой для проектов!');
+//    cbProjectLayer.SetFocus;
+//    Exit;
+//  end;
   if cbMPLayer.ItemIndex < 0 then
   begin
     ShowMessage('Нужно указать слой для сводного плана!');
@@ -140,7 +140,10 @@ var
   I: Integer;
 begin
   I := cbProjectLayer.ItemIndex;
-  Result := Integer(FNetTypes.Objects[I]);
+  if I < 0 then
+    Result := -1
+  else
+    Result := Integer(FNetTypes.Objects[I]);
 end;
 
 procedure TmstMPClassDialog.SetId(const Value: Integer);

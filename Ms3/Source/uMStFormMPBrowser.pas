@@ -76,7 +76,7 @@ type
     trackAlpha: TTrackBar;
     chbTransparency: TCheckBox;
     N22: TMenuItem;
-    acTransparency: TAction;
+    acViewTransparency: TAction;
     btnZone: TSpeedButton;
     btnRemoveZone: TSpeedButton;
     acTransparency1: TMenuItem;
@@ -95,6 +95,15 @@ type
     N32: TMenuItem;
     N34: TMenuItem;
     SortImageList: TImageList;
+    acViewFastSearch: TAction;
+    N35: TMenuItem;
+    pnlFastSearch: TPanel;
+    Label1: TLabel;
+    edFastSearchCol: TEdit;
+    Label2: TLabel;
+    edFastSearch: TEdit;
+    SpeedButton1: TSpeedButton;
+    acListDoFastSearch: TAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure chbTransparencyClick(Sender: TObject);
     procedure trackAlphaChange(Sender: TObject);
@@ -121,8 +130,8 @@ type
     procedure acListUnloadFromGisExecute(Sender: TObject);
     procedure acObjExportCoordsExecute(Sender: TObject);
     procedure acObjDisplayExecute(Sender: TObject);
-    procedure acTransparencyExecute(Sender: TObject);
-    procedure acTransparencyUpdate(Sender: TObject);
+    procedure acViewTransparencyExecute(Sender: TObject);
+    procedure acViewTransparencyUpdate(Sender: TObject);
     procedure acObjLoadToGisExecute(Sender: TObject);
     procedure acObjLoadToGisUpdate(Sender: TObject);
     procedure kaDBGrid1DblClick(Sender: TObject);
@@ -136,6 +145,12 @@ type
       State: TGridDrawState);
     function kaDBGrid1GetSortColumn(Sender: TObject; Column: TColumn; var Desc: Boolean): Boolean;
     procedure kaDBGrid1DrawSortIcon(Sender: TObject; aCanvas: TCanvas; const aRect: TRect);
+    procedure acViewFastSearchExecute(Sender: TObject);
+    procedure acViewFastSearchUpdate(Sender: TObject);
+    procedure kaDBGrid1ColEnter(Sender: TObject);
+    procedure edFastSearchKeyPress(Sender: TObject; var Key: Char);
+    procedure acListDoFastSearchExecute(Sender: TObject);
+    procedure acListDoFastSearchUpdate(Sender: TObject);
   private
     FDrawBox: TEzBaseDrawBox;
     procedure SetDrawBox(const Value: TEzBaseDrawBox);
@@ -157,6 +172,9 @@ type
     procedure FilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure RefreshDataSet();
     procedure RefreshCurrentRow();
+  private
+    FFastSearchColName: string;
+    procedure SetFastSearchCol(aCol: TColumn);
   private
     procedure Notify(const ObjId: Integer; Op: TRowOperation);
   private
@@ -411,14 +429,24 @@ begin
   end;
 end;
 
-procedure TmstMPBrowserForm.acTransparencyExecute(Sender: TObject);
+procedure TmstMPBrowserForm.acViewFastSearchExecute(Sender: TObject);
+begin
+  pnlFastSearch.Visible := not pnlFastSearch.Visible;
+end;
+
+procedure TmstMPBrowserForm.acViewFastSearchUpdate(Sender: TObject);
+begin
+  acViewFastSearch.Checked := pnlFastSearch.Visible;
+end;
+
+procedure TmstMPBrowserForm.acViewTransparencyExecute(Sender: TObject);
 begin
   chbTransparency.Checked := not chbTransparency.Checked;
 end;
 
-procedure TmstMPBrowserForm.acTransparencyUpdate(Sender: TObject);
+procedure TmstMPBrowserForm.acViewTransparencyUpdate(Sender: TObject);
 begin
-  acTransparency.Checked := chbTransparency.Checked;
+  acViewTransparency.Checked := chbTransparency.Checked;
 end;
 
 procedure TmstMPBrowserForm.acObjProjectedToDrawnExecute(Sender: TObject);
@@ -436,6 +464,34 @@ var
 begin
   Drawn := DataSource1.DataSet.FieldByName(SF_DRAWN).AsInteger = 1;
   acObjProjectedToDrawn.Enabled := not Drawn;
+end;
+
+procedure TmstMPBrowserForm.acListDoFastSearchExecute(Sender: TObject);
+var
+  Fld: TField;
+begin
+  if (FFastSearchColName <> '') and (edFastSearch.Text <> '') then
+  begin
+    Fld := memBrowser2.FieldByName(FFastSearchColName);
+    if Assigned(Fld) then
+    begin
+      memBrowser2.Locate(FFastSearchColName, edFastSearch.Text, [loPartialKey]);
+    end;
+  end;
+end;
+
+procedure TmstMPBrowserForm.acListDoFastSearchUpdate(Sender: TObject);
+var
+  Fld: TField;
+  B: Boolean;
+begin
+  B := (FFastSearchColName <> '') and (edFastSearch.Text <> '');
+  if B then
+  begin
+    Fld := memBrowser2.FieldByName(FFastSearchColName);
+    B := Assigned(Fld);
+  end;
+  acListDoFastSearch.Enabled := B;
 end;
 
 procedure TmstMPBrowserForm.acListLoadToGisExecute(Sender: TObject);
@@ -496,8 +552,8 @@ begin
 end;
 
 procedure TmstMPBrowserForm.Browse;
-var
-  V: Variant;
+//var
+//  V: Variant;
 begin
   if not Visible then
   begin
@@ -536,6 +592,12 @@ procedure TmstMPBrowserForm.ClearFilter;
 begin
   FFilter.Clear();
   ApplyFilter();
+end;
+
+procedure TmstMPBrowserForm.edFastSearchKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+    acListDoFastSearch.Execute();
 end;
 
 procedure TmstMPBrowserForm.FilterRecord(DataSet: TDataSet; var Accept: Boolean);
@@ -681,6 +743,11 @@ begin
   NeedCheck := TmstMPObjectCheckState(Ds.FieldByName(SF_CHECK_STATE).AsInteger) > ocsChecked;
   if NeedCheck then
     FontColor := clRed;
+end;
+
+procedure TmstMPBrowserForm.kaDBGrid1ColEnter(Sender: TObject);
+begin
+  SetFastSearchCol(kaDBGrid1.CurrentCol);
 end;
 
 procedure TmstMPBrowserForm.kaDBGrid1DblClick(Sender: TObject);
@@ -944,10 +1011,16 @@ begin
   FDrawBox := Value;
 end;
 
+procedure TmstMPBrowserForm.SetFastSearchCol(aCol: TColumn);
+begin
+  FFastSearchColName := aCol.FieldName;
+  edFastSearchCol.Text := aCol.Title.Caption;
+end;
+
 procedure TmstMPBrowserForm.ShowFilterDialog;
 begin
   if mstMPBrowserFilterDialog = nil then
-    mstMPBrowserFilterDialog := TmstMPBrowserFilterDialog.Create(Self);
+    mstMPBrowserFilterDialog := TmstMPBrowserFilterDialog.Create(Application);
   if mstMPBrowserFilterDialog.Execute(FFilter) then
     ApplyFilter();
 end;

@@ -976,7 +976,8 @@ begin
           Layer := LLayer.AddChild();
           LayerId := LayerId + 1;
           Layer.Id := LayerId;
-          Layer.Name := SL_LOTS + '_Отводы_' + Category.Name;//Category.GetLayerName();
+//          Layer.Name := SL_LOTS + '_Отводы_' + Category.Name;
+          Layer.Name := Category.GetLayerName();
           Layer.Caption := 'Отводы - ' + Category.Name;
           Layer.Position := Position;
           Layer.LayerType := 2;
@@ -1639,7 +1640,7 @@ begin
     Query := TIBQuery(FDataSets.FindComponent(DataSet.Name));
     if Assigned(Query) then
     begin
-      Param := Query.ParamByName(ParamName);
+      Param := Query.Params.FindParam(ParamName);
       if Assigned(Param) then
         Param.Value := ParamValue;
     end;

@@ -248,6 +248,8 @@ type
   private
     function GetAppSettings: ImstAppSettings;
   public
+    procedure UnloadAllLots;
+  public
     procedure SaveLayersVisibility();
     //
     procedure DisplayLayersDialog();
@@ -267,7 +269,7 @@ type
     property LayerMapImages: TEzBaseLayer read GetMapImageLayer; // R500
     property Maps: TmstMapList read FMaps;
     property Streets: TmstStreetList read FStreets;
-//    property Lots: TmstLotList read FLots;
+    property Lots: TmstLotRegistry read FLotRegistry;
     property Addresses: TmstAddressList read FAddresses;
     property NetTypes: TmstProjectNetTypes read FNetTypes;
     //
@@ -295,6 +297,7 @@ implementation
 {$R *.dfm}
 
 uses
+  uEzLayerUtils,
   uMStConsts,
   uMStKernelGISUtils, uMStKernelConsts, uMStKernelClassesOptions, uMStClassesProjectsUtils,
   uMStFormMain, uMStFormLayers, uMStFormSplash,
@@ -1135,7 +1138,8 @@ begin
   R := ReorderRect2D(R);
   for I := 0 to FLotRegistry.Count - 1 do
   begin
-    FMapMngr.LoadLots(R, FLotRegistry[I].LotList, FLotRegistry[I].Layer, FLotRegistry[I].CategoryId, CallBack);
+    if FLotRegistry[I].Layer.LayerInfo.Visible then
+      FMapMngr.LoadLots(R, FLotRegistry[I].LotList, FLotRegistry[I].Layer, FLotRegistry[I].CategoryId, CallBack);
   end;
 end;
 
@@ -1511,9 +1515,12 @@ begin
   then
   begin
 //    if (OldSelection.LotType >= 0) and (OldSelection.Id >= 0) then
-      RedrawLot(OldSelection.CategoryId, OldSelection.Id);
+//      RedrawLot(OldSelection.CategoryId, OldSelection.Id);
+      GetLotLayer(OldSelection.CategoryId).RecNo := OldSelection.Id;
 //    if (NewSelection.LotType >= 0) and (NewSelection.Id >= 0) then
-      RedrawLot(NewSelection.CategoryId, NewSelection.Id);
+//      RedrawLot(NewSelection.CategoryId, NewSelection.Id);
+      GetLotLayer(NewSelection.CategoryId).RecNo := NewSelection.Id;
+      mstClientMainForm.DrawBox.RegenDrawing;
   end;
 end;
 
@@ -2061,6 +2068,18 @@ begin
       aLot := Items[I];
     if Assigned(aLot) then
       aLot.Visible := True;
+  end;
+end;
+
+procedure TMStClientAppModule.UnloadAllLots;
+var
+  I: Integer;
+begin
+  for I := 0 to FLotRegistry.Count - 1 do
+  begin
+    TEzLayerUtils.ClearLayer(GIS, FLotRegistry.Items[I].Layer, nil);
+    FLotRegistry.Items[I].LotList.Clear;
+    FLotRegistry.Items[I].Clear;
   end;
 end;
 

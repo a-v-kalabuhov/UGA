@@ -58,7 +58,6 @@ object mstMPClassDialog: TmstMPClassDialog
     TabOrder = 0
     Text = 'edLayerName'
     OnChange = edLayerNameChange
-    ExplicitLeft = 188
   end
   object cbProjectLayer: TComboBox
     Left = 129
@@ -70,7 +69,6 @@ object mstMPClassDialog: TmstMPClassDialog
     DropDownCount = 20
     ItemHeight = 13
     TabOrder = 1
-    ExplicitLeft = 188
   end
   object cbMPLayer: TComboBox
     Left = 129
@@ -82,7 +80,6 @@ object mstMPClassDialog: TmstMPClassDialog
     DropDownCount = 20
     ItemHeight = 13
     TabOrder = 2
-    ExplicitLeft = 188
   end
   object btnOK: TButton
     Left = 391
@@ -94,7 +91,6 @@ object mstMPClassDialog: TmstMPClassDialog
     Default = True
     TabOrder = 3
     OnClick = btnOKClick
-    ExplicitLeft = 450
   end
   object btnCancel: TButton
     Left = 391
@@ -106,6 +102,5 @@ object mstMPClassDialog: TmstMPClassDialog
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
     TabOrder = 4
-    ExplicitLeft = 450
   end
 end

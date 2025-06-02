@@ -128,7 +128,10 @@ begin
   begin
     ibqProjectLayerClass.Edit;
     ibqProjectLayerClass.FieldByName(SF_NAME).AsString := Dlg.LayerName;
-    ibqProjectLayerClass.FieldByName(SF_NET_TYPES_ID).AsInteger := Dlg.NetTypeId;
+    if Dlg.NetTypeId >= 0 then
+      ibqProjectLayerClass.FieldByName(SF_NET_TYPES_ID).AsInteger := Dlg.NetTypeId
+    else
+      ibqProjectLayerClass.FieldByName(SF_NET_TYPES_ID).Value := Null;
     ibqProjectLayerClass.FieldByName(SF_MP_NET_TYPES_ID).AsInteger := Dlg.MPNetTypeId;
     ibqProjectLayerClass.Post;
     //
@@ -138,6 +141,7 @@ end;
 
 procedure TmstMPClassSettingsForm.btnCloseClick(Sender: TObject);
 begin
+  ShowMessage('Если вы внесли изменения в классификатор,'#13'то необходимо перезапустить "Планшетохранилище"!');
   Close;
 end;
 

@@ -362,6 +362,11 @@ type
     midmif2: TMenuItem;
     acMPLoadRect: TAction;
     N62: TMenuItem;
+    N63: TMenuItem;
+    acGenClassIDforMP: TAction;
+    ID1: TMenuItem;
+    N64: TMenuItem;
+    acLotUnloadAll: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -536,6 +541,10 @@ type
     procedure acMPLoadRectUpdate(Sender: TObject);
     procedure acMPLoadRectExecute(Sender: TObject);
     procedure XLS2Click(Sender: TObject);
+    procedure acGenClassIDforMPExecute(Sender: TObject);
+    procedure acGenClassIDforMPUpdate(Sender: TObject);
+    procedure acLotUnloadAllExecute(Sender: TObject);
+    procedure acLotUnloadAllUpdate(Sender: TObject);
   private
     FPoints: TMstPointArray;
     FCursorState: TCursorState;
@@ -2170,6 +2179,16 @@ begin
 //  acAllMaps.Enabled := (mstMapMngr.UserRole = 'KGO') or (mstMapMngr.UserRole = 'GIS');
 end;
 
+procedure TmstClientMainForm.acGenClassIDforMPExecute(Sender: TObject);
+begin
+  mstClientAppModule.MP.FillClassIDinProjectLayers();
+end;
+
+procedure TmstClientMainForm.acGenClassIDforMPUpdate(Sender: TObject);
+begin
+  acGenClassIDforMP.Enabled := mstClientAppModule.User.IsAdministrator;
+end;
+
 procedure TmstClientMainForm.acGivenMapsExecute(Sender: TObject);
 begin
 //  mstMapMngr.StartMapsManager(False);
@@ -3575,6 +3594,18 @@ end;
 procedure TmstClientMainForm.acLotPropertiesExecute(Sender: TObject);
 begin
   mstClientAppModule.Stack.ViewCorrentObjectProperty;
+end;
+
+procedure TmstClientMainForm.acLotUnloadAllExecute(Sender: TObject);
+begin
+  mstClientAppModule.UnloadAllLots;
+  DrawBox.RegenDrawing;
+  TreeView.Items.Clear;
+end;
+
+procedure TmstClientMainForm.acLotUnloadAllUpdate(Sender: TObject);
+begin
+  acLotUnloadAll.Enabled := not mstClientAppModule.Lots.IsEmpty();
 end;
 
 end.

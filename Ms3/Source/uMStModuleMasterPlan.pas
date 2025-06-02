@@ -104,6 +104,8 @@ type
     procedure CopyToDrawn(const ObjId: Integer);
     procedure ExportToMif(const aMifFileName: string);
     procedure LoadMPObjects(const aLeftGeo, aTopGeo, aRightGeo, aBottomGeo: Double);
+    //
+    procedure FillClassIDinProjectLayers();
   private
     // ImstMPModuleObjList
     function BrowserDataSet(): TDataSet;
@@ -367,6 +369,15 @@ const
   + 'CUSTOMER_ORGS_ID, EXECUTOR_ORGS_ID, OWNER_ORG_ID, DRAW_ORGS_ID, DELETED, :TABLE_VERSION, 1, PROJECTED, '
   + 'CERTIF_DATE, CERTIF_NUMBER, HAS_CERTIF, CHECK_STATE, :LINKED_OBJ_ID '
   + 'FROM MASTER_PLAN_OBJECTS '
+  + 'WHERE ID=:ID';
+
+  SQL_GET_EMPLY_PROJECT_LAYERS_CLASS_ID =
+    'SELECT ID FROM PROJECT_LAYERS '
+  + 'WHERE (CLASS_ID IS NULL) OR (CLASS_ID = '''')';
+
+  SQL_UPDATE_PROJECT_LAYERS_CLASS_ID =
+    'UPDATE PROJECT_LAYERS '
+  + 'SET CLASS_ID=:CLASS_ID '
   + 'WHERE ID=:ID';
 
   SQL_UPDATE_MP_OBJECT_CHECK_STATE =
@@ -719,6 +730,45 @@ begin
     //
     SaveMPObjectAndCoords(MpObj);
     RefreshObjList();
+  end;
+end;
+
+procedure TmstMasterPlanModule.FillClassIDinProjectLayers;
+var
+  Db: IDb;
+  Conn: IIBXConnection;
+  Ds: TDataSet;
+  ClassId: string;
+  Ids: TIntegerList;
+  I: Integer;
+begin
+  DoGetDb(Db);
+  Conn := Db.GetConnection(cmReadWrite, dmKis);
+  Ids := TIntegerList.Create;
+  try
+    Ds := Conn.GetDataSet(SQL_GET_EMPLY_PROJECT_LAYERS_CLASS_ID);
+    Ds.Open;
+    while not Ds.Eof do
+    begin
+      Ids.Add(Ds.FieldByName(SF_ID).AsInteger);
+      Ds.Next;
+    end;
+    Ds.Close;
+    //
+    if Ids.Count > 0 then
+    begin
+      Ds := Conn.GetDataSet(SQL_UPDATE_PROJECT_LAYERS_CLASS_ID);
+      for I := 0 to Ids.Count - 1 do
+      begin
+        ClassId := GetUniqueString(False, True);
+        Conn.SetParam(Ds, SF_CLASS_ID, ClassId);
+        Conn.SetParam(Ds, SF_ID, Ids[I]);
+        Conn.ExecDataSet(Ds);
+      end;
+    end;
+  finally
+    Ids.Free;
+    Conn.Commit;
   end;
 end;
 

@@ -10,7 +10,9 @@ uses
   uEzBufferZone in 'uEzBufferZone.pas',
   uEzRectRelation in 'uEzRectRelation.pas',
   uEzIntersection in 'uEzIntersection.pas',
-  uEzGeometry in 'uEzGeometry.pas';
+  uEzGeometry in 'uEzGeometry.pas',
+  uEzEntityDivide in 'uEzEntityDivide.pas',
+  uEzLayerUtils in 'uEzLayerUtils.pas';
 
 begin
   try

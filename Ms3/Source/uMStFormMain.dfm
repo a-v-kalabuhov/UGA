@@ -586,7 +586,7 @@ object mstClientMainForm: TmstClientMainForm
           Height = 21
           Hint = #1052#1072#1089#1096#1090#1072#1073' '#1086#1090#1095#1077#1090#1072
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 0
           OnChange = cbReportScaleChange
           Items.Strings = (
@@ -770,7 +770,7 @@ object mstClientMainForm: TmstClientMainForm
         Left = 115
         Top = 0
         Width = 67
-        Height = 13
+        Height = 22
         Caption = '      '#1055#1083#1072#1085#1096#1077#1090':'
         Layout = tlCenter
       end
@@ -796,7 +796,7 @@ object mstClientMainForm: TmstClientMainForm
         Left = 265
         Top = 0
         Width = 61
-        Height = 13
+        Height = 22
         Caption = '        '#1054#1090#1074#1086#1076':'
         Layout = tlCenter
       end
@@ -1024,6 +1024,12 @@ object mstClientMainForm: TmstClientMainForm
       object midmif2: TMenuItem
         Action = acMPExportMidMif
       end
+      object N63: TMenuItem
+        Caption = '-'
+      end
+      object ID1: TMenuItem
+        Action = acGenClassIDforMP
+      end
     end
     object imMaps: TMenuItem
       Caption = #1055#1083#1072#1085#1096#1077#1090#1099
@@ -1059,6 +1065,9 @@ object mstClientMainForm: TmstClientMainForm
       Caption = #1054#1090#1074#1086#1076#1099
       object N24: TMenuItem
         Action = acLoadLots
+      end
+      object N64: TMenuItem
+        Action = acLotUnloadAll
       end
       object N38: TMenuItem
         Action = acLotVisible
@@ -1515,6 +1524,12 @@ object mstClientMainForm: TmstClientMainForm
       OnExecute = acSavePointListExecute
       OnUpdate = acSavePointListUpdate
     end
+    object acLotUnloadAll: TAction
+      Category = 'Lots'
+      Caption = #1059#1073#1088#1072#1090#1100' '#1086#1090#1074#1086#1076#1099' '#1089' '#1082#1072#1088#1090#1099
+      OnExecute = acLotUnloadAllExecute
+      OnUpdate = acLotUnloadAllUpdate
+    end
   end
   object Preferences: TEzModifyPreferences
     PointEntitySize = 0
@@ -1566,7 +1581,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 80
     Top = 256
     Bitmap = {
-      494C010155007801580210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101550078015C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000006001000001002000000000000060
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4543,7 +4558,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 460
     Top = 224
     Bitmap = {
-      494C010112001300480210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101120013004C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -5407,6 +5422,12 @@ object mstClientMainForm: TmstClientMainForm
       Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1089#1077#1090#1080' '#1087#1086' '#1086#1073#1083#1072#1089#1090#1080
       OnExecute = acMPLoadRectExecute
       OnUpdate = acMPLoadRectUpdate
+    end
+    object acGenClassIDforMP: TAction
+      Category = 'Admin'
+      Caption = #1047#1072#1087#1086#1083#1085#1080#1090#1100' ID '#1082#1083#1072#1089#1089#1086#1074' '#1076#1083#1103' '#1057#1074#1086#1076#1085#1086#1075#1086' '#1087#1083#1072#1085#1072
+      OnExecute = acGenClassIDforMPExecute
+      OnUpdate = acGenClassIDforMPUpdate
     end
   end
   object MidMifDialog: TOpenDialog

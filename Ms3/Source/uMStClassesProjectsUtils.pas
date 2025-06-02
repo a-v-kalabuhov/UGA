@@ -6,13 +6,11 @@ uses
   SysUtils, Graphics,
   EzBase, EzBaseGIS, EzLib, EzEntities,
   uCK36,
+  uEzLayerUtils,
   uMStConsts,
   uMStClassesProjects, uMStClassesProjectsMP;
 
 type
-  TLayerRecNoPredicate = function (Layer: TEzBaseLayer; const Recno: Integer): Boolean;
-  TLayerRecNoPredicateEvent = function (Layer: TEzBaseLayer; const Recno: Integer): Boolean of object;
-
   TProjectUtils = class
   private
     class procedure AddLineToLayer(aLayer: TEzBaseLayer; aLine: TmstProjectLine);
@@ -347,32 +345,9 @@ begin
 end;
 
 class procedure TProjectUtils.ClearLayer(const aLayerName: string; aPredicate: TLayerRecNoPredicate);
-var
-  L: TEzBaseLayer;
-//  V: Boolean;
 begin
   if Assigned(GIS) then
-  begin
-    L := GIS.Layers.LayerByName(aLayerName);
-    if Assigned(L) then
-    begin
-      L.First;
-      while not L.Eof do
-      begin
-        if not L.RecIsDeleted then
-          if not Assigned(aPredicate) or aPredicate(L, L.Recno) then          
-            L.DeleteEntity(L.Recno);
-        L.Next;
-      end;
-//      V := L.LayerInfo.Visible;
-//      L.LayerInfo.Visible := True;
-//      try
-//        L.Pack(False);
-//      finally
-//        L.LayerInfo.Visible := V;
-//      end;
-    end;
-  end;
+    TEzlayerUtils.ClearLayer(GIS, aLayerName, aPredicate);
 end;
 
 class procedure TProjectUtils.ClearProjectLayers;

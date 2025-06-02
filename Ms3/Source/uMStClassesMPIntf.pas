@@ -48,6 +48,8 @@ type
     //
     procedure ExportToMif(const aMifFileName: string);
     procedure LoadMPObjects(const aGeoLeft, aGeoTop, aGeoRight, aGeoBottom: Double);
+    //
+    procedure FillClassIDinProjectLayers();
   end;
 
   TRowOperation = (rowInsert, rowUpdate, rowDelete);

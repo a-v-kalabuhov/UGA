@@ -1689,7 +1689,7 @@ begin
   else
     begin
 //       Result := SL_LOTS + '_' + IntToStr(Id);
-//       Result := SL_LOTS + '_Отводы_' + Self.Name;
+       Result := SL_LOTS + '_Отводы_' + Self.Name;
       Result := StringReplace(Result, ' ', '_', [rfReplaceAll]);
     end;
   end;
