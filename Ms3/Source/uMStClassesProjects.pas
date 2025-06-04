@@ -256,6 +256,7 @@ type
   public
     constructor Create(aOwner: TmstProject);
     function Add(): TmstProjectPlace;
+    function ByDbId(const DbId: Integer): TmstProjectPlace;
     procedure CopyFrom(Source: TmstProjectPlaces);
     procedure DeletePlace(const DbId: Integer);
     property Items[Index: Integer]: TmstProjectPlace read GetItems write SetItems; default;
@@ -1607,6 +1608,19 @@ begin
   Result := TmstProjectPlace.Create;
   inherited Add(Result);
   Result.Owner := FOwner;
+end;
+
+function TmstProjectPlaces.ByDbId(const DbId: Integer): TmstProjectPlace;
+var
+  I: Integer;
+begin
+  for I := 0 to Count - 1 do
+    if Items[I].DatabaseId = DbId then
+    begin
+      Result := Items[I];
+      Exit;
+    end;
+  Result := nil;
 end;
 
 procedure TmstProjectPlaces.CopyFrom(Source: TmstProjectPlaces);

@@ -258,7 +258,7 @@ begin
       aLayer.Recno := I;
       aLayer.DBTable.Edit;
       aLayer.DBTable.FieldPut(SLF_PROJECT_ID, IntToStr(aPlace.Owner.DatabaseId));
-      //aLayer.DBTable.FieldPut(SLF_LINE_ID, IntToStr(aPlace.DatabaseId));
+      aLayer.DBTable.FieldPut(SLF_OBJECT_ID, IntToStr(aPlace.DatabaseId));
       aLayer.DBTable.FieldPut(SLF_LAYER_ID, IntToStr(aPlace.Layer.DatabaseId));
       aLayer.DBTable.Post;
     finally

@@ -21,6 +21,8 @@ type
     FDrawBox: TezBaseDrawBox;
     FDB: IDb;
     FUseDecartCoords: Boolean;
+    FSkipped: Integer;
+    FExported: Integer;
     procedure SetOnGetProject(const Value: TGetProjectEvent);
     procedure SetDrawBox(const Value: TezBaseDrawBox);
     procedure SetDB(const Value: IDb);
@@ -30,12 +32,15 @@ type
     procedure ProcessLayer(const LayerName: string);
     procedure StartWrite();
     procedure FinishWrite();
-    procedure WriteEntity(Ent: TEzEntity; Prj: TmstProject; Line: TmstProjectLine);
-    procedure WriteFields(Prj: TmstProject; Line: TmstProjectLine);
+    procedure WriteEntity(Ent: TEzEntity; Prj: TmstProject; Line: TmstProjectLine); overload;
+    procedure WriteEntity(Ent: TEzEntity; Prj: TmstProject; Place: TmstProjectPlace); overload;
+    procedure WriteFields(Prj: TmstProject; Line: TmstProjectLine); overload;
+    procedure WriteFields(Prj: TmstProject; Place: TmstProjectPlace);overload;
     function DecorataFieldValue(const FieldValue: string): string;
     procedure WriteHeader();
     procedure WMid(const S: String);
     procedure WMif(const S: String);
+    function CanExportEntity(Ent: TEzEntity): Boolean;
   strict private
     procedure CalcExtents(out X1, Y1, X2, Y2: Double);
     function MIF2DelphiColor( iColor: Integer ): Integer;
@@ -60,6 +65,9 @@ type
     property DB: IDb read FDB write SetDB;
     property DrawBox: TezBaseDrawBox read FDrawBox write SetDrawBox;
     property UseDecartCoords: Boolean read FUseDecartCoords write SetUseDecartCoords;
+    //
+    property Exported: Integer Read FExported;
+    property Skipped: Integer Read FSkipped;
     //
     property OnGetProject: TGetProjectEvent read FOnGetProject write SetOnGetProject;
   end;
@@ -99,6 +107,11 @@ begin
     X2 := 1000;
     Y2 := 1000;
   end;
+end;
+
+function TmstProjectMIFExport.CanExportEntity(Ent: TEzEntity): Boolean;
+begin
+  Result := Ent.EntityID in [idPolygon, idPolyline, idSpline, idPlace, idPoint, idArc, idEllipse];
 end;
 
 constructor TmstProjectMIFExport.Create;
@@ -157,9 +170,11 @@ procedure TmstProjectMIFExport.ProcessLayer(const LayerName: string);
 var
   EzLayer: TEzBaseLayer;
   Ent: TEzEntity;
-  PrjId, LineId: Integer;
+  PrjId, LineId, PlaceId: Integer;
   Prj: TmstProject;
   Line: TmstProjectLine;
+  Place: TmstProjectPlace;
+  Wrote: Boolean;
 begin
   EzLayer := FGIS.Layers.LayerByName(LayerName);
   if Assigned(EzLayer) then
@@ -170,19 +185,39 @@ begin
       if not Ezlayer.RecIsDeleted then
       begin
         Ent := Ezlayer.RecLoadEntity();
-        if Assigned(Ent) then
+        if Assigned(Ent) and CanExportEntity(Ent) then
         begin
           EzLayer.DBTable.Recno := EzLayer.Recno;
-          PrjId := EzLayer.DBTable.IntegerGet(SF_PROJECT_ID);
-          LineId := EzLayer.DBTable.IntegerGet(SF_LINE_ID);
+          PrjId := EzLayer.DBTable.IntegerGet(SLF_PROJECT_ID);
+          LineId := EzLayer.DBTable.IntegerGet(SLF_LINE_ID);
           Prj := FOnGetProject(Self, PrjId);
           Line := nil;
+          Wrote := False;
           if Assigned(Prj) then
           begin
             Line := Prj.Lines.ByDbId(LineId);
+            if Line <> nil then
+            begin
+              WriteEntity(Ent, Prj, Line);
+              Wrote := True;
+            end
+            else
+            begin
+              PlaceId := EzLayer.DBTable.IntegerGet(SLF_OBJECT_ID);
+              Place := Prj.Places.ByDbId(PlaceId);
+              if Place <> nil then
+              begin
+                WriteEntity(Ent, Prj, Place);
+                Wrote := True;
+              end;
+            end;
           end;
-          WriteEntity(Ent, Prj, Line);
-        end;
+          if not Wrote then
+            WriteEntity(Ent, Prj, Line);
+          FExported := FExported + 1;
+        end
+        else
+          FSkipped := FSkipped + 1;
       end;
       EzLayer.Next;
     end;
@@ -201,6 +236,8 @@ begin
   C := SysUtils.DecimalSeparator;
   SysUtils.DecimalSeparator := '.';
   try
+    FExported := 0;
+    FSkipped := 0;
     // пробегаем по слоям
     ProcessLayer(SL_PROJECT_OPEN);
     ProcessLayer(SL_PROJECT_CLOSED);
@@ -339,6 +376,88 @@ Begin
   WritePolygonStyle( ENT );
 end;
 
+procedure TmstProjectMIFExport.WriteEntity(Ent: TEzEntity; Prj: TmstProject; Place: TmstProjectPlace);
+var
+  AddFields: Boolean;
+  OldSep: Char;
+begin
+  AddFields := True;
+  OldSep := DecimalSeparator;
+  DecimalSeparator := '.';
+  try
+    try
+      case Ent.EntityID of
+        idPolygon:
+            WritePolygon(Ent);
+        idPolyline, idSpline:
+            WritePolyline(Ent);
+        idPlace, idPoint:
+            WritePoint(Ent);
+        idArc:
+            WriteArc(Ent);
+        idEllipse:
+            WriteEllipse(Ent);
+        else
+            AddFields := False;
+      end;
+    except
+      AddFields := False;
+    end;
+    if AddFields then
+      WriteFields(Prj, Place);
+  finally
+    DecimalSeparator := OldSep;
+  end;
+end;
+
+procedure TmstProjectMIFExport.WriteFields(Prj: TmstProject; Place: TmstProjectPlace);
+var
+  s: String;
+begin
+////  Проекты
+//  WMIF('  PROJECT_ID Integer ');
+//  WMIF('  ADDRESS Char(120) ');
+//  WMIF('  DOC_NUMBER Char(12) ');
+//  WMIF('  DOC_DATE Char(10) ');
+//  WMIF('  CUSTOMER Char(10) ');
+//  WMIF('  EXECUTOR Char(10) ');
+//  WMIF('  CONFIRMED Logical ');
+//  WMIF('  CONFIRM_DATE Char(10) ');
+////  Линии
+//  WMIF('  LINE_ID Integer ');
+//  WMIF('  LINE_INFO Char(255) ');
+//  WMIF('  LINE_DIAMETER Char(50) ');
+//  WMIF('  LINE_VOLTAGE Char(50) ');
+////  Слои
+//  WMIF('  LAYER_NAME Char(255) ');
+  s := '';
+  if Assigned(Prj) then
+  begin
+    S := S + IntToStr(Prj.DatabaseId) + ',';
+    S := S + DecorataFieldValue(Prj.Address) + ',';
+    S := S + DecorataFieldValue(Prj.DocNumber) + ',';
+    S := S + DecorataFieldValue(DateToStr(Prj.DocDate)) + ',';
+    S := S + DecorataFieldValue(Copy(GetLicOrgName(Prj.CustomerOrgId), 1, 255)) + ',';
+    S := S + DecorataFieldValue(Copy(GetLicOrgName(Prj.ExecutorOrgId), 1, 255)) + ',';
+    S := S + StrUtils.IfThen(Prj.Confirmed, 'T', 'F') + ',';
+    S := S + DecorataFieldValue(IfThen(Prj.Confirmed, DateToStr(Prj.ConfirmDate), '')) + ',';
+  end
+  else
+    S := S + '0,"","","","","",F,"",';
+  if Assigned(Place) then
+  begin
+    S := S + IntToStr(Place.DatabaseId) + ',';
+    S := S + '"",';
+    S := S + '"",';
+    S := S + '"",';
+    S := S + DecorataFieldValue(IfThen(Assigned(Place.Layer), Place.Layer.Name, ''));
+  end
+  else
+    S := S + '0,"","","",""';
+  //
+  WMID( S );
+end;
+
 procedure TmstProjectMIFExport.WriteEntity(Ent: TEzEntity; Prj: TmstProject; Line: TmstProjectLine);
 var
   AddFields: Boolean;
@@ -374,7 +493,7 @@ begin
 end;
 
 procedure TmstProjectMIFExport.WriteFields(Prj: TmstProject; Line: TmstProjectLine);
-Var
+var
   s: String;
 begin
 ////  Проекты
