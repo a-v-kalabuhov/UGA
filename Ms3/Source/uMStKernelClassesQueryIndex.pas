@@ -81,6 +81,7 @@ begin
     TObject(FIndex[I]).Free;
     FIndex[I] := nil;
   end;
+  FIndex.Clear;
 end;
 
 function TQueryRowIndex.CompareEntry(aItem: Pointer): Integer;

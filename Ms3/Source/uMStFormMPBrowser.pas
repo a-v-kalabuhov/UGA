@@ -223,7 +223,7 @@ begin
     begin
       // если не нашли, то показываем сообщение
       ShowMessage('Пересечения не обнаружены!');
-      FMP.SetObjCheckState(ObjId, ocsChecked);
+//      FMP.SetObjCheckState(ObjId, ocsChecked);
       RefreshCurrentRow();
     end
     else

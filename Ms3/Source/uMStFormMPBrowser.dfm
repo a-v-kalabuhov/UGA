@@ -2,7 +2,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
   Left = 0
   Top = 0
   Caption = #1057#1074#1086#1076#1085#1099#1081' '#1087#1083#1072#1085
-  ClientHeight = 504
+  ClientHeight = 544
   ClientWidth = 1161
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -136,27 +136,25 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Left = 0
     Top = 29
     Width = 1161
-    Height = 475
+    Height = 515
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 104
-    ExplicitHeight = 400
+    ExplicitHeight = 495
     object tabData: TPanel
       Left = 0
       Top = 29
       Width = 1161
-      Height = 446
+      Height = 486
       Align = alClient
       Caption = #1055#1088#1086#1077#1082#1090#1099
       TabOrder = 0
-      ExplicitTop = 0
-      ExplicitHeight = 475
+      ExplicitHeight = 466
       object kaDBGrid1: TkaDBGrid
         Left = 1
         Top = 1
         Width = 1159
-        Height = 444
+        Height = 484
         Align = alClient
         DataSource = DataSource1
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
@@ -403,8 +401,6 @@ object mstMPBrowserForm: TmstMPBrowserForm
       BevelOuter = bvNone
       TabOrder = 1
       Visible = False
-      ExplicitLeft = -1
-      ExplicitTop = -1
       object Label1: TLabel
         Left = 16
         Top = 8
@@ -671,7 +667,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Left = 128
     Top = 136
     Bitmap = {
-      494C01010A004800980010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010A004800A40010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1165,7 +1161,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Left = 280
     Top = 112
     Bitmap = {
-      494C01010200080018000C000C00FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010200080024000C000C00FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000300000000C00000001002000000000000009
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

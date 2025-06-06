@@ -640,7 +640,7 @@ var
 begin
   if mstProjectBrowserFilterDialog = nil then
   begin
-    mstProjectBrowserFilterDialog := TmstProjectBrowserFilterDialog.Create(Self);
+    mstProjectBrowserFilterDialog := TmstProjectBrowserFilterDialog.Create(Application);
     Pt.X := 0;
     Pt.Y := btnFilterClear.Height + 1;
     Pt := btnFilterClear.ClientToScreen(Pt);
