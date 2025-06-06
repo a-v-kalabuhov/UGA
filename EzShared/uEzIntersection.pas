@@ -18,6 +18,8 @@ type
     constructor Create(const aPoint1: TEzPoint; anArragement: TSegmentsArrangement); overload;
     constructor Create(const aPoint1, aPoint2: TEzPoint; anArragement: TSegmentsArrangement); overload;
     //
+    function IsEqual(Item: TEzIntersection; const aDelta: Double): Boolean;
+    //
     property Arragement: TSegmentsArrangement read FArragement;
     property Point1: TEzPoint read FPoint1;
     property Point2: TEzPoint read FPoint2;
@@ -28,6 +30,7 @@ type
   private
     FList: TObjectList;
     function GetItems(Index: Integer): TEzIntersection;
+    procedure RemoveDups(Item: TEzIntersection; StartrIdx: Integer; const aDelta: Double);
   public
     constructor Create;
     destructor Destroy; override;
@@ -36,7 +39,21 @@ type
     procedure Append(aList: TEzIntersectionList);
     procedure Clear;
     function Count: Integer;
+    procedure RemoveDuplicates(const aDelta: Double);
     property Items[Index: Integer]: TEzIntersection read GetItems;
+  end;
+
+  // неиспользуется, недописан
+  TEzIntersectionListCheck = class
+  private
+    FList: TEzIntersectionList;
+    FDelta: Double;
+    procedure RemoveSinglePointDups(Idx: Integer);
+    procedure RemoveTwoPointDups(Idx: Integer); virtual; abstract;
+  public
+    constructor Create(aList: TEzIntersectionList; const aDelta: Double);
+    //
+    procedure RemoveDuplicatedPoints();
   end;
 
   IEzFindIntersections = interface
@@ -47,8 +64,11 @@ type
   TEzFindIntersections = class(TInterfacedObject, IEzFindIntersections)
   private
     FDelta: Double;
-    function GetSegmentIntersect(const Pt1, Pt2, PolyPt1, PolyPt2: TEzPoint): TEzIntersection;
-    function GetIntersections(const Pt1, Pt2: TEzPoint; aPoly: TEzOpenedEntity): TEzIntersectionList;
+    FPt1: TSegmentPoint;
+    FPt2: TSegmentPoint;
+    FPolyPt1, FPolyPt2: TSegmentPoint;
+    function GetSegmentIntersect(): TEzIntersection;
+    function GetIntersections(aPoly: TEzOpenedEntity): TEzIntersectionList;
   public
     constructor Create(const aDelta: Double);
     //
@@ -79,6 +99,21 @@ begin
   FPoint2 := aPoint2;
   FIsPoint := False;
   FArragement := anArragement;
+end;
+
+function TEzIntersection.IsEqual(Item: TEzIntersection; const aDelta: Double): Boolean;
+begin
+  Result := FIsPoint and Item.FIsPoint;
+  if Result then
+  begin
+    Result := FArragement = Item.FArragement;
+    if Result then
+    begin
+      Result := TGeometry.IsPointsEqual(FPoint1, Item.FPoint1, aDelta);
+      if Result and FIsPoint then
+        Result := TGeometry.IsPointsEqual(FPoint2, Item.FPoint2, aDelta);
+    end;
+  end;
 end;
 
 { TEzIntersectionList }
@@ -126,6 +161,32 @@ begin
   Result := TEzIntersection(FList[Index]);
 end;
 
+procedure TEzIntersectionList.RemoveDuplicates;
+var
+  I: Integer;
+begin
+  I := 0;
+  while I < FList.Count do
+  begin
+    RemoveDups(Items[I], I + 1, aDelta);
+    Inc(I);
+  end;
+end;
+
+procedure TEzIntersectionList.RemoveDups(Item: TEzIntersection; StartrIdx: Integer; const aDelta: Double);
+var
+  I: Integer;
+begin
+  I := StartrIdx;
+  while I < FList.Count do
+  begin
+    if Items[I].IsEqual(Item, aDelta) then
+      FList.Delete(I)
+    else
+      Inc(I);
+  end;
+end;
+
 { TEzFindIntersections }
 
 constructor TEzFindIntersections.Create;
@@ -133,10 +194,9 @@ begin
   FDelta := aDelta;
 end;
 
-function TEzFindIntersections.GetIntersections(const Pt1, Pt2: TEzPoint; aPoly: TEzOpenedEntity): TEzIntersectionList;
+function TEzFindIntersections.GetIntersections(aPoly: TEzOpenedEntity): TEzIntersectionList;
 var
   P1, P2: Integer;
-  PolyPt1, PolyPt2: TEzPoint;
   Intersect: TEzIntersection;
 begin
   //
@@ -153,9 +213,9 @@ begin
   P1 := 0;
   for P2 := 1 to aPoly.Points.Count - 1 do
   begin
-    PolyPt1 := aPoly.Points[P1];
-    PolyPt2 := aPoly.Points[P2];
-    Intersect := GetSegmentIntersect(Pt1, Pt2, PolyPt1, PolyPt2);
+    FPolyPt1 := TSegmentPoint.Create(aPoly.Points[P1], P1 = 0);
+    FPolyPt2 := TSegmentPoint.Create(aPoly.Points[P2], P2 = aPoly.Points.Count - 1);
+    Intersect := GetSegmentIntersect();
     if Intersect <> nil then
       Result.Add(Intersect);
     P1 := P2;
@@ -165,7 +225,6 @@ end;
 function TEzFindIntersections.FindPolyIntersect(Poly1, Poly2: TEzOpenedEntity): TEzIntersectionList;
 var
   P1, P2: Integer;
-  Pt1, Pt2: TEzPoint;
   Intersects: TEzIntersectionList;
 begin
   Result := TEzIntersectionList.Create;
@@ -173,9 +232,9 @@ begin
   P1 := 0;
   for P2 := 1 to Poly1.Points.Count - 1 do
   begin
-    Pt1 := Poly1.Points[P1];
-    Pt2 := Poly1.Points[P2];
-    Intersects := GetIntersections(Pt1, Pt2, Poly2);
+    FPt1 := TSegmentPoint.Create(Poly1.Points[P1], P1 = 0);
+    FPt2 := TSegmentPoint.Create(Poly1.Points[P2], P2 = Poly1.Points.Count - 1);
+    Intersects := GetIntersections(Poly2);
     if Intersects <> nil then
     try
       Result.Append(Intersects);
@@ -184,9 +243,11 @@ begin
     end;
     P1 := P2;
   end;
+  //
+  Result.RemoveDuplicates(FDelta);
 end;
 
-function TEzFindIntersections.GetSegmentIntersect(const Pt1, Pt2, PolyPt1, PolyPt2: TEzPoint): TEzIntersection;
+function TEzFindIntersections.GetSegmentIntersect(): TEzIntersection;
 var
   SegGeo: ISegmentGeometry;
 begin
@@ -200,7 +261,7 @@ begin
   Result := nil;
   //
   SegGeo := TSegmentGeometry.Create(FDelta);
-  SegGeo.Process(Pt1, Pt2, PolyPt1, PolyPt2);
+  SegGeo.Process(FPt1, FPt2, FPolyPt1, FPolyPt2);
   case SegGeo.Arrangement of
     saCollinear:
       // отрезки никак не взаимодействуют
@@ -212,14 +273,54 @@ begin
       end;
     saEqual:
       begin
-        // у отрезков есть совпадающая часть, но они не одинаковые
-        Result := TEzIntersection.Create(Pt1, Pt2, SegGeo.Arrangement);
+        // отрезки одинаковые
+        Result := TEzIntersection.Create(FPt1.Pt2D, FPt2.Pt2D, SegGeo.Arrangement);
       end;
     saIntersection, saTouch, saConnect:
       begin
         // у отрезков есть пересечение, прикосновение или они соединяются
         Result := TEzIntersection.Create(SegGeo.CommonPt1, SegGeo.Arrangement);
       end;
+  end;
+end;
+
+{ TEzIntersectionListCheck }
+
+constructor TEzIntersectionListCheck.Create;
+begin
+  FList := aList;
+  FDelta := aDelta;
+end;
+
+procedure TEzIntersectionListCheck.RemoveDuplicatedPoints;
+var
+  I: Integer;
+begin
+  for I := 0 to FList.Count - 1 do
+  begin
+    if FList.Items[I].Arragement in [saIntersection, saTouch, saConnect] then
+      RemoveSinglePointDups(I)
+    else
+      RemoveTwoPointDups(I);
+  end;
+end;
+
+procedure TEzIntersectionListCheck.RemoveSinglePointDups(Idx: Integer);
+var
+  I: Integer;
+  D: Double;
+begin
+  for I := Idx + 1 to FList.Count - 1 do
+  begin
+    if FList.Items[I].Arragement in [saIntersection, saTouch, saConnect] then
+    begin
+      // проверяем если точки совпадают и тогда удаляем
+      D := TGeometry.Distance(FList.Items[Idx].Point1, FList.Items[I].Point1);
+      if D < FDelta then
+      begin
+
+      end;
+    end;
   end;
 end;
 

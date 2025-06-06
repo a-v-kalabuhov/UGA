@@ -21,8 +21,8 @@ const
     'есть общая часть',
     'отрезки эквивалентны',
     'точка пересечения',
-    'один конец отрезка А лежит на отрезке B',
-    'отрезки соединяются'
+    'точка лежит на другом объекте',
+    'объекты соединяются'
   );
 
 type
@@ -54,6 +54,7 @@ type
   IFourPoints = interface
     ['{FEB40234-ADFB-4202-9CA2-F965BA4EDB88}']
     procedure SortByVectorLen();
+    function IsLine(const aDelta: Double): Boolean;
     function GetPoints(Index: Integer): TEzPoint;
     property Points[Index: Integer]: TEzPoint read GetPoints;
   end;
@@ -66,15 +67,27 @@ type
     procedure MoveMin(FromIdx, ToIdx: Integer);
   protected
     procedure SortByVectorLen();
+    function IsLine(const aDelta: Double): Boolean;
     function GetPoints(Index: Integer): TEzPoint;
   public
     constructor Create(const A1, A2, B1, B2: TEzPoint);
   end;
 
+  TSegmentPoint = record
+    X, Y: Double;
+    IsEnd: Boolean;
+    constructor Create(const aPoint: TEzPoint; const aIsEnd: Boolean);
+    function Pt2D(): TEzPoint;
+  end;
+
   // проверка взаимного расположения двух отрезков
   ISegmentGeometry = interface
     ['{3872815A-EB89-464D-9F62-D89DC7C9F747}']
-    procedure Process(const AA1, AA2, BB1, BB2: TEzPoint);
+    procedure Process(
+      const AA1: TSegmentPoint;
+      const AA2: TSegmentPoint;
+      const BB1: TSegmentPoint;
+      const BB2: TSegmentPoint);
     function GetCommonPt1: TEzPoint;
     function GetCommonPt2: TEzPoint;
     function GetArrangement: TSegmentsArrangement;
@@ -85,30 +98,35 @@ type
 
   TSegmentGeometry = class(TInterfacedObject, ISegmentGeometry)
   private
-    FB1: TEzPoint;
-    FA2: TEzPoint;
-    FA1: TEzPoint;
+    FB1: TSegmentPoint;
+    FB2: TSegmentPoint;
+    FA2: TSegmentPoint;
+    FA1: TSegmentPoint;
     FBoxA, FBoxB: TEzRect;
     FCommonPt2: TEzPoint;
     FCommonPt1: TEzPoint;
     FArrangement: TSegmentsArrangement;
-    FB2: TEzPoint;
     FDelta: Double;
     function AreEqualOrConnecting(): Boolean;
+    function AreEqualOrConnecting2(const PtStart1, PtEnd1, PtStart2, PtEnd2: TSegmentPoint): Boolean;
     function FindIntersection(): Boolean;
     function FindCommonPart(): Boolean;
     function FindTouch(): Boolean;
     procedure SetDelta(const Value: Double);
   protected
-    procedure Process(const AA1, AA2, BB1, BB2: TEzPoint);
+    procedure Process(
+      const AA1: TSegmentPoint;
+      const AA2: TSegmentPoint;
+      const BB1: TSegmentPoint;
+      const BB2: TSegmentPoint);
     function GetCommonPt1: TEzPoint;
     function GetCommonPt2: TEzPoint;
     function GetArrangement: TSegmentsArrangement;
     //
-    property A1: TEzPoint read FA1;
-    property A2: TEzPoint read FA2;
-    property B1: TEzPoint read FB1;
-    property B2: TEzPoint read FB2;
+    property A1: TSegmentPoint read FA1;
+    property A2: TSegmentPoint read FA2;
+    property B1: TSegmentPoint read FB1;
+    property B2: TSegmentPoint read FB2;
     property Delta: Double read FDelta write SetDelta;
   public
     constructor Create(const aDelta: Double);
@@ -220,68 +238,60 @@ end;
 { TSegmentGeometry }
 
 function TSegmentGeometry.AreEqualOrConnecting: Boolean;
+begin
+  Result := AreEqualOrConnecting2(FA1, FA2, FB1, FB2);
+  if not Result then
+    Result := AreEqualOrConnecting2(FA2, FA1, FB1, FB2);
+end;
+
+function TSegmentGeometry.AreEqualOrConnecting2(const PtStart1, PtEnd1, PtStart2, PtEnd2: TSegmentPoint): Boolean;
 var
   DA1B1, DA2B2: Double;
   DA1B2, DA2B1: Double;
 begin
   Result := False;
-  DA1B1 := Dist2D(FA1, FB1);
+  DA1B1 := Dist2D(PtStart1.Pt2D, PtStart2.Pt2D);
+  DA2B2 := Dist2D(PtEnd1.Pt2D, PtEnd2.Pt2D);
   if DA1B1 < FDelta then
   begin
     // одна точка совпала
-    FCommonPt1 := FA1;
-    DA2B2 := Dist2D(FA2, FB2);
-    Result := DA2B2 < FDelta;
-    if Result then
+    FCommonPt1 := PtStart1.Pt2D;
+    // дальше:
+    // если совпадает вторая точка, то отрезки совпадают
+    if DA2B2 < FDelta then
     begin
       // вторая точка совпала
-      FCommonPt2 := FA2;
+      FCommonPt2 := PtEnd1.Pt2D;
       FArrangement := saEqual;
+      Result := True;
       Exit;
-    end
-    else
-      FArrangement := saConnect;
-  end
-  else
-  begin
-    DA1B2 := Dist2D(FA1, FB2);
-    DA2B1 := Dist2D(FA2, FB1);
-    if DA1B2 < FDelta then
+    end;
+    // если вторая точка не совпадает,
+    // то отрезки как-то соединяются
+    if PtStart1.IsEnd then
     begin
-      // одна точка совпала
-      FCommonPt1 := FA1;
-      if DA2B1 < FDelta then
+      // если отрезки соединяются и точка является концом,
+      // то получаем соединение или касание
+      if PtStart2.IsEnd then
       begin
-        // вторая точка совпала
-        FCommonPt2 := FA2;
-        FArrangement := saEqual;
+        FArrangement := saConnect;
         Result := True;
         Exit;
       end
       else
       begin
-        FArrangement := saConnect;
-        Result := False;
+        FArrangement := saTouch;
+        Result := True;
+        Exit;
       end;
     end
     else
     begin
-      if DA2B1 < FDelta then
-      begin
-        FCommonPt1 := FA2;
-        FArrangement := saConnect;
-        Result := False;
-      end
-      else
-      begin
-        DA2B2 := Dist2D(FA2, FB2);
-        if DA2B2 < FDelta then
-        begin
-          FCommonPt1 := FA2;
-          FArrangement := saConnect;
-          Result := False;
-        end;
-      end;
+      // если отрезки соединяются и точка не является концом,
+      // то получаем пересечение
+      FArrangement := saIntersection;
+      Result := True;
+      Exit;
     end;
   end;
 end;
@@ -302,93 +312,35 @@ var
   FourPoints: IFourPoints;
 begin
   Result := False;
+  TGeometry.Nearest(A1.Pt2D, A2.Pt2D, Pt1a, Pt2a);
+  Angle1 := TAngle.Create(Pt1a, Pt2a, FDelta);
+  TGeometry.Nearest(B1.Pt2D, B2.Pt2D, Pt1b, Pt2b);
+  // 1. проверить угол он должен быть близким
+  //    - если нет, то нет и общего отезка
+  Angle2 := TAngle.Create(Pt1b, Pt2b, FDelta);
+  A1Val := Angle1.Normalize();
+  A2Val := Angle2.Normalize();
+  D := Abs(A1Val - A2Val);
+  if D >= AngleDelta then
+    Exit;
+  // 2. точки сортируем по расстоянию от начала координат
+  FourPoints := TFourPoints.Create(A1.Pt2D, A2.Pt2D, B1.Pt2D, B2.Pt2D);
+  if not FourPoints.IsLine(FDelta) then
+    Exit;
+  if not (
+      TGeometry.IsPointOnLine(A1.Pt2D, B1.Pt2D, B2.Pt2D, FDelta) or
+      TGeometry.IsPointOnLine(A2.Pt2D, B1.Pt2D, B2.Pt2D, FDelta) or
+      TGeometry.IsPointOnLine(B1.Pt2D, A1.Pt2D, A2.Pt2D, FDelta) or
+      TGeometry.IsPointOnLine(B2.Pt2D, A1.Pt2D, A2.Pt2D, FDelta))
+  then
+    Exit;
   //
-  case FArrangement of
-  saCollinear :
-    begin
-      // когда проверяли на совпадение, то выяснили,
-      // что нет ни совпадения ни соединения
-      // значит проверяем по полной:
-      // 1. проверить угол он должен быть близким
-      //    - если нет, то нет и общего отезка
-      TGeometry.Nearest(A1, A2, Pt1a, Pt2a);
-      Angle1 := TAngle.Create(Pt1a, Pt2a, FDelta);
-      TGeometry.Nearest(B1, B2, Pt1b, Pt2b);
-      Angle2 := TAngle.Create(Pt1b, Pt2b, FDelta);
-      A1Val := Angle1.Normalize();
-      A2Val := Angle2.Normalize();
-      D := Abs(A1Val - A2Val);
-      if D >= AngleDelta then
-        Exit;
-      // 2. точки сортируем по расстоянию от начала координат
-      FourPoints := TFourPoints.Create(A1, A2, B1, B2);
-      FourPoints.SortByVectorLen();
-      // 3. найти внутреннюю область - это и есть общий отрезок
-      FCommonPt1 := FourPoints.Points[2];
-      FCommonPt2 := FourPoints.Points[3];
-      FArrangement := saCommonPart;
-      Exit;
-      { метод 2
-      // 2. повернуть все точки в прямую Х
-      Pt1a := TGeometry.RotatePoint(Pt1a, 2 * pi - A1Val);
-      Pt2a := TGeometry.RotatePoint(Pt2a, 2 * pi - A1Val);
-      Pt1b := TGeometry.RotatePoint(Pt1b, 2 * pi - A2Val);
-      Pt2b := TGeometry.RotatePoint(Pt2b, 2 * pi - A2Val);
-      // 3. отсортировать отрезки по Х
-      X1 := Pt1a.X;
-      X2 := Pt2a.X;
-      X3 := Pt1b.X;
-      X4 := Pt2b.X;
-      FourPoints := TFourPoints.Create(Pt1a, Pt2a, Pt1b, Pt2b);
-      FourPoints.SortByX();
-      // 4. найти внутреннюю область - это и есть общий отрезок
-      FCommonPt1 := FourPoints.Points[2];
-      FCommonPt2 := FourPoints.Points[3];
-      // 5. повернуть её обратно
-      FCommonPt1 := TGeometry.RotatePoint(FCommonPt1, A1Val);
-      FCommonPt2 := TGeometry.RotatePoint(FCommonPt2, A2Val);
-      }
-    end;
-  saEqual :
-    begin
-      Exit;
-    end;
-  saConnect :
-    begin
-      // одной точкой уже соединены
-      if TGeometry.IsPointsEqual(A1, FCommonPt1, FDelta) then
-      begin
-        Pt1a := A1;
-        Pt2a := A2;
-      end
-      else
-      begin
-        Pt1a := A2;
-        Pt2a := A1;
-      end;
-      if TGeometry.IsPointsEqual(B1, FCommonPt1, FDelta) then
-      begin
-        Pt1b := B1;
-        Pt2b := B2;
-      end
-      else
-      begin
-        Pt1b := B2;
-        Pt2b := B1;
-      end;
-      if TGeometry.IsPointOnLine(Pt2a, Pt1b, Pt2b, FDelta) then
-      begin
-        FArrangement := saCommonPart;
-        FCommonPt2 := Pt2a;
-      end
-      else
-      if TGeometry.IsPointOnLine(Pt2b, Pt1a, Pt2a, FDelta) then
-      begin
-        FArrangement := saCommonPart;
-        FCommonPt2 := Pt2b;
-      end;
-    end;
-  end;
+  FourPoints.SortByVectorLen();
+  // 3. найти внутреннюю область - это и есть общий отрезок
+  FCommonPt1 := FourPoints.Points[2];
+  FCommonPt2 := FourPoints.Points[3];
+  FArrangement := saCommonPart;
+  Result := True;
 end;
 
 function TSegmentGeometry.FindIntersection: Boolean;
@@ -396,9 +348,9 @@ var
   FoundPt: TEzPoint;
 begin
   Result := False;
-  if TGeometry.IsLinesIntersects(A1, B1, A2, B2, FoundPt, FDelta) then
+  if TGeometry.IsLinesIntersects(A1.Pt2D, B1.Pt2D, A2.Pt2D, B2.Pt2D, FoundPt, FDelta) then
   begin
-    Result := IsPointOnMe(FoundPt, A1, B1) and IsPointOnMe(FoundPt, A2, B2);
+    Result := IsPointOnMe(FoundPt, A1.Pt2D, B1.Pt2D) and IsPointOnMe(FoundPt, A2.Pt2D, B2.Pt2D);
     if Result then
       FCommonPt1 := FoundPt;
   end;
@@ -409,31 +361,72 @@ begin
   Result := False;
   if FArrangement = saIntersection then
   begin
-    if TGeometry.IsPointsEqual(FCommonPt1, A1, FDelta)
-       or
-       TGeometry.IsPointsEqual(FCommonPt1, B1, FDelta)
-    then
+    // общая точка - это конец одного отрезка
+    // и она лежит на втором отрезке,
+    // но не на его концах
+    if TGeometry.IsPointsEqual(FCommonPt1, A1.Pt2D, FDelta) then
     begin
-      if IsPointOnMe(FCommonPt1, A2, B2) then
+      if IsPointOnMe(FCommonPt1, B1.Pt2D, B2.Pt2D) then
       begin
         FArrangement := saTouch;
         Result := True;
         Exit;
-      end;  
+      end;
     end;
-    if TGeometry.IsPointsEqual(FCommonPt1, A2, FDelta)
-       or
-       TGeometry.IsPointsEqual(FCommonPt1, B2, FDelta)
-    then
+    if TGeometry.IsPointsEqual(FCommonPt1, A2.Pt2D, FDelta) then
     begin
-      if IsPointOnMe(FCommonPt1, A1, B1) then
+      if IsPointOnMe(FCommonPt1, B1.Pt2D, B2.Pt2D) then
       begin
         FArrangement := saTouch;
         Result := True;
         Exit;
-      end;  
+      end;
+    end;
+    if TGeometry.IsPointsEqual(FCommonPt1, B1.Pt2D, FDelta) then
+    begin
+      if IsPointOnMe(FCommonPt1, A1.Pt2D, A2.Pt2D) then
+      begin
+        FArrangement := saTouch;
+        Result := True;
+        Exit;
+      end;
+    end;
+    if TGeometry.IsPointsEqual(FCommonPt1, B2.Pt2D, FDelta) then
+    begin
+      if IsPointOnMe(FCommonPt1, A1.Pt2D, A2.Pt2D) then
+      begin
+        FArrangement := saTouch;
+        Result := True;
+        Exit;
+      end;
     end;
   end;
+////
+//    if TGeometry.IsPointsEqual(FCommonPt1, A1.Pt2D, FDelta)
+//       or
+//       TGeometry.IsPointsEqual(FCommonPt1, B1.Pt2D, FDelta)
+//    then
+//    begin
+//      if IsPointOnMe(FCommonPt1, A2.Pt2D, B2.Pt2D) then
+//      begin
+//        FArrangement := saTouch;
+//        Result := True;
+//        Exit;
+//      end;  
+//    end;
+//    if TGeometry.IsPointsEqual(FCommonPt1, A2.Pt2D, FDelta)
+//       or
+//       TGeometry.IsPointsEqual(FCommonPt1, B2.Pt2D, FDelta)
+//    then
+//    begin
+//      if IsPointOnMe(FCommonPt1, A1.Pt2D, B1.Pt2D) then
+//      begin
+//        FArrangement := saTouch;
+//        Result := True;
+//        Exit;
+//      end;  
+//    end;
+//  end;
 end;
 
 function TSegmentGeometry.GetArrangement: TSegmentsArrangement;
@@ -451,7 +444,11 @@ begin
   Result := FCommonPt2;
 end;
 
-procedure TSegmentGeometry.Process(const AA1, AA2, BB1, BB2: TEzPoint);
+procedure TSegmentGeometry.Process(
+  const AA1: TSegmentPoint;
+  const AA2: TSegmentPoint;
+  const BB1: TSegmentPoint;
+  const BB2: TSegmentPoint);
 begin
   FArrangement := saCollinear;
   //
@@ -482,6 +479,9 @@ begin
     Exit;
   if FindIntersection() then
   begin
+    // нашли, что два отрезка пересекаются, но как?
+    // точка пересечения может быть концом нашего отрезка
+    // тогда это будет касание
     if FindTouch() then
       FArrangement := saTouch
     else
@@ -790,6 +790,19 @@ begin
   Result := FPoints[Index];
 end;
 
+function TFourPoints.IsLine(const aDelta: Double): Boolean;
+var
+  D: Double;
+begin
+  Result := False;
+  TGeometry.DistanceLinePoint(FPoints[2], FPoints[0], FPoints[1], aDelta, D);
+  if D < aDelta then
+  begin
+    TGeometry.DistanceLinePoint(FPoints[2], FPoints[0], FPoints[1], aDelta, D);
+    Result := D < aDelta;
+  end;
+end;
+
 procedure TFourPoints.MoveMin(FromIdx, ToIdx: Integer);
 var
   L: Double;
@@ -800,7 +813,7 @@ begin
     Exit;
   L := FLen[FromIdx];
   Pt := FPoints[FromIdx];
-  for I := ToIdx + 1 to FromIdx do
+  for I := FromIdx downto ToIdx + 1 do 
   begin
     FLen[I] := FLen[I - 1];
     FPoints[I] := FPoints[I - 1];
@@ -835,6 +848,21 @@ begin
   if R1.ymin > R2.ymax then
     Exit;
   Result := True;
+end;
+
+{ TSegmentPoint }
+
+constructor TSegmentPoint.Create(const aPoint: TEzPoint; const aIsEnd: Boolean);
+begin
+  X := aPoint.X;
+  Y := aPoint.Y;
+  IsEnd := aIsEnd;
+end;
+
+function TSegmentPoint.Pt2D: TEzPoint;
+begin
+  Result.x := X;
+  Result.y := Y;
 end;
 
 end.

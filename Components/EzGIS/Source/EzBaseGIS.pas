@@ -3397,8 +3397,8 @@ End;
 Procedure TEzBaseGIS.SetActive( Value: Boolean );
 Begin
   If FActive = Value Then exit;
-  FActive := Value;
-  If FActive Then
+//  FActive := Value;
+  If Value Then
     Open
   Else
     Close;
