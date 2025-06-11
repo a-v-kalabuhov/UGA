@@ -15,12 +15,13 @@ type
   private
     class procedure AddLineToLayer(aLayer: TEzBaseLayer; aLine: TmstProjectLine);
     class procedure AddPlaceToLayer(aLayer: TEzBaseLayer; aPlace: TmstProjectPlace);
-    class function PointTo2D(aPrj: TmstProject; aPt: TmstProjectPoint): TEzPoint;
     class procedure ClearLayer(const aLayerName: string; aPredicate: TLayerRecNoPredicate);
     //
     class procedure AddMPProjectToGIS(aPrj: TmstProjectMP);
   public
-    class procedure AddProjectToGIS(aPrj: TmstProject); 
+    class function PointTo2D(aPrj: TmstProject; aPt: TmstProjectPoint): TEzPoint;
+    //
+    class procedure AddProjectToGIS(aPrj: TmstProject);
     class procedure FindProjectInGIS(Prj: TmstProject; LineId: Integer; out Layer: TEzBaseLayer; out RecNo: Integer);
     class function ProjectLayerName(aPrj: TmstProject): string;
     class function Window(aPrj: TmstProject): TEzRect;

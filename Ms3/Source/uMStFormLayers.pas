@@ -212,7 +212,7 @@ begin
     ShowMessage('Ошибка копирования файла!' + sLineBreak + Src + sLineBreak + Tgt);
     Exit;
   end;
-  // удаляем из него лишние слои
+  // распаковываем во временную папку
   Zip := TZipFile.Create;
   try
     Zip.LoadFromFile(Tgt, True);
@@ -228,7 +228,7 @@ begin
   finally
     Zip.Free;
   end;
-  // удаляем ненужное
+  // удаляем из него лишние слои
   for I := 0 to FDeletedLayers.Count - 1 do
   begin
     L := FDeletedLayers[I] as TmstLayer;
@@ -317,8 +317,10 @@ begin
   L := GetLayer();
   if Assigned(L) then
   begin
-    FImportedLayers.Remove(L);
-    FDeletedLayers.Add(L);
+    if FImportedLayers.IndexOf(L) > 0 then
+      FImportedLayers.Remove(L)
+    else
+      FDeletedLayers.Add(L);
     mstClientAppModule.Layers.Extract(L);
     mstClientAppModule.MapMngr.DeleteLayer(L);
     lvLayers.DeleteSelected;
@@ -396,6 +398,7 @@ begin
       if not Assigned(FProgressForm) then
         FProgressForm := TMStImportProgressForm.Create(Self);
       try
+        FDbImporter.LayersId := FImportLayer.Id;
         FDbImporter.Start();
         if Assigned(FProgressForm) then
           FProgressForm.Start(aFileName, Import.RecordCount);
@@ -432,6 +435,11 @@ end;
 
 function TMStFormLayers.LayerToListView(aLayer: TmstLayer): TListItem;
 begin
+  Result := nil;
+  if aLayer.IsMP then
+    Exit;
+  if aLayer.IsLotCategory then
+    Exit;
   Result := lvLayers.Items.Add;
   Result.Caption := aLayer.Caption;
   Result.Data := aLayer;

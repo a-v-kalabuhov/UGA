@@ -524,7 +524,7 @@ begin
         if Vectors.Count = 1 then
         begin
           V := TEzVector(Vectors[0]);
-          V.AddVector(V);
+          Poly.Points.AddVector(V);
         end
         else
         begin

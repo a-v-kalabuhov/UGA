@@ -7,14 +7,15 @@ uses
   EzLib, EzBaseGIS, EzEntities, EzBase,
   uCommonUtils, uCK36, uGC, uEzEntityCSConvert,
   uEzBufferZone,
-  uMStKernelClasses, uMStKernelIBX, uMStConsts, uMStClassesProjects;
+  uMStKernelClasses, uMStKernelIBX, uMStConsts, uMStClassesProjects, uMStClassesMPStatuses;
 
 type
   TmstProjectMP = class;
 
   TmstMPObjectState = (
     mstProjected, // проектируемые объекты
-    mstDrawn      // нанесённые
+    mstDrawn,     // нанесённые
+    mstArchived   // архивные
   );
 
   TmstMPObjectCheckState = (
@@ -83,6 +84,13 @@ type
     FTempLayerId: Integer;
     FTempCategoryId: Integer;
     FTempСaеtegory: string;
+    FConfirmDate: TDateTime;
+    FComment: string;
+    FVoltageComment: string;
+    FDiameterComment: string;
+    FOldProjectId: Integer;
+    FOldProjectLineId: Integer;
+    FOldProjectPlaceId: Integer;
     procedure SetClassId(const Value: Integer);
     procedure SetAddress(const Value: string);
     procedure SetArchived(const Value: Boolean);
@@ -137,6 +145,13 @@ type
     procedure SetTempLayerId(const Value: Integer);
     procedure SetTempCategoryId(const Value: Integer);
     procedure SetTempСaеtegory(const Value: string);
+    procedure SetConfirmDate(const Value: TDateTime);
+    procedure SetComment(const Value: string);
+    procedure SetVoltageComment(const Value: string);
+    procedure SetDiameterComment(const Value: string);
+    procedure SetOldProjectId(const Value: Integer);
+    procedure SetOldProjectLineId(const Value: Integer);
+    procedure SetOldProjectPlaceId(const Value: Integer);
   protected
     function GetObjectId: Integer; override;
     function GetText: String; override;
@@ -165,7 +180,9 @@ type
     property MpClassName: string read FMpClassName write SetMpClassName;
     //
     property Confirmed: Boolean read FConfirmed write SetConfirmed;
+    property ConfirmDate: TDateTime read FConfirmDate write SetConfirmDate;
     property Diameter: Integer read FDiameter write SetDiameter;
+    property DiameterComment: string read FDiameterComment write SetDiameterComment;
     property Dismantled: Boolean read FDismantled write SetDismantled;
     property DocNumber: string read FDocNumber write SetDocNumber;
     property DocDate: TDateTime read FDocDate write SetDocDate;
@@ -181,6 +198,8 @@ type
     property Top: string read FTop write SetTop;
     property Underground: Boolean read FUnderground write SetUnderground;
     property Voltage: Integer read FVoltage write SetVoltage;
+    property VoltageComment: string read FVoltageComment write SetVoltageComment;
+    property Comment: string read FComment write SetComment;
     // импорт
     property ProjectName: string read FProjectName write SetProjectName;
     property CK36: Boolean read FCK36 write SetCK36;
@@ -217,6 +236,10 @@ type
     property CertifNumber: string read FCertifNumber write SetCertifNumber;
     // дата справки
     property CertifDate: TDateTime read FCertifDate write SetCertifDate;
+    // для импорта из старых проектов
+    property OldProjectId: Integer read FOldProjectId write SetOldProjectId;
+    property OldProjectLineId: Integer read FOldProjectLineId write SetOldProjectLineId;
+    property OldProjectPlaceId: Integer read FOldProjectPlaceId write SetOldProjectPlaceId;
     //
     property EzData: TStream read FEzData;
     property EzId: Integer read FEzId write SetEzId;
@@ -327,33 +350,31 @@ const
   SQL_CHECK_MP_OBJECT_EXISTS = 'SELECT ID FROM MASTER_PLAN_OBJECTS WHERE ID=:ID';
   SQL_INSERT_MP_OBJECT =
       'INSERT INTO MASTER_PLAN_OBJECTS (' +
-      '  ID,              OBJ_ID,         MASTER_PLAN_CLASS_ID, ' +
-      '  LINKED_OBJ_ID, ' +
-      '  STATUS,     DISMANTLED, ' +
-      '  ARCHIVED,        CONFIRMED,      ADDRESS,              DOC_NUMBER, DOC_DATE, ' +
-      '  REQUEST_NUMBER,  REQUEST_DATE,   UNDERGROUND,          DIAMETER,   PIPE_COUNT, ' +
-      '  VOLTAGE,         MATERIAL,       TOP,                  BOTTOM,     FLOOR, ' +
-      '  PROJECTED,       CHECK_STATE,    LOADED,               PROJECT_NAME, ' +
-      '  OWNER,           DRAW_DATE,      IS_LINE,              ROTATION,   EZDATA, ' +
-      '  CUSTOMER_ORGS_ID, ' +
-      '  EXECUTOR_ORGS_ID, ' +
-      '  OWNER_ORG_ID,    DRAW_ORGS_ID,   DELETED,              TABLE_VERSION, ' +
-      '  DRAWN,           HAS_CERTIF,     CERTIF_NUMBER,        CERTIF_DATE, ' +
-      '  EZ_ID,           MINX,           MINY,                 MAXX,       MAXY) ' +
+      '  ID,                 OBJ_ID,            MASTER_PLAN_CLASS_ID, LINKED_OBJ_ID, ' +
+      '  STATUS,             DISMANTLED, ' +
+      '  ARCHIVED,           CONFIRMED,         ADDRESS,              DOC_NUMBER,     DOC_DATE, ' +
+      '  REQUEST_NUMBER,     REQUEST_DATE,      UNDERGROUND,          DIAMETER,       PIPE_COUNT, ' +
+      '  VOLTAGE,            MATERIAL,          TOP,                  BOTTOM,         FLOOR, ' +
+      '  PROJECTED,          CHECK_STATE,       LOADED,               PROJECT_NAME, ' +
+      '  OWNER,              DRAW_DATE,         IS_LINE,              ROTATION,       EZDATA, ' +
+      '  CUSTOMER_ORGS_ID,   EXECUTOR_ORGS_ID,  OWNER_ORG_ID,         DRAW_ORGS_ID,   DELETED, ' +
+      '  TABLE_VERSION,      DRAWN,             HAS_CERTIF,           CERTIF_NUMBER,  CERTIF_DATE, ' +
+      '  PROJECTS_ID,        PROJECT_LINES_ID,  PROJECT_PLACES_ID,    COMMENT,        VOLTAGE_COMMENT, ' +
+      '  DIAMETER_COMMENT,   CONFIRM_DATE, ' +
+      '  EZ_ID,              MINX,              MINY,                 MAXX,           MAXY) ' +
       'VALUES (' +
-      ' :ID,             :OBJ_ID,        :MASTER_PLAN_CLASS_ID, ' +
-      ' :LINKED_OBJ_ID, ' +
-      ' :STATUS,    :DISMANTLED, ' +
-      ' :ARCHIVED,       :CONFIRMED,     :ADDRESS,             :DOC_NUMBER,:DOC_DATE, ' +
-      ' :REQUEST_NUMBER, :REQUEST_DATE,  :UNDERGROUND,         :DIAMETER,  :PIPE_COUNT, ' +
-      ' :VOLTAGE,        :MATERIAL,      :TOP,                 :BOTTOM,    :FLOOR, ' +
-      ' :PROJECTED,      :CHECK_STATE,   :LOADED,              :PROJECT_NAME, ' +
-      ' :OWNER,          :DRAW_DATE,     :IS_LINE,             :ROTATION,  :EZDATA, ' +
-      ' :CUSTOMER_ORGS_ID, ' +
-      ' :EXECUTOR_ORGS_ID, ' +
-      ' :OWNER_ORG_ID,   :DRAW_ORGS_ID,   0,                   :TABLE_VERSION, ' +
-      ' :DRAWN,          :HAS_CERTIF,    :CERTIF_NUMBER,       :CERTIF_DATE, ' +
-      ' :EZ_ID,          :MINX,          :MINY,                :MAXX,      :MAXY)';
+      ' :ID,                :OBJ_ID,           :MASTER_PLAN_CLASS_ID,:LINKED_OBJ_ID, ' +
+      ' :STATUS,            :DISMANTLED, ' +
+      ' :ARCHIVED,          :CONFIRMED,        :ADDRESS,             :DOC_NUMBER,    :DOC_DATE, ' +
+      ' :REQUEST_NUMBER,    :REQUEST_DATE,     :UNDERGROUND,         :DIAMETER,      :PIPE_COUNT, ' +
+      ' :VOLTAGE,           :MATERIAL,         :TOP,                 :BOTTOM,        :FLOOR, ' +
+      ' :PROJECTED,         :CHECK_STATE,      :LOADED,              :PROJECT_NAME, ' +
+      ' :OWNER,             :DRAW_DATE,        :IS_LINE,             :ROTATION,      :EZDATA, ' +
+      ' :CUSTOMER_ORGS_ID,  :EXECUTOR_ORGS_ID, :OWNER_ORG_ID,        :DRAW_ORGS_ID,   0, ' +
+      ' :TABLE_VERSION,     :DRAWN,            :HAS_CERTIF,          :CERTIF_NUMBER, :CERTIF_DATE, ' +
+      ' :PROJECTS_ID,       :PROJECT_LINES_ID, :PROJECT_PLACES_ID,   :COMMENT,       :VOLTAGE_COMMENT, ' +
+      ' :DIAMETER_COMMENT,  :CONFIRM_DATE, ' +
+      ' :EZ_ID,             :MINX,             :MINY,                :MAXX,          :MAXY)';
   SQL_UPDATE_MP_OBJECT =
       'UPDATE MASTER_PLAN_OBJECTS ' +
       'SET ' +
@@ -400,7 +421,14 @@ const
       '   LOADED = :LOADED, ' +
       '   HAS_CERTIF = :HAS_CERTIF, ' +
       '   CERTIF_NUMBER = :CERTIF_NUMBER, ' +
-      '   CERTIF_DATE = :CERTIF_DATE ' +
+      '   CERTIF_DATE = :CERTIF_DATE, ' +
+      '   CERTIF_NUMBER = :CERTIF_NUMBER, ' +
+      '   PROJECTS_ID = :PROJECTS_ID, ' +
+      '   PROJECT_PLACES_ID = :PROJECT_PLACES_ID, ' +
+      '   COMMENT = :COMMENT, ' +
+      '   VOLTAGE_COMMENT = :VOLTAGE_COMMENT, ' +
+      '   DIAMETER_COMMENT = :DIAMETER_COMMENT, ' +
+      '   CONFIRM_DATE = :CONFIRM_DATE ' +
       'WHERE (ID = :ID)';
 
 { TmstMPProjectSaver }
@@ -810,6 +838,7 @@ begin
     Tgt.FArchived := FArchived;
     Tgt.FDocNumber := FDocNumber;
     Tgt.FConfirmed := FConfirmed;
+    Tgt.FConfirmDate := FConfirmDate;
     Tgt.FDismantled := FDismantled;
     Tgt.FAddress := FAddress;
     Tgt.FDocDate := FDocDate;
@@ -817,6 +846,7 @@ begin
     Tgt.FRequestDate := FRequestDate;
     Tgt.FMaterial := FMaterial;
     Tgt.FVoltage := FVoltage;
+    Tgt.FVoltageComment := FVoltageComment;
     Tgt.FUnderground := FUnderground;
     Tgt.FPipeCount := FPipeCount;
     Tgt.FFloor := FFloor;
@@ -845,6 +875,7 @@ begin
     Tgt.FCertifNumber := FCertifNumber;
     Tgt.FCertifDate := FCertifDate;
     Tgt.FHasCertif := FHasCertif;
+    Tgt.FComment := FComment;
     //
     Tgt.FCK36 := FCK36;
     Tgt.FExchangeXY := FExchangeXY;
@@ -864,6 +895,10 @@ begin
     Tgt.FExecutorOrg := FExecutorOrg;
     //
     Tgt.DatabaseId := Self.DatabaseId;
+    //
+    Tgt.FOldProjectId := Self.FOldProjectId;
+    Tgt.FOldProjectLineId := Self.FOldProjectLineId;
+    Tgt.FOldProjectPlaceId := Self.FOldProjectPlaceId;
   end;
 end;
 
@@ -960,6 +995,16 @@ begin
   FClassId := Value;
 end;
 
+procedure TmstMPObject.SetComment(const Value: string);
+begin
+  FComment := Value;
+end;
+
+procedure TmstMPObject.SetConfirmDate(const Value: TDateTime);
+begin
+  FConfirmDate := Value;
+end;
+
 procedure TmstMPObject.SetConfirmed(const Value: Boolean);
 begin
   FConfirmed := Value;
@@ -978,6 +1023,11 @@ end;
 procedure TmstMPObject.SetDiameter(const Value: Integer);
 begin
   FDiameter := Value;
+end;
+
+procedure TmstMPObject.SetDiameterComment(const Value: string);
+begin
+  FDiameterComment := Value;
 end;
 
 procedure TmstMPObject.SetDismantled(const Value: Boolean);
@@ -1110,6 +1160,21 @@ begin
   FObjState := Value;
 end;
 
+procedure TmstMPObject.SetOldProjectId(const Value: Integer);
+begin
+  FOldProjectId := Value;
+end;
+
+procedure TmstMPObject.SetOldProjectLineId(const Value: Integer);
+begin
+  FOldProjectLineId := Value;
+end;
+
+procedure TmstMPObject.SetOldProjectPlaceId(const Value: Integer);
+begin
+  FOldProjectPlaceId := Value;
+end;
+
 procedure TmstMPObject.SetOwner(const Value: string);
 begin
   FOwner := Value;
@@ -1185,26 +1250,37 @@ begin
   FVoltage := Value;
 end;
 
+procedure TmstMPObject.SetVoltageComment(const Value: string);
+begin
+  FVoltageComment := Value;
+end;
+
 function TmstMPObject.Status: Integer;
 begin
+  if Archived then
+    Result := TmstMPStatuses.Archived
+  else
   if Drawn then
-    Result := 4
+    Result := TmstMPStatuses.Drawn
   else
     if Dismantled then
-      Result := 3
+      Result := TmstMPStatuses.ProjectedDismantled
     else
     if HasCertif then
-      Result := 2
+      Result := TmstMPStatuses.ProjectedCertified
     else
-      Result := 1;
+      Result := TmstMPStatuses.Projected;
 end;
 
 procedure TmstMPObject.UpdateObjState;
 begin
-  if Drawn then
-    ObjState := mstDrawn
+  if Archived then
+    ObjState := mstArchived
   else
-    ObjState := mstProjected;
+    if Drawn then
+      ObjState := mstDrawn
+    else
+      ObjState := mstProjected;
 end;
 
 { TmstProjectObjects }
@@ -1219,11 +1295,19 @@ begin
     begin
       Result.FDrawn := False;
       Result.FProjected := True;
+      Result.FArchived := False;
     end;
   mstDrawn :
     begin
       Result.FDrawn := True;
       Result.FProjected := False;
+      Result.FArchived := False;
+    end;
+  mstArchived :
+    begin
+      Result.FDrawn := False;
+      Result.FProjected := False;
+      Result.FArchived := True;
     end;
   end;
   Result.FCheckState := FOwner.CheckState;
@@ -1459,6 +1543,15 @@ begin
   Conn.SetParam(DsMain, SF_HAS_CERTIF, IfThen(aObj.HasCertif, 1, 0));
   //CHECK_STATS
   Conn.SetParam(DsMain, SF_CHECK_STATE, Integer(aObj.CheckState));
+  //
+  // Дополнительные параметры:
+  Conn.SetNullableParam(DsMain, SF_PROJECTS_ID, aObj.OldProjectId, 0);
+  Conn.SetNullableParam(DsMain, SF_PROJECT_LINES_ID, aObj.OldProjectLineId, 0);
+  Conn.SetNullableParam(DsMain, SF_PROJECT_PLACES_ID, aObj.OldProjectPlaceId, 0);
+  Conn.SetParam(DsMain, SF_VOLTAGE_COMMENT, aObj.VoltageComment);
+  Conn.SetParam(DsMain, SF_DIAMETER_COMMENT, aObj.DiameterComment);
+  Conn.SetParam(DsMain, SF_COMMENT, aObj.Comment);
+  Conn.SetNullableParam(DsMain, SF_CONFIRM_DATE, aObj.ConfirmDate, 0);
   //
   XMin := aObj.MinX;
   YMin := aObj.MinY;

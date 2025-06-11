@@ -3,7 +3,7 @@ unit uMStKernelSemantic;
 interface
 
 uses
-  SysUtils, Contnrs,
+  SysUtils, Contnrs, Variants,
   //
   uCommonClasses;
 
@@ -131,6 +131,11 @@ end;
 function TmstLayerField.TryParse(const FldValue: string; out TypedVal: Variant): Boolean;
 begin
   Result := False;
+  if FldValue = '' then
+  begin
+    TypedVal := NULL;
+    Exit;
+  end;
   try
     case DataType of
       mstDataUnknown:

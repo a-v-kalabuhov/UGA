@@ -23,7 +23,7 @@ uses
   uMStKernelStack, uMStKernelIBX, uMStKernelAppSettings,
   uMStModuleMapMngrIBX,
   uMStImportEzClasses,
-  uMStClassesLots, uMStClassesProjects, uMStClassesMPIntf;
+  uMStClassesLots, uMStClassesProjects, uMStClassesMPIntf, uMStClassesProjectsIntf;
 
 type
   ELayerNotFound = class(Exception);
@@ -34,7 +34,7 @@ type
   TmstProgressEvent = procedure (const Message: String; Percent: Byte;
     Delay: Integer; Ticks: Integer = -1) of object;
 
-  TMStClientAppModule = class(TDataModule, ImstAppModule, ImstLotController, ImstAppSettings, ImstCoordViewList)
+  TMStClientAppModule = class(TDataModule, ImstAppModule, ImstLotController, ImstAppSettings, ImstCoordViewList, ImstProjects)
     GIS: TEzGIS;
     ApplicationEvents: TApplicationEvents;
     procedure DataModuleDestroy(Sender: TObject);
@@ -173,6 +173,11 @@ type
     function GetCoordViews: ImstCoordViewList;
     procedure NotifyCoordViews();
   private
+    // ImstProjects
+    function GetProject(PrjId: Integer; LoadIsNotExtsts: Boolean): TmstProject;
+    procedure LoadProjects(const aLeft, aTop, aRight, aBottom: Double; CallBack: TProgressEvent2);
+    procedure LoadProjectsByField(const FieldName, Text: String; OnPrjLoaded: TNotifyEvent);
+  private
     FCoordViews: TInterfaceList;
     // ImstCoordViewList
     procedure Subscribe(aView: ImstCoordView);
@@ -197,10 +202,6 @@ type
     // Загрузка участков на клиента
     procedure LoadLots(const aLeft, aTop, aRight, aBottom: Double; CallBack: TProgressEvent2);
     procedure LoadLotsByField(const FieldName, Text: String; OnLotLoaded: TNotifyEvent);
-    //
-    function GetProject(PrjId: Integer; LoadIsNotExtsts: Boolean): TmstProject;
-    procedure LoadProjects(const aLeft, aTop, aRight, aBottom: Double; CallBack: TProgressEvent2);
-    procedure LoadProjectsByField(const FieldName, Text: String; OnPrjLoaded: TNotifyEvent);
     // Загрузка изображения планшета
     function LoadMapImage(MapEntityId: Integer): Boolean;  // MapId = Entity.ID
     // Поиск адреса и установке его на экране
@@ -247,6 +248,8 @@ type
     function SessionDir: String;
   private
     function GetAppSettings: ImstAppSettings;
+    function GetProjects: ImstProjects;
+    function GetDb: IDb;
   public
     procedure UnloadAllLots;
   public
@@ -274,9 +277,11 @@ type
     property NetTypes: TmstProjectNetTypes read FNetTypes;
     //
     property AppSettings: ImstAppSettings read GetAppSettings;
+    property Db: IDb read GetDb;
+    property CoordViews: ImstCoordViewList read GetCoordViews;
     property MP: ImstMPModule read GetMP;
     property ObjList: ImstMPModuleObjList read GetObjList;
-    property CoordViews: ImstCoordViewList read GetCoordViews;
+    property Projects: ImstProjects read GetProjects;
 
     property Finder: TmstFinder read FFinder;
     property Stack: TmstObjectStack read FStack;
@@ -521,6 +526,11 @@ begin
   Result := Self as ImstCoordViewList;
 end;
 
+function TMStClientAppModule.GetDb: IDb;
+begin
+  Result := MapMngr as IDb;
+end;
+
 procedure TMStClientAppModule.GetDbForMP(Sender: TObject; out aDb: IDb);
 begin
   aDb := MapMngr as IDb;
@@ -684,6 +694,11 @@ begin
       Result := nil;
     end;
   end;
+end;
+
+function TMStClientAppModule.GetProjects: ImstProjects;
+begin
+  Result := Self as ImstProjects;
 end;
 
 function TMStClientAppModule.Init: Boolean;
@@ -1933,7 +1948,7 @@ begin
   if IsMPLayer(Layer) then
   begin
     MPLayer := True;
-    CanShow := GetMPObjectisVisible(Layer, Recno, Clr);
+    CanShow := GetMPObjectIsVisible(Layer, Recno, Clr);
     if CanShow then
       if Entity is TEzOpenedEntity then
         TEzOpenedEntity(Entity).PenTool.Color := Clr;

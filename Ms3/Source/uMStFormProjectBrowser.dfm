@@ -176,6 +176,10 @@ object MStProjectBrowserForm: TMStProjectBrowserForm
     TabOrder = 2
     object tabData: TTabSheet
       Caption = #1055#1088#1086#1077#1082#1090#1099
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0

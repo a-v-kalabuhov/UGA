@@ -13,6 +13,7 @@ type
     const ProjectedDismantled = 2;
     const ProjectedCertified = 3;
     const Drawn = 4;
+    const Archived = 5;
   end;
 
 implementation
@@ -21,12 +22,12 @@ implementation
 
 class function TmstMPStatuses.MaxId: Integer;
 begin
-  Result := 4;
+  Result := Archived;
 end;
 
 class function TmstMPStatuses.MinId: Integer;
 begin
-  Result := 1;
+  Result := Projected;
 end;
 
 class function TmstMPStatuses.StatusName(const aStatus: Integer): string;
@@ -36,6 +37,7 @@ begin
   2 : Result := 'проектные демонтируемые объекты';
   3 : Result := 'проектные выдана справка';
   4 : Result := 'нанесенные';
+  5 : Result := 'архивные';
   else
       Result := 'ошибка';
   end;

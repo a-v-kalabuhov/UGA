@@ -3,7 +3,7 @@ object mstLoadLotProgressForm: TmstLoadLotProgressForm
   Top = 0
   BorderStyle = bsNone
   ClientHeight = 74
-  ClientWidth = 274
+  ClientWidth = 405
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -32,7 +32,7 @@ object mstLoadLotProgressForm: TmstLoadLotProgressForm
   object ProgressBar1: TProgressBar
     Left = 8
     Top = 48
-    Width = 258
+    Width = 389
     Height = 17
     TabOrder = 0
   end

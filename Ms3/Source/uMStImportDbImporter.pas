@@ -19,9 +19,6 @@ type
     FConn: IIBXConnection;
     FLayersId: Integer;
     FObjectId: string;
-    FQuery: TDataSet;
-    function GenNewId(): Integer;
-    function PrepareSQL(Fld: TmstLayerField; IsString: Boolean): string;
     procedure SetLayersId(const Value: Integer);
     procedure SetObjectId(const Value: string);
   public
@@ -38,6 +35,14 @@ type
   end;
 
 implementation
+
+const
+  SQL_INSERT_LAYER_OBJECT_SEMANTICS =
+    'INSERT INTO LAYERS_SEMANTIC ' +
+    '(ID,LAYERS_ID,OBJECT_ID,FIELD_NAME,FIELD_TYPE,FIELD_VALUE) ' +
+    'VALUES ' +
+    '(:ID,:LAYERS_ID,:OBJECT_ID,:FIELD_NAME,:FIELD_TYPE,:FIELD_VALUE)';
+
 
 { TmstDbImporter }
 
@@ -59,6 +64,7 @@ var
   Fld: TmstLayerField;
   TypedVal: Variant;
   IsString: Boolean;
+  Ds: TDataSet;
 begin
   for I := 0 to FieldValues.Count - 1 do
   begin
@@ -73,36 +79,19 @@ begin
       // если не удалось, то считаем строкой
       IsString := not Fld.TryParse(FldValue, TypedVal);
       // формируем запрос
-      if not Assigned(FQuery) then
-      begin
-        Sql := PrepareSQL(Fld, IsString);
-        // выполняем запрос
-        FQuery := FConn.GetDataSet(Sql);
-      end;
-      NewId := GenNewId();
-      FConn.SetParam(FQuery, 'ID', NewId);
-      FConn.SetParam(FQuery, 'LAYERS_ID', FLayersId);
-      FConn.SetParam(FQuery, 'OBJECT_ID', FObjectId);
-      FConn.SetParam(FQuery, 'FIELD_NAME', Fld.Caption);
-      FConn.SetParam(FQuery, 'FIELD_TYPE', Fld.DataTypeName);
-      FConn.SetParam(FQuery, 'FIELD_VALUE', TypedVal);
-      FConn.ExecDataSet(FQuery);
+      NewId := FConn.GenNextValue(SG_LAYERS_SEMANTIC);
+      Ds := FConn.GetDataSet(SQL_INSERT_LAYER_OBJECT_SEMANTICS);
+      FConn.SetParam(Ds, 'ID', NewId);
+      FConn.SetParam(Ds, 'LAYERS_ID', FLayersId);
+      FConn.SetParam(Ds, 'OBJECT_ID', FObjectId);
+      FConn.SetParam(Ds, 'FIELD_NAME', Fld.Caption);
+      FConn.SetParam(Ds, 'FIELD_TYPE', Fld.DataTypeName);
+      FConn.SetParam(Ds, 'FIELD_VALUE', TypedVal);
+//      FConn.SetParam(Ds, 'FIELD_VALUE', FldValue);
+      FConn.ExecDataSet(Ds);
     end;
   end;
   FConn.Commit();
-end;
-
-function TmstDbImporter.GenNewId: Integer;
-begin
-  Result := FConn.GenNextValue(SG_LAYERS_SEMANTIC);
-end;
-
-function TmstDbImporter.PrepareSQL(Fld: TmstLayerField; IsString: Boolean): string;
-begin
-  Result := 'INSERT INTO LAYERS_SEMANTIC ' +
-            '(ID,LAYERS_ID,OBJECT_ID,FIELD_NAME,FIELD_TYPE,FIELD_VALUE) ' +
-            'VALUES ' +
-            '(:ID,:LAYERS_ID,:OBJECT_ID,:FIELD_NAME,:FIELD_TYPE,:FIELD_VALUE)';
 end;
 
 procedure TmstDbImporter.SetEntityRecNo(const Value: Integer);

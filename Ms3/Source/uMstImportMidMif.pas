@@ -106,20 +106,16 @@ begin
       try
         Reader.MifInfo := FMifInfo;
         Reader.Grapher := FGrapher;
-        while I < FMif.Count do
+        while I < FMif.Count - 1 do
         begin
           Reader.Clear();
           I1 := I;
           try
             I := Reader.Read(FMif, aSettings, I);
             if Assigned(Reader.Entity) then
-            begin
-              FireImportSuccessEvent(MidRecNo, I1, Reader.Entity);
-            end
+              FireImportSuccessEvent(MidRecNo, I1, Reader.Entity)
             else
-            begin
               FireImportErrorEvent(MidRecNo, I1, nil);
-            end;
           except
             on E: Exception do
             begin

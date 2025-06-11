@@ -255,7 +255,7 @@ var
   Loaded: Boolean;
 begin
   Loaded := mstClientAppModule.IsProjectLoaded(PrjId);
-  Result := mstClientAppModule.GetProject(PrjId, True);
+  Result := mstClientAppModule.Projects.GetProject(PrjId, True);
   if Assigned(Result) and not Loaded then
   begin
     TProjectUtils.AddProjectToGIS(Result);
@@ -453,7 +453,7 @@ begin
 //    I := ibqProjects.RecNo;
     PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
     LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;
-    Prj := mstClientAppModule.GetProject(PrjId, True);
+    Prj := mstClientAppModule.Projects.GetProject(PrjId, True);
     if Prj = nil then
       Exit;
     if Prj.Lines.Count = 1 then
@@ -690,7 +690,7 @@ begin
     PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
     if mstClientAppModule.IsProjectLoaded(PrjId) then
     begin
-      Prj := mstClientAppModule.GetProject(PrjId, False);
+      Prj := mstClientAppModule.Projects.GetProject(PrjId, False);
       if Assigned(Prj) then
       begin
         // текущая линия
@@ -765,7 +765,7 @@ var
 begin
   // получаем текущую линию
   PrjId := ibqProjects.FieldByName(SF_PROJECT_ID).AsInteger;
-  Prj := mstClientAppModule.GetProject(PrjId, True);
+  Prj := mstClientAppModule.Projects.GetProject(PrjId, True);
   if Assigned(Prj) then
   begin
     LineId := ibqProjects.FieldByName(SF_LINE_ID).AsInteger;

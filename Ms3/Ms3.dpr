@@ -112,7 +112,9 @@ uses
   uMStModuleDefaultActions in 'Source\uMStModuleDefaultActions.pas' {mstDefaultActionsModule: TDataModule},
   uMStDialogMPIntersections in 'Source\uMStDialogMPIntersections.pas' {MStMPIntersectionsDialog},
   uMStFramesMPIntersectItem in 'Source\uMStFramesMPIntersectItem.pas' {mstMPIntersectItemFrame: TFrame},
-  uMStKernelUtils in 'Source\uMStKernelUtils.pas';
+  uMStKernelUtils in 'Source\uMStKernelUtils.pas',
+  uMStClassesProjectsExportToMP in 'Source\uMStClassesProjectsExportToMP.pas',
+  uMStClassesProjectsIntf in 'Source\uMStClassesProjectsIntf.pas';
 
 {$R *.RES}
 

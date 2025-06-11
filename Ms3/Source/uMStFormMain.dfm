@@ -586,7 +586,7 @@ object mstClientMainForm: TmstClientMainForm
           Height = 21
           Hint = #1052#1072#1089#1096#1090#1072#1073' '#1086#1090#1095#1077#1090#1072
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 0
           OnChange = cbReportScaleChange
           Items.Strings = (
@@ -770,7 +770,7 @@ object mstClientMainForm: TmstClientMainForm
         Left = 115
         Top = 0
         Width = 67
-        Height = 22
+        Height = 13
         Caption = '      '#1055#1083#1072#1085#1096#1077#1090':'
         Layout = tlCenter
       end
@@ -796,7 +796,7 @@ object mstClientMainForm: TmstClientMainForm
         Left = 265
         Top = 0
         Width = 61
-        Height = 22
+        Height = 13
         Caption = '        '#1054#1090#1074#1086#1076':'
         Layout = tlCenter
       end
@@ -1029,6 +1029,9 @@ object mstClientMainForm: TmstClientMainForm
       end
       object ID1: TMenuItem
         Action = acGenClassIDforMP
+      end
+      object N65: TMenuItem
+        Action = acCopyProjectsToMP
       end
     end
     object imMaps: TMenuItem
@@ -1581,7 +1584,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 80
     Top = 256
     Bitmap = {
-      494C0101550078015C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010155007801700210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000006001000001002000000000000060
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4558,7 +4561,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 460
     Top = 224
     Bitmap = {
-      494C0101120013004C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010112001300600210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -5428,6 +5431,12 @@ object mstClientMainForm: TmstClientMainForm
       Caption = #1047#1072#1087#1086#1083#1085#1080#1090#1100' ID '#1082#1083#1072#1089#1089#1086#1074' '#1076#1083#1103' '#1057#1074#1086#1076#1085#1086#1075#1086' '#1087#1083#1072#1085#1072
       OnExecute = acGenClassIDforMPExecute
       OnUpdate = acGenClassIDforMPUpdate
+    end
+    object acCopyProjectsToMP: TAction
+      Category = 'Admin'
+      Caption = #1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100' '#1087#1088#1086#1077#1082#1090#1099' '#1074' '#1057#1074#1086#1076#1085#1099#1081' '#1087#1083#1072#1085
+      OnExecute = acCopyProjectsToMPExecute
+      OnUpdate = acCopyProjectsToMPUpdate
     end
   end
   object MidMifDialog: TOpenDialog

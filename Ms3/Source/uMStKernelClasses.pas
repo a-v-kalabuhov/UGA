@@ -166,6 +166,7 @@ type
     FIsMP: Boolean;
     FMpCategoryId: Integer;
     FMpStateId: Integer;
+    FIsLotCategory: Boolean;
     procedure SetName(const Value: String);
     procedure SetCaption(const Value: String);
     procedure SetPosition(const Value: SmallInt);
@@ -179,6 +180,7 @@ type
     procedure SetIsMP(const Value: Boolean);
     procedure SetMpCategoryId(const Value: Integer);
     procedure SetMpStateId(const Value: Integer);
+    procedure SetIsLotCategory(const Value: Boolean);
   public
     constructor Create;
     destructor Destroy; override;
@@ -205,6 +207,7 @@ type
     property Child[Index: Integer]: TmstLayer read GetChild;
     //
     property IsMP: Boolean read FIsMP write SetIsMP;
+    property IsLotCategory: Boolean read FIsLotCategory write SetIsLotCategory;
     property MpCategoryId: Integer read FMpCategoryId write SetMpCategoryId;
     property MpStatusId: Integer read FMpStateId write SetMpStateId;
   end;
@@ -708,6 +711,11 @@ end;
 procedure TmstLayer.SetId(const Value: Integer);
 begin
   FId := Value;
+end;
+
+procedure TmstLayer.SetIsLotCategory(const Value: Boolean);
+begin
+  FIsLotCategory := Value;
 end;
 
 procedure TmstLayer.SetIsMP(const Value: Boolean);

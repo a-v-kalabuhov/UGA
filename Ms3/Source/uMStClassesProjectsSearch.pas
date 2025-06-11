@@ -6,7 +6,7 @@ uses
   SysUtils,
   uMStKernelClasses, uMStKernelStack, uMStKernelClassesSearch,
   uMStConsts,
-  uMStModuleApp;
+  uMStModuleApp, uMStClassesProjectsIntf;
 
 type
   TmstProjectAddressSearchData = class(TmstTextSearchData)
@@ -23,11 +23,13 @@ implementation
 { TmstProjectAddressSearchData }
 
 procedure TmstProjectAddressSearchData.DoSearch(AStack: TmstObjectStack);
+var
+  Projects: ImstProjects;
 begin
   inherited;
   FStack := aStack;
-  with mstClientAppModule do
-    LoadProjectsByField(SF_ADDRESS, SearchText, OnProjectLoaded);
+  Projects := mstClientAppModule.Projects;
+  Projects.LoadProjectsByField(SF_ADDRESS, SearchText, OnProjectLoaded);
 end;
 
 procedure TmstProjectAddressSearchData.OnProjectLoaded(Sender: TObject);

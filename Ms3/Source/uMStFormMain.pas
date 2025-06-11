@@ -14,7 +14,9 @@ uses
   ExtCtrls, StdCtrls, Menus, IniFiles, ActnList, OleCtrls, ImgList, DB, CheckLst, Grids, DBGrids,
   // Library
   EzCmdLine, EzBaseGIS, EzBasicCtrls, EzCtrls, EzEntities, EzDxfImport, EzBase, EzActions, EzActionLaunch,
-  EzSystem, EzTable, EzLib, 
+  EzSystem, EzTable, EzLib,
+  // VT
+  VirtualTrees,
   // shared
   uGeoUtils, uGeoTypes, uCK36, uEzEntityCSConvert,
   // Project
@@ -24,7 +26,7 @@ uses
   uMStClassesWatermarkDraw, uMstClassesLots, uMStClassesProjects, uMStClassesProjectsSearch, uMStClassesProjectsMIFExport,
   uMstDialogFactory, uMStClassesProjectsMP, 
   uMStModuleMapMngrIBX, uMStModuleProjectImport, uMstModuleMasterPlan, uMStDialogMPLineColors,
-  uMStFormLayerBrowser, VirtualTrees;
+  uMStFormLayerBrowser, uMStClassesProjectsExportToMP;
 
 const
   WM_RESTORE_PANELS = WM_USER + 100;
@@ -367,6 +369,8 @@ type
     ID1: TMenuItem;
     N64: TMenuItem;
     acLotUnloadAll: TAction;
+    acCopyProjectsToMP: TAction;
+    N65: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -545,6 +549,8 @@ type
     procedure acGenClassIDforMPUpdate(Sender: TObject);
     procedure acLotUnloadAllExecute(Sender: TObject);
     procedure acLotUnloadAllUpdate(Sender: TObject);
+    procedure acCopyProjectsToMPExecute(Sender: TObject);
+    procedure acCopyProjectsToMPUpdate(Sender: TObject);
   private
     FPoints: TMstPointArray;
     FCursorState: TCursorState;
@@ -1382,7 +1388,7 @@ end;
 
 function TmstClientMainForm.GetProjectToExport(Sender: TObject; const ProjectId: Integer): TmstProject;
 begin
-  Result := mstClientAppModule.GetProject(ProjectId, True);
+  Result := mstClientAppModule.Projects.GetProject(ProjectId, True);
 end;
 
 procedure TmstClientMainForm.GISBeforeClose(Sender: TObject);
@@ -1560,7 +1566,7 @@ begin
   Enabled := False;
   try
     Frm.Show;
-    mstClientAppModule.LoadProjects(ALeft, ATop, ARight, ABottom, Frm.OnProgress2);
+    mstClientAppModule.Projects.LoadProjects(ALeft, ATop, ARight, ABottom, Frm.OnProgress2);
   finally
     Enabled := True;
     Frm.Free;
@@ -2107,6 +2113,38 @@ end;
 procedure TmstClientMainForm.acCopyAllUpdate(Sender: TObject);
 begin
   acCopyAll.Enabled := (ListView.Items.Count > 0);
+end;
+
+procedure TmstClientMainForm.acCopyProjectsToMPExecute(Sender: TObject);
+var
+  Exp: TmstProjectExportToMP;
+  Frm: TmstLoadLotProgressForm;
+begin
+  Frm := TmstLoadLotProgressForm.Create(Self);
+  Enabled := False;
+  try
+    Frm.Show;
+
+    Exp := TmstProjectExportToMP.Create;
+    try
+      Exp.DoExport(
+        mstClientAppModule.Db,
+        mstClientAppModule.Projects,
+        Frm.OnProgress2);
+      ShowMessage('Проекты скопированы.');
+    finally
+      Exp.Free;
+    end;
+
+  finally
+    Enabled := True;
+    Frm.Free;
+  end;
+end;
+
+procedure TmstClientMainForm.acCopyProjectsToMPUpdate(Sender: TObject);
+begin
+  acGenClassIDforMP.Enabled := mstClientAppModule.User.IsAdministrator;
 end;
 
 procedure TmstClientMainForm.acDeletePointExecute(Sender: TObject);

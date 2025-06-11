@@ -12,6 +12,7 @@ type
   IIBXConnection = interface
     ['{68A09629-23B1-4386-AE7D-CAC313576E88}']
     procedure ExecDataSet(DataSet: TDataSet);
+    procedure ExecSQL(const Sql: string);
     function  GetDataSet(const SQL: String): TDataSet;
     function  GetGenValue(const GenName: string): Integer;
     function  GenNextValue(const GenName: string): Integer;

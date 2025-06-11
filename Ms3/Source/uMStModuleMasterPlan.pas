@@ -14,7 +14,7 @@ uses
   uMStModuleProjectImport, uMStClassesProjectsEz, uMStClassesMPClassif, uMStClassesMPIntf, uMStKernelClasses,
   uMStFormMPBrowser, uMStKernelClassesQueryIndex, uMStKernelAppSettings, uMStClassesMPObjectAdapter,
   uMStDialogMPObjectSemantics, uMStClassesMPMIFExport, uMStModuleMPImportExcel,
-  uMStClassesProjectsMPIntersect, uMStDialogMPIntersections;
+  uMStClassesProjectsMPIntersect, uMStDialogMPIntersections, uMStClassesProjectsExportToMP;
 
 type
   TObjIdEvent = procedure (ObjId: Integer) of object;
@@ -1204,13 +1204,18 @@ end;
 
 function TmstMasterPlanModule.IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
 var
-  CatId: Integer;
+  CatId, StatusId: Integer;
 begin
   memObjects.RecNo := FIdxObjects.GetFirstRow(ObjId);
-  CatId := FClassifier.GetClassCategoryId(FMPAdapter.MpClassId);
-  Result := FClassifier.GetMPCategoryVisible(FMPAdapter.Status, CatId);
+  StatusId := FMPAdapter.Status;
+  Result := FClassifier.GetMPStatusVisible(StatusId);
   if Result then
-    aLineColor := FClassifier.GetClassCategoryColor(FMPAdapter.MpClassId);
+  begin
+    CatId := FClassifier.GetClassCategoryId(FMPAdapter.MpClassId);
+    Result := FClassifier.GetMPCategoryVisible(FMPAdapter.Status, CatId);
+    if Result then
+      aLineColor := FClassifier.GetClassCategoryColor(FMPAdapter.MpClassId);
+  end;
 end;
 
 procedure TmstMasterPlanModule.LoadAllToGIS;

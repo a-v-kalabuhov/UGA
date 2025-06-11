@@ -89,6 +89,8 @@ begin
         PrjObj.Projected := True;
       mstDrawn: 
         PrjObj.Drawn := True;
+      mstArchived:
+        PrjObj.Archived := True;
     end;
   end;
 end;

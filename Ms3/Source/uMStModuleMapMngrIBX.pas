@@ -29,8 +29,10 @@ type
     FCounter: Integer;
     FDataSets: TComponent;
     FTransaction: TIBTransaction;
+    procedure ClearDataSets;
   protected
     procedure ExecDataSet(DataSet: TDataSet);
+    procedure ExecSQL(const Sql: string);
     function  GetDataSet(const aSQL: String): TDataSet;
     function  GetGenValue(const GenName: string): Integer;
     function  GenNextValue(const GenName: string): Integer;
@@ -967,6 +969,7 @@ begin
       LLayer.Visible := True;
       LayerId := MaxInt div 2 + 100;
       LLayer.Id := LayerId;
+      LLayer.IsLotCategory := True;
       //
       for I := 0 to FLotCategories.Count - 1 do
       begin
@@ -982,6 +985,7 @@ begin
           Layer.Position := Position;
           Layer.LayerType := 2;
           Layer.Visible := True;
+          Layer.IsLotCategory := True;
           Inc(Position);
         end;
       end;
@@ -1498,15 +1502,20 @@ end;
 
 { TIBXConnection }
 
+procedure TIBXConnection.ClearDataSets;
+begin
+  FreeAndNil(FDataSets);
+  FDataSets := TComponent.Create(nil);
+end;
+
 procedure TIBXConnection.Commit;
 begin
   if Assigned(FTransaction) then
   begin
     if FTransaction.Active then
-    begin
       FTransaction.CommitRetaining;
-    end;
   end;
+  ClearDataSets;
 end;
 
 constructor TIBXConnection.Create;
@@ -1532,6 +1541,20 @@ begin
   begin
     if DataSet is TIBQuery then
       TIBQuery(DataSet).ExecSQL;
+  end;
+end;
+
+procedure TIBXConnection.ExecSQL(const Sql: string);
+var
+  Query: TIBQuery;
+begin
+  Query := TIBQuery.Create(nil);
+  try
+    Query.Transaction := FTransaction;
+    Query.SQL.Text := SQL;
+    Query.ExecSQL();
+  finally
+    Query.Free;
   end;
 end;
 
@@ -1585,7 +1608,7 @@ begin
     Query.Transaction := FTransaction;
     Query.SQL.Text := aSQL;
     Query.Open;
-    if Fetch then     
+    if Fetch then
       Query.FetchAll();
     Result := Query.RecordCount;
   finally
@@ -1602,6 +1625,7 @@ begin
       FTransaction.RollbackRetaining();
     end;
   end;
+  ClearDataSets;
 end;
 
 procedure TIBXConnection.SetBlobParam(DataSet: TDataSet; const ParamName: String; Stream: TStream);
