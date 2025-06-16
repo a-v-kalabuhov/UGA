@@ -31,12 +31,15 @@ type
     FImport: TmstProjectImportModule;
     FOnXYChanged: TChangedEvent;
     FOnCK36Changed: TChangedEvent;
+    FNeedLines: Boolean;
     procedure SetOnXYChanged(const Value: TChangedEvent);
     procedure SetOnCK36Changed(const Value: TChangedEvent);
+    procedure SetNeedLines(const Value: Boolean);
   public
     procedure DisplayDialog(Import: TmstProjectImportModule);
     property OnCK36Changed: TChangedEvent read FOnCK36Changed write SetOnCK36Changed;
     property OnXYChanged: TChangedEvent read FOnXYChanged write SetOnXYChanged;
+    property NeedLines: Boolean read FNeedLines write SetNeedLines;
   end;
 
 var
@@ -48,7 +51,7 @@ implementation
 
 procedure TMStDxfImportOptionsDialog.Button1Click(Sender: TObject);
 begin
-  if FImport.LinesCount = 0 then
+  if FNeedLines and (FImport.LinesCount = 0) then
   begin
     ShowMessage('Нет осевых линий для импорта!');
     Exit;
@@ -106,6 +109,11 @@ begin
   Label4.Font.Style := Label4.Font.Style + [fsBold];
   Label6.Font.Style := Label6.Font.Style + [fsBold];
   lMissingLayers.Font.Style := lMissingLayers.Font.Style + [fsBold];
+end;
+
+procedure TMStDxfImportOptionsDialog.SetNeedLines(const Value: Boolean);
+begin
+  FNeedLines := Value;
 end;
 
 procedure TMStDxfImportOptionsDialog.SetOnCK36Changed(const Value: TChangedEvent);

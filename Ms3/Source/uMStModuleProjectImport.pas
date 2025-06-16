@@ -64,7 +64,7 @@ type
     function BeginImport(aDrawBox: TEzBaseDrawBox; OnGetImportLayer: TGetImportLayerEvent;
       OnImportExecuted: TOnImportExecuted; OnCreateProject: TCreateProjectFunc;
       OnGetProjectReader: TGetProjectReaderFunc): Boolean;
-    procedure DisplayImportDialog();
+    procedure DisplayImportDialog(NeedLines: Boolean);
     procedure EndImport(Cancel: Boolean);
     //
     property DxfImport: TEzDxfImport read FDxfImport;
@@ -309,6 +309,7 @@ begin
   mstDxfImportOptionsDialog.DisplayDialog(Self);
   mstDxfImportOptionsDialog.OnCK36Changed := Self.OnImportMSK36Changed;
   mstDxfImportOptionsDialog.OnXYChanged := Self.OnImportXYChanged;
+  mstDxfImportOptionsDialog.NeedLines := NeedLines;
 end;
 
 procedure TmstProjectImportModule.DoGetImportLayer(out ImportLayer: TEzBaseLayer);

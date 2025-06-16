@@ -1182,7 +1182,7 @@ begin
                                    )
         then
           Exit;
-        FImport.DisplayImportDialog();
+        FImport.DisplayImportDialog(False);
       end;
     srcExcel:
       begin

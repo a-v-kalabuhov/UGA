@@ -2423,7 +2423,7 @@ begin
                             )
   then
     Exit;
-  FImport.DisplayImportDialog();
+  FImport.DisplayImportDialog(True);
 end;
 
 procedure TmstClientMainForm.acProjectBrowseExecute(Sender: TObject);
