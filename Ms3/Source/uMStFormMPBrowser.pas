@@ -179,6 +179,7 @@ type
     procedure Notify(const ObjId: Integer; Op: TRowOperation);
   private
     procedure LocateObj(const ObjId: Integer);
+    function IntLocateObj(const ObjId: Integer): Boolean;
   public
     procedure Browse();
     //
@@ -723,6 +724,21 @@ begin
   FFilter.Free;
 end;
 
+function TmstMPBrowserForm.IntLocateObj(const ObjId: Integer): Boolean;
+var
+  Bkm: Pointer;
+begin
+  memBrowser2.DisableControls;
+  try
+    Bkm := memBrowser2.GetBookmark();
+    Result := memBrowser2.Locate(SF_ID, ObjId, []);
+    if not Result then
+      memBrowser2.GotoBookmark(Bkm);
+  finally
+    memBrowser2.EnableControls;
+  end;
+end;
+
 procedure TmstMPBrowserForm.kaDBGrid1CellColors(Sender: TObject; Field: TField; var Background, FontColor: TColor;
   State: TGridDrawState; var FontStyle: TFontStyles);
 var
@@ -900,21 +916,14 @@ end;
 
 procedure TmstMPBrowserForm.LocateObj(const ObjId: Integer);
 var
-  Bkm: Pointer;
   RowObjId: Integer;
 begin
-  memBrowser2.DisableControls;
-  try
-    Bkm := memBrowser2.GetBookmark();
-    if not memBrowser2.Locate(SF_ID, ObjId, []) then
-      memBrowser2.GotoBookmark(Bkm);
-  finally
-    memBrowser2.EnableControls;
+  if IntLocateObj(ObjId) then
+  begin
+    RowObjId := memBrowser2.FieldByName(SF_ID).AsInteger;
+    TMPSettings.SetCurrentMPObj(RowObjId);
+    DrawBox.Repaint;
   end;
-  //
-  RowObjId := memBrowser2.FieldByName(SF_ID).AsInteger;
-  TMPSettings.SetCurrentMPObj(RowObjId);
-  DrawBox.Repaint;
 end;
 
 procedure TmstMPBrowserForm.memBrowser2AfterClose(DataSet: TDataSet);
@@ -941,15 +950,10 @@ end;
 procedure TmstMPBrowserForm.Notify(const ObjId: Integer; Op: TRowOperation);
 var
   RowObjId: Integer;
+  Bkm: Pointer;
 begin
   if not memBrowser2.Active then
     Exit;
-  //
-  RowObjId := memBrowser2.FieldByName(SF_ID).AsInteger;
-  if RowObjId <> ObjId then
-  begin
-
-  end;
   //
   case Op of
     rowInsert:
@@ -959,13 +963,34 @@ begin
         memBrowser2.Post;
         RefreshCurrentRow();
       end;
-    rowUpdate: 
+    rowUpdate:
       begin
-        RefreshCurrentRow();
+        RowObjId := memBrowser2.FieldByName(SF_ID).AsInteger;
+        if RowObjId <> ObjId then
+        begin
+          if IntLocateObj(ObjId) then
+          begin
+            RefreshCurrentRow();
+            IntLocateObj(RowObjId);
+          end;
+        end
+        else
+          RefreshCurrentRow();
       end;
     rowDelete:
       begin
-        memBrowser2.Delete;
+//        memBrowser2.Delete;
+        RowObjId := memBrowser2.FieldByName(SF_ID).AsInteger;
+        if RowObjId <> ObjId then
+        begin
+          if IntLocateObj(ObjId) then
+          begin
+            memBrowser2.Delete();
+            IntLocateObj(RowObjId);
+          end;
+        end
+        else
+          memBrowser2.Delete();
       end;
   end;
 end;

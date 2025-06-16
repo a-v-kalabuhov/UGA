@@ -350,8 +350,14 @@ begin
   S := S + IntToStr(MpObj.Diameter) + ',';
 //  WMIF('  ' + SF_VOLTAGE + ' Integer ');
   S := S + IntToStr(MpObj.Voltage) + ',';
+//  WMIF('  ' + SF_VOLTAGE_TXT + ' Char(255) ');
+  S := S + DecorateFieldValue(MpObj.VoltageText(), 255) + ',';
 //  WMIF('  ' + SF_PIPE_COUNT + ' Integer ');
   S := S + IntToStr(MpObj.PipeCount) + ',';
+//  WMIF('  ' + SF_SEWER + ' Logical ');
+  S := S + GetBoolStr(MpObj.Sewer) + ',';
+//  WMIF('  ' + SF_PRESSURE_TXT + ' Logical ');
+  S := S + DecorateFieldValue(MpObj.PressureText(), 255) + ',';
 //  WMIF('  ' + SF_MATERIAL + ' Char(255) ');
   S := S + DecorateFieldValue(MpObj.Material, 255) + ',';
 //  WMIF('  ' + SF_TOP + ' Char(255) ');
@@ -389,7 +395,7 @@ begin
   S := S + FloatToStrF( Y2, ffFixed, 21, 9 ) + ')';
   WMIF(S);
 
-  WMIF('Columns 32');
+  WMIF('Columns 36');
   WMIF('  ' + SF_CLASS_ID + ' Char(50) ');
   WMIF('  ' + SF_CLASS_NAME + ' Char(255) ');
 //    WMIF('  ' + SF_DB_ID + ' ');
@@ -410,12 +416,16 @@ begin
   WMIF('  ' + SF_ROTATION + ' Integer ');
   WMIF('  ' + SF_DRAWN + ' Logical ');
   WMIF('  ' + SF_CONFIRMED + ' Logical ');
+  WMIF('  ' + SF_CONFIRM_DATE + ' Char(10) ');
   WMIF('  ' + SF_DISMANTLED + ' Logical ');
   WMIF('  ' + SF_ARCHIVED + ' Logical ');
   WMIF('  ' + SF_UNDERGROUND + ' Logical ');
   WMIF('  ' + SF_DIAMETER + ' Integer ');
   WMIF('  ' + SF_VOLTAGE + ' Integer ');
+  WMIF('  ' + SF_VOLTAGE_TXT + ' Char(255) ');
   WMIF('  ' + SF_PIPE_COUNT + ' Integer ');
+  WMIF('  ' + SF_SEWER + ' Logical ');
+  WMIF('  ' + SF_PRESSURE_TXT + ' Char(255) ');
   WMIF('  ' + SF_MATERIAL + ' Char(255) ');
   WMIF('  ' + SF_TOP + ' Char(255) ');
   WMIF('  ' + SF_BOTTOM + ' Char(255) ');

@@ -23,7 +23,8 @@ uses
   uMStKernelStack, uMStKernelIBX, uMStKernelAppSettings,
   uMStModuleMapMngrIBX,
   uMStImportEzClasses,
-  uMStClassesLots, uMStClassesProjects, uMStClassesMPIntf, uMStClassesProjectsIntf;
+  uMStClassesLots, uMStClassesProjects, uMStClassesMPIntf, uMStClassesProjectsIntf,
+  uMStClassesProjectsMP;
 
 type
   ELayerNotFound = class(Exception);
@@ -193,6 +194,7 @@ type
     procedure FindLots(DrawBox: TEzDrawBox; const X, Y: Double);
     procedure FindMap(const Nomenclature: String; OnMapFound: TNotifyEvent);
     procedure FindProjects(DrawBox: TEzDrawBox; const X, Y: Double);
+    procedure FindMPProjects(DrawBox: TEzDrawBox; const X, Y: Double);
     procedure HideLot(const aCategoryId, DatabaseId: Integer);
     function GetLotList(const aCategoryId: Integer): TmstLotList;
     //
@@ -1672,6 +1674,25 @@ begin
         OnMapFound(TObject(FMaps[I].MapEntityId));
       Break;
     end;
+end;
+
+procedure TMStClientAppModule.FindMPProjects(DrawBox: TEzDrawBox; const X, Y: Double);
+var
+  Obj: TmstMPObject;
+  I: Integer;
+  ObjList: TList;
+begin
+  Exit;
+  ObjList := MP.PickObjects(X, Y);
+  try
+    for I := 0 to ObjList.Count - 1 do
+    begin
+      Obj := ObjList[I];
+      FStack.AddObject(Obj);
+    end;
+  finally
+    ObjList.Free;
+  end;
 end;
 
 function TMStClientAppModule.FindProject(const aId: Integer): TmstProject;

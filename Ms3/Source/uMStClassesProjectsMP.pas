@@ -7,7 +7,8 @@ uses
   EzLib, EzBaseGIS, EzEntities, EzBase,
   uCommonUtils, uCK36, uGC, uEzEntityCSConvert,
   uEzBufferZone,
-  uMStKernelClasses, uMStKernelIBX, uMStConsts, uMStClassesProjects, uMStClassesMPStatuses;
+  uMStKernelClasses, uMStKernelIBX, uMStConsts, uMStClassesProjects, uMStClassesMPStatuses,
+  uMStClassesMPVoltages, uMStClassesMPPressures;
 
 type
   TmstProjectMP = class;
@@ -80,9 +81,6 @@ type
     FCustomerOrg: string;
     FExecutorOrg: string;
     FTempPoints: TEzVector;
-    FTempLayer: string;
-    FTempLayerId: Integer;
-    FTempCategoryId: Integer;
     FTempСaеtegory: string;
     FConfirmDate: TDateTime;
     FComment: string;
@@ -91,6 +89,10 @@ type
     FOldProjectId: Integer;
     FOldProjectLineId: Integer;
     FOldProjectPlaceId: Integer;
+    FChecked: Boolean;
+    FPressureIndex: Integer;
+    FSewer: Boolean;
+    FVoltageIndex: Integer;
     procedure SetClassId(const Value: Integer);
     procedure SetAddress(const Value: string);
     procedure SetArchived(const Value: Boolean);
@@ -141,9 +143,6 @@ type
     procedure SetDrawOrg(const Value: string);
     procedure SetExecutorOrg(const Value: string);
     procedure SetMpClassName(const Value: string);
-    procedure SetTempLayer(const Value: string);
-    procedure SetTempLayerId(const Value: Integer);
-    procedure SetTempCategoryId(const Value: Integer);
     procedure SetTempСaеtegory(const Value: string);
     procedure SetConfirmDate(const Value: TDateTime);
     procedure SetComment(const Value: string);
@@ -152,6 +151,10 @@ type
     procedure SetOldProjectId(const Value: Integer);
     procedure SetOldProjectLineId(const Value: Integer);
     procedure SetOldProjectPlaceId(const Value: Integer);
+    procedure SetChecked(const Value: Boolean);
+    procedure SetPressureIndex(const Value: Integer);
+    procedure SetSewer(const Value: Boolean);
+    procedure SetVoltageIndex(const Value: Integer);
   protected
     function GetObjectId: Integer; override;
     function GetText: String; override;
@@ -168,10 +171,6 @@ type
     property MPObjectGuid: string read FMPObjectGuid write SetMPObjectGuid;
     // ID объекта, который привязан к текущему  
     property LinkedObjectGuid: string read FLinkedObjectGuid write SetLinkedObjectGuid;
-    //
-    property Address: string read FAddress write SetAddress;
-    property Archived: Boolean read FArchived write SetArchived;
-    property Bottom: string read FBottom write SetBottom;
     // Id в классификаторе
     property MpClassId: Integer read FClassId write SetClassId;
     // для экспорта
@@ -179,6 +178,10 @@ type
     // для экспорта
     property MpClassName: string read FMpClassName write SetMpClassName;
     //
+    property Address: string read FAddress write SetAddress;
+    property Archived: Boolean read FArchived write SetArchived;
+    property Bottom: string read FBottom write SetBottom;
+    property Checked: Boolean read FChecked write SetChecked;
     property Confirmed: Boolean read FConfirmed write SetConfirmed;
     property ConfirmDate: TDateTime read FConfirmDate write SetConfirmDate;
     property Diameter: Integer read FDiameter write SetDiameter;
@@ -240,6 +243,11 @@ type
     property OldProjectId: Integer read FOldProjectId write SetOldProjectId;
     property OldProjectLineId: Integer read FOldProjectLineId write SetOldProjectLineId;
     property OldProjectPlaceId: Integer read FOldProjectPlaceId write SetOldProjectPlaceId;
+    property Sewer: Boolean read FSewer write SetSewer;
+    property PressureIndex: Integer read FPressureIndex write SetPressureIndex;
+    function PressureText(): string;
+    property VoltageIndex: Integer read FVoltageIndex write SetVoltageIndex;
+    function VoltageText(): string;
     //
     property EzData: TStream read FEzData;
     property EzId: Integer read FEzId write SetEzId;
@@ -360,7 +368,8 @@ const
       '  CUSTOMER_ORGS_ID,   EXECUTOR_ORGS_ID,  OWNER_ORG_ID,         DRAW_ORGS_ID,   DELETED, ' +
       '  TABLE_VERSION,      DRAWN,             HAS_CERTIF,           CERTIF_NUMBER,  CERTIF_DATE, ' +
       '  PROJECTS_ID,        PROJECT_LINES_ID,  PROJECT_PLACES_ID,    COMMENT,        VOLTAGE_COMMENT, ' +
-      '  DIAMETER_COMMENT,   CONFIRM_DATE, ' +
+      '  DIAMETER_COMMENT,   CONFIRM_DATE,      CHECKED,              PRESSURE_INDEX, VOLTAGE_INDEX, ' +
+      '  SEWER, ' +
       '  EZ_ID,              MINX,              MINY,                 MAXX,           MAXY) ' +
       'VALUES (' +
       ' :ID,                :OBJ_ID,           :MASTER_PLAN_CLASS_ID,:LINKED_OBJ_ID, ' +
@@ -373,7 +382,8 @@ const
       ' :CUSTOMER_ORGS_ID,  :EXECUTOR_ORGS_ID, :OWNER_ORG_ID,        :DRAW_ORGS_ID,   0, ' +
       ' :TABLE_VERSION,     :DRAWN,            :HAS_CERTIF,          :CERTIF_NUMBER, :CERTIF_DATE, ' +
       ' :PROJECTS_ID,       :PROJECT_LINES_ID, :PROJECT_PLACES_ID,   :COMMENT,       :VOLTAGE_COMMENT, ' +
-      ' :DIAMETER_COMMENT,  :CONFIRM_DATE, ' +
+      ' :DIAMETER_COMMENT,  :CONFIRM_DATE,     :CHECKED,             :PRESSURE_INDEX,:VOLTAGE_INDEX, ' +
+      ' :SEWER, ' +
       ' :EZ_ID,             :MINX,             :MINY,                :MAXX,          :MAXY)';
   SQL_UPDATE_MP_OBJECT =
       'UPDATE MASTER_PLAN_OBJECTS ' +
@@ -428,7 +438,9 @@ const
       '   COMMENT = :COMMENT, ' +
       '   VOLTAGE_COMMENT = :VOLTAGE_COMMENT, ' +
       '   DIAMETER_COMMENT = :DIAMETER_COMMENT, ' +
-      '   CONFIRM_DATE = :CONFIRM_DATE ' +
+      '   CONFIRM_DATE = :CONFIRM_DATE, ' +
+      '   SEWER = :SEWER, ' +
+      '   CHECKED = :CHECKED ' +
       'WHERE (ID = :ID)';
 
 { TmstMPProjectSaver }
@@ -483,11 +495,11 @@ begin
     for I := 0 to Prj.Objects.Count - 1 do
     begin
       Obj := Prj.Objects[I];
+      Obj.CK36 := Prj.CK36;
       Obj.ProjectName := Prj.Name;
+      Obj.Address := Prj.Address;
       Obj.DocNumber := Prj.DocNumber;
       Obj.DocDate := Prj.DocDate;
-      Obj.Address := Prj.Address;
-      Obj.CK36 := Prj.CK36;
       Obj.ExchangeXY := Prj.ExchangeXY;
       Obj.CustomerOrgId := Prj.CustomerOrgId;
       Obj.ExecutorOrgId := Prj.ExecutorOrgId;
@@ -496,6 +508,8 @@ begin
       Obj.RequestNumber := Prj.RequestNumber;
       Obj.RequestDate := Prj.RequestDate;
       Obj.DrawDate := Prj.DrawDate;
+      Obj.Confirmed := Prj.Confirmed;
+      Obj.ConfirmDate := Prj.ConfirmDate;
       SaveObj(Conn, Obj, SaveObjState);
     end;
     //
@@ -627,6 +641,30 @@ begin
   Conn.SetParam(DsMain, SF_HAS_CERTIF, IfThen(aObj.HasCertif, 1, 0));
   //CHECK_STATS
   Conn.SetParam(DsMain, SF_CHECK_STATE, Integer(aObj.CheckState));
+  //
+  // Дополнительные параметры:
+  // инфо
+  Conn.SetParam(DsMain, SF_COMMENT, aObj.Comment);
+  // старое напряжение (перенесено из PROJECTS)
+  Conn.SetParam(DsMain, SF_VOLTAGE_COMMENT, aObj.VoltageComment);
+  // старый диаметр (перенесено из PROJECTS)
+  Conn.SetParam(DsMain, SF_DIAMETER_COMMENT, aObj.DiameterComment);
+  // дата согласования
+  Conn.SetNullableParam(DsMain, SF_CONFIRM_DATE, aObj.ConfirmDate, 0);
+  // ID проекта (перенесено из PROJECTS)
+  Conn.SetNullableParam(DsMain, SF_PROJECTS_ID, aObj.OldProjectId, 0);
+  // ID линии (перенесено из PROJECTS)
+  Conn.SetNullableParam(DsMain, SF_PROJECT_LINES_ID, aObj.OldProjectLineId, 0);
+  // ID точки (перенесено из PROJECTS)
+  Conn.SetNullableParam(DsMain, SF_PROJECT_PLACES_ID, aObj.OldProjectPlaceId, 0);
+  // напорная канализация
+  Conn.SetParam(DsMain, SF_SEWER,  IfThen(aObj.Sewer, 1, 0));
+  // индекс величины давления
+  Conn.SetParam(DsMain, SF_PRESSURE_INDEX, aObj.PressureIndex);
+  // индекс величины напрядения
+  Conn.SetParam(DsMain, SF_VOLTAGE_INDEX, aObj.VoltageIndex);
+  // проверен
+  Conn.SetParam(DsMain, SF_CHECKED,  IfThen(aObj.Checked, 1, 0));
   //
   XMin := aObj.MinX;
   YMin := aObj.MinY;
@@ -836,6 +874,7 @@ begin
     Tgt.FLinkedObjectGuid := FLinkedObjectGuid;
     Tgt.FClassId := FClassId;
     Tgt.FArchived := FArchived;
+    Tgt.FChecked := FChecked;
     Tgt.FDocNumber := FDocNumber;
     Tgt.FConfirmed := FConfirmed;
     Tgt.FConfirmDate := FConfirmDate;
@@ -896,9 +935,16 @@ begin
     //
     Tgt.DatabaseId := Self.DatabaseId;
     //
+    Tgt.FComment := Self.FComment;
+    Tgt.FVoltageComment := Self.FVoltageComment;
+    Tgt.FDiameterComment := Self.FDiameterComment;
+    Tgt.FConfirmDate := Self.FConfirmDate;
     Tgt.FOldProjectId := Self.FOldProjectId;
     Tgt.FOldProjectLineId := Self.FOldProjectLineId;
     Tgt.FOldProjectPlaceId := Self.FOldProjectPlaceId;
+    Tgt.FSewer := Self.FSewer;
+    Tgt.FPressureIndex := Self.FPressureIndex;
+    Tgt.FVoltageIndex := Self.FVoltageIndex;
   end;
 end;
 
@@ -913,6 +959,8 @@ begin
   // при создании можно взять любой ГУИД,
   // если будет загрузка из Бд, то он изменится
   FMpObjectGuid := FGuid;
+  FPressureIndex := -1;
+  FVoltageIndex := -1;
 end;
 
 destructor TmstMPObject.Destroy;
@@ -930,6 +978,11 @@ end;
 function TmstMPObject.GetText: String;
 begin
   Result := '';
+end;
+
+function TmstMPObject.PressureText: string;
+begin
+  Result := TmstMPPressures.StatusName(FPressureIndex);
 end;
 
 procedure TmstMPObject.ReplaceEntity(Ent: TEzEntity; ClearLoadedData: Boolean);
@@ -973,6 +1026,11 @@ end;
 procedure TmstMPObject.SetCertifNumber(const Value: string);
 begin
   FCertifNumber := Value;
+end;
+
+procedure TmstMPObject.SetChecked(const Value: Boolean);
+begin
+  FChecked := Value;
 end;
 
 procedure TmstMPObject.SetCheckState(const Value: TmstMPObjectCheckState);
@@ -1190,6 +1248,11 @@ begin
   FPipeCount := Value;
 end;
 
+procedure TmstMPObject.SetPressureIndex(const Value: Integer);
+begin
+  FPressureIndex := Value;
+end;
+
 procedure TmstMPObject.SetProjected(const Value: Boolean);
 begin
   FProjected := Value;
@@ -1215,19 +1278,9 @@ begin
   FRotation := Value;
 end;
 
-procedure TmstMPObject.SetTempCategoryId(const Value: Integer);
+procedure TmstMPObject.SetSewer(const Value: Boolean);
 begin
-  FTempCategoryId := Value;
-end;
-
-procedure TmstMPObject.SetTempLayer(const Value: string);
-begin
-  FTempLayer := Value;
-end;
-
-procedure TmstMPObject.SetTempLayerId(const Value: Integer);
-begin
-  FTempLayerId := Value;
+  FSewer := Value;
 end;
 
 procedure TmstMPObject.SetTempСaеtegory(const Value: string);
@@ -1253,6 +1306,11 @@ end;
 procedure TmstMPObject.SetVoltageComment(const Value: string);
 begin
   FVoltageComment := Value;
+end;
+
+procedure TmstMPObject.SetVoltageIndex(const Value: Integer);
+begin
+  FVoltageIndex := Value;
 end;
 
 function TmstMPObject.Status: Integer;
@@ -1281,6 +1339,11 @@ begin
       ObjState := mstDrawn
     else
       ObjState := mstProjected;
+end;
+
+function TmstMPObject.VoltageText: string;
+begin
+  Result := TmstMPVoltages.StatusName(FVoltageIndex);
 end;
 
 { TmstProjectObjects }
@@ -1545,13 +1608,29 @@ begin
   Conn.SetParam(DsMain, SF_CHECK_STATE, Integer(aObj.CheckState));
   //
   // Дополнительные параметры:
-  Conn.SetNullableParam(DsMain, SF_PROJECTS_ID, aObj.OldProjectId, 0);
-  Conn.SetNullableParam(DsMain, SF_PROJECT_LINES_ID, aObj.OldProjectLineId, 0);
-  Conn.SetNullableParam(DsMain, SF_PROJECT_PLACES_ID, aObj.OldProjectPlaceId, 0);
-  Conn.SetParam(DsMain, SF_VOLTAGE_COMMENT, aObj.VoltageComment);
-  Conn.SetParam(DsMain, SF_DIAMETER_COMMENT, aObj.DiameterComment);
+  // инфо
   Conn.SetParam(DsMain, SF_COMMENT, aObj.Comment);
+  // старое напряжение (перенесено из PROJECTS)
+  Conn.SetParam(DsMain, SF_VOLTAGE_COMMENT, aObj.VoltageComment);
+  // старый диаметр (перенесено из PROJECTS)
+  Conn.SetParam(DsMain, SF_DIAMETER_COMMENT, aObj.DiameterComment);
+  // дата согласования
   Conn.SetNullableParam(DsMain, SF_CONFIRM_DATE, aObj.ConfirmDate, 0);
+  // ID проекта (перенесено из PROJECTS)
+  Conn.SetNullableParam(DsMain, SF_PROJECTS_ID, aObj.OldProjectId, 0);
+  // ID линии (перенесено из PROJECTS)
+  Conn.SetNullableParam(DsMain, SF_PROJECT_LINES_ID, aObj.OldProjectLineId, 0);
+  // ID точки (перенесено из PROJECTS)
+  Conn.SetNullableParam(DsMain, SF_PROJECT_PLACES_ID, aObj.OldProjectPlaceId, 0);
+  // напорная канализация
+  Conn.SetParam(DsMain, SF_SEWER,  IfThen(aObj.Sewer, 1, 0));
+  // индекс величины давления
+  Conn.SetParam(DsMain, SF_PRESSURE_INDEX, aObj.PressureIndex);
+  // индекс величины напрядения
+  Conn.SetParam(DsMain, SF_VOLTAGE_INDEX, aObj.VoltageIndex);
+  // проверен
+  Conn.SetParam(DsMain, SF_CHECKED,  IfThen(aObj.Sewer, 1, 0));
+  //
   //
   XMin := aObj.MinX;
   YMin := aObj.MinY;

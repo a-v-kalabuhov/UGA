@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup />
   <ItemGroup>
+    <Projects Include="..\..\Components\jvcl\examples\JvInspector\InspExample.dproj" />
     <Projects Include="..\Components\CadDll\Demos\Import\DemoDelphi\CADImporterDLL.dproj" />
     <Projects Include="..\Components\CadDll\Demos\View\DemoDelphi\DemoDelphi.dproj" />
     <Projects Include="..\Components\ECWCompress\EcwCL.dproj" />
@@ -22,6 +23,7 @@
     <Projects Include="..\Ms3\Ms3.dproj">
       <Dependencies>..\shared\Source\shared_make.dproj;..\EzShared\EzShared_make.dproj</Dependencies>
     </Projects>
+    <Projects Include="..\Ms3\Ms3DbUpdate.dproj" />
     <Projects Include="..\Ms3\Test\Ms3Tests.dproj" />
     <Projects Include="..\shared\Source\MyVCL.dproj" />
     <Projects Include="..\shared\Source\shared_make.dproj" />
@@ -116,14 +118,23 @@
   <Target Name="Kis:Make">
     <MSBuild Projects="Kis.dproj" Targets="Make" />
   </Target>
-  <Target Name="mfTest1">
-    <MSBuild Projects="..\MapFile\mfTest1.dproj" Targets="" />
+  <Target Name="KisTestsProject">
+    <MSBuild Projects="KisTestsProject.dproj" Targets="" />
   </Target>
-  <Target Name="mfTest1:Clean">
-    <MSBuild Projects="..\MapFile\mfTest1.dproj" Targets="Clean" />
+  <Target Name="KisTestsProject:Clean">
+    <MSBuild Projects="KisTestsProject.dproj" Targets="Clean" />
   </Target>
-  <Target Name="mfTest1:Make">
-    <MSBuild Projects="..\MapFile\mfTest1.dproj" Targets="Make" />
+  <Target Name="KisTestsProject:Make">
+    <MSBuild Projects="KisTestsProject.dproj" Targets="Make" />
+  </Target>
+  <Target Name="KisTestDwgCom">
+    <MSBuild Projects="..\Tests\KisTestDwgCom.dproj" Targets="" />
+  </Target>
+  <Target Name="KisTestDwgCom:Clean">
+    <MSBuild Projects="..\Tests\KisTestDwgCom.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="KisTestDwgCom:Make">
+    <MSBuild Projects="..\Tests\KisTestDwgCom.dproj" Targets="Make" />
   </Target>
   <Target Name="Ms3" DependsOnTargets="shared_make;EzShared_make">
     <MSBuild Projects="..\Ms3\Ms3.dproj" Targets="" />
@@ -134,23 +145,14 @@
   <Target Name="Ms3:Make" DependsOnTargets="shared_make:Make;EzShared_make:Make">
     <MSBuild Projects="..\Ms3\Ms3.dproj" Targets="Make" />
   </Target>
-  <Target Name="KisTestsProject">
-    <MSBuild Projects="KisTestsProject.dproj" Targets="" />
+  <Target Name="Ms3DbUpdate">
+    <MSBuild Projects="..\Ms3\Ms3DbUpdate.dproj" Targets="" />
   </Target>
-  <Target Name="KisTestsProject:Clean">
-    <MSBuild Projects="KisTestsProject.dproj" Targets="Clean" />
+  <Target Name="Ms3DbUpdate:Clean">
+    <MSBuild Projects="..\Ms3\Ms3DbUpdate.dproj" Targets="Clean" />
   </Target>
-  <Target Name="KisTestsProject:Make">
-    <MSBuild Projects="KisTestsProject.dproj" Targets="Make" />
-  </Target>
-  <Target Name="NewMain">
-    <MSBuild Projects="..\Components\EzGIS\Demos\NewMain\NewMain.dproj" Targets="" />
-  </Target>
-  <Target Name="NewMain:Clean">
-    <MSBuild Projects="..\Components\EzGIS\Demos\NewMain\NewMain.dproj" Targets="Clean" />
-  </Target>
-  <Target Name="NewMain:Make">
-    <MSBuild Projects="..\Components\EzGIS\Demos\NewMain\NewMain.dproj" Targets="Make" />
+  <Target Name="Ms3DbUpdate:Make">
+    <MSBuild Projects="..\Ms3\Ms3DbUpdate.dproj" Targets="Make" />
   </Target>
   <Target Name="Ms3Tests">
     <MSBuild Projects="..\Ms3\Test\Ms3Tests.dproj" Targets="" />
@@ -161,14 +163,14 @@
   <Target Name="Ms3Tests:Make">
     <MSBuild Projects="..\Ms3\Test\Ms3Tests.dproj" Targets="Make" />
   </Target>
-  <Target Name="KisTestDwgCom">
-    <MSBuild Projects="..\Tests\KisTestDwgCom.dproj" Targets="" />
+  <Target Name="NewMain">
+    <MSBuild Projects="..\Components\EzGIS\Demos\NewMain\NewMain.dproj" Targets="" />
   </Target>
-  <Target Name="KisTestDwgCom:Clean">
-    <MSBuild Projects="..\Tests\KisTestDwgCom.dproj" Targets="Clean" />
+  <Target Name="NewMain:Clean">
+    <MSBuild Projects="..\Components\EzGIS\Demos\NewMain\NewMain.dproj" Targets="Clean" />
   </Target>
-  <Target Name="KisTestDwgCom:Make">
-    <MSBuild Projects="..\Tests\KisTestDwgCom.dproj" Targets="Make" />
+  <Target Name="NewMain:Make">
+    <MSBuild Projects="..\Components\EzGIS\Demos\NewMain\NewMain.dproj" Targets="Make" />
   </Target>
   <Target Name="DemoDelphi">
     <MSBuild Projects="..\Components\CadDll\Demos\View\DemoDelphi\DemoDelphi.dproj" Targets="" />
@@ -197,14 +199,32 @@
   <Target Name="DbFilterTestPrj:Make">
     <MSBuild Projects="..\DbFilterTest\DbFilterTestPrj.dproj" Targets="Make" />
   </Target>
+  <Target Name="mfTest1">
+    <MSBuild Projects="..\MapFile\mfTest1.dproj" Targets="" />
+  </Target>
+  <Target Name="mfTest1:Clean">
+    <MSBuild Projects="..\MapFile\mfTest1.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="mfTest1:Make">
+    <MSBuild Projects="..\MapFile\mfTest1.dproj" Targets="Make" />
+  </Target>
+  <Target Name="InspExample">
+    <MSBuild Projects="..\..\Components\jvcl\examples\JvInspector\InspExample.dproj" Targets="" />
+  </Target>
+  <Target Name="InspExample:Clean">
+    <MSBuild Projects="..\..\Components\jvcl\examples\JvInspector\InspExample.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="InspExample:Make">
+    <MSBuild Projects="..\..\Components\jvcl\examples\JvInspector\InspExample.dproj" Targets="Make" />
+  </Target>
   <Target Name="Build">
-    <CallTarget Targets="fr7;FRIBX7;tdbf_d7d;EcwCL;EzGISD7;shared_make;EzShared_make;MyVCL;Kis;mfTest1;Ms3;KisTestsProject;NewMain;Ms3Tests;KisTestDwgCom;DemoDelphi;CADImporterDLL;DbFilterTestPrj" />
+    <CallTarget Targets="fr7;FRIBX7;tdbf_d7d;EcwCL;EzGISD7;shared_make;EzShared_make;MyVCL;Kis;KisTestsProject;KisTestDwgCom;Ms3;Ms3DbUpdate;Ms3Tests;NewMain;DemoDelphi;CADImporterDLL;DbFilterTestPrj;mfTest1;InspExample" />
   </Target>
   <Target Name="Clean">
-    <CallTarget Targets="fr7:Clean;FRIBX7:Clean;tdbf_d7d:Clean;EcwCL:Clean;EzGISD7:Clean;shared_make:Clean;EzShared_make:Clean;MyVCL:Clean;Kis:Clean;mfTest1:Clean;Ms3:Clean;KisTestsProject:Clean;NewMain:Clean;Ms3Tests:Clean;KisTestDwgCom:Clean;DemoDelphi:Clean;CADImporterDLL:Clean;DbFilterTestPrj:Clean" />
+    <CallTarget Targets="fr7:Clean;FRIBX7:Clean;tdbf_d7d:Clean;EcwCL:Clean;EzGISD7:Clean;shared_make:Clean;EzShared_make:Clean;MyVCL:Clean;Kis:Clean;KisTestsProject:Clean;KisTestDwgCom:Clean;Ms3:Clean;Ms3DbUpdate:Clean;Ms3Tests:Clean;NewMain:Clean;DemoDelphi:Clean;CADImporterDLL:Clean;DbFilterTestPrj:Clean;mfTest1:Clean;InspExample:Clean" />
   </Target>
   <Target Name="Make">
-    <CallTarget Targets="fr7:Make;FRIBX7:Make;tdbf_d7d:Make;EcwCL:Make;EzGISD7:Make;shared_make:Make;EzShared_make:Make;MyVCL:Make;Kis:Make;mfTest1:Make;Ms3:Make;KisTestsProject:Make;NewMain:Make;Ms3Tests:Make;KisTestDwgCom:Make;DemoDelphi:Make;CADImporterDLL:Make;DbFilterTestPrj:Make" />
+    <CallTarget Targets="fr7:Make;FRIBX7:Make;tdbf_d7d:Make;EcwCL:Make;EzGISD7:Make;shared_make:Make;EzShared_make:Make;MyVCL:Make;Kis:Make;KisTestsProject:Make;KisTestDwgCom:Make;Ms3:Make;Ms3DbUpdate:Make;Ms3Tests:Make;NewMain:Make;DemoDelphi:Make;CADImporterDLL:Make;DbFilterTestPrj:Make;mfTest1:Make;InspExample:Make" />
   </Target>
   <Import Condition="Exists('$(MSBuildBinPath)\Borland.Group.Targets')" Project="$(MSBuildBinPath)\Borland.Group.Targets" />
 </Project>

@@ -3,7 +3,7 @@ unit uMStClassesMPIntf;
 interface
 
 uses
-  DB, Graphics,
+  Classes, DB, Graphics,
   EzBaseGIS, EzLib,
   uMStKernelClasses, uMStKernelIBX, uMStKernelAppSettings,
   uMStClassesMPClassif, uMStClassesProjectsMP, uMStClassesProjectsMPIntersect;
@@ -50,6 +50,8 @@ type
     procedure LoadMPObjects(const aGeoLeft, aGeoTop, aGeoRight, aGeoBottom: Double);
     //
     procedure FillClassIDinProjectLayers();
+    //
+    function PickObjects(const X, Y: Double): TList;
   end;
 
   TRowOperation = (rowInsert, rowUpdate, rowDelete);

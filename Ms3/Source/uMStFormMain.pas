@@ -1428,6 +1428,7 @@ begin
     mstClientAppModule.Stack.BeginUpdate;
     mstClientAppModule.FindLots(DrawBox, WX, WY);
     mstClientAppModule.FindProjects(DrawBox, WX, WY);
+    mstClientAppModule.FindMPProjects(DrawBox, WX, WY);
   finally
     mstClientAppModule.Stack.EndUpdate;
     mstClientAppModule.Stack.UpdateView;

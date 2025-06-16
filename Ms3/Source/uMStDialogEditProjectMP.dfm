@@ -32,11 +32,15 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
     Top = 11
     Width = 1182
     Height = 651
-    ActivePage = tsSemantics
+    ActivePage = tsMap
     Align = alClient
     TabOrder = 0
     object tsSemantics: TTabSheet
       Caption = #1044#1072#1085#1085#1099#1077' '#1087#1088#1086#1077#1082#1090#1072
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 103
         Top = 78
@@ -136,6 +140,14 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Caption = #1041#1072#1083#1072#1085#1089#1086#1076#1077#1088#1078#1072#1090#1077#1083#1100':'
         FocusControl = edOwner
       end
+      object Label30: TLabel
+        Left = 36
+        Top = 344
+        Width = 102
+        Height = 13
+        Alignment = taRightJustify
+        Caption = #1044#1072#1090#1072' '#1089#1086#1075#1083#1072#1089#1086#1074#1072#1085#1080#1103':'
+      end
       object edAddress: TEdit
         Left = 144
         Top = 74
@@ -228,7 +240,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         Height = 21
         Style = csDropDownList
         Enabled = False
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
       end
       object edDrawer: TEdit
@@ -289,10 +301,32 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
         TabOrder = 12
         OnClick = btnOwnerClick
       end
+      object edConfirmDate: TEdit
+        Left = 144
+        Top = 341
+        Width = 116
+        Height = 21
+        MaxLength = 10
+        TabOrder = 17
+        Text = 'edConfirmDate'
+      end
+      object chbConfirmed: TCheckBox
+        Left = 75
+        Top = 317
+        Width = 82
+        Height = 17
+        Alignment = taLeftJustify
+        Caption = #1057#1086#1075#1083#1072#1089#1086#1074#1072#1085':'
+        TabOrder = 16
+      end
     end
     object tsMap: TTabSheet
       Caption = #1050#1072#1088#1090#1072
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Splitter1: TSplitter
         Left = 0
         Top = 423
@@ -366,12 +400,11 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
           Left = 1159
           Top = 1
           Width = 14
-          Height = 21
+          Height = 13
           Align = alRight
           Alignment = taRightJustify
           Caption = 'lXY'
           Layout = tlCenter
-          ExplicitHeight = 13
         end
         object ToolBar1: TToolBar
           Left = 1
@@ -493,7 +526,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
             Width = 285
             Height = 21
             Style = csDropDownList
-            ItemHeight = 13
+            ItemHeight = 0
             TabOrder = 0
             OnChange = cbLayersChange
           end
@@ -525,6 +558,15 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
             TabOrder = 2
             OnClick = btnPropertiesClick
           end
+          object btnFill: TButton
+            Left = 801
+            Top = 2
+            Width = 110
+            Height = 21
+            Caption = #1047#1072#1087#1086#1083#1085#1080#1090#1100' '#1076#1083#1103' '#1074#1089#1077#1093
+            TabOrder = 4
+            OnClick = btnFillClick
+          end
         end
       end
     end
@@ -551,73 +593,7 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
     OnClick = btnOKClick
   end
   object mdNav: TRxMemoryData
-    FieldDefs = <
-      item
-        Name = 'ENT_ID'
-        DataType = ftInteger
-      end
-      item
-        Name = 'NET_STATE_ID'
-        DataType = ftInteger
-      end
-      item
-        Name = 'DISMANTLED'
-        DataType = ftBoolean
-      end
-      item
-        Name = 'ARCHIVED'
-        DataType = ftBoolean
-      end
-      item
-        Name = 'AGREED'
-        DataType = ftBoolean
-      end
-      item
-        Name = 'UNDERGROUND'
-        DataType = ftBoolean
-      end
-      item
-        Name = 'ROTANGLE'
-        DataType = ftInteger
-      end
-      item
-        Name = 'DIAM'
-        DataType = ftInteger
-      end
-      item
-        Name = 'PIPE_COUNT'
-        DataType = ftInteger
-      end
-      item
-        Name = 'MATERIAL'
-        DataType = ftString
-        Size = 254
-      end
-      item
-        Name = 'TOP'
-        DataType = ftString
-        Size = 254
-      end
-      item
-        Name = 'BOTTOM'
-        DataType = ftString
-        Size = 254
-      end
-      item
-        Name = 'FLOOR'
-        DataType = ftString
-        Size = 254
-      end
-      item
-        Name = 'OBJ_ID'
-        DataType = ftString
-        Size = 32
-      end
-      item
-        Name = 'LAYER_NAME'
-        DataType = ftString
-        Size = 100
-      end>
+    FieldDefs = <>
     AfterEdit = mdNavAfterEdit
     AfterPost = mdNavAfterPost
     AfterScroll = mdNavAfterScroll
@@ -650,18 +626,26 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
       DisplayLabel = #1040#1088#1093#1080#1074#1085#1072#1103
       FieldName = 'ARCHIVED'
     end
-    object mdNavAGREED: TBooleanField
-      DisplayLabel = #1057#1086#1075#1083#1072#1089#1086#1074#1072#1085#1072
-      FieldName = 'AGREED'
-    end
     object mdNavUNDERGROUND: TBooleanField
       DisplayLabel = #1055#1086#1076#1079#1077#1084'.'
       FieldName = 'UNDERGROUND'
     end
-    object mdNavROTANGLE: TIntegerField
-      DisplayLabel = #1059#1075#1086#1083' '#1087#1086#1074'.'
-      DisplayWidth = 5
-      FieldName = 'ROTANGLE'
+    object mdNavSEWER: TBooleanField
+      DisplayLabel = #1053#1072#1087#1086#1088#1085#1072#1103' '#1082#1072#1085#1072#1083#1080#1079#1072#1094#1080#1103
+      DisplayWidth = 50
+      FieldName = 'SEWER'
+    end
+    object mdNavPRESSURE_IDX: TIntegerField
+      FieldName = 'PRESSURE_IDX'
+      Visible = False
+    end
+    object mdNavPRESSURE_TXT: TStringField
+      DisplayLabel = #1044#1072#1074#1083#1077#1085#1080#1077
+      DisplayWidth = 100
+      FieldKind = fkCalculated
+      FieldName = 'PRESSURE_TXT'
+      Size = 255
+      Calculated = True
     end
     object mdNavDIAM: TIntegerField
       DisplayLabel = #1044#1080#1072#1084#1077#1090#1088
@@ -671,6 +655,18 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
     object mdNavPIPE_COUNT: TIntegerField
       DisplayLabel = #1050#1086#1083'. '#1090#1088#1091#1073'/'#1087#1088#1086#1074#1086#1076#1086#1074
       FieldName = 'PIPE_COUNT'
+    end
+    object mdNavVOLTAGE_IDX: TSmallintField
+      FieldName = 'VOLTAGE_IDX'
+      Visible = False
+    end
+    object mdNavVOLTAGE_TXT: TStringField
+      DisplayLabel = #1053#1072#1087#1088#1103#1078#1077#1085#1080#1077
+      DisplayWidth = 100
+      FieldKind = fkCalculated
+      FieldName = 'VOLTAGE_TXT'
+      Size = 255
+      Calculated = True
     end
     object mdNavMATERIAL: TStringField
       DisplayLabel = #1052#1072#1090#1077#1088#1080#1072#1083
@@ -701,6 +697,11 @@ object mstEditProjectMPDialog: TmstEditProjectMPDialog
       FieldName = 'OBJ_ID'
       Visible = False
       Size = 36
+    end
+    object mdNavROTANGLE: TIntegerField
+      DisplayLabel = #1059#1075#1086#1083' '#1087#1086#1074'.'
+      DisplayWidth = 5
+      FieldName = 'ROTANGLE'
     end
     object mdNavLAYER_NAME: TStringField
       DisplayLabel = #1057#1083#1086#1081

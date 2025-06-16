@@ -59,7 +59,7 @@ end;
 
 procedure TmstDbImporter.DoImport(FieldValues: TStrings);
 var
-  FldValue, Sql: string;
+  FldValue: string;
   I, NewId: Integer;
   Fld: TmstLayerField;
   TypedVal: Variant;

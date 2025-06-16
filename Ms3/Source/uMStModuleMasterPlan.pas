@@ -106,6 +106,7 @@ type
     procedure LoadMPObjects(const aLeftGeo, aTopGeo, aRightGeo, aBottomGeo: Double);
     //
     procedure FillClassIDinProjectLayers();
+    function PickObjects(const X, Y: Double): TList;
   private
     // ImstMPModuleObjList
     function BrowserDataSet(): TDataSet;
@@ -222,6 +223,17 @@ const
     + 'MPO.CHECK_STATE, '
     + 'MPO.DELETED, '
     + 'MPO.TABLE_VERSION, '
+    + 'MPO.CHECKED, '
+    + 'MPO.PROJECTS_ID, '
+    + 'MPO.PROJECT_LINES_ID, '
+    + 'MPO.PROJECT_PLACES_ID, '
+    + 'MPO.VOLTAGE_COMMENT, '
+    + 'MPO.DIAMETER_COMMENT, '
+    + 'MPO.COMMENT, '
+    + 'MPO.CONFIRM_DATE, '
+    + 'MPO.SEWER, '
+    + 'MPO.PRESSURE_INDEX, '
+    + 'MPO.VOLTAGE_INDEX, '
     + 'PL.NAME AS LAYER_NAME, '
     + 'PL.CLASS_ID, '
     + 'MPOS.NAME AS STATUS_NAME, '
@@ -284,6 +296,17 @@ const
     + 'MPO.CHECK_STATE, '
     + 'MPO.DELETED, '
     + 'MPO.TABLE_VERSION, '
+    + 'MPO.CHECKED, '
+    + 'MPO.PROJECTS_ID, '
+    + 'MPO.PROJECT_LINES_ID, '
+    + 'MPO.PROJECT_PLACES_ID, '
+    + 'MPO.VOLTAGE_COMMENT, '
+    + 'MPO.DIAMETER_COMMENT, '
+    + 'MPO.COMMENT, '
+    + 'MPO.CONFIRM_DATE, '
+    + 'MPO.SEWER, '
+    + 'MPO.PRESSURE_INDEX, '
+    + 'MPO.VOLTAGE_INDEX, '
     + 'PL.NAME AS LAYER_NAME, '
     + 'PL.CLASS_ID, '
     + 'MPOS.NAME AS STATUS_NAME, '
@@ -338,7 +361,18 @@ const
   + 'CERTIF_DATE = :CERTIF_DATE, '
   + 'CERTIF_NUMBER = :CERTIF_NUMBER, '
   + 'HAS_CERTIF = :HAS_CERTIF, '
-  + 'CHECK_STATE = :CHECK_STATE '
+  + 'CHECK_STATE = :CHECK_STATE, '
+  + 'CHECKED = :CHECKED, '
+  + 'PROJECTS_ID = :PROJECTS_ID, '
+  + 'PROJECT_LINES_ID = :PROJECT_LINES_ID, '
+  + 'PROJECT_PLACES_ID = :PROJECT_PLACES_ID, '
+  + 'VOLTAGE_COMMENT = :VOLTAGE_COMMENT, '
+  + 'DIAMETER_COMMENT = :DIAMETER_COMMENT, '
+  + 'COMMENT = :COMMENT, '
+  + 'CONFIRM_DATE = :CONFIRM_DATE, '
+  + 'SEWER = :SEWER, '
+  + 'PRESSURE_INDEX = :PRESSURE_INDEX, '
+  + 'VOLTAGE_INDEX = :VOLTAGE_INDEX '
   + 'WHERE (ID = :ID)';
 
   SQL_SET_MP_OBJECT_DELETED =
@@ -367,7 +401,9 @@ const
   + 'REQUEST_NUMBER, REQUEST_DATE, UNDERGROUND, DIAMETER, PIPE_COUNT, VOLTAGE, MATERIAL, TOP, BOTTOM, FLOOR, OWNER, '
   + 'DRAW_DATE, IS_LINE, ROTATION, EZDATA, EZ_ID, EZ_RECNO, MINX, MINY, MAXX, MAXY, LOADED, PROJECT_NAME, '
   + 'CUSTOMER_ORGS_ID, EXECUTOR_ORGS_ID, OWNER_ORG_ID, DRAW_ORGS_ID, DELETED, :TABLE_VERSION, 1, PROJECTED, '
-  + 'CERTIF_DATE, CERTIF_NUMBER, HAS_CERTIF, CHECK_STATE, :LINKED_OBJ_ID '
+  + 'CERTIF_DATE, CERTIF_NUMBER, HAS_CERTIF, CHECK_STATE, :LINKED_OBJ_ID, '
+  + 'CHECKED, PROJECTS_ID, PROJECT_LINES_ID, PROJECT_PLACES_ID, VOLTAGE_COMMENT, '
+  + 'DIAMETER_COMMENT, COMMENT, CONFIRM_DATE, SEWER, PRESSURE_INDEX, VOLTAGE_INDEX '
   + 'FROM MASTER_PLAN_OBJECTS '
   + 'WHERE ID=:ID';
 
@@ -1041,6 +1077,18 @@ begin
   Result.MaxY := memBrowser.FieldByName(SF_MAXY).AsFloat;
   Result.CheckState := TmstMPObjectCheckState(memBrowser.FieldByName(SF_CHECK_STATE).AsInteger);
   //
+  Result.Checked := memBrowser.FieldByName(SF_CHECKED).AsInteger = 1;
+  Result.ConfirmDate := memBrowser.FieldByName(SF_CONFIRM_DATE).AsDateTime;;
+  Result.Comment := memBrowser.FieldByName(SF_COMMENT).AsString;
+  Result.VoltageComment := memBrowser.FieldByName(SF_VOLTAGE_COMMENT).AsString;
+  Result.DiameterComment := memBrowser.FieldByName(SF_DIAMETER_COMMENT).AsString;
+  Result.OldProjectId := memBrowser.FieldByName(SF_PROJECTS_ID).AsInteger;
+  Result.OldProjectLineId := memBrowser.FieldByName(SF_PROJECT_LINES_ID).AsInteger;
+  Result.OldProjectPlaceId := memBrowser.FieldByName(SF_PROJECT_PLACES_ID).AsInteger;
+  Result.Sewer := memBrowser.FieldByName(SF_SEWER).AsInteger = 1;
+  Result.PressureIndex := memBrowser.FieldByName(SF_PRESSURE_INDEX).AsInteger;
+  Result.VoltageIndex := memBrowser.FieldByName(SF_VOLTAGE_INDEX).AsInteger;
+  //
   Result.UpdateObjState();
   //
   if LoadEzData then
@@ -1430,6 +1478,19 @@ begin
   Ds.FieldByName(SF_CERTIF_NUMBER).AsString := aObj.CertifNumber;
   // дата справки
   Ds.FieldByName(SF_CERTIF_DATE).Value := GetDateDbValue(aObj.CertifDate);
+  //
+  Ds.FieldByName(SF_COMMENT).AsString := aObj.Comment;
+  Ds.FieldByName(SF_VOLTAGE_COMMENT).AsString := aObj.VoltageComment;
+  Ds.FieldByName(SF_DIAMETER_COMMENT).AsString := aObj.DiameterComment;
+  Ds.FieldByName(SF_CONFIRM_DATE).Value := GetDateDbValue(aObj.ConfirmDate);
+  Ds.FieldByName(SF_PROJECTS_ID).AsInteger := aObj.OldProjectId;
+  Ds.FieldByName(SF_PROJECT_LINES_ID).AsInteger := aObj.OldProjectLineId;
+  Ds.FieldByName(SF_PROJECT_PLACES_ID).AsInteger := aObj.OldProjectPlaceId;
+  Ds.FieldByName(SF_SEWER).AsInteger := IfThen(aObj.Sewer, 1, 0);
+  Ds.FieldByName(SF_PRESSURE_INDEX).AsInteger := aObj.PressureIndex;
+  Ds.FieldByName(SF_VOLTAGE_INDEX).AsInteger := aObj.VoltageIndex;
+  Ds.FieldByName(SF_CHECKED).AsInteger := IfThen(aObj.Checked, 1, 0);
+  //
   Ds.Post;
 end;
 
@@ -1778,6 +1839,11 @@ begin
   Result := memBrowser;
 end;
 
+function TmstMasterPlanModule.PickObjects(const X, Y: Double): TList;
+begin
+  Result := TList.Create;
+end;
+
 procedure TmstMasterPlanModule.PrepareBrowserDataSet;
 begin
 
@@ -1846,7 +1912,7 @@ begin
     Conn.SetParam(Ds, SF_ROTATION, aObj.Rotation);
     Conn.SetParam(Ds, SF_STATUS, aObj.Status);
     Conn.SetParam(Ds, SF_TOP, aObj.Top);
-    Conn.SetParam(Ds, SF_UNDERGROUND, aObj.Underground);
+    Conn.SetParam(Ds, SF_UNDERGROUND, IfThen(aObj.Underground, 1, 0));
     Conn.SetParam(Ds, SF_VOLTAGE, aObj.Voltage);
     // импорт
     Conn.SetParam(Ds, SF_PROJECT_NAME, aObj.ProjectName);
@@ -1877,6 +1943,29 @@ begin
     Conn.SetParam(Ds, SF_CERTIF_NUMBER, aObj.CertifNumber);
     // дата справки
     Conn.SetNullableParam(Ds, SF_CERTIF_DATE, aObj.CertifDate, 0);
+    //
+    // инфо
+    Conn.SetParam(Ds, SF_COMMENT, aObj.Comment);
+    // старое напряжение (перенесено из PROJECTS)
+    Conn.SetParam(Ds, SF_VOLTAGE_COMMENT, aObj.VoltageComment);
+    // старый диаметр (перенесено из PROJECTS)
+    Conn.SetParam(Ds, SF_DIAMETER_COMMENT, aObj.DiameterComment);
+    // дата согласования
+    Conn.SetNullableParam(Ds, SF_CONFIRM_DATE, aObj.ConfirmDate, 0);
+    // ID проекта (перенесено из PROJECTS)
+    Conn.SetNullableParam(Ds, SF_PROJECTS_ID, aObj.OldProjectId, 0);
+    // ID линии (перенесено из PROJECTS)
+    Conn.SetNullableParam(Ds, SF_PROJECT_LINES_ID, aObj.OldProjectLineId, 0);
+    // ID точки (перенесено из PROJECTS)
+    Conn.SetNullableParam(Ds, SF_PROJECT_PLACES_ID, aObj.OldProjectPlaceId, 0);
+    // напорная канализация
+    Conn.SetParam(Ds, SF_SEWER,  IfThen(aObj.Sewer, 1, 0));
+    // индекс величины давления
+    Conn.SetParam(Ds, SF_PRESSURE_INDEX, aObj.PressureIndex);
+    // индекс величины напрядения
+    Conn.SetParam(Ds, SF_VOLTAGE_INDEX, aObj.VoltageIndex);
+    // проверен
+    Conn.SetParam(Ds, SF_CHECKED,  IfThen(aObj.Checked, 1, 0));
     //
     Ds.Open;
   finally

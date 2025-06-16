@@ -7,7 +7,7 @@ uses
   Dialogs, StdCtrls, Mask, JvExMask, JvSpin,
   EzLib,
   uMStConsts, uMStClassesProjectsMP, uMStKernelIBX, uMStClassesMPIntf,
-  uMStModuleApp;
+  uMStModuleApp, JvExControls, JvInspector;
 
 type
   TmstEditMPObjectSemanticsDialog = class(TForm)
@@ -28,7 +28,6 @@ type
     chbArchived: TCheckBox;
     cbProjected: TComboBox;
     Label1: TLabel;
-    chbConfirmed: TCheckBox;
     chbDismantled: TCheckBox;
     btnOK: TButton;
     btnCancel: TButton;
@@ -81,6 +80,21 @@ type
     edObjGuid: TEdit;
     Label28: TLabel;
     cbCheckState: TComboBox;
+    chbChecked: TCheckBox;
+    Label29: TLabel;
+    edDiamComment: TEdit;
+    edVoltComment: TEdit;
+    Label32: TLabel;
+    mInfo: TMemo;
+    lSemInfo: TLabel;
+    chbSewer: TCheckBox;
+    Label33: TLabel;
+    cbVoltage: TComboBox;
+    Label31: TLabel;
+    cbPressure: TComboBox;
+    chbConfirmed: TCheckBox;
+    edConfirmDate: TEdit;
+    Label30: TLabel;
     procedure btnCancelClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure btnSelectCustomerClick(Sender: TObject);
@@ -284,7 +298,12 @@ begin
   cbProjected.Enabled := FCanChangeStatus;
   cbClass.Enabled := FCanChangeClass;
   chbConfirmed.Checked := FObject.Confirmed;
+  if FObject.ConfirmDate = 0 then
+    edConfirmDate.Text := ''
+  else
+    edConfirmDate.Text := FormatDateTime('dd.mm.yyyy', FObject.ConfirmDate);
   chbDismantled.Checked := FObject.Dismantled;
+  chbChecked.Checked := FObject.Checked;
   edCustomer.Text := GetOrgName(FObject.CustomerOrgId);
   edExecutor.Text := GetOrgName(FObject.ExecutorOrgId);
   edOwner.Text := FObject.Owner;
@@ -337,6 +356,13 @@ begin
   edObjGuid.Text := FObject.MPObjectGuid;
   //
   cbCheckState.ItemIndex := Integer(FObject.CheckState);
+  //
+  edDiamComment.Text := FObject.DiameterComment;
+  edVoltComment.Text := FObject.VoltageComment;
+  chbSewer.Checked := FObject.Sewer;
+  cbPressure.ItemIndex := FObject.PressureIndex;
+  cbVoltage.ItemIndex := FObject.VoltageIndex;
+  mInfo.Text := FObject.Comment;
 end;
 
 function TmstEditMPObjectSemanticsDialog.SelectOrg(var Id: Integer; out OrgName: string): Boolean;
@@ -354,7 +380,9 @@ begin
   FObject.RequestNumber := edRequestNumber.Text;
   FObject.Archived := chbArchived.Checked;
   FObject.Confirmed := chbConfirmed.Checked;
+  FObject.ConfirmDate := GetDate(edConfirmDate.Text);
   FObject.Dismantled := chbDismantled.Checked;
+  FObject.Checked := chbChecked.Checked;
   FObject.Owner := edOwner.Text;
   //
   FObject.Underground := chbUnderground.Checked;
@@ -370,6 +398,13 @@ begin
   FObject.HasCertif := chbHasCertif.Checked;
   FObject.CertifNumber := edCertifNumber.Text;
   FObject.CertifDate := GetDate(edCertifDate.Text);
+  //
+  FObject.DiameterComment := edDiamComment.Text;
+  FObject.VoltageComment := edVoltComment.Text;
+  FObject.Sewer := chbSewer.Checked;
+  FObject.PressureIndex := cbPressure.ItemIndex;
+  FObject.VoltageIndex := cbVoltage.ItemIndex;
+  FObject.Comment := mInfo.Text;
   //
   if FCanChangeStatus then
   begin

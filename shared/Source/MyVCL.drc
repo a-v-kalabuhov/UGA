@@ -16,9 +16,9 @@ BEGIN
 	PREVIEWLib_TLB_dtlOcxPage,	"ActiveX"
 END
 
-/* C:\Projects\kis\shared\Source\MyVCLAdd.res */
-/* C:\Projects\kis\shared\Source\PREVIEWLib_TLB.dcr */
-/* C:\Projects\kis\shared\Source\ATPrintPreview.dfm */
+/* MyVCLAdd.res */
+/* PREVIEWLib_TLB.dcr */
+/* ATPrintPreview.dfm */
 /* C:\Projects\kis\shared\Source\MyVCL.res */
 /* C:\Projects\kis\shared\Source\ATPrintPreview.dcr */
 /* C:\Projects\kis\shared\Source\MyVCL.drf */

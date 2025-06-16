@@ -114,7 +114,9 @@ uses
   uMStFramesMPIntersectItem in 'Source\uMStFramesMPIntersectItem.pas' {mstMPIntersectItemFrame: TFrame},
   uMStKernelUtils in 'Source\uMStKernelUtils.pas',
   uMStClassesProjectsExportToMP in 'Source\uMStClassesProjectsExportToMP.pas',
-  uMStClassesProjectsIntf in 'Source\uMStClassesProjectsIntf.pas';
+  uMStClassesProjectsIntf in 'Source\uMStClassesProjectsIntf.pas',
+  uMStClassesMPVoltages in 'Source\uMStClassesMPVoltages.pas',
+  uMStClassesMPPressures in 'Source\uMStClassesMPPressures.pas';
 
 {$R *.RES}
 

@@ -5,8 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, ExtCtrls, ActnList, EzBaseGIS, EzCtrls, DB, StdCtrls, Grids,
-  DBGrids, DBCtrls, ImgList,
-  //
+  DBGrids, DBCtrls, ImgList, ToolWin,
   RxMemDS,
   //
   EzEntities, EzSystem, EzCmdLine, EzBasicCtrls, EzLib, EzBase,
@@ -14,7 +13,7 @@ uses
   uDBGrid, uMStGISEzActions,
   uMStKernelIBX, uMStConsts, uEzEntityCSConvert,
   //
-  uMStClassesProjectsMP, uMStModuleDefaultActions, ToolWin;
+  uMStClassesProjectsMP, uMStModuleDefaultActions, uMStClassesMPPressures, uMStClassesMPVoltages;
 
 type
   TmstEditProjectMPDialog = class(TForm)
@@ -70,7 +69,6 @@ type
     mdNavNET_STATE_NAME: TStringField;
     mdNavDISMANTLED: TBooleanField;
     mdNavARCHIVED: TBooleanField;
-    mdNavAGREED: TBooleanField;
     mdNavROTANGLE: TIntegerField;
     mdNavUNDERGROUND: TBooleanField;
     mdNavDIAM: TIntegerField;
@@ -96,6 +94,15 @@ type
     ToolButton7: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
+    Label30: TLabel;
+    edConfirmDate: TEdit;
+    chbConfirmed: TCheckBox;
+    mdNavSEWER: TBooleanField;
+    mdNavPRESSURE_IDX: TIntegerField;
+    mdNavPRESSURE_TXT: TStringField;
+    mdNavVOLTAGE_IDX: TSmallintField;
+    mdNavVOLTAGE_TXT: TStringField;
+    btnFill: TButton;
     procedure btnCustomerClick(Sender: TObject);
     procedure btnExecutorClick(Sender: TObject);
     procedure btnDrawerClick(Sender: TObject);
@@ -127,6 +134,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure mdNavAfterScroll(DataSet: TDataSet);
     procedure MapDrawBoxAfterSelect(Sender: TObject; Layer: TEzBaseLayer; RecNo: Integer);
+    procedure btnFillClick(Sender: TObject);
   private
     FOriginal: TmstProjectMP;
     FTempProject: TmstProjectMP;
@@ -138,15 +146,14 @@ type
     procedure LoadProjectSemantics();
     procedure LoadPrjStatus();
     procedure LoadLayerList();
-    procedure FindFirstLineLayer(); 
     //
     procedure PrepareGIS();
     procedure BlocksToGIS();
     procedure ProjectToGIS();
     //
-    procedure PrepareNavigator();
     procedure FillNavDataSet();
     procedure EditCurrentObjectSemantic();
+    procedure FillAllObjectsSemantic();
     //
     function GetOrgName(OrgId: Integer): string;
     function SelectOrg(var Id: Integer; out OrgName: string): Boolean;
@@ -154,7 +161,7 @@ type
     function CheckFormData(): Boolean;
     function GetProjectStatus(): Integer;
     function CheckField(aControl: TEdit; const aFieldName: string): Boolean;
-    function CheckDateField(aControl: TEdit; const aFieldName: string): Boolean;
+    function CheckDateField(aControl: TEdit; const aFieldName: string; const AllowEmpty: Boolean): Boolean;
     procedure NeedToFillField(aControl: TEdit; const aFieldName: string);
     function GetCurrentMpObj(): TmstMPObject;
     procedure LoadDataFromNavDataSet(MpObj: TmstMPObject);
@@ -255,6 +262,11 @@ begin
   end;
 end;
 
+procedure TmstEditProjectMPDialog.btnFillClick(Sender: TObject);
+begin
+  FillAllObjectsSemantic();
+end;
+
 procedure TmstEditProjectMPDialog.btnLocateClick(Sender: TObject);
 var
   Layer: TEzBaseLayer;
@@ -315,13 +327,19 @@ begin
   FillNavDataSet();
 end;
 
-function TmstEditProjectMPDialog.CheckDateField(aControl: TEdit; const aFieldName: string): Boolean;
+function TmstEditProjectMPDialog.CheckDateField(aControl: TEdit; const aFieldName: string; const AllowEmpty: Boolean): Boolean;
 var
   S: string;
   TheDate: TDateTime;
 begin
   Result := True;
   S := Trim(aControl.Text);
+  if (S = '') and not AllowEmpty then
+  begin
+    NeedToFillField(aControl, aFieldName);
+    Result := False;
+    Exit;
+  end;
   if S <> '' then
   begin
     if not TryStrToDate(S, TheDate) then
@@ -353,9 +371,11 @@ begin
      or
      not CheckField(edRequestNumber, 'Номер заявки')
      or
-     not CheckDateField(edDocDate, 'Дата проекта')
+     not CheckDateField(edDocDate, 'Дата проекта', True)
      or
-     not CheckDateField(edDrawDate, 'Дата нанесения')
+     not CheckDateField(edDrawDate, 'Дата нанесения', True)
+     or
+     not CheckDateField(edConfirmDate, 'Дата согласования', True)
   then
   begin
     Result := False;
@@ -496,7 +516,8 @@ begin
 //  if DrawMode = dmNormal then
   if mdNav.Active then
   begin
-    if mdNavENT_ID.AsInteger = Entity.ID then
+    if mdNavENT_ID.AsInteger = Recno then
+    if mdNavLAYER_NAME.AsString = Layer.Name then
     begin
       Entity.DrawControlPoints(Grapher, Canvas, Grapher.CurrentParams.VisualWindow, False);
     end;
@@ -514,6 +535,55 @@ begin
     Result := Obj1.EzLayerRecno - Obj2.EzLayerRecno;
 end;
 
+procedure TmstEditProjectMPDialog.FillAllObjectsSemantic;
+var
+  TmpDs: TRxMemoryData;
+  MpObj: TmstMPObject;
+  Rn: Integer;
+begin
+  if not mdNav.Active then
+    Exit;
+  mdNav.Edit();
+  TmpDs := TRxMemoryData.Create(Self);
+  FNavUpdating := True;
+  try
+    Rn := mdNav.RecNo;
+    TmpDs.LoadFromDataSet(mdNav, 0, lmCopy);
+    TmpDs.RecNo := Rn;
+    mdNav.First;
+    while not mdNav.Eof do
+    begin
+      mdNav.Edit;
+      mdNavDISMANTLED.AsBoolean := TmpDs.FieldByName(SF_DISMANTLED).AsBoolean;
+      mdNavARCHIVED.AsBoolean := TmpDs.FieldByName(SF_ARCHIVED).AsBoolean;
+      //mdNavAGREED.AsBoolean := TmpDs.FieldByName(SF_AGREED).AsBoolean;
+      mdNavROTANGLE.AsInteger := TmpDs.FieldByName(SF_ROTANGLE).AsInteger;
+      mdNavUNDERGROUND.AsBoolean := TmpDs.FieldByName(SF_UNDERGROUND).AsBoolean;
+      mdNavDIAM.AsInteger := TmpDs.FieldByName(SF_DIAM).AsInteger;
+      mdNavPIPE_COUNT.AsInteger := TmpDs.FieldByName(SF_PIPE_COUNT).AsInteger;
+      mdNavMATERIAL.AsString := TmpDs.FieldByName(SF_MATERIAL).AsString;
+      mdNavTOP.AsString := TmpDs.FieldByName(SF_TOP).AsString;
+      mdNavBOTTOM.AsString := TmpDs.FieldByName(SF_BOTTOM).AsString;
+      mdNavFLOOR.AsString := TmpDs.FieldByName(SF_FLOOR).AsString;
+      mdNavPRESSURE_IDX.AsInteger := TmpDs.FieldByName(SF_PRESSURE_IDX).AsInteger;
+      mdNavVOLTAGE_IDX.AsInteger := TmpDs.FieldByName(SF_VOLTAGE_IDX).AsInteger;
+      mdNavSEWER.AsBoolean := TmpDs.FieldByName(SF_SEWER).AsBoolean;
+      mdNav.Post;
+      MpObj := GetCurrentMpObj();
+      if Assigned(MpObj) then
+      begin
+        LoadDataFromNavDataSet(MpObj);
+      end;
+      //
+      mdNav.Next;
+    end;
+    mdNav.RecNo := Rn;
+  finally
+    FNavUpdating := False;
+    TmpDs.Free;
+  end;
+end;
+
 procedure TmstEditProjectMPDialog.FillNavDataSet;
 var
   I: Integer;
@@ -523,8 +593,9 @@ var
 begin
   if FLayersUpdating then
     Exit;
-  if not mdNav.Active then
-    mdNav.Open;
+  if mdNav.Active then
+    mdNav.Close;
+  mdNav.Open;
   FNavUpdating := True;
   try
     L := TmstProjectLayer(cbLayers.Items.Objects[cbLayers.ItemIndex]);
@@ -532,27 +603,30 @@ begin
     for I := 0 to FTempProject.Objects.Count - 1 do
     begin
       MPObj := FTempProject.Objects[I];
-      if (L = nil) or (L.MPLayerId = MPObj.MPLayerId) then
+      if (L = nil) or (L.DatabaseId = MPObj.MpClassId) then
       begin
         Layer := EzGIS1.Layers.LayerByName(MPObj.EzLayerName);
         if Assigned(Layer) then
         begin
           mdNav.Append;
-          mdNav.FieldByName('OBJ_ID').AsString := MPObj.MPObjectGuid;
-          mdNav.FieldByName('NET_STATE_ID').AsInteger := MPObj.Status;
-          mdNav.FieldByName('DISMANTLED').AsBoolean := MPObj.Dismantled;
-          mdNav.FieldByName('ARCHIVED').AsBoolean := MPObj.Archived;
-          mdNav.FieldByName('AGREED').AsBoolean := MPObj.Confirmed;
-          mdNav.FieldByName('ROTANGLE').AsInteger := MPObj.Rotation;
-          mdNav.FieldByName('UNDERGROUND').AsBoolean := MPObj.Underground;
-          mdNav.FieldByName('DIAM').AsInteger := MPObj.Diameter;
-          mdNav.FieldByName('PIPE_COUNT').AsInteger := MPObj.PipeCount;
-          mdNav.FieldByName('MATERIAL').AsString := MPObj.Material;
-          mdNav.FieldByName('TOP').AsString := MPObj.Top;
-          mdNav.FieldByName('BOTTOM').AsString := MPObj.Bottom;
-          mdNav.FieldByName('FLOOR').AsString := MPObj.Floor;
-          mdNav.FieldByName('ENT_ID').AsInteger := MPObj.EzLayerRecno;
-          mdNav.FieldByName('LAYER_NAME').AsString := MPObj.EzLayerName;
+          mdNav.FieldByName(SF_OBJ_ID).AsString := MPObj.MPObjectGuid;
+          mdNav.FieldByName(SF_NET_STATE_ID).AsInteger := MPObj.Status;
+          mdNav.FieldByName(SF_DISMANTLED).AsBoolean := MPObj.Dismantled;
+          mdNav.FieldByName(SF_ARCHIVED).AsBoolean := MPObj.Archived;
+//          mdNav.FieldByName(SF_AGREED).AsBoolean := MPObj.Confirmed;
+          mdNav.FieldByName(SF_ROTANGLE).AsInteger := MPObj.Rotation;
+          mdNav.FieldByName(SF_UNDERGROUND).AsBoolean := MPObj.Underground;
+          mdNav.FieldByName(SF_DIAM).AsInteger := MPObj.Diameter;
+          mdNav.FieldByName(SF_PIPE_COUNT).AsInteger := MPObj.PipeCount;
+          mdNav.FieldByName(SF_MATERIAL).AsString := MPObj.Material;
+          mdNav.FieldByName(SF_TOP).AsString := MPObj.Top;
+          mdNav.FieldByName(SF_BOTTOM).AsString := MPObj.Bottom;
+          mdNav.FieldByName(SF_FLOOR).AsString := MPObj.Floor;
+          mdNav.FieldByName(SF_ENT_ID).AsInteger := MPObj.EzLayerRecno;
+          mdNav.FieldByName(SF_LAYER_NAME).AsString := MPObj.EzLayerName;
+          mdNav.FieldByName(SF_PRESSURE_IDX).AsInteger := MPObj.PressureIndex;
+          mdNav.FieldByName(SF_VOLTAGE_IDX).AsInteger := MPObj.VoltageIndex;
+          mdNav.FieldByName(SF_SEWER).AsBoolean := MPObj.Sewer;
           mdNav.Post;
         end;
       end;
@@ -561,11 +635,6 @@ begin
     FNavUpdating := False;
   end;
   mdNav.First;
-end;
-
-procedure TmstEditProjectMPDialog.FindFirstLineLayer;
-begin
-
 end;
 
 procedure TmstEditProjectMPDialog.FormCreate(Sender: TObject);
@@ -627,7 +696,7 @@ procedure TmstEditProjectMPDialog.LoadDataFromNavDataSet(MpObj: TmstMPObject);
 begin
   MpObj.Dismantled := mdNavDISMANTLED.AsBoolean;
   MpObj.Archived := mdNavARCHIVED.AsBoolean;
-  MpObj.Confirmed := mdNavAGREED.AsBoolean;
+  //MpObj.Confirmed := mdNavAGREED.AsBoolean;
   MpObj.Rotation := mdNavROTANGLE.AsInteger;
   MpObj.Underground := mdNavUNDERGROUND.AsBoolean;
   MpObj.Diameter := mdNavDIAM.AsInteger;
@@ -636,6 +705,9 @@ begin
   MpObj.Top := mdNavTOP.AsString;
   MpObj.Bottom := mdNavBOTTOM.AsString;
   MpObj.Floor := mdNavFLOOR.AsString;
+  MpObj.PressureIndex := mdNavPRESSURE_IDX.AsInteger;
+  MpObj.VoltageIndex := mdNavVOLTAGE_IDX.AsInteger;
+  MpObj.Sewer := mdNavSEWER.AsBoolean;
 end;
 
 procedure TmstEditProjectMPDialog.LoadLayerList;
@@ -685,26 +757,10 @@ begin
 //  PrepareNavigator();
   // загружаем список слоёв в комбобокс
   LoadLayerList();
-  // показываем первый слой
-  FindFirstLineLayer();
 end;
 
 procedure TmstEditProjectMPDialog.LoadProjectSemantics;
 begin
-//    property DrawDate: TDateTime read FDrawDate write SetDrawDate;
-//    property DrawOrgId: Integer read FDrawOrgId write SetDrawOrgId;
-//    property Name: string read FName write SetName;
-//    property RequestNumber: string read FRequestNumber write SetRequestNumber;
-//    property Status: Integer read FStatus write SetStatus;
-
-//    property Address: string read FAddress write SetAddress;
-//    property DocNumber: string read FDocNumber write SetDocNumber;
-//    property DocDate: TDateTime read FDocDate write SetDocDate;
-//    property CustomerOrgId: Integer read FCustomerOrgId write SetCustomerOrgId;
-//    property ExecutorOrgId: Integer read FExecutorOrgId write SetExecutorOrgId;
-//    property Confirmed: Boolean read FConfirmed write SetConfirmed;
-//    property ConfirmDate: TDateTime read FConfirmDate write SetConfirmDate;
-//    property CK36: Boolean read FCK36 write SetCK36;
   LoadPrjStatus();
   edName.Text := FTempProject.Name;
   edAddress.Text := FTempProject.Address;
@@ -723,6 +779,11 @@ begin
     edDrawDate.Text := ''
   else
     edDrawDate.Text := DateToStr(FTempProject.DrawDate);
+  if FTempProject.ConfirmDate = 0 then
+    edConfirmDate.Text := ''
+  else
+    edConfirmDate.Text := DateToStr(FTempProject.ConfirmDate);
+  chbConfirmed.Checked := FTempProject.Confirmed;
 end;
 
 procedure TmstEditProjectMPDialog.MapDrawBoxAfterSelect(Sender: TObject; Layer: TEzBaseLayer; RecNo: Integer);
@@ -804,6 +865,8 @@ end;
 procedure TmstEditProjectMPDialog.mdNavCalcFields(DataSet: TDataSet);
 begin
   mdNavNET_STATE_NAME.AsString := TmstMPStatuses.StatusName(mdNavNET_STATE_ID.AsInteger);
+  mdNavPRESSURE_TXT.AsString := TmstMPPressures.StatusName(mdNavPRESSURE_IDX.AsInteger);
+  mdNavVOLTAGE_TXT.AsString := TmstMPVoltages.StatusName(mdNavVOLTAGE_IDX.AsInteger);
 end;
 
 procedure TmstEditProjectMPDialog.NeedToFillField(aControl: TEdit; const aFieldName: string);
@@ -845,36 +908,6 @@ begin
   MapDrawBox.ZoomToExtension;
 end;
 
-procedure TmstEditProjectMPDialog.PrepareNavigator;
-begin
-  // надо заполнить поля датасета - заполнено в редакторе
-  // + состояние сети - int
-  // + демонтированная - bool
-  // + архивная -	bool
-  // + согласована -	bool
-  //  адрес - текст
-  //  номер проекта	текст
-  //  название проекта	текст
-  //  номер заявки	текст
-  // + угол поворота объекта 	int
-  // + подземные -	bool
-  // + диаметр -	int
-  // + количество проводов/труб -	int
-  // + напряжение -	int
-  // + материал	- текст
-  // + верх (труб, каналов, коллекторов, пакетов(блоков) при кабельной канализации, бесколодезных прокладок):	текст
-  // + низ (каналов, коллекторов, пакетов(блоков) при кабельной канализации, бесколодезных прокладок)	текст
-  // + дно колодцев, лотков в самотечных сетях	текст
-  //  заказчик	текст
-  //  заказчик проектная организация	текст
-  //  организация которая нанесла	текст
-  //  дата нанесения	дата
-  //  балансодержатель	текст
-// ------------------------------------------
-  //  надо добавить записи в датасет
-  FillNavDataSet();
-end;
-
 procedure TmstEditProjectMPDialog.ProjectToGIS;
 var
   I: Integer;
@@ -911,10 +944,7 @@ begin
     begin
       Layer := EzGIS1.Layers.LayerByName(MPObj.EzLayerName);
       if Assigned(Layer) then
-      begin
         Ext := Layer.UpdateExtension;
-
-      end;
     end;
   end;
 end;
@@ -936,6 +966,12 @@ begin
     FTempProject.DrawDate := 0
   else
     FTempProject.DrawDate := StrToDate(Trim(edDrawDate.Text));
+  //
+  if Trim(edConfirmDate.Text) = '' then
+    FTempProject.ConfirmDate := 0
+  else
+    FTempProject.ConfirmDate := StrToDate(Trim(edConfirmDate.Text));
+  FTempProject.Confirmed := chbConfirmed.Checked;
 end;
 
 function TmstEditProjectMPDialog.SelectOrg(var Id: Integer; out OrgName: string): Boolean;
