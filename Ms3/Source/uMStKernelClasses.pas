@@ -763,6 +763,7 @@ end;
 procedure TmstLayerList.Add(aLayer: TmstLayer);
 begin
   FItems.Add(aLayer);
+  Notify(aLayer, lnAdded);
 end;
 
 function TmstLayerList.AddLayer: TmstLayer;
@@ -1139,9 +1140,14 @@ begin
   RemoveChilds(aLayer);
   //
   if aLayer.Parent <> nil then
-  begin
-    aLayer.Parent.ExtractChild(aLayer);
-    Notify(aLayer, lnExtracted);
+    aLayer.Parent.ExtractChild(aLayer)
+  else
+    FItems.Extract(aLayer);
+  //
+  try
+    Notify(aLayer, lnDeleted);
+  finally
+    aLayer.Free;
   end;
 end;
 
