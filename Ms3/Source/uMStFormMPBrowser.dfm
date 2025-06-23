@@ -2,7 +2,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
   Left = 0
   Top = 0
   Caption = #1057#1074#1086#1076#1085#1099#1081' '#1087#1083#1072#1085
-  ClientHeight = 604
+  ClientHeight = 644
   ClientWidth = 1161
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -136,7 +136,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Left = 0
     Top = 29
     Width = 1161
-    Height = 575
+    Height = 615
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -145,7 +145,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
       Left = 0
       Top = 29
       Width = 1161
-      Height = 546
+      Height = 586
       Align = alClient
       Caption = #1055#1088#1086#1077#1082#1090#1099
       TabOrder = 0
@@ -154,7 +154,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
         Left = 1
         Top = 1
         Width = 1159
-        Height = 544
+        Height = 584
         Align = alClient
         DataSource = DataSource1
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
@@ -506,10 +506,20 @@ object mstMPBrowserForm: TmstMPBrowserForm
       OnExecute = acObjLoadToGisExecute
       OnUpdate = acObjLoadToGisUpdate
     end
+    object acObjLoadProjToGis: TAction
+      Category = 'Object'
+      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1085#1072' '#1082#1072#1088#1090#1091' '#1074#1077#1089#1100' '#1087#1088#1086#1077#1082#1090
+      OnExecute = acObjLoadProjToGisExecute
+    end
     object acObjUnloadFromGis: TAction
       Category = 'Object'
       Caption = #1059#1073#1088#1072#1090#1100' '#1089' '#1082#1072#1088#1090#1099
       OnExecute = acObjUnloadFromGisExecute
+    end
+    object acObjUnloadProjectFromGis: TAction
+      Category = 'Object'
+      Caption = #1059#1073#1088#1072#1090#1100' '#1089' '#1082#1072#1088#1090#1099' '#1074#1077#1089#1100' '#1087#1088#1086#1077#1082#1090
+      OnExecute = acObjUnloadProjectFromGisExecute
     end
     object acObjRemove: TAction
       Category = 'Object'
@@ -608,11 +618,6 @@ object mstMPBrowserForm: TmstMPBrowserForm
       OnExecute = acListDoFastSearchExecute
       OnUpdate = acListDoFastSearchUpdate
     end
-    object acObjLoadProjToGis: TAction
-      Category = 'Object'
-      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1085#1072' '#1082#1072#1088#1090#1091' '#1074#1077#1089#1100' '#1087#1088#1086#1077#1082#1090
-      OnExecute = acObjLoadProjToGisExecute
-    end
   end
   object PopupMenu1: TPopupMenu
     Images = ImageList1
@@ -656,6 +661,9 @@ object mstMPBrowserForm: TmstMPBrowserForm
     end
     object N27: TMenuItem
       Action = acObjUnloadFromGis
+    end
+    object N39: TMenuItem
+      Action = acObjUnloadProjectFromGis
     end
     object N23: TMenuItem
       Caption = '-'
@@ -1144,6 +1152,9 @@ object mstMPBrowserForm: TmstMPBrowserForm
       end
       object N16: TMenuItem
         Action = acObjUnloadFromGis
+      end
+      object N38: TMenuItem
+        Action = acObjUnloadProjectFromGis
       end
       object N17: TMenuItem
         Action = acListUnloadFromGis

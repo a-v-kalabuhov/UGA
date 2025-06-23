@@ -101,6 +101,7 @@ type
     procedure LoadProjectToGis(const ObjId: Integer; const Display: Boolean; const ZoomIfVisible: Boolean);
     procedure UnloadAllFromGis();
     function UnloadFromGis(const ObjId: Integer): Boolean;
+    function UnloadProjectFromGis(const ObjId: Integer): Boolean;
     //
     procedure GiveOutCertif(const ObjId: Integer; CertifNumber: string; CertifDate: TDateTime);
     procedure CopyToDrawn(const ObjId: Integer);
@@ -2130,6 +2131,45 @@ begin
     FEzAdapter.Loaded := False;
     FEzAdapter.EzRecno := -1;
     Result := True;
+    //
+    if LocateObj(FEzAdapter.Id, memBrowser) then
+    begin
+      memBrowser.Edit;
+      memBrowser.FieldByName(SF_LOADED).AsInteger := 1;
+      memBrowser.Post;
+    end;
+  end;
+end;
+
+function TmstMasterPlanModule.UnloadProjectFromGis(const ObjId: Integer): Boolean;
+var
+  IDs: TIntegerList;
+  I: Integer;
+  Ent: TEzEntity;
+  Layer: TEzBaseLayer;
+begin
+  Result := False;
+  IDs := GetObjectsInProject(ObjId);
+  try
+    for I := 0 to IDs.Count - 1 do
+      if LocateObj(IDs[I], memEzData) then
+      if IsLoaded(IDs[I]) then
+      begin
+        Layer := GetMPLayer();
+        Layer.DeleteEntity(FEzAdapter.EzRecno);
+        FEzAdapter.Loaded := False;
+        FEzAdapter.EzRecno := -1;
+        Result := True;
+        //
+        if LocateObj(FEzAdapter.Id, memBrowser) then
+        begin
+          memBrowser.Edit;
+          memBrowser.FieldByName(SF_LOADED).AsInteger := 1;
+          memBrowser.Post;
+        end;
+      end;
+  finally
+    IDs.Free;
   end;
 end;
 

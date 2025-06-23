@@ -107,6 +107,9 @@ type
     acObjLoadProjToGis: TAction;
     N36: TMenuItem;
     N37: TMenuItem;
+    acObjUnloadProjectFromGis: TAction;
+    N38: TMenuItem;
+    N39: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure chbTransparencyClick(Sender: TObject);
     procedure trackAlphaChange(Sender: TObject);
@@ -155,6 +158,7 @@ type
     procedure acListDoFastSearchExecute(Sender: TObject);
     procedure acListDoFastSearchUpdate(Sender: TObject);
     procedure acObjLoadProjToGisExecute(Sender: TObject);
+    procedure acObjUnloadProjectFromGisExecute(Sender: TObject);
   private
     FDrawBox: TEzBaseDrawBox;
     procedure SetDrawBox(const Value: TEzBaseDrawBox);
@@ -443,6 +447,23 @@ begin
     if FMP.UnloadFromGis(ObjId) then
     begin
       DrawBox.RegenDrawing;
+      kaDbGrid1.Refresh;
+    end;
+  end;
+end;
+
+procedure TmstMPBrowserForm.acObjUnloadProjectFromGisExecute(Sender: TObject);
+var
+  ObjId: Integer;
+  Ds: TDataSet;
+begin
+  Ds := DataSource1.DataSet;
+  if Ds.Active then
+  begin
+    ObjId := Ds.FieldByName(SF_ID).AsInteger;
+    if FMP.UnloadProjectFromGis(ObjId) then
+    begin
+      FDrawBox.RegenDrawing;
       kaDbGrid1.Refresh;
     end;
   end;
@@ -968,7 +989,7 @@ end;
 procedure TmstMPBrowserForm.Notify(const ObjId: Integer; Op: TRowOperation);
 var
   RowObjId: Integer;
-  Bkm: Pointer;
+  //Bkm: Pointer;
 begin
   if not memBrowser2.Active then
     Exit;

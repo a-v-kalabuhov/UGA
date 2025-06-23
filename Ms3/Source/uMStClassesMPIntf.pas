@@ -43,6 +43,7 @@ type
     procedure LoadProjectToGis(const ObjId: Integer; const Display: Boolean; const ZoomIfVisible: Boolean);
     procedure UnloadAllFromGis();
     function UnloadFromGis(const ObjId: Integer): Boolean;
+    function UnloadProjectFromGis(const ObjId: Integer): Boolean;
     //
     procedure CopyToDrawn(const ObjId: Integer);
     procedure GiveOutCertif(const ObjId: Integer; CertifNumber: string; CertifDate: TDateTime);
