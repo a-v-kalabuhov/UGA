@@ -171,6 +171,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       MaxLength = 10
       TabOrder = 7
       Text = 'edRequestDate'
+      OnKeyPress = edRequestDateKeyPress
     end
     object edAddress: TEdit
       Left = 116
@@ -211,6 +212,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       MaxLength = 10
       TabOrder = 3
       Text = 'edDocDate'
+      OnKeyPress = edDocDateKeyPress
     end
     object edRequestNumber: TEdit
       Left = 116
@@ -301,6 +303,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       MaxLength = 10
       TabOrder = 18
       Text = 'edDrawDate'
+      OnKeyPress = edDrawDateKeyPress
     end
     object btnClearCustomer: TButton
       Left = 273
@@ -372,6 +375,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       MaxLength = 10
       TabOrder = 6
       Text = 'edConfirmDate'
+      OnKeyPress = edConfirmDateKeyPress
     end
   end
   object GroupBox2: TGroupBox
@@ -850,6 +854,7 @@ object mstEditMPObjectSemanticsDialog: TmstEditMPObjectSemanticsDialog
       MaxLength = 10
       TabOrder = 2
       Text = 'edCertifDate'
+      OnKeyPress = edCertifDateKeyPress
     end
   end
 end

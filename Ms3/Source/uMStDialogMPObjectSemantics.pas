@@ -6,6 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, DB,
   Dialogs, StdCtrls, Mask, JvExMask, JvSpin,
   EzLib,
+  uDateTimeUtils,
   uMStConsts, uMStClassesProjectsMP, uMStKernelIBX, uMStClassesMPIntf,
   uMStModuleApp, JvExControls, JvInspector;
 
@@ -103,6 +104,11 @@ type
     procedure btnClearCustomerClick(Sender: TObject);
     procedure btnClearExecutorClick(Sender: TObject);
     procedure btnClearDrawerClick(Sender: TObject);
+    procedure edDocDateKeyPress(Sender: TObject; var Key: Char);
+    procedure edRequestDateKeyPress(Sender: TObject; var Key: Char);
+    procedure edConfirmDateKeyPress(Sender: TObject; var Key: Char);
+    procedure edDrawDateKeyPress(Sender: TObject; var Key: Char);
+    procedure edCertifDateKeyPress(Sender: TObject; var Key: Char);
   private
     FMPModule: ImstMPModule;
     FObject: TmstMPObject;
@@ -216,12 +222,14 @@ end;
 function TmstEditMPObjectSemanticsDialog.CheckDate(aEdit: TEdit): Boolean;
 var
   Dummy: TDateTime;
+  S: string;
 begin
   if Trim(aEdit.Text) = '' then
     Result := True
   else
   begin
-    Result := TryStrToDate(Trim(aEdit.Text), Dummy);
+    S := TDateTimeUtils.ReplaceSeparators(Trim(aEdit.Text));
+    Result := TryStrToDate(S, Dummy);
     if not Result then
     begin
       aEdit.SelectAll;
@@ -229,6 +237,30 @@ begin
       ShowMessage('Неверно введена дата!');
     end;
   end;
+end;
+
+procedure TmstEditMPObjectSemanticsDialog.edCertifDateKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key in DateSeparators then
+    Key := '.';
+end;
+
+procedure TmstEditMPObjectSemanticsDialog.edConfirmDateKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key in DateSeparators then
+    Key := '.';
+end;
+
+procedure TmstEditMPObjectSemanticsDialog.edDocDateKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key in DateSeparators then
+    Key := '.';
+end;
+
+procedure TmstEditMPObjectSemanticsDialog.edDrawDateKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key in DateSeparators then
+    Key := '.';
 end;
 
 function TmstEditMPObjectSemanticsDialog.EditObject(AObject: TmstMPObject; aMPModule: ImstMPModule;
@@ -244,6 +276,12 @@ begin
   begin
     WriteToObject();
   end;
+end;
+
+procedure TmstEditMPObjectSemanticsDialog.edRequestDateKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key in DateSeparators then
+    Key := '.';
 end;
 
 function TmstEditMPObjectSemanticsDialog.GetDate(const aText: string): TDateTime;

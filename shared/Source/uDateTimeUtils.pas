@@ -10,7 +10,12 @@ type
   public
     class function DateEquals(const aDate1, aDate2: TDateTime): Boolean;
     class function DateLOE(const aDate1, aDate2: TDateTime): Boolean;
+    class function ReplaceSeparators(const aDateText: string): string;
   end;
+
+const
+  DateSeparators = [',', '/', '\', '-'];
+  DefaultDateSeparator = '.';
 
 implementation
 
@@ -35,6 +40,18 @@ begin
   DecodeDate(aDate1, Y1, M1, D1);
   DecodeDate(aDate2, Y2, M2, D2);
   Result := (Y1 < Y2) or ((Y1 = Y2) and ((M1 < M2) or ((M1 = M2) and (D1 <= D2))));
+end;
+
+class function TDateTimeUtils.ReplaceSeparators(const aDateText: string): string;
+var
+  I: Integer;
+begin
+  Result := aDateText;
+  for I := 1 to Length(Result) do
+  begin
+    if Result[I] in DateSeparators then
+      Result[I] := DefaultDateSeparator;
+  end;
 end;
 
 end.

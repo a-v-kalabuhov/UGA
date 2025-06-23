@@ -321,8 +321,8 @@ begin
       FImportedLayers.Remove(L)
     else
       FDeletedLayers.Add(L);
-    mstClientAppModule.Layers.Extract(L);
     mstClientAppModule.MapMngr.DeleteLayer(L);
+    mstClientAppModule.Layers.Remove(L);
     lvLayers.DeleteSelected;
   end;
 end;
