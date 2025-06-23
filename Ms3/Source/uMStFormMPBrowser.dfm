@@ -2,7 +2,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
   Left = 0
   Top = 0
   Caption = #1057#1074#1086#1076#1085#1099#1081' '#1087#1083#1072#1085
-  ClientHeight = 564
+  ClientHeight = 604
   ClientWidth = 1161
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -136,25 +136,25 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Left = 0
     Top = 29
     Width = 1161
-    Height = 535
+    Height = 575
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitHeight = 515
+    ExplicitHeight = 535
     object tabData: TPanel
       Left = 0
       Top = 29
       Width = 1161
-      Height = 506
+      Height = 546
       Align = alClient
       Caption = #1055#1088#1086#1077#1082#1090#1099
       TabOrder = 0
-      ExplicitHeight = 486
+      ExplicitHeight = 506
       object kaDBGrid1: TkaDBGrid
         Left = 1
         Top = 1
         Width = 1159
-        Height = 504
+        Height = 544
         Align = alClient
         DataSource = DataSource1
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
@@ -608,6 +608,11 @@ object mstMPBrowserForm: TmstMPBrowserForm
       OnExecute = acListDoFastSearchExecute
       OnUpdate = acListDoFastSearchUpdate
     end
+    object acObjLoadProjToGis: TAction
+      Category = 'Object'
+      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1085#1072' '#1082#1072#1088#1090#1091' '#1074#1077#1089#1100' '#1087#1088#1086#1077#1082#1090
+      OnExecute = acObjLoadProjToGisExecute
+    end
   end
   object PopupMenu1: TPopupMenu
     Images = ImageList1
@@ -646,6 +651,9 @@ object mstMPBrowserForm: TmstMPBrowserForm
     object N26: TMenuItem
       Action = acObjLoadToGis
     end
+    object N37: TMenuItem
+      Action = acObjLoadProjToGis
+    end
     object N27: TMenuItem
       Action = acObjUnloadFromGis
     end
@@ -667,7 +675,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Left = 128
     Top = 136
     Bitmap = {
-      494C01010A004800AC0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010A004800B00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1125,6 +1133,9 @@ object mstMPBrowserForm: TmstMPBrowserForm
       object N8: TMenuItem
         Action = acObjLoadToGis
       end
+      object N36: TMenuItem
+        Action = acObjLoadProjToGis
+      end
       object acListLoadToGis1: TMenuItem
         Action = acListLoadToGis
       end
@@ -1161,7 +1172,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Left = 280
     Top = 112
     Bitmap = {
-      494C0101020008002C000C000C00FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010200080030000C000C00FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000300000000C00000001002000000000000009
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

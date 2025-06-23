@@ -104,6 +104,9 @@ type
     edFastSearch: TEdit;
     SpeedButton1: TSpeedButton;
     acListDoFastSearch: TAction;
+    acObjLoadProjToGis: TAction;
+    N36: TMenuItem;
+    N37: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure chbTransparencyClick(Sender: TObject);
     procedure trackAlphaChange(Sender: TObject);
@@ -151,6 +154,7 @@ type
     procedure edFastSearchKeyPress(Sender: TObject; var Key: Char);
     procedure acListDoFastSearchExecute(Sender: TObject);
     procedure acListDoFastSearchUpdate(Sender: TObject);
+    procedure acObjLoadProjToGisExecute(Sender: TObject);
   private
     FDrawBox: TEzBaseDrawBox;
     procedure SetDrawBox(const Value: TEzBaseDrawBox);
@@ -357,6 +361,20 @@ begin
   HasCertif := DataSource1.DataSet.FieldByName(SF_HAS_CERTIF).AsInteger = 1;
   Status := DataSource1.DataSet.FieldByName(SF_STATUS).AsInteger;
   acObjGiveOutCertif.Enabled := not HasCertif or (Status <> TmstMPStatuses.Drawn);
+end;
+
+procedure TmstMPBrowserForm.acObjLoadProjToGisExecute(Sender: TObject);
+var
+  ObjId: Integer;
+  Ds: TDataSet;
+begin
+  Ds := DataSource1.DataSet;
+  if Ds.Active then
+  begin
+    ObjId := Ds.FieldByName(SF_ID).AsInteger;
+    FMP.LoadProjectToGis(ObjId, True, True);
+    kaDBGrid1.Refresh;
+  end;
 end;
 
 procedure TmstMPBrowserForm.acObjLoadToGisExecute(Sender: TObject);

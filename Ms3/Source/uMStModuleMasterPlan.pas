@@ -74,6 +74,7 @@ type
     FSubscribers: TInterfaceList;
     FIntersectDialog: TForm;
     procedure UpdateIntersectListAfterDivision(const ObjId: Integer; Obj1, Obj2: TmstMPObject);
+    function GetObjectsInProject(const ObjId: Integer): TIntegerList;
   private
     /// <summary>
     /// Загружает данные по сводному плану в память из базы данных.
@@ -97,6 +98,7 @@ type
     function IsLoaded(const ObjId: Integer): Boolean;
     procedure LoadAllToGIS();
     procedure LoadToGis(const ObjId: Integer; const Display: Boolean; const ZoomIfVisible: Boolean);
+    procedure LoadProjectToGis(const ObjId: Integer; const Display: Boolean; const ZoomIfVisible: Boolean);
     procedure UnloadAllFromGis();
     function UnloadFromGis(const ObjId: Integer): Boolean;
     //
@@ -418,6 +420,12 @@ const
 
   SQL_UPDATE_MP_OBJECT_CHECK_STATE =
     'UPDATE MASTER_PLAN_OBJECTS SET CHECK_STATE=:CHECK_STATE WHERE ID=:ID';
+
+  SQL_GET_MP_OBJECTS_ID_FOR_PROJECT =
+    'SELECT MPO1.ID, MPO1.ADDRESS FROM MASTER_PLAN_OBJECTS MPO1, MASTER_PLAN_OBJECTS MPO2 '
+  + 'WHERE (MPO2.ID = :ID) AND '
+  + '(MPO1.DOC_NUMBER = MPO2.DOC_NUMBER) AND '
+  + '((MPO1.DOC_DATE = MPO2.DOC_DATE) OR ((MPO1.DOC_DATE IS NULL) AND (MPO2.DOC_DATE IS NULL)))';
 
 
 { TmstMasterPlanModule }
@@ -1106,6 +1114,36 @@ begin
   end;
 end;
 
+function TmstMasterPlanModule.GetObjectsInProject(const ObjId: Integer): TIntegerList;
+var
+  Db: IDb;
+  Conn: IIBXConnection;
+  Ds: TDataSet;
+  RowNum: Integer;
+  Vrs: Integer;
+begin
+  Result := TIntegerList.Create;
+  // соединение
+  DoGetDb(Db);
+  //
+  Conn := Db.GetConnection(cmReadWrite, dmKis);
+  try
+    Ds := Conn.GetDataSet(SQL_GET_MP_OBJECTS_ID_FOR_PROJECT);
+    Conn.SetParam(Ds, SF_ID, ObjId);
+    Ds.Open;
+    while not Ds.Eof do
+    begin
+      Result.Add(Ds.FieldByName(SF_ID).AsInteger);
+      Ds.Next;
+    end;
+    Ds.Close;
+  finally
+    Conn.Commit;
+  end;
+  //
+  SendRowNotification(ObjId, rowUpdate);
+end;
+
 procedure TmstMasterPlanModule.GiveOutCertif(const ObjId: Integer; CertifNumber: string; CertifDate: TDateTime);
 var
   Db: IDb;
@@ -1405,6 +1443,35 @@ begin
   begin
     FBrowserForm.kaDBGrid1.Refresh;
   end; 
+end;
+
+procedure TmstMasterPlanModule.LoadProjectToGis(const ObjId: Integer; const Display, ZoomIfVisible: Boolean);
+var
+  IDs: TIntegerList;
+  I: Integer;
+  Ent: TEzEntity;
+  ProjBox: TEzRect;
+begin
+  IDs := GetObjectsInProject(ObjId);
+  try
+    for I := 0 to IDs.Count - 1 do
+      if LocateObj(IDs[I], memEzData) then
+      begin
+        AddCurrentObjToLayer(False, ZoomIfVisible);
+        Ent := FEzAdapter.GetEntity();
+        if I = 0 then
+          ProjBox := Ent.FBox
+        else
+          ProjBox := UnionRect2D(ProjBox, Ent.FBox);
+      end;
+      //
+      if Display and (IDs.Count > 0) then
+      begin
+        FDrawBox.ZoomWindow(ProjBox);
+      end;
+  finally
+    IDs.Free;
+  end;
 end;
 
 procedure TmstMasterPlanModule.RefreshBrowseDataSetRow(const ObjId: Integer; TargetDataSet: TDataSet);

@@ -40,6 +40,7 @@ type
     function IsLoaded(const ObjId: Integer): Boolean;
     procedure LoadAllToGIS();
     procedure LoadToGis(const ObjId: Integer; const Display: Boolean; const ZoomIfVisible: Boolean);
+    procedure LoadProjectToGis(const ObjId: Integer; const Display: Boolean; const ZoomIfVisible: Boolean);
     procedure UnloadAllFromGis();
     function UnloadFromGis(const ObjId: Integer): Boolean;
     //
