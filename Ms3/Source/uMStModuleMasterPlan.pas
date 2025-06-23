@@ -83,6 +83,7 @@ type
     //
     function GetObjByDbId(const ObjId: Integer; LoadEzData: Boolean): TmstMPObject;
     procedure DeleteObj(const ObjId: Integer);
+    procedure DeleteProject(const ObjId: Integer);
     procedure DivideObj(const ObjId: Integer);
     function EditObjProperties(const ObjId: Integer): Boolean;
     function EditNewObject(const MpObj: TmstMPObject): Boolean;
@@ -529,6 +530,20 @@ begin
   DeleteRow(memObjects, ObjId);
   //
   SendRowNotification(ObjId, rowDelete);
+end;
+
+procedure TmstMasterPlanModule.DeleteProject(const ObjId: Integer);
+var
+  IDs: TIntegerList;
+  I: Integer;
+begin
+  IDs := GetObjectsInProject(ObjId);
+  try
+    for I := 0 to IDs.Count - 1 do
+      DeleteObj(IDs[I]);
+  finally
+    IDs.Free;
+  end;
 end;
 
 procedure TmstMasterPlanModule.DeleteRow(Ds: TDataSet; const ObjId: Integer);

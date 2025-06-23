@@ -110,6 +110,9 @@ type
     acObjUnloadProjectFromGis: TAction;
     N38: TMenuItem;
     N39: TMenuItem;
+    acObjRemoveProject: TAction;
+    N40: TMenuItem;
+    N41: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure chbTransparencyClick(Sender: TObject);
     procedure trackAlphaChange(Sender: TObject);
@@ -159,6 +162,7 @@ type
     procedure acListDoFastSearchUpdate(Sender: TObject);
     procedure acObjLoadProjToGisExecute(Sender: TObject);
     procedure acObjUnloadProjectFromGisExecute(Sender: TObject);
+    procedure acObjRemoveProjectExecute(Sender: TObject);
   private
     FDrawBox: TEzBaseDrawBox;
     procedure SetDrawBox(const Value: TEzBaseDrawBox);
@@ -432,6 +436,34 @@ begin
     // строка удалистя через увдомление от МР модуля
 //    Ds.Delete;
     DrawBox.RegenDrawing;
+  end;
+end;
+
+procedure TmstMPBrowserForm.acObjRemoveProjectExecute(Sender: TObject);
+var
+  ObjId: Integer;
+  Ds: TDataSet;
+  PrjNumber: string;
+  PrjDate: string;
+  S: string;
+  MsgRes: Integer;
+begin
+  Ds := DataSource1.DataSet;
+  if Ds.Active and not Ds.IsEmpty then
+  begin
+    PrjNumber := Ds.FieldByName(SF_DOC_NUMBER).AsString;
+    PrjDate :=  Ds.FieldByName(SF_DOC_DATE).AsString;
+    S := PrjNumber;
+    if PrjDate <> '' then
+      S := S + ' от ' + PrjDate;
+    MsgRes := MessageDlg('Удалить все сети проекта ' + S + '?', mtConfirmation, mbYesNo, 0);
+    if MsgRes = ID_YES then
+    begin
+      ObjId := Ds.FieldByName(SF_ID).AsInteger;
+      // удаляем объект из проекта
+      FMP.DeleteProject(ObjId);
+      DrawBox.RegenDrawing;
+    end;
   end;
 end;
 

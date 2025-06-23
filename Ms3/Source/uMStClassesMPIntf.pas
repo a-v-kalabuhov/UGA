@@ -24,6 +24,7 @@ type
     //
     function GetObjByDbId(const ObjId: Integer; LoadEzData: Boolean): TmstMPObject;
     procedure DeleteObj(const ObjId: Integer);
+    procedure DeleteProject(const ObjId: Integer);
     procedure DivideObj(const ObjId: Integer);
     function EditNewObject(const Obj: TmstMPObject): Boolean;
     function EditObjProperties(const ObjId: Integer): Boolean;

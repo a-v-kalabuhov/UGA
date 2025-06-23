@@ -2,7 +2,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
   Left = 0
   Top = 0
   Caption = #1057#1074#1086#1076#1085#1099#1081' '#1087#1083#1072#1085
-  ClientHeight = 644
+  ClientHeight = 664
   ClientWidth = 1161
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -136,7 +136,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
     Left = 0
     Top = 29
     Width = 1161
-    Height = 615
+    Height = 635
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -145,7 +145,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
       Left = 0
       Top = 29
       Width = 1161
-      Height = 586
+      Height = 606
       Align = alClient
       Caption = #1055#1088#1086#1077#1082#1090#1099
       TabOrder = 0
@@ -154,7 +154,7 @@ object mstMPBrowserForm: TmstMPBrowserForm
         Left = 1
         Top = 1
         Width = 1159
-        Height = 584
+        Height = 604
         Align = alClient
         DataSource = DataSource1
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
@@ -528,6 +528,11 @@ object mstMPBrowserForm: TmstMPBrowserForm
       ShortCut = 16430
       OnExecute = acObjRemoveExecute
     end
+    object acObjRemoveProject: TAction
+      Category = 'Object'
+      Caption = #1059#1076#1072#1083#1080#1090#1100' '#1074#1077#1089#1100' '#1087#1088#1086#1077#1082#1090
+      OnExecute = acObjRemoveProjectExecute
+    end
     object acObjCopyId: TAction
       Category = 'Object'
       Caption = #1057#1082#1086#1087#1080#1088#1086#1074#1072#1090#1100' ID '#1086#1073#1098#1077#1082#1090#1072
@@ -670,6 +675,9 @@ object mstMPBrowserForm: TmstMPBrowserForm
     end
     object N24: TMenuItem
       Action = acObjRemove
+    end
+    object N40: TMenuItem
+      Action = acObjRemoveProject
     end
   end
   object memBrowser2: TRxMemoryData
@@ -1134,6 +1142,9 @@ object mstMPBrowserForm: TmstMPBrowserForm
       end
       object N14: TMenuItem
         Action = acObjRemove
+      end
+      object N41: TMenuItem
+        Action = acObjRemoveProject
       end
     end
     object N7: TMenuItem
