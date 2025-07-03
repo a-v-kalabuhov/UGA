@@ -22,6 +22,7 @@ const
 
    ID_NODETYPE_MP_ROOT = 220;
    ID_NODETYPE_MP_PRJ = 221;
+   ID_NODETYPE_MP_OBJECT = 222;
 
    mstRootNodeTypes: set of Byte = [
      ID_NODETYPE_LOT_ROOT,

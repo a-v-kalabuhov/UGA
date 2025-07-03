@@ -3,12 +3,12 @@ unit uMStDialogMPObjectSemantics;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, DB,
-  Dialogs, StdCtrls, Mask, JvExMask, JvSpin,
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, DB, Dialogs, StdCtrls, Mask,
+  JvExMask, JvSpin, JvExControls, JvInspector,
   EzLib,
   uDateTimeUtils,
   uMStConsts, uMStClassesProjectsMP, uMStKernelIBX, uMStClassesMPIntf,
-  uMStModuleApp, JvExControls, JvInspector;
+  uMStModuleApp;
 
 type
   TmstEditMPObjectSemanticsDialog = class(TForm)

@@ -20,11 +20,11 @@ uses
   uGC, uCommonUtils, uVCLUtils, uFileUtils, uGeoUtils, uGeoTypes,
   // Project
   uMStKernelTypes, uMStKernelClasses, uMStKernelClassesSearch, uMStKernelInterfaces, uMStKernelAppModule,
-  uMStKernelStack, uMStKernelIBX, uMStKernelAppSettings,
+  uMStKernelStack, uMStKernelIBX, uMStKernelAppSettings, uMStKernelStackConsts,
   uMStModuleMapMngrIBX,
   uMStImportEzClasses,
   uMStClassesLots, uMStClassesProjects, uMStClassesMPIntf, uMStClassesProjectsIntf,
-  uMStClassesProjectsMP;
+  uMStClassesProjectsMP, uMStKernelClassesPropertiesViewers;
 
 type
   ELayerNotFound = class(Exception);
@@ -160,6 +160,19 @@ type
     function IntLoadMapImage(aMap: TmstMap): Boolean;  // MapId = Entity.ID
     procedure LoadLayersVisibility();
     procedure TurnOffLayer(Sender: TObject; aLayer: TmstLayer);
+    //
+    procedure SetStackLotsVisibility(IsVisible: Boolean);
+    procedure HideAllLotsInStack(Sender: TObject; AObject: TmstObject);
+    procedure ShowAllLotsInStack(Sender: TObject; AObject: TmstObject);
+    procedure RemoveSelectedObjectFromStack(Sender: TObject; AObject: TmstObject);
+    procedure ViewPropertiesSelectedObjectInStack(Sender: TObject; AObject: TmstObject);
+    procedure ChangeVisibilitySelectedLotInStack(Sender: TObject; AObject: TmstObject);
+    procedure HideAllLotsExceptSelectedInStack(Sender: TObject; AObject: TmstObject);
+    procedure ViewSelectedObjInSteckInBrowser(Sender: TObject; AObject: TmstObject);
+    procedure LocateSelectedObjectInStack(Sender: TObject; AObject: TmstObject);
+    procedure ShowHideSelectedLotContourInStack(Sender: TObject; AObject: TmstObject);
+    procedure ShowHideAllLotContoursExceptSelectedInStack(Sender: TObject; AObject: TmstObject);
+    procedure LocateSelectedLotContourInStack(Sender: TObject; AObject: TmstObject);
   private
     function IsMPLayer(aLayer: TEzBaseLayer): Boolean;
     function GetMPObjectisVisible(aLayer: TEzBaseLayer; aRecNo: Integer; var LineColor: TColor): Boolean;
@@ -861,6 +874,115 @@ begin
   begin
     FStack := TmstObjectStack.Create(Self as ImstAppModule, FMapMngr as IDb, FMapMngr as ImstLotCategories, Self as ImstLotController);
     FStack.OnSelectionChange := SelectionChange;
+    // Сделать все отводы невидимыми
+    FStack.RegisterCommand(
+      '{84A0E223-AB5E-4D3E-8A08-E2436D51109B}',
+      [ID_NODETYPE_LOT_ROOT, ID_NODETYPE_LOT_ANNULED_ROOT, ID_NODETYPE_LOT_ACTUAL_ROOT, ID_NODETYPE_LOT_CATEGORIZED_ROOT],
+      'Скрыть все участки по списку',
+      -1,
+      HideAllLotsInStack,
+      nil
+    );
+    // Сделать все отводы видимыми
+    FStack.RegisterCommand(
+      '{4FA5DD99-CEC7-418E-9223-68F4B52565BC}',
+      [ID_NODETYPE_LOT_ROOT, ID_NODETYPE_LOT_ANNULED_ROOT, ID_NODETYPE_LOT_ACTUAL_ROOT, ID_NODETYPE_LOT_CATEGORIZED_ROOT],
+      'Показать все участки по списку',
+      -1,
+      ShowAllLotsInStack,
+      nil
+    );
+    // Убрать объект из выбранных
+    FStack.RegisterCommand(
+      '{8E4DE39A-5B6A-42A0-8C1E-F4B031BFD56D}',
+      [ID_NODETYPE_LOT, ID_NODETYPE_LOT_ACTUAL, ID_NODETYPE_LOT_ANNULED, ID_NODETYPE_LOT_CATEGORIZED,
+       ID_NODETYPE_STREET, ID_NODETYPE_ADDRESS, ID_NODETYPE_PRJ, ID_NODETYPE_MP_PRJ, ID_NODETYPE_MP_OBJECT],
+      'Убрать объект из списка',
+      -1,
+      RemoveSelectedObjectFromStack,
+      nil);
+    // Посмотреть информацию
+//    menuItem.Caption := 'Посмотреть свойства объекта';
+//    menuItem.OnClick := ViewPropertiesHandler;
+    FStack.RegisterCommand(
+      '{1FA46E55-40FF-41EC-B244-51194E95BAF4}',
+      [ID_NODETYPE_LOT, ID_NODETYPE_LOT_ACTUAL, ID_NODETYPE_LOT_ANNULED, ID_NODETYPE_LOT_CATEGORIZED,
+       ID_NODETYPE_PRJ, ID_NODETYPE_MP_PRJ, ID_NODETYPE_MP_OBJECT],
+      'Посмотреть свойства объекта',
+      -1,
+      ViewPropertiesSelectedObjectInStack,
+      nil);
+    //
+    // Спрятать/показать (для отводов)
+//    menuItem.Caption := 'Спрятать/показать объект';
+//    menuItem.OnClick := ChangeVisibilityHandler;
+    FStack.RegisterCommand(
+      '{69953EEE-0351-4135-8B9C-00FF7A940811}',
+      [ID_NODETYPE_LOT, ID_NODETYPE_LOT_ACTUAL, ID_NODETYPE_LOT_ANNULED, ID_NODETYPE_LOT_CATEGORIZED],
+      'Спрятать/показать отвод',
+      -1,
+      ChangeVisibilitySelectedLotInStack,
+      nil);
+//
+    // Спрятать все кроме этого (для отводов)
+//    menuItem.Caption := 'Спрятать все кроме выбранного';
+//    menuItem.OnClick := HideExceptCurrentHandler;
+    FStack.RegisterCommand(
+      '{A26DAFDA-729B-4211-BB32-6D051F18C401}',
+      [ID_NODETYPE_LOT, ID_NODETYPE_LOT_ACTUAL, ID_NODETYPE_LOT_ANNULED, ID_NODETYPE_LOT_CATEGORIZED],
+      'Спрятать все кроме выбранного',
+      -1,
+      HideAllLotsExceptSelectedInStack,
+      nil);
+    // Показать в списке
+//    menuItem.Caption := 'Показать в списке';
+//    menuItem.OnClick := ViewBrowserHandler;
+    FStack.RegisterCommand(
+      '{1BC6D927-A18F-4697-BFB9-E8E07EB1F9C7}',
+      [ID_NODETYPE_MP_OBJECT],
+      'Показать в списке сетей',
+      -1,
+      ViewSelectedObjInSteckInBrowser,
+      nil);
+  // Показать
+//  menuItem.Caption := 'Найти объект на карте';
+//  menuItem.OnClick := LocateHandler;
+    FStack.RegisterCommand(
+      '{28C19363-9EA9-4BAA-9883-C2D4F1F5BA7E}',
+      [ID_NODETYPE_LOT, ID_NODETYPE_LOT_ACTUAL, ID_NODETYPE_LOT_ANNULED, ID_NODETYPE_LOT_CATEGORIZED,
+       ID_NODETYPE_STREET, ID_NODETYPE_ADDRESS, ID_NODETYPE_PRJ, ID_NODETYPE_MP_PRJ, ID_NODETYPE_MP_OBJECT],
+      'Найти объект на карте',
+      -1,
+      LocateSelectedObjectInStack,
+      nil);
+  //
+//  menuItem.Caption := 'Включить/выключить контур';
+//  menuItem.OnClick := OnOffContourHandler;
+    FStack.RegisterCommand(
+      '{B972FD22-88D2-4364-867E-856CBFF9A21E}',
+      [ID_NODETYPE_LOT_CONTOUR],
+      'Включить/выключить контур',
+      -1,
+      ShowHideSelectedLotContourInStack,
+      nil);
+//  menuItem.Caption := 'Выключить все контуры кроме выбранного';
+//  menuItem.OnClick := OnOffAllContourHandler;
+    FStack.RegisterCommand(
+      '{4002976A-7618-4C71-A879-AE02F70FEC8A}',
+      [ID_NODETYPE_LOT_CONTOUR],
+      'Выключить все контуры кроме выбранного',
+      -1,
+      ShowHideAllLotContoursExceptSelectedInStack,
+      nil);
+//  menuItem.Caption := 'Найти контур на карте';
+//  menuItem.OnClick := LocateHandler;
+    FStack.RegisterCommand(
+      '{84B13513-86B8-46D2-B756-3E5FF3200DDE}',
+      [ID_NODETYPE_LOT_CONTOUR],
+      'Найти контур на карте',
+      -1,
+      LocateSelectedLotContourInStack,
+      nil);
   end;
 
   if not Assigned(FFinder) then
@@ -1279,6 +1401,11 @@ begin
   end;
 end;
 
+procedure TMStClientAppModule.RemoveSelectedObjectFromStack(Sender: TObject; AObject: TmstObject);
+begin
+  FStack.RemoveSelected();
+end;
+
 procedure TMStClientAppModule.RepaintViewports;
 begin
   GIS.RepaintViewports;
@@ -1490,6 +1617,41 @@ begin
   end;
 end;
 
+procedure TMStClientAppModule.LocateSelectedLotContourInStack(Sender: TObject; AObject: TmstObject);
+begin
+  FStack.LocateCurrentObject();
+end;
+
+procedure TMStClientAppModule.LocateSelectedObjectInStack(Sender: TObject; AObject: TmstObject);
+var
+  DbId: Integer;
+  Lot: TmstLot;
+  Prj: TmstProject;
+var
+  ObjList: ImstMPModuleObjList;
+  Browser: ImstMPBrowser;
+begin
+  if AObject is TmstLot then
+  begin
+    Lot := TmstLot(AObject);
+    LocateLot(Lot.GetCategoryId, Lot.DatabaseId);
+  end;
+  if AObject is TmstProject then
+  begin
+    Prj := TmstProject(AObject);
+    LocateProject(Prj.DatabaseId);
+  end;
+  if AObject is TmstMPObject then
+  begin
+    MP.LoadToGis(AObject.DatabaseId, True, False);
+    RepaintViewports;
+    ObjList := Self.ObjList;
+    Browser := ObjList.Browser();
+    if Assigned(Browser) then
+      Browser.LocateObj(AObject.DatabaseId);
+  end;
+end;
+
 procedure TMStClientAppModule.ProgressInit(const Message: String;
   Percent: Byte; Delay: Integer; Ticks: Integer = -1);
 begin
@@ -1682,7 +1844,6 @@ var
   I: Integer;
   ObjList: TList;
 begin
-  Exit;
   ObjList := MP.PickObjects(X, Y);
   try
     for I := 0 to ObjList.Count - 1 do
@@ -1738,6 +1899,35 @@ begin
   Result := FLoadedProjects.Count > 0;
 end;
 
+procedure TMStClientAppModule.HideAllLotsExceptSelectedInStack(Sender: TObject; AObject: TmstObject);
+var
+  I, C: Integer;
+  aLot, TmpLot: TmstLot;
+  aLotList: TmstLotList;
+  TmpModel: TmstStackViewModel;
+begin
+  if AObject is TmstLot then
+  begin
+    aLot := AObject as TmstLot;
+    aLotList := FStack.LotLists[aLot.GetCategoryId];
+    if Assigned(aLotList) then
+    begin
+      for I := 0 to aLotList.Count - 1 do
+      begin
+        if aLotList[I].DatabaseId <> aLot.DatabaseId then
+          HideLot(aLotList[I].GetCategoryId, aLotList[I].DatabaseId);
+      end;
+    end;
+  end;
+  FStack.UpdateView;
+  RepaintViewports;
+end;
+
+procedure TMStClientAppModule.HideAllLotsInStack;
+begin
+  SetStackLotsVisibility(False);
+end;
+
 procedure TMStClientAppModule.HideLot(const aCategoryId, DatabaseId: Integer);
 var
   I: Integer;
@@ -1758,10 +1948,49 @@ begin
   FShowInvisibleLots := Value;
 end;
 
+procedure TMStClientAppModule.SetStackLotsVisibility(IsVisible: Boolean);
+var
+  I: Integer;
+  SelectedObjects: TList;
+  Lot: TmstLot;
+begin
+  SelectedObjects := FStack.GetSelectedObjects();
+  try
+    for I := 0 to SelectedObjects.Count - 1 do
+    begin
+      Lot := SelectedObjects[I];
+      Lot.Visible := IsVisible;
+//      if IsVisible then
+//        UnHideLot(Lot.GetCategoryId, Lot.DatabaseId)
+//      else
+//        HideLot(Lot.GetCategoryId, Lot.DatabaseId);
+    end;
+    FStack.UpdateView;
+    RepaintViewports;
+  finally
+    SelectedObjects.Free;
+  end;
+end;
+
 procedure TMStClientAppModule.SetViewCoordSystem(const Value: TCoordSystem);
 begin
   FViewCoordSystem := Value;
   NotifyCoordViews();
+end;
+
+procedure TMStClientAppModule.ShowAllLotsInStack;
+begin
+  SetStackLotsVisibility(True);
+end;
+
+procedure TMStClientAppModule.ShowHideAllLotContoursExceptSelectedInStack(Sender: TObject; AObject: TmstObject);
+begin
+  FStack.OnOffAllContours();
+end;
+
+procedure TMStClientAppModule.ShowHideSelectedLotContourInStack(Sender: TObject; AObject: TmstObject);
+begin
+  FStack.OnOffCurrentContour();
 end;
 
 procedure TMStClientAppModule.PrepareCadastralBlock(Layer: TEzBaseLayer;
@@ -2358,6 +2587,63 @@ begin
       Result := False;
     end;
   end;
+end;
+
+procedure TMStClientAppModule.ViewPropertiesSelectedObjectInStack(Sender: TObject; AObject: TmstObject);
+var
+  Node: TmstTreeNode;
+  aLot: TmstLot;
+  Prj: TmstProject;
+begin
+  if AObject is TmstLot then
+  begin
+    aLot := AObject as TmstLot;
+    with TmstLotPropertiesView.Create do
+    try
+      ShowView(aLot);
+    finally
+      Free;
+    end;
+  end;
+  //
+  if AObject is TmstProject then
+  begin
+    Prj := AObject as TmstProject;
+    if Prj.Edit(True) then
+      Prj.Save(FMapMngr as IDb);
+  end;
+  //
+  if AObject is TmstMPObject then
+  begin
+    MP.EditObjProperties(AObject.DatabaseId);
+  end;
+end;
+
+procedure TMStClientAppModule.ViewSelectedObjInSteckInBrowser(Sender: TObject; AObject: TmstObject);
+var
+  ObjList: ImstMPModuleObjList;
+  Browser: ImstMPBrowser;
+begin
+  if AObject is TmstMPObject then
+  begin
+    ObjList := Self.ObjList;
+    Browser := ObjList.Browser();
+    if Assigned(Browser) then
+      Browser.LocateObj(AObject.DatabaseId);
+  end;
+end;
+
+procedure TMStClientAppModule.ChangeVisibilitySelectedLotInStack(Sender: TObject; AObject: TmstObject);
+var
+  Lot: TmstLot;
+begin
+  if AObject is TmstLot then
+  begin
+    Lot := AObject as TmstLot;
+    Lot.Visible := not Lot.Visible;
+  end;
+  FStack.UpdateView;
+  RepaintViewports;
 end;
 
 procedure TMStClientAppModule.ClearLoadedProjects();

@@ -51,7 +51,7 @@ type
 
   TmstLotRegistry = class(TObjectList)
   private
-    FUpdateObjectHandler: TmstUpdateObjectEvent;
+    FUpdateObjectHandler: TmstObjectEvent;
     FBeforeAddLotHandler: TBeforeAddLotEvent;
     function GetItems(Index: Integer): TmstLotListEz;
     procedure SetItems(Index: Integer; const Value: TmstLotListEz);
@@ -59,7 +59,7 @@ type
     function Add(Value: TmstLotListEz): Integer;
     function FindByCategory(CategoryId: Integer): TmstLotListEz;
     procedure SetBeforeAddLotHandler(Value: TBeforeAddLotEvent);
-    procedure SetUpdateObjectHandler(Value: TmstUpdateObjectEvent);
+    procedure SetUpdateObjectHandler(Value: TmstObjectEvent);
     //
     property Items[Index: Integer]: TmstLotListEz read GetItems write SetItems; default;
     function IsEmpty: Boolean;
@@ -139,7 +139,7 @@ begin
   inherited Items[Index] := Value;
 end;
 
-procedure TmstLotRegistry.SetUpdateObjectHandler(Value: TmstUpdateObjectEvent);
+procedure TmstLotRegistry.SetUpdateObjectHandler(Value: TmstObjectEvent);
 var
   I: Integer;
 begin

@@ -1923,8 +1923,35 @@ begin
 end;
 
 function TmstMasterPlanModule.PickObjects(const X, Y: Double): TList;
+var
+  Ent: TEzEntity;
+  AppertureInPixels: Integer;
+  Apperture: Double;
+  Distance: Double;
+  PtCode: Integer;
+  TheObj: TmstObject;
 begin
   Result := TList.Create;
+  //
+  AppertureInPixels := 2;
+  Apperture := FDrawBox.Grapher.DistToRealX(AppertureInPixels);
+  //
+  memEzData.First;
+  while not memEzData.Eof do
+  begin
+    Ent := FEzAdapter.GetEntity();
+    try
+      PtCode := Ent.PointCode(Point2D(X, Y), Apperture, Distance, True, False);
+      if PtCode <> PICKED_NONE then
+      begin
+        TheObj := GetObjByDbId(Ent.ExtId, False);
+        Result.Add(TheObj);
+      end;
+    finally
+      Ent.Free;
+    end;
+    memEzData.Next;
+  end;
 end;
 
 procedure TmstMasterPlanModule.PrepareBrowserDataSet;

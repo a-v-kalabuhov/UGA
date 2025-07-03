@@ -972,12 +972,12 @@ end;
 
 function TmstMPObject.GetObjectId: Integer;
 begin
-  Result := inherited GetObjectId();
+  Result := ID_MP_OBJECT;
 end;
 
 function TmstMPObject.GetText: String;
 begin
-  Result := '';
+  Result := Address;
 end;
 
 function TmstMPObject.PressureText: string;

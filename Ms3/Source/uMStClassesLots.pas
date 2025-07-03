@@ -85,7 +85,10 @@ type
   end;
 
   TmstLotContours = class(TmstObjectList)
+  private
+    FOwner: TmstLot;
   protected
+    procedure Notify(Ptr: Pointer; Action: TListNotification); override;
     function GetItem(Index: Integer): TmstLotContour;
     procedure SetItem(Index: Integer; AContour: TmstLotContour);
   public
@@ -555,6 +558,7 @@ function TmstLotContours.AddContour: TmstLotContour;
 begin
   Result := TmstLotContour.Create;
   Self.Add(Result);
+  Result.FLot := FOwner;
 end;
 
 function TmstLotContours.EnabledCount: Integer;
@@ -576,6 +580,17 @@ end;
 function TmstLotContours.GetItem(Index: Integer): TmstLotContour;
 begin
   Result := TmstLotContour(inherited GetItem(Index));
+end;
+
+procedure TmstLotContours.Notify(Ptr: Pointer; Action: TListNotification);
+begin
+  if Action = lnAdded then
+    TmstLotContour(Ptr).FLot := FOwner;
+  if Action = lnExtracted then
+    TmstLotContour(Ptr).FLot := nil;
+  if Action = lnDeleted then
+    TmstLotContour(Ptr).FLot := nil;
+  inherited Notify(Ptr, Action);
 end;
 
 procedure TmstLotContours.SetItem(Index: Integer;
@@ -640,6 +655,7 @@ constructor TmstLot.Create;
 begin
   inherited;
   FContours := TmstLotContours.Create;
+  FContours.FOwner := Self;
   FSelectedContour := -1;
   FVisible := True;
 end;

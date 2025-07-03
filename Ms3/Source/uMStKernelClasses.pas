@@ -7,12 +7,13 @@ interface
 
 uses
   // System
-  SysUtils, Windows, Classes, Contnrs, Controls, CheckLst, StrUtils, 
+  SysUtils, Windows, Classes, Contnrs, Controls, CheckLst, StrUtils,
+  //
+  VirtualTrees,
   // Common
   uCommonUtils, uGeoTypes,  
   //
-  uMStConsts, uMStKernelTypes, uMStKernelSemantic, uMStKernelStackConsts,
-  VirtualTrees;
+  uMStConsts, uMStKernelTypes, uMStKernelSemantic, uMStKernelStackConsts;
 
 const
   ID_NONE = 0;
@@ -25,6 +26,7 @@ const
   ID_LOT_CATEGORIZED = 7;
   ID_PROJECT = 8;
   ID_PROJECT_MP = 9;
+  ID_MP_OBJECT = 10;
   S_GUEST = 'GUEST';
 
 type
@@ -90,7 +92,8 @@ type
     property AsText: String read GetText;
   end;
 
-  TmstUpdateObjectEvent = procedure (Sender: TObject; AObject: TmstObject) of object;
+  TmstObjectEvent = procedure (Sender: TObject; AObject: TmstObject) of object;
+  TmstObjectPredicate = procedure (Sender: TObject; AObject: TmstObject; var Value: Boolean) of object;
 
   TIndexRec = record
     ID: Integer;    // значение поля для поиска
@@ -104,7 +107,7 @@ type
 
   TmstObjectList = class(TObjectList)
   private
-    FOnUpdateObject: TmstUpdateObjectEvent;
+    FOnUpdateObject: TmstObjectEvent;
   protected
     function GetItem(Index: Integer): TmstObject;
     procedure SetItem(Index: Integer; AObject: TmstObject);
@@ -112,7 +115,7 @@ type
     function IndexOfDatabaseId(const DatabaseID: Integer): Integer;
     function GetByDatabaseId(const DatabaseID: Integer): TmstObject;
     property Items[Index: Integer]: TmstObject read GetItem write SetItem; default;
-    property OnUpdateObject: TmstUpdateObjectEvent read FOnUpdateObject write FOnUpdateObject;
+    property OnUpdateObject: TmstObjectEvent read FOnUpdateObject write FOnUpdateObject;
   end;
 
   // Не использовать пока!!!
@@ -505,7 +508,7 @@ uses
   uGC, uVCLUtils,
   // Project
   uMStKernelConsts, uMStKernelClassesPropertiesViewers,
-  uMStClassesProjects;
+  uMStClassesProjects, uMStClassesProjectsMP;
 
 type
   PVSTLayer = ^TVSTLayer;
@@ -1887,6 +1890,7 @@ initialization
   mstRegistry.RegisterObjectClass(TmstAddress, TmstAddressList, ID_ADDRESS, 'Адреса');
   mstRegistry.RegisterObjectClass(TmstProject, TmstObjectList, ID_PROJECT, 'Проекты');
   mstRegistry.RegisterObjectClass(TmstProject, TmstObjectList, ID_PROJECT_MP, 'Сводный план');
+  mstRegistry.RegisterObjectClass(TmstMPObject, TmstObjectList, ID_MP_OBJECT, 'Сводный план');
 
 finalization
   FreeAndNil(mstRegistry);

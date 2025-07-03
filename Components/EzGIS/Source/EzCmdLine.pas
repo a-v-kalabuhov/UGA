@@ -90,6 +90,7 @@ Type
     FOnContinueOperation: TNotifyEvent;
     FOnUndo: TNotifyEvent;
     FOnInitialize: TNotifyEvent;
+    FCancelled: Boolean;
 
     Procedure SetFullViewCursorPos(Const Pt: TEzPoint);
     Procedure DrawFullViewCursor(Sender: TObject = Nil);
@@ -97,7 +98,8 @@ Type
     Procedure SetCaption( Const Value: String );
     { this is used in order to cancel a command if a DrawBox is not
       of the expected type }
-    Function AcceptDrawBox: Boolean; {Dynamic;}
+    Function AcceptDrawBox: Boolean;
+    procedure SetCancelled(const Value: Boolean); {Dynamic;}
   Public
     { methods }
     Constructor CreateAction( CmdLine: TEzCmdLine );
@@ -119,6 +121,7 @@ Type
     Property LastClicked: TEzPoint read FLastClicked write FLastClicked;
 
     { previous version these properties was in the published section }
+    property Cancelled: Boolean read FCancelled write SetCancelled;
     Property ChainedTo: TEzAction Read FChainedTo Write FChainedTo;
     Property CanDoOSNAP: Boolean Read FCanDoOSNAP Write FCanDoOSNAP;
     Property CanDoAccuDraw: Boolean Read FCanDoAccuDraw Write FCanDoAccuDraw;
@@ -603,7 +606,7 @@ Begin
   With FCmdLine Do
     If Assigned( FCmdLine ) And ( FCmdLine.TheDefaultAction <> Self )
        And Assigned( OnAfterCommand ) Then
-      OnAfterCommand( FCmdLine, LastCommand, LastActionID );
+      OnAfterCommand( Self, LastCommand, LastActionID );
   FFullViewCursor.Free;
   FCursorFrame.Free;
   If Assigned( FLauncher ) then
@@ -668,6 +671,11 @@ Begin
     End;
   end;
 End;
+
+procedure TEzAction.SetCancelled(const Value: Boolean);
+begin
+  FCancelled := Value;
+end;
 
 Procedure TEzAction.SetCaption( Const Value: String );
 Begin
@@ -1293,6 +1301,7 @@ Begin
     For I := 0 To FActionList.Count - 1 Do
     begin
       Action := TEzAction( FActionList[I] );
+      Action.Cancelled := True;
       KillAction( Action );
     End;
     FActionList.Clear;

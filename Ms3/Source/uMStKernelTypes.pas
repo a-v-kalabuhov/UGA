@@ -11,6 +11,8 @@ type
   TmstMapReportErrorMode = (mreDeny = 0, mreWatermarks = 1);
   TmstImageExt = (imgGFA, imgBMP, imgJPEG);
 
+  TIntDynArray = array of Integer;
+
 implementation
 
 end.

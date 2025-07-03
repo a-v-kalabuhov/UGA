@@ -3,10 +3,10 @@ unit uMStKernelStack;
 interface
 
 uses
-  SysUtils, Controls, Contnrs, ComCtrls, Menus,
+  SysUtils, Classes, Controls, Contnrs, ComCtrls, Menus,
   uGC,
-  uMStKernelClasses, uMStKernelAppModule, uMStKernelStackConsts, uMStKernelConsts, uMStKernelIBX,
-  uMStClassesLots, uMStClassesProjects, uMStKernelStackUtils;
+  uMStKernelClasses, uMStKernelTypes, uMStKernelAppModule, uMStKernelStackConsts, uMStKernelConsts, uMStKernelIBX,
+  uMStClassesLots, uMStClassesProjects, uMStKernelStackUtils, uMStClassesProjectsMP;
 
 type
 (*
@@ -47,6 +47,7 @@ type
     FAddresse_s: TmstObjectList;
     FProjects: TmstObjectList;
     FMPPrjs: TmstObjectList;
+    FMpObjects: TmstObjectList;
     FView: TControl;
     FUpdating: Boolean;
     FDetailedView: TControl;
@@ -57,6 +58,7 @@ type
     FDb: IDb;
     FLotCategories: ImstLotCategories;
     FLotController: ImstLotController;
+    FCommands: TObjectList;
     procedure ClearView;
     function CreateViewModel: TmstStackViewModel;
     procedure ClearObjectView;
@@ -65,12 +67,12 @@ type
     procedure UpdateObjectView(aObject: TmstObject);
     procedure UpdateDetailedView;
     // Подготовка меню с действиями
-    procedure PreparePopupMenu(AObject: TmstObject; AMenu: TPopupMenu);
     function ObjectExists(AObject: TmstObject): Boolean;
     function GetObjectByType(ObjectType, DbId: Integer): TmstObject;
     function GetLotByDbId(DbId: Integer): TmstLot;
     function GetLotListByDbId(DbId: Integer): TmstLotList;
     function GetListByLotCategoryId(aCategoryId: Integer): TmstLotList;
+    procedure AddDefaultMenuItmes(AMenu: TPopupMenu);
     procedure PrepareRootMenu(const ObjectTypeId: Integer; AMenu: TPopupMenu);
     procedure PrepareContourMenu(AContour: TmstLotContour; AMenu: TPopupMenu);
     procedure PrepareObjectMenu(AObject: TmstObject; AMenu: TPopupMenu);
@@ -80,6 +82,7 @@ type
     procedure ShowAllLotsHandler(Sender: TObject);
     procedure HideExceptCurrentHandler(Sender: TObject);
     procedure RemoveObjectHandler(Sender: TObject);
+    procedure ViewBrowserHandler(Sender: TObject);
     procedure ViewPropertiesHandler(Sender: TObject);
     procedure ChangeVisibilityHandler(Sender: TObject);
     procedure LocateHandler(Sender: TObject);
@@ -87,6 +90,8 @@ type
     procedure OnOffContourHandler(Sender: TObject);
     procedure DoSelectionChange(const OldSelectedInfo, NewSelectedInfo: TmstSelectedLotInfo);
     function GetLotLists(Index: Integer): TmstLotList;
+    //
+    procedure DoShowBrowser(aNodeType: Integer; aObj: TmstObject);
   public
     constructor Create(AppModule: ImstAppModule; aDb: IDb; aLotCategories: ImstLotCategories; aLotController: ImstLotController);
     destructor Destroy; override;
@@ -97,21 +102,29 @@ type
     // Обновление контрола
     procedure UpdateView;
     procedure ClearSelection;
-    procedure PopupOnObject(const ObjectTypeId, DatabaseId, ParentTypeId, ParentDatabaseId: Integer; AMenu: TPopupMenu);
+    procedure PopupOnObject(const NodeTypeId, DatabaseId, ParentTypeId, ParentDatabaseId: Integer; AMenu: TPopupMenu);
     procedure SelectObject(const ObjectTypeId, DatabaseId, ParentTypeId, ParentDatabaseId: Integer);
+
+    procedure RegisterCommand(aCmdId: string; aSupportedNodeTypes: array of Integer; aCmdCaption: string;
+      aImageIndex: Integer;
+      ExecuteHandler: TmstObjectEvent; UpdateHandler: TmstObjectPredicate);
 
     // Добавить в стек
     procedure AddObject(AObject: TmstObject);
     // Выкинуть из стека
     procedure RemoveObject(ObjectId, DatabaseId: Integer);
+    procedure RemoveSelected();
     //
     function LotListCount: Integer;
+    //
+    function GetSelectedObjects(): TList;
 
     procedure RemoveAllObjects;
     procedure RemoveCurrentObject;
     procedure LocateCurrentObject;
     procedure ViewCorrentObjectProperty;
     procedure OnOffCurrentContour;
+    procedure OnOffAllContours;
     // View для всего списка объектов
     property View: TControl read FView write FView;
     // View для свойств объекта
@@ -132,6 +145,7 @@ type
     procedure AddLot(ToNode: TTreeNode; LotCategory: TmstLotCategory; Lot: TmstLot);
     procedure AddStreet(ToNode: TTreeNode; Street: TmstStreet);
     procedure AddProject(ToNode: TTreeNode; aProject: TmstProject);
+    procedure AddMPObject(ToNode: TTreeNode; aObject: TmstMPObject);
     function FindStreet(ANode: TTreeNode; DatabaseId: Integer): TTreeNode;
     procedure AddAddress(ToNode: TTreeNode; Address: TmstAddress);
     procedure OnCreateNode(Sender: TCustomTreeView; var NodeClass: TTreeNodeClass);
@@ -151,7 +165,43 @@ implementation
 uses
   uMStKernelClassesPropertiesViewers;
 
+type
+  TmstObjectStackCmd = class
+  private
+    FId: string;
+    FOwner: TmstObjectStack;
+    FNodeTypes: TIntDynArray;
+    FImageIndex: Integer;
+    FCaption: string;
+    FExecuteHandler: TmstObjectEvent;
+    FUpdateHandler: TmstObjectPredicate;
+    //
+    FObject: TmstObject;
+  public
+    constructor Create(aCmdId: string; aOwner: TmstObjectStack;
+      aSupportedNodeTypes: array of Integer; 
+      aCmdCaption: string; aImageIndex: Integer;
+      ExecuteHandler: TmstObjectEvent; UpdateHandler: TmstObjectPredicate);
+    //
+    function IsSupported(aNodeType: Integer): Boolean;
+    //
+    procedure ItemClick(Sender: TObject);
+    procedure DoUpdate(var Value: Boolean);
+  end;
+
+
 { TmstObjectStack }
+
+procedure TmstObjectStack.AddDefaultMenuItmes(AMenu: TPopupMenu);
+var
+  Item: TMenuItem;
+begin
+  // Очистить от объектов
+  Item := TMenuItem.Create(AMenu);
+  Item.Caption := 'Очистить список';
+  Item.OnClick := RemoveAllObjectsHandler;
+  AMenu.Items.Add(Item);
+end;
 
 procedure TmstObjectStack.AddObject(AObject: TmstObject);
 var
@@ -181,6 +231,8 @@ begin
       FProjects.Add(AObject);
     ID_PROJECT_MP :
       FMPPrjs.Add(AObject);
+    ID_MP_OBJECT :
+      FMpObjects.Add(AObject);
     else
       NeedUpdate := False;
     end;
@@ -221,6 +273,8 @@ begin
   FAddresse_s := TmstObjectList.Create(False);
   FProjects := TmstObjectList.Create(False);
   FMPPrjs := TmstObjectList.Create(False);
+  FMpObjects := TmstObjectList.Create(False);
+  FCommands := TObjectList.Create;
   FView := nil;
   FObjectView := nil;
   FDetailedView := nil;
@@ -243,6 +297,8 @@ end;
 
 destructor TmstObjectStack.Destroy;
 begin
+  FreeAndNil(FCommands);
+  FreeAndNil(FMpObjects);
   FreeAndNil(FMPPrjs);
   FreeAndNil(FProjects);
   FreeAndNil(FAddresse_s);
@@ -328,8 +384,38 @@ begin
       Result := FProjects.GetByDatabaseId(DbId);
     ID_NODETYPE_MP_PRJ :
       Result := FMPPrjs.GetByDatabaseId(DbId);
+    ID_NODETYPE_MP_OBJECT :
+      Result := FMpObjects.GetByDatabaseId(DbId);
   else
     Result := nil;
+  end;
+end;
+
+function TmstObjectStack.GetSelectedObjects: TList;
+var
+  Tree: TTreeView;
+  Node: TmstTreeNode;
+  I, C: Integer;
+  Lot: TmstLot;
+begin
+  Result := TList.Create;
+  //
+  Tree := TTreeView(FView);
+  if Assigned(Tree) then
+  begin
+    if Assigned(Tree.Selected) then
+    begin
+      C := Pred(Tree.Selected.Count);
+      for I := 0 to C do
+      begin
+        Node := TmstTreeNode(Tree.Selected[I]);
+        if Node.NodeType in mstLotNodeTypes then
+        begin
+          Lot := GetLotByDbId(Node.DatabaseId);
+          Result.Add(Lot);
+        end;
+      end;
+    end;
   end;
 end;
 
@@ -355,6 +441,8 @@ begin
     List := FProjects;
   ID_PROJECT_MP :
     List := FMPPrjs;
+  ID_MP_OBJECT :
+    List := FMpObjects;
   end;
   Result := Assigned(List) and (List.IndexOfDatabaseId(AObject.DatabaseId) >= 0);
 end;
@@ -363,11 +451,6 @@ procedure TmstObjectStack.PrepareRootMenu(const ObjectTypeId: Integer; AMenu: TP
 var
   Item: TMenuItem;
 begin
-  // Очистить от объектов
-  Item := TMenuItem.Create(AMenu);
-  Item.Caption := 'Убрать из списка';
-  Item.OnClick := RemoveAllObjectsHandler;
-  AMenu.Items.Add(Item);
   if ObjectTypeId in mstRootNodeTypesLots then
   begin
     // Сделать все объекты невидимыми (для отводов)
@@ -414,6 +497,7 @@ var
   menuItem: TMenuItem;
   IsLot: Boolean;
   IsPrj: Boolean;
+  IsMPObj: Boolean;
 begin
   AMenu.Items.Clear;
   // Убрать из выбранных
@@ -423,7 +507,8 @@ begin
   AMenu.Items.Add(menuItem);
   IsLot := aObject is TmstLot;
   IsPrj := aObject is TmstProject;
-  if IsLot or IsPrj then
+  IsMPObj := aObject is TmstMPObject;
+  if IsLot or IsPrj or IsMPObj then
   begin
     // Посмотреть информацию
     menuItem := TMenuItem.Create(AMenu);
@@ -444,50 +529,69 @@ begin
     menuItem.OnClick := HideExceptCurrentHandler;
     AMenu.Items.Add(menuItem);
   end;
+  if IsMPObj then
+  begin
+    // Посмотреть информацию
+    menuItem := TMenuItem.Create(AMenu);
+    menuItem.Caption := 'Показать в списке';
+    menuItem.OnClick := ViewBrowserHandler;
+    AMenu.Items.Add(menuItem);
+  end;
   // Показать
   menuItem := TMenuItem.Create(AMenu);
   menuItem.Caption := 'Найти объект на карте';
   menuItem.OnClick := LocateHandler;
   AMenu.Items.Add(menuItem);
-//  raise Exception.Create('TmstObjectStack.PrepareRootMenu not implemented!');
 end;
 
-procedure TmstObjectStack.PopupOnObject(const ObjectTypeId, DatabaseId,
+procedure TmstObjectStack.PopupOnObject(const NodeTypeId, DatabaseId,
   ParentTypeId, ParentDatabaseId: Integer; AMenu: TPopupMenu);
 var
   Tmp: TmstObject;
+  Itm: TMenuItem;
+  I: Integer;
+  Cmd: TmstObjectStackCmd;
+  B: Boolean;
 begin
   AMenu.Items.Clear;
-  if ObjectTypeId in mstRootNodeTypes then
-    PrepareRootMenu(ObjectTypeId, AMenu)
-  else
+  AddDefaultMenuItmes(AMenu);
+  //
+//  if NodeTypeId = ID_NODETYPE_LOT_CONTOUR then
+//  begin
+//    Tmp := GetObjectByType(ParentTypeId, ParentDatabaseId);
+//    if Assigned(Tmp) then
+//    begin
+//      Tmp := TmstLot(Tmp).Contours.GetByDatabaseId(DatabaseId);
+//      PrepareContourMenu(TmstLotContour(Tmp), AMenu);
+//    end;
+//  end
+//  else
+//  begin
+//    Tmp := GetObjectByType(NodeTypeId, DatabaseId);
+//    if Assigned(Tmp) then
+//      PrepareObjectMenu(Tmp, AMenu);
+//  end;
+  //
+  Itm := TMenuItem.Create(AMenu);
+  Itm.Caption := '-';
+  AMenu.Items.Add(Itm);
+  for I := 0 to FCommands.Count - 1 do
   begin
-    if ObjectTypeId = ID_NODETYPE_LOT_CONTOUR then
+    Tmp := GetObjectByType(NodeTypeId, DatabaseId);
+    Cmd := TmstObjectStackCmd(FCommands[I]);
+    if Cmd.IsSupported(NodeTypeId) then
     begin
-      Tmp := GetObjectByType(ParentTypeId, ParentDatabaseId);
-      if Assigned(Tmp) then
-      begin
-        Tmp := TmstLot(Tmp).Contours.GetByDatabaseId(DatabaseId);
-        PrepareContourMenu(TmstLotContour(Tmp), AMenu);
-      end;
-    end
-    else
-    begin
-      Tmp := GetObjectByType(ObjectTypeId, DatabaseId);
-      if Assigned(Tmp) then
-        PrepareObjectMenu(Tmp, AMenu);
+      Cmd.FObject := Tmp;
+      Itm := TMenuItem.Create(AMenu);
+      Itm.Caption := Cmd.FCaption;
+      Itm.ImageIndex := Cmd.FImageIndex;
+      Itm.OnClick := Cmd.ItemClick;
+      B := True;
+      Cmd.DoUpdate(B);
+      Itm.Enabled := B;
+      AMenu.Items.Add(Itm);
     end;
   end;
-end;
-
-procedure TmstObjectStack.PreparePopupMenu(AObject: TmstObject; AMenu: TPopupMenu);
-begin
-  // Общие действия
-  // 1 - позиционирование на объекте
-  // 2 - удалить из стека
-  // 3 - просмотр свойств
-
-  // Действия по конкретному типу объектов
 end;
 
 procedure TmstObjectStack.RemoveObject(ObjectId, DatabaseId: Integer);
@@ -523,6 +627,8 @@ begin
     List := FProjects;
   ID_PROJECT_MP :
     List := FMPPrjs;
+  ID_MP_OBJECT :
+    List := FMpObjects;
   end;
   if Assigned(List) then
   begin
@@ -533,6 +639,11 @@ begin
       UpdateView;
     end;
   end;
+end;
+
+procedure TmstObjectStack.RemoveObjectHandler(Sender: TObject);
+begin
+
 end;
 
 procedure TmstObjectStack.SelectObject(const ObjectTypeId,
@@ -616,6 +727,20 @@ begin
           Tmp := GetObjectByType(ObjectTypeId, DatabaseId);
           UpdateObjectView(Tmp);
         end;
+      ID_NODETYPE_MP_OBJECT :
+        begin
+          ClearObjectView;
+          ClearDetailedView;
+          OldSelected := FSelectedLot;
+          FSelectedLot.Id := -1;
+          FSelectedLot.CategoryId := 0;
+          FSelectedLot.ContourId := -1;
+          FSelectedLot.DatabaseId := -1;
+          DoSelectionChange(OldSelected, FSelectedLot);
+          //
+          Tmp := GetObjectByType(ObjectTypeId, DatabaseId);
+          UpdateObjectView(Tmp);
+        end;
       else
         raise Exception.Create('Тип отвода неопределен! [' + IntToStr(ObjectTypeId) + ']');
       end;
@@ -659,6 +784,11 @@ begin
       if aObject is TmstProject then
       begin
         ProjectToListView(ListView, TmstProject(aObject));
+      end
+      else
+      if aObject is TmstMPObject then
+      begin
+        MPObjectToListView(ListView, TmstMPObject(aObject));
       end;
     end
     else
@@ -693,6 +823,7 @@ begin
   FAddresse_s.Clear;
   FProjects.Clear;
   FMPPrjs.Clear;
+  FMpObjects.Clear;
 end;
 
 procedure TmstObjectStack.LocateHandler(Sender: TObject);
@@ -744,6 +875,15 @@ procedure TmstObjectStack.DoSelectionChange(const OldSelectedInfo,
 begin
   if Assigned(FOnSelectionChange) then
     FOnSelectionChange(OldSelectedInfo, NewSelectedInfo);
+end;
+
+procedure TmstObjectStack.DoShowBrowser(aNodeType: Integer; aObj: TmstObject);
+begin
+  raise Exception.Create('TmstObjectStack.DoShowBrowser');
+//  if Assigned(FOnShowBrowser) then
+  begin
+  
+  end; 
 end;
 
 procedure TmstObjectStack.HideAllLotsHandler(Sender: TObject);
@@ -912,6 +1052,11 @@ begin
   end;
 end;
 
+procedure TmstObjectStack.OnOffAllContours;
+begin
+  OnOffAllContourHandler(nil);
+end;
+
 procedure TmstObjectStack.OnOffContourHandler(Sender: TObject);
 var
   aLot: TmstLot;
@@ -958,7 +1103,7 @@ begin
   end;
 end;
 
-procedure TmstObjectStack.RemoveObjectHandler(Sender: TObject);
+procedure TmstObjectStack.RemoveSelected;
 var
   Node: TmstTreeNode;
   DbId: Integer;
@@ -1064,6 +1209,15 @@ begin
   LocateHandler(nil);
 end;
 
+procedure TmstObjectStack.RegisterCommand;
+var
+  Cmd: TmstObjectStackCmd;
+begin
+  Cmd := TmstObjectStackCmd.Create(aCmdId, Self, aSupportedNodeTypes, aCmdCaption, aImageIndex,
+    ExecuteHandler, UpdateHandler);
+  FCommands.Add(Cmd);
+end;
+
 procedure TmstObjectStack.RemoveAllObjects;
 begin
   RemoveAllObjectsHandler(nil);
@@ -1072,6 +1226,23 @@ end;
 procedure TmstObjectStack.RemoveCurrentObject;
 begin
   RemoveObjectHandler(nil);
+end;
+
+procedure TmstObjectStack.ViewBrowserHandler(Sender: TObject);
+var
+  TreeView: TTreeView;
+  Node: TmstTreeNode;
+  aLot: TmstLot;
+  Prj: TmstProject;
+begin
+  TreeView := TTreeView(FView);
+  Node := TmstTreeNode(TreeView.Selected);
+  if Node = nil then
+    Exit;
+  if Node.NodeType in [ID_NODETYPE_MP_OBJECT] then
+  begin
+    DoShowBrowser(Node.NodeType, GetObjectByType(Node.NodeType, Node.DatabaseId));
+  end;
 end;
 
 procedure TmstObjectStack.ViewCorrentObjectProperty;
@@ -1106,6 +1277,17 @@ begin
       ImageIndex := IMAGE_INVISIBLELOT
     else
       ImageIndex := LotCategory.GetNodeImageIndex();// IMAGE_LOT;
+    SelectedIndex := ImageIndex;
+  end;
+end;
+
+procedure TmstTreeViewModel.AddMPObject(ToNode: TTreeNode; aObject: TmstMPObject);
+begin
+  with TmstTreeNode(FData.Items.AddChild(ToNode, aObject.AsText)) do
+  begin
+    DatabaseId := aObject.DatabaseId;
+    NodeType := ID_NODETYPE_MP_OBJECT;
+    ImageIndex := IMAGE_PROJECT;
     SelectedIndex := ImageIndex;
   end;
 end;
@@ -1207,6 +1389,13 @@ begin
       TmstTreeNode(PrjRoot).NodeType := ID_NODETYPE_MP_ROOT;
       for I := 0 to Pred(AStack.FMPPrjs.Count) do
         AddProject(PrjRoot, TmstProject(AStack.FMPPrjs[I]));
+    end;
+    if AStack.FMpObjects.Count > 0 then
+    begin
+      PrjRoot := FData.Items.AddChildObject(nil, mstRegistry.GetNameById(ID_MP_OBJECT), Pointer(ID_MP_OBJECT));
+      TmstTreeNode(PrjRoot).NodeType := ID_NODETYPE_MP_ROOT;
+      for I := 0 to Pred(AStack.FMpObjects.Count) do
+        AddMPObject(PrjRoot, TmstMPObject(AStack.FMpObjects[I]));
     end;
   finally
     FData.Items.EndUpdate;
@@ -1353,6 +1542,57 @@ end;
 procedure TmstTreeNode.SetLotCategoryId(const Value: Integer);
 begin
   FLotCategoryId := Value;
+end;
+
+{ TmstObjectStackCmd }
+
+constructor TmstObjectStackCmd.Create(aCmdId: string; aOwner: TmstObjectStack;
+  aSupportedNodeTypes: array of Integer; 
+  aCmdCaption: string; aImageIndex: Integer;
+  ExecuteHandler: TmstObjectEvent; UpdateHandler: TmstObjectPredicate);
+var
+  I: Integer;
+begin
+  FId := aCmdId;
+  SetLength(FNodeTypes, Length(aSupportedNodeTypes));
+  for I := 0 to Length(aSupportedNodeTypes) - 1 do
+    FNodeTypes[I] := aSupportedNodeTypes[I];
+  FOwner := aOwner;
+  FCaption := aCmdCaption;
+  FImageIndex := aImageIndex;
+  FExecuteHandler := ExecuteHandler;
+  FUpdateHandler := UpdateHandler;
+end;
+
+procedure TmstObjectStackCmd.DoUpdate(var Value: Boolean);
+begin
+  Value := Assigned(FExecuteHandler);
+  if Value then
+    if Assigned(FUpdateHandler) then
+    begin
+      FUpdateHandler(FOwner, FObject, Value);
+    end;
+end;
+
+function TmstObjectStackCmd.IsSupported(aNodeType: Integer): Boolean;
+var
+  I: Integer;
+begin
+  for I := 0 to Length(FNodeTypes) - 1 do
+  begin
+    if FNodeTypes[I] = aNodeType then
+    begin
+      Result := True;
+      Exit;
+    end;
+  end;
+  Result := False;
+end;
+
+procedure TmstObjectStackCmd.ItemClick(Sender: TObject);
+begin
+  if Assigned(FExecuteHandler) then
+    FExecuteHandler(FOwner, FObject);
 end;
 
 end.

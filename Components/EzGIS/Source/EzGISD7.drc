@@ -8,650 +8,655 @@
   resources were bound to the produced executable.
 */
 
-#define fExpress_STo_Date 64896
-#define fExpress_STo_Num 64897
-#define fExpress_SDecode 64898
-#define fExpress_SExpressionOkay 64899
-#define EzHTMLmap_SHTMLTemplateError 64900
-#define EzHTMLmap_SHTMLLayerError 64901
-#define EzHTMLmap_SHTMLHintError 64902
-#define EzHTMLmap_SHTMLTemplateWrong 64903
-#define EzHTMLmap_SHTMLTagLink 64904
-#define fExpress_SWhite 64912
-#define fExpress_SRGB 64913
-#define fExpress_SText 64914
-#define fExpress_SLayerName 64915
-#define fExpress_SDistance 64916
-#define fExpress_SLeft 64917
-#define fExpress_SRight 64918
-#define fExpress_SIsSelected 64919
-#define fExpress_SYear 64920
-#define fExpress_SMonth 64921
-#define fExpress_SDay 64922
-#define fExpress_SHour 64923
-#define fExpress_SMin 64924
-#define fExpress_SSec 64925
-#define fExpress_SMSec 64926
-#define fExpress_STo_Char 64927
-#define fExpress_SFillColor 64928
-#define fExpress_SBlack 64929
-#define fExpress_SMaroon 64930
-#define fExpress_SGreen 64931
-#define fExpress_SOlive 64932
-#define fExpress_SNavy 64933
-#define fExpress_SPurple 64934
-#define fExpress_STeal 64935
-#define fExpress_SGray 64936
-#define fExpress_SSilver 64937
-#define fExpress_SRed 64938
-#define fExpress_SLime 64939
-#define fExpress_SYellow 64940
-#define fExpress_SBlue 64941
-#define fExpress_SFuchsia 64942
-#define fExpress_SAqua 64943
-#define fExpress_SPos 64944
-#define fExpress_SPower 64945
-#define fExpress_SRound 64946
-#define fExpress_SSin 64947
-#define fExpress_SSqr 64948
-#define fExpress_SSqrt 64949
-#define fExpress_STrunc 64950
-#define fExpress_SUpper 64951
-#define fExpress_SCurDate 64952
-#define fExpress_SFormateDateTime 64953
-#define fExpress_SFormatFloat 64954
-#define fExpress_SCentroidX 64955
-#define fExpress_SCentroidY 64956
-#define fExpress_SType 64957
-#define fExpress_SCrLf 64958
-#define fExpress_SColor 64959
-#define fExpress_SCopy 64960
-#define fExpress_SCos 64961
-#define fExpress_SExp 64962
-#define fExpress_SFormat 64963
-#define fExpress_SFrac 64964
-#define fExpress_SIf 64965
-#define fExpress_SInt 64966
-#define fExpress_SLength 64967
-#define fExpress_SLn 64968
-#define fExpress_SLower 64969
-#define fExpress_SMaxExtentX 64970
-#define fExpress_SMaxExtentY 64971
-#define fExpress_SMinExtentX 64972
-#define fExpress_SMinExtentY 64973
-#define fExpress_SPerimeter 64974
-#define fExpress_SPI 64975
-#define GIFImage_sEmptyImage 64976
-#define GIFImage_sInvalidBitmapList 64977
-#define GIFImage_sInvalidReduction 64978
-#define GIFImage_sGIFImageFile 64979
-#define GIFImage_sProgressLoading 64980
-#define GIFImage_sProgressSaving 64981
-#define GIFImage_sProgressConverting 64982
-#define GIFImage_sProgressRendering 64983
-#define GIFImage_sProgressCopying 64984
-#define GIFImage_sProgressOptimizing 64985
-#define fExpress_SCustomGlobal 64986
-#define fExpress_SExprNative 64987
-#define fExpress_SAbs 64988
-#define fExpress_SArcTan 64989
-#define fExpress_SArea 64990
-#define fExpress_SPoints 64991
-#define GIFImage_sUnsupportedClass 64992
-#define GIFImage_sInvalidData 64993
-#define GIFImage_sBadHeight 64994
-#define GIFImage_sBadWidth 64995
-#define GIFImage_sFailedPaste 64996
-#define GIFImage_sScreenSizeExceeded 64997
-#define GIFImage_sNoColorTable 64998
-#define GIFImage_sBadPixelCoordinates 64999
-#define GIFImage_sUnsupportedBitmap 65000
-#define GIFImage_sInvalidPixelFormat 65001
-#define GIFImage_sBadDimension 65002
-#define GIFImage_sNoDIB 65003
-#define GIFImage_sInvalidStream 65004
-#define GIFImage_sInvalidColor 65005
-#define GIFImage_sInvalidBitSize 65006
-#define GIFImage_sEmptyColorMap 65007
-#define GIFImage_sTooManyColors 65008
-#define GIFImage_sBadColorIndex 65009
-#define GIFImage_sBadVersion 65010
-#define GIFImage_sBadSignature 65011
-#define GIFImage_sScreenBadColorSize 65012
-#define GIFImage_sImageBadColorSize 65013
-#define GIFImage_sUnknownExtension 65014
-#define GIFImage_sBadExtensionLabel 65015
-#define GIFImage_sOutOfMemDIB 65016
-#define GIFImage_sDIBCreate 65017
-#define GIFImage_sDecodeTooFewBits 65018
-#define GIFImage_sDecodeCircular 65019
-#define GIFImage_sBadTrailer 65020
-#define GIFImage_sBadExtensionInstance 65021
-#define GIFImage_sBadBlockSize 65022
-#define GIFImage_sBadBlock 65023
-#define GraphicStrings_gesPreparing 65024
-#define GraphicStrings_gesLoadingData 65025
-#define GraphicStrings_gesUpsampling 65026
-#define GraphicStrings_gesTransfering 65027
-#define GraphicStrings_gesLZ77Error 65028
-#define GraphicStrings_gesJPEGEOI 65029
-#define GraphicStrings_gesJPEGStripSize 65030
-#define GraphicStrings_gesJPEGComponentCount 65031
-#define GraphicStrings_gesJPEGDataPrecision 65032
-#define GraphicStrings_gesJPEGSamplingFactors 65033
-#define GraphicStrings_gesJPEGBogusTableField 65034
-#define GraphicStrings_gesJPEGFractionalLine 65035
-#define GraphicStrings_gesWarning 65036
-#define fPictureDef_SDefinePicTitle 65037
-#define fPictureDef_SPictNotDefined 65038
-#define GIFImage_sOutOfData 65039
-#define GraphicStrings_gesUnsupportedImage 65040
-#define GraphicStrings_gesUnsupportedFeature 65041
-#define GraphicStrings_gesInvalidCRC 65042
-#define GraphicStrings_gesCompression 65043
-#define GraphicStrings_gesExtraCompressedData 65044
-#define GraphicStrings_gesInvalidPalette 65045
-#define GraphicStrings_gesUnknownCriticalChunk 65046
-#define GraphicStrings_gesCompressionScheme 65047
-#define GraphicStrings_gesRLAPixelFormat 65048
-#define GraphicStrings_gesPSPFileType 65049
-#define GraphicStrings_gesIndexedNotSupported 65050
-#define GraphicStrings_gesConversionUnsupported 65051
-#define GraphicStrings_gesInvalidSampleDepth 65052
-#define GraphicStrings_gesInvalidPixelDepth 65053
-#define GraphicStrings_gesInvalidSubSampling 65054
-#define GraphicStrings_gesVerticalSubSamplingError 65055
-#define GraphicStrings_gesSGITrueColorAlpha 65056
-#define GraphicStrings_gesSGIMono 65057
-#define GraphicStrings_gesPhotoshop 65058
-#define GraphicStrings_gesPortable 65059
-#define GraphicStrings_gesPortablePixel 65060
-#define GraphicStrings_gesPortableGray 65061
-#define GraphicStrings_gesPortableMono 65062
-#define GraphicStrings_gesAutoDesk 65063
-#define GraphicStrings_gesKodakPhotoCD 65064
-#define GraphicStrings_gesCompuserve 65065
-#define GraphicStrings_gesHalo 65066
-#define GraphicStrings_gesPaintShopPro 65067
-#define GraphicStrings_gesPortableNetworkGraphic 65068
-#define GraphicStrings_gesInvalidImage 65069
-#define GraphicStrings_gesInvalidColorFormat 65070
-#define GraphicStrings_gesStreamReadError 65071
-#define GraphicStrings_gesMetaFiles 65072
-#define GraphicStrings_gesEnhancedMetaFiles 65073
-#define GraphicStrings_gesJPGImages 65074
-#define GraphicStrings_gesJPEGImages 65075
-#define GraphicStrings_gesJPEImages 65076
-#define GraphicStrings_gesJFIFImages 65077
-#define GraphicStrings_gesTruevision 65078
-#define GraphicStrings_gesTIFF 65079
-#define GraphicStrings_gesMacTIFF 65080
-#define GraphicStrings_gesPCTIF 65081
-#define GraphicStrings_gesGFIFax 65082
-#define GraphicStrings_gesSGI 65083
-#define GraphicStrings_gesSGITrueColor 65084
-#define GraphicStrings_gesZSoft 65085
-#define GraphicStrings_gesZSoftWord 65086
-#define GraphicStrings_gesAliasWaveFront 65087
-#define MZLib_SInvalidBlockType 65088
-#define MZLib_SInvalidStoredBlockLengths 65089
-#define MZLib_STooManyLDSymbols 65090
-#define MZLib_SInvalidBitLengthRepeat 65091
-#define MZLib_SIncorrectDataCheck 65092
-#define MZLib_SUnknownCompression 65093
-#define MZLib_SInvalidWindowSize 65094
-#define MZLib_SIncorrectHeaderCheck 65095
-#define MZLib_SNeedDictionary 65096
-#define GraphicStrings_gesAllImages 65097
-#define GraphicStrings_gesRegistration 65098
-#define GraphicStrings_gesBitmaps 65099
-#define GraphicStrings_gesRLEBitmaps 65100
-#define GraphicStrings_gesDIBs 65101
-#define GraphicStrings_gesEPS 65102
-#define GraphicStrings_gesIcons 65103
-#define JPG_sJPEGError 65104
-#define MZLib_SNeedDict 65105
-#define MZLib_SStreamEnd 65106
-#define MZLib_SFileError 65107
-#define MZLib_SStreamError 65108
-#define MZLib_SDataError 65109
-#define MZLib_SInsufficientMemory 65110
-#define MZLib_SBufferError 65111
-#define MZLib_SIncompatibleVersion 65112
-#define MZLib_SInvalidDistanceCode 65113
-#define MZLib_SInvalidLengthCode 65114
-#define MZLib_SOversubscribedDBLTree 65115
-#define MZLib_SIncompleteDBLTree 65116
-#define MZLib_SOversubscribedLLTree 65117
-#define MZLib_SIncompleteLLTree 65118
-#define MZLib_SEmptyDistanceTree 65119
-#define EzBaseExpr_SEXPR_INVALIDPARAMETERTO 65120
-#define EzExprLex_SDefaultDateFormat 65121
-#define EzProjImpl_serr18 65122
-#define EzProjImpl_serr19 65123
-#define EzProjImpl_serr23 65124
-#define EzProjImpl_serr24 65125
-#define EzProjImpl_serr25 65126
-#define EzProjImpl_serr32 65127
-#define EzProjImpl_serr33 65128
-#define EzProjImpl_serr34 65129
-#define EzProjImpl_serr35 65130
-#define fProj_SConfirmAddToProj 65131
-#define fProj_SProjectionAdded 65132
-#define fProj_SConfirmDeleteToProj 65133
-#define fProj_SProjectionDeleted 65134
-#define EzProjections_serr0 65135
-#define EzConsts_SCmdArcFCS 65136
-#define EzConsts_SCmdNode 65137
-#define EzConsts_SCmdNodeLink 65138
-#define EzConsts_SCmdText500 65139
-#define EzBaseExpr_SEXPR_WRONGWHENEXPR 65140
-#define EzBaseExpr_SEXPR_WRONGTHENEXPR 65141
-#define EzBaseExpr_SEXPR_OPERATORINCOMPAT 65142
-#define EzBaseExpr_SEXPR_CANNOTCASTTOSTRING 65143
-#define EzBaseExpr_SEXPR_CANNOTCASTTOFLOAT 65144
-#define EzBaseExpr_SEXPR_CANNOTCASTTOINTEGER 65145
-#define EzBaseExpr_SEXPR_CANNOTCASTTOBOOLEAN 65146
-#define EzBaseExpr_SEXPR_WRONGUNARYOP 65147
-#define EzBaseExpr_SEXPR_WRONGBINARYOP 65148
-#define EzBaseExpr_SEXPR_WRONGBOOLEANOP 65149
-#define EzBaseExpr_SEXPR_WRONGRELATIONALOP 65150
-#define EzBaseExpr_SEXPR_WRONGPARAMETER 65151
-#define EzConsts_SCmdFittedText 65152
-#define EzConsts_SCmdPoint 65153
-#define EzConsts_SCmdDimHoriz 65154
-#define EzConsts_SCmdDimVert 65155
-#define EzConsts_SCmdDimParall 65156
-#define EzConsts_SCmdCircle2P 65157
-#define EzConsts_SCmdCircle3P 65158
-#define EzConsts_SCmdCircleCR 65159
-#define EzConsts_SCmdRichText 65160
-#define EzConsts_SCmdInsert 65161
-#define EzConsts_SCmdMirror 65162
-#define EzConsts_SCmdCustomClick 65163
-#define EzConsts_SCmdDropSelection 65164
-#define EzConsts_SCmdDragDrop 65165
-#define EzConsts_SCmdTracking 65166
-#define EzConsts_SCmdArcSE 65167
-#define EzConsts_SCmdDeleteVertex 65168
-#define EzConsts_SCmdSetClipArea 65169
-#define EzConsts_SCmdBreak 65170
-#define EzConsts_SCmdTrim 65171
-#define EzConsts_SCmdExtend 65172
-#define EzConsts_SCmdFillet 65173
-#define EzConsts_SCmdAddMarker 65174
-#define EzConsts_SCmdPolygonBuffer 65175
-#define EzConsts_SCmdTable 65176
-#define EzConsts_SCmdCalloutText 65177
-#define EzConsts_SCmdBulletLeader 65178
-#define EzConsts_SCmdBannerText 65179
-#define EzConsts_SCmdZoomAll 65180
-#define EzConsts_SCmdScaleX 65181
-#define EzConsts_SCmdScaleY 65182
-#define EzConsts_SCmdJustifText 65183
-#define EzConsts_SCmdMeasures 65184
-#define EzConsts_SCmdOffset 65185
-#define EzConsts_SCmdInsertVertex 65186
-#define EzConsts_SCmdGridOrigin 65187
-#define EzConsts_SCmdEditDB 65188
-#define EzConsts_SCmdPolygonSelect 65189
-#define EzConsts_SCmdCircleSelect 65190
-#define EzConsts_SCmdZoomIn 65191
-#define EzConsts_SCmdZoomOut 65192
-#define EzConsts_SCmdZoomWindow 65193
-#define EzConsts_SCmdRealTimeZoom 65194
-#define EzConsts_SCmdRealTimeZoomB 65195
-#define EzConsts_SCmdHandScroll 65196
-#define EzConsts_SCmdClipPoly 65197
-#define EzConsts_SCmdSetClipPolyArea 65198
-#define EzConsts_SCmdClipPolyline 65199
-#define EzConsts_SCmdSymbol 65200
-#define EzConsts_SCmdTextSymbol 65201
-#define EzConsts_SCmdText 65202
-#define EzConsts_SCmdHorzGLine 65203
-#define EzConsts_SCmdVertGLine 65204
-#define EzConsts_SCmdMoveGLine 65205
-#define EzConsts_SCmdHints 65206
-#define EzConsts_SCmdPictRef 65207
-#define EzConsts_SCmdCustomPicture 65208
-#define EzConsts_SCmdGeorefBitmap 65209
-#define EzConsts_SCmdBandsBitmap 65210
-#define EzConsts_SCmdPersistBitmap 65211
-#define EzConsts_SCmdUndo 65212
-#define EzConsts_SCmdPan 65213
-#define EzConsts_SCmdSelect 65214
-#define EzConsts_SCmdSelPLine 65215
-#define EzConsts_SCartesianFormat 65216
-#define EzConsts_SDegreesFormat 65217
-#define EzConsts_SCmdMove 65218
-#define EzConsts_SCmdScale 65219
-#define EzConsts_SCmdRotate 65220
-#define EzConsts_SCmdReshape 65221
-#define EzConsts_SCmdRotateText 65222
-#define EzConsts_SCmdLine 65223
-#define EzConsts_SCmdPolyline 65224
-#define EzConsts_SCmdPolygon 65225
-#define EzConsts_SCmdSketch 65226
-#define EzConsts_sCmdArc 65227
-#define EzConsts_SCmdEllipse 65228
-#define EzConsts_SCmdSpline 65229
-#define EzConsts_SCmdSplineText 65230
-#define EzConsts_SCmdRectangle 65231
-#define EzConsts_sTitleCaption 65232
-#define EzConsts_sGroupCaption 65233
-#define EzConsts_sJustifTextInfo 65234
-#define EzConsts_sFittedTextInfo 65235
-#define EzConsts_sBlockInfo 65236
-#define EzConsts_sSplineTextInfo 65237
-#define EzConsts_sDimHorizInfo 65238
-#define EzConsts_sDimVertInfo 65239
-#define EzConsts_sDimParallelInfo 65240
-#define EzConsts_sPreviewInfo 65241
-#define EzConsts_sERMapperInfo 65242
-#define EzConsts_SDefaultDateFormat 65243
-#define EzConsts_SEntityField 65244
-#define EzConsts_SRecNoField 65245
-#define EzConsts_SSelection 65246
-#define EzConsts_SUTMZone 65247
-#define EzConsts_sArcInfo 65248
-#define EzConsts_sEllipseInfo 65249
-#define EzConsts_sPicRefInfo 65250
-#define EzConsts_sBmpRefInfo 65251
-#define EzConsts_sPersistBmpInfo 65252
-#define EzConsts_sBandsBmpInfo 65253
-#define EzConsts_sBandsTiffInfo 65254
-#define EzConsts_sCustomPicInfo 65255
-#define EzConsts_sSplineInfo 65256
-#define EzConsts_sTTTextInfo 65257
-#define EzConsts_sATTTextInfo 65258
-#define EzConsts_sTableInfo 65259
-#define EzConsts_sColumnInfo 65260
-#define EzConsts_sTableColumnInfo 65261
-#define EzConsts_sColumnTitleInfo 65262
-#define EzConsts_sRowDataInfo 65263
-#define EzConsts_SChangeDirNotAllowed 65264
-#define EzConsts_SEz_GisVersion 65265
-#define EzConsts_SEz_CADVersion 65266
-#define EzConsts_sDataInfo 65267
-#define EzConsts_sFieldValue 65268
-#define EzConsts_sPenInfo 65269
-#define EzConsts_sBrushInfo 65270
-#define EzConsts_sSymbolInfo 65271
-#define EzConsts_sTTFontInfo 65272
-#define EzConsts_sVectorFontInfo 65273
-#define EzConsts_sNoneInfo 65274
-#define EzConsts_sPointInfo 65275
-#define EzConsts_SPlaceInfo 65276
-#define EzConsts_sPolylineInfo 65277
-#define EzConsts_sPolygonInfo 65278
-#define EzConsts_sRectangleInfo 65279
-#define EzConsts_SNoImagesFound 65280
-#define EzConsts_SSelectImgTitle 65281
-#define EzConsts_SBandedImagesFilter 65282
-#define EzConsts_SBitmapFilter 65283
-#define EzConsts_SJPGFilter 65284
-#define EzConsts_SMetafileFilter 65285
-#define EzConsts_SICOFilter 65286
-#define EzConsts_SGIFFilter 65287
-#define EzConsts_STIFFilter 65288
-#define EzConsts_STargaFilter 65289
-#define EzConsts_SPCXFilter 65290
-#define EzConsts_SPCDFilter 65291
-#define EzConsts_SPSDFilter 65292
-#define EzConsts_SPSPFilter 65293
-#define EzConsts_SPNGFilter 65294
-#define EzConsts_SEDBFilter 65295
-#define EzConsts_SNetLeft 65296
-#define EzConsts_SNetCleaning 65297
-#define EzConsts_SNetUnits 65298
-#define EzConsts_SDGNWrongHeader 65299
-#define EzConsts_SNoneColorTextInColorPicker 65300
-#define EzConsts_SCustomTextInColorPicker 65301
-#define EzConsts_SLayerIndexOutOfRange 65302
-#define EzConsts_sDrawBoxCollectionNotSame 65303
-#define EzConsts_SFilterEnabled 65304
-#define EzConsts_SBFFFolderName 65305
-#define EzConsts_SBFFSTatusText 65306
-#define EzConsts_SBFFCaption 65307
-#define EzConsts_SLLBCurrent 65308
-#define EzConsts_SLLBVisible 65309
-#define EzConsts_SLLBSelectable 65310
-#define EzConsts_SLLBLayerName 65311
-#define EzConsts_SWrongFieldName 65312
-#define EzConsts_SCircleInfo 65313
-#define EzConsts_SBufferRefInfo 65314
-#define EzConsts_SOneSelection 65315
-#define EzConsts_SMultiSelection 65316
-#define EzConsts_SUnknownFormat 65317
-#define EzConsts_SNoNodeClicked 65318
-#define EzConsts_SNetSameNodes 65319
-#define EzConsts_SNetExpressionNotNumeric 65320
-#define EzConsts_SNetDirections1 65321
-#define EzConsts_SNetDirections2 65322
-#define EzConsts_SNetContinueStraight 65323
-#define EzConsts_SNetDirections3 65324
-#define EzConsts_SNetDirections4 65325
-#define EzConsts_SNetDirections5 65326
-#define EzConsts_SNetRight 65327
-#define EzConsts_SGridTooDense 65328
-#define EzConsts_Sscrcanceled 65329
-#define EzConsts_SEmptyTable 65330
-#define EzConsts_SPageid 65331
-#define EzConsts_SROwCol 65332
-#define EzConsts_SWrongFontSize 65333
-#define EzConsts_SLoadingCAD 65334
-#define EzConsts_SSavingCAD 65335
-#define EzConsts_SWrongCADFile 65336
-#define EzConsts_SFileAlreadyExists 65337
-#define EzConsts_STextInfo 65338
-#define EzConsts_SErrWrongField 65339
-#define EzConsts_SThematicNotUpdated 65340
-#define EzConsts_SMBToomanyfields 65341
-#define EzConsts_SCalculatingRanges 65342
-#define EzConsts_SExpresionNull 65343
-#define EzConsts_SClickInterestPoint 65344
-#define EzConsts_SEntityToDrag 65345
-#define EzConsts_SDragFromCtrlPt 65346
-#define EzConsts_SDefineCircleCenter 65347
-#define EzConsts_SDefineCircle 65348
-#define EzConsts_SAreaAndPerimeter 65349
-#define EzConsts_SZoomUnZoom 65350
-#define EzConsts_SScrolling 65351
-#define EzConsts_SInsertXGuideLine 65352
-#define EzConsts_SInsertYGuideLine 65353
-#define EzConsts_SSelectGline 65354
-#define EzConsts_SMoveGLinetoNew 65355
-#define EzConsts_SUnrecognizedCommand 65356
-#define EzConsts_SShpFileNotFound 65357
-#define EzConsts_SThereAreNoLayers 65358
-#define EzConsts_SDLLLoadError 65359
-#define EzConsts_SDXFATTRIBBad 65360
-#define EzConsts_SDXFThereIsNoHeader 65361
-#define EzConsts_SDXFThereIsNoLayers 65362
-#define EzConsts_SDXFThereIsNoBlocks 65363
-#define EzConsts_SDXFThereIsNoEntities 65364
-#define EzConsts_SDXFThereIsNoMaxMin 65365
-#define EzConsts_SDXFErrorInLine 65366
-#define EzConsts_SDXFDupLayer 65367
-#define EzConsts_SDXFNoName 65368
-#define EzConsts_SDXFCannotSave 65369
-#define EzConsts_STextIsNotVisible 65370
-#define EzConsts_SInsertText 65371
-#define EzConsts_SEntityToReshape 65372
-#define EzConsts_SReshapeToPoint 65373
-#define EzConsts_SVertexToReshape 65374
-#define EzConsts_SVertexToDelete 65375
-#define EzConsts_SDXFInvalidInteger 65376
-#define EzConsts_SDXFFileReadingNow 65377
-#define EzConsts_SDXFUndefBlock 65378
-#define EzConsts_SDXFWrongBlockInfo 65379
-#define EzConsts_SDXFLWPolylineBad 65380
-#define EzConsts_SDXFPOINTBad 65381
-#define EzConsts_SDXFINSERTBad 65382
-#define EzConsts_SDXFTEXTBad 65383
-#define EzConsts_SDXFLINEBad 65384
-#define EzConsts_SDXFPOLYLINEBad2 65385
-#define EzConsts_SDXFLWPOLYLINEBad2 65386
-#define EzConsts_SDXF3DFACEBad 65387
-#define EzConsts_SDXFSOLIDBad 65388
-#define EzConsts_SDXFCIRCLEBad 65389
-#define EzConsts_SDXFARCBad 65390
-#define EzConsts_SDXFATTDEFBad 65391
-#define EzConsts_SExpressionEmpty 65392
-#define EzConsts_SWrongFieldnameCol 65393
-#define EzConsts_SGetRecordInvalid 65394
-#define EzConsts_SInsertNotAllowed 65395
-#define EzConsts_SWrongReadOnly 65396
-#define EzConsts_SLatLonMismatch 65397
-#define EzConsts_SWrongProjParams 65398
-#define EzConsts_SWrongProjector 65399
-#define EzConsts_SLayerAlreadyExists 65400
-#define EzConsts_SCannotCreateNewLayer 65401
-#define EzConsts_SWrongEzGIS 65402
-#define EzConsts_SProjEditSource 65403
-#define EzConsts_SProjEditDestin 65404
-#define EzConsts_SDXFReading 65405
-#define EzConsts_SDXFPolylineBad 65406
-#define EzConsts_SDXFInvalidFloat 65407
-#define EzConsts_SExtendSelectEnt 65408
-#define EzConsts_STrimWrongEntity 65409
-#define EzConsts_SExtendWrongEntity 65410
-#define EzConsts_SExtendWrongSegment 65411
-#define EzConsts_STrimOnlyOneCuttingEdge 65412
-#define EzConsts_SExtendOnlyOneCuttingEdge 65413
-#define EzConsts_SFilletWrongEntity 65414
-#define EzConsts_SFilletNotContiguous 65415
-#define EzConsts_STrimCuttingEdge 65416
-#define EzConsts_SFirstExtensionLine 65417
-#define EzConsts_SSecondExtensionLine 65418
-#define EzConsts_SDefineTextLocation 65419
-#define EzConsts_SBlobErrNotEditing 65420
-#define EzConsts_SCannotOpenDesignMode 65421
-#define EzConsts_SLayerNotAssigned 65422
-#define EzConsts_SLayerEmpty 65423
-#define EzConsts_SVertexSingleEntityError 65424
-#define EzConsts_SInsertVertexPoint 65425
-#define EzConsts_SVertexEntityBadError 65426
-#define EzConsts_SChangeGridOrigin 65427
-#define EzConsts_SShowHintCaption 65428
-#define EzConsts_SVectorialFirstPt 65429
-#define EzConsts_SVectorialSecondPt 65430
-#define EzConsts_SSelectRefEntity 65431
-#define EzConsts_SBreakSelectFirstPoint 65432
-#define EzConsts_SBreakSelectSecndPoint 65433
-#define EzConsts_SBreakWrongSelection 65434
-#define EzConsts_SBreakWrongEntity 65435
-#define EzConsts_SBreakNotClicked 65436
-#define EzConsts_STrimNoCuttingEdge 65437
-#define EzConsts_SExtendNoExtendEdge 65438
-#define EzConsts_STrimSelectEnt 65439
-#define EzConsts_SCircleRadius 65440
-#define EzConsts_SArcSweepAngle 65441
-#define EzConsts_SCircleEndPoint 65442
-#define EzConsts_SRealTimeZoom 65443
-#define EzConsts_SDefineFirstZoomPoint 65444
-#define EzConsts_SDefineSecondZoomPoint 65445
-#define EzConsts_SNotEnoughData 65446
-#define EzConsts_SStartSingleSelect 65447
-#define EzConsts_SDefineBasePoint 65448
-#define EzConsts_SDefineEndPoint 65449
-#define EzConsts_SReferenceFirstPoint 65450
-#define EzConsts_SReferenceSecondPoint 65451
-#define EzConsts_STransformLastPoint 65452
-#define EzConsts_SRotTransformLastPoint 65453
-#define EzConsts_SDefineSecondSelection 65454
-#define EzConsts_SWarnNoSelection 65455
-#define EzConsts_SInvalidSymbolVersion 65456
-#define EzConsts_SWrongImageFormat 65457
-#define EzConsts_SEntListIndexError 65458
-#define EzConsts_SEntListCountError 65459
-#define EzConsts_SEntListCapacityError 65460
-#define EzConsts_SVectorOutOfBound 65461
-#define EzConsts_SDefineFromPoint 65462
-#define EzConsts_SDefineToPoint 65463
-#define EzConsts_SFirstPoint 65464
-#define EzConsts_SSecondPoint 65465
-#define EzConsts_SThirdPoint 65466
-#define EzConsts_SFourthPoint 65467
-#define EzConsts_SFifthPoint 65468
-#define EzConsts_SNextPoint 65469
-#define EzConsts_SClipPolygon 65470
-#define EzConsts_SCircleCenter 65471
-#define EzConsts_SGISUnassigned 65472
-#define EzConsts_SEzImplMissed 65473
-#define EzConsts_SNoGISDefined 65474
-#define EzConsts_SSelectinLayer 65475
-#define EzConsts_SEntityNotClosed 65476
-#define EzConsts_SMultiPartNotSupported 65477
-#define EzConsts_SLayerNotFound 65478
-#define EzConsts_SCannotGroup 65479
-#define EzConsts_SUndoDelete 65480
-#define EzConsts_SUndoInsert 65481
-#define EzConsts_SCannotUndo 65482
-#define EzConsts_SUndoTransform 65483
-#define EzConsts_SFlatScrollBarNotAllowed 65484
-#define EzConsts_SEntityOutOfBound 65485
-#define EzConsts_SInvalidSymbolFile 65486
-#define EzConsts_SSymbolOutOfBound 65487
-#define EzConsts_SRestNotExclusive 65488
-#define EzConsts_SRestructuring 65489
-#define EzConsts_SDuplicateLayer 65490
-#define EzConsts_SRecnoInvalid 65491
-#define EzConsts_SRebuildTree 65492
-#define EzConsts_SDBFNotFound 65493
-#define EzConsts_SUpdateExtension 65494
-#define EzConsts_SThereAreNoDeleted 65495
-#define EzConsts_SPackingLayer 65496
-#define EzConsts_SWrongRecordsRecover 65497
-#define EzConsts_SExprFail 65498
-#define EzConsts_SCannotDeleteLayer 65499
-#define EzConsts_SInternalListError 65500
-#define EzConsts_SLayerFilesNotFound 65501
-#define EzConsts_SPrinterIsBusy 65502
-#define EzConsts_SGISListError 65503
-#define EzConsts_SIndivClickToEdit 65504
-#define EzConsts_SEntityClickCaption 65505
-#define EzConsts_SSymbolTextCaption 65506
-#define EzConsts_SSymbolText 65507
-#define EzConsts_SUnconnectedDrawBox 65508
-#define EzConsts_SMsgConfirm 65509
-#define EzConsts_SMsgError 65510
-#define EzConsts_SMsgWarning 65511
-#define EzConsts_SMsgInfo 65512
-#define EzConsts_SWrongBuffer 65513
-#define EzConsts_SCannotCreateBuffer 65514
-#define EzConsts_SCannotContainParams 65515
-#define EzConsts_SWrongLayername 65516
-#define EzConsts_SWrongParameters 65517
-#define EzConsts_SExprParserError 65518
-#define EzConsts_SBadExtension 65519
-#define EzConsts_SCommand 65520
-#define EzConsts_SFeature 65521
-#define EzConsts_SRange 65522
-#define EzConsts_SFrequency 65523
-#define EzConsts_SSymbolCaption 65524
-#define EzConsts_SLinetypeCaption 65525
-#define EzConsts_SScaleFmt 65526
-#define EzConsts_STranslateFmt 65527
-#define EzConsts_SRotateFmt 65528
-#define EzConsts_SNewEntityInfo 65529
-#define EzConsts_SIsInvalidFloatValue 65530
-#define EzConsts_SIsInvalidIntegerValue 65531
-#define EzConsts_SIsInvalidBoolValue 65532
-#define EzConsts_SLauncher 65533
-#define EzConsts_SDragDropClick 65534
-#define EzConsts_STextRefPtFirst 65535
+#define fExpress_SHour 64896
+#define fExpress_SMin 64897
+#define fExpress_SSec 64898
+#define fExpress_SMSec 64899
+#define fExpress_STo_Char 64900
+#define fExpress_STo_Date 64901
+#define fExpress_STo_Num 64902
+#define fExpress_SDecode 64903
+#define fExpress_SExpressionOkay 64904
+#define fExpress_SLime 64912
+#define fExpress_SYellow 64913
+#define fExpress_SBlue 64914
+#define fExpress_SFuchsia 64915
+#define fExpress_SAqua 64916
+#define fExpress_SWhite 64917
+#define fExpress_SRGB 64918
+#define fExpress_SText 64919
+#define fExpress_SLayerName 64920
+#define fExpress_SDistance 64921
+#define fExpress_SLeft 64922
+#define fExpress_SRight 64923
+#define fExpress_SIsSelected 64924
+#define fExpress_SYear 64925
+#define fExpress_SMonth 64926
+#define fExpress_SDay 64927
+#define fExpress_SCentroidX 64928
+#define fExpress_SCentroidY 64929
+#define fExpress_SType 64930
+#define fExpress_SCrLf 64931
+#define fExpress_SColor 64932
+#define fExpress_SFillColor 64933
+#define fExpress_SBlack 64934
+#define fExpress_SMaroon 64935
+#define fExpress_SGreen 64936
+#define fExpress_SOlive 64937
+#define fExpress_SNavy 64938
+#define fExpress_SPurple 64939
+#define fExpress_STeal 64940
+#define fExpress_SGray 64941
+#define fExpress_SSilver 64942
+#define fExpress_SRed 64943
+#define fExpress_SMaxExtentY 64944
+#define fExpress_SMinExtentX 64945
+#define fExpress_SMinExtentY 64946
+#define fExpress_SPerimeter 64947
+#define fExpress_SPI 64948
+#define fExpress_SPos 64949
+#define fExpress_SPower 64950
+#define fExpress_SRound 64951
+#define fExpress_SSin 64952
+#define fExpress_SSqr 64953
+#define fExpress_SSqrt 64954
+#define fExpress_STrunc 64955
+#define fExpress_SUpper 64956
+#define fExpress_SCurDate 64957
+#define fExpress_SFormateDateTime 64958
+#define fExpress_SFormatFloat 64959
+#define fExpress_SExprNative 64960
+#define fExpress_SAbs 64961
+#define fExpress_SArcTan 64962
+#define fExpress_SArea 64963
+#define fExpress_SPoints 64964
+#define fExpress_SCopy 64965
+#define fExpress_SCos 64966
+#define fExpress_SExp 64967
+#define fExpress_SFormat 64968
+#define fExpress_SFrac 64969
+#define fExpress_SIf 64970
+#define fExpress_SInt 64971
+#define fExpress_SLength 64972
+#define fExpress_SLn 64973
+#define fExpress_SLower 64974
+#define fExpress_SMaxExtentX 64975
+#define EzBaseExpr_SEXPR_CANNOTCASTTOSTRING 64976
+#define EzBaseExpr_SEXPR_CANNOTCASTTOFLOAT 64977
+#define EzBaseExpr_SEXPR_CANNOTCASTTOINTEGER 64978
+#define EzBaseExpr_SEXPR_CANNOTCASTTOBOOLEAN 64979
+#define EzBaseExpr_SEXPR_WRONGUNARYOP 64980
+#define EzBaseExpr_SEXPR_WRONGBINARYOP 64981
+#define EzBaseExpr_SEXPR_WRONGBOOLEANOP 64982
+#define EzBaseExpr_SEXPR_WRONGRELATIONALOP 64983
+#define EzBaseExpr_SEXPR_WRONGPARAMETER 64984
+#define EzBaseExpr_SEXPR_INVALIDPARAMETERTO 64985
+#define EzHTMLmap_SHTMLTemplateError 64986
+#define EzHTMLmap_SHTMLLayerError 64987
+#define EzHTMLmap_SHTMLHintError 64988
+#define EzHTMLmap_SHTMLTemplateWrong 64989
+#define EzHTMLmap_SHTMLTagLink 64990
+#define fExpress_SCustomGlobal 64991
+#define fProj_SProjectionDeleted 64992
+#define EzProjImpl_serr18 64993
+#define EzProjImpl_serr19 64994
+#define EzProjImpl_serr23 64995
+#define EzProjImpl_serr24 64996
+#define EzProjImpl_serr25 64997
+#define EzProjImpl_serr32 64998
+#define EzProjImpl_serr33 64999
+#define EzProjImpl_serr34 65000
+#define EzProjImpl_serr35 65001
+#define EzProjections_serr0 65002
+#define fPictureDef_SDefinePicTitle 65003
+#define fPictureDef_SPictNotDefined 65004
+#define EzBaseExpr_SEXPR_WRONGWHENEXPR 65005
+#define EzBaseExpr_SEXPR_WRONGTHENEXPR 65006
+#define EzBaseExpr_SEXPR_OPERATORINCOMPAT 65007
+#define EzConsts_SCmdRichText 65008
+#define EzConsts_SCmdInsert 65009
+#define EzConsts_SCmdMirror 65010
+#define EzConsts_SCmdCustomClick 65011
+#define EzConsts_SCmdDropSelection 65012
+#define EzConsts_SCmdDragDrop 65013
+#define EzConsts_SCmdTracking 65014
+#define EzConsts_SCmdArcSE 65015
+#define EzConsts_SCmdArcFCS 65016
+#define EzConsts_SCmdNode 65017
+#define EzConsts_SCmdNodeLink 65018
+#define EzConsts_SCmdText500 65019
+#define EzExprLex_SDefaultDateFormat 65020
+#define fProj_SConfirmAddToProj 65021
+#define fProj_SProjectionAdded 65022
+#define fProj_SConfirmDeleteToProj 65023
+#define EzConsts_SCmdTable 65024
+#define EzConsts_SCmdCalloutText 65025
+#define EzConsts_SCmdBulletLeader 65026
+#define EzConsts_SCmdBannerText 65027
+#define EzConsts_SCmdZoomAll 65028
+#define EzConsts_SCmdScaleX 65029
+#define EzConsts_SCmdScaleY 65030
+#define EzConsts_SCmdJustifText 65031
+#define EzConsts_SCmdFittedText 65032
+#define EzConsts_SCmdPoint 65033
+#define EzConsts_SCmdDimHoriz 65034
+#define EzConsts_SCmdDimVert 65035
+#define EzConsts_SCmdDimParall 65036
+#define EzConsts_SCmdCircle2P 65037
+#define EzConsts_SCmdCircle3P 65038
+#define EzConsts_SCmdCircleCR 65039
+#define EzConsts_SCmdZoomOut 65040
+#define EzConsts_SCmdZoomWindow 65041
+#define EzConsts_SCmdRealTimeZoom 65042
+#define EzConsts_SCmdRealTimeZoomB 65043
+#define EzConsts_SCmdHandScroll 65044
+#define EzConsts_SCmdClipPoly 65045
+#define EzConsts_SCmdSetClipPolyArea 65046
+#define EzConsts_SCmdClipPolyline 65047
+#define EzConsts_SCmdDeleteVertex 65048
+#define EzConsts_SCmdSetClipArea 65049
+#define EzConsts_SCmdBreak 65050
+#define EzConsts_SCmdTrim 65051
+#define EzConsts_SCmdExtend 65052
+#define EzConsts_SCmdFillet 65053
+#define EzConsts_SCmdAddMarker 65054
+#define EzConsts_SCmdPolygonBuffer 65055
+#define EzConsts_SCmdCustomPicture 65056
+#define EzConsts_SCmdGeorefBitmap 65057
+#define EzConsts_SCmdBandsBitmap 65058
+#define EzConsts_SCmdPersistBitmap 65059
+#define EzConsts_SCmdUndo 65060
+#define EzConsts_SCmdPan 65061
+#define EzConsts_SCmdSelect 65062
+#define EzConsts_SCmdSelPLine 65063
+#define EzConsts_SCmdMeasures 65064
+#define EzConsts_SCmdOffset 65065
+#define EzConsts_SCmdInsertVertex 65066
+#define EzConsts_SCmdGridOrigin 65067
+#define EzConsts_SCmdEditDB 65068
+#define EzConsts_SCmdPolygonSelect 65069
+#define EzConsts_SCmdCircleSelect 65070
+#define EzConsts_SCmdZoomIn 65071
+#define EzConsts_SCmdPolyline 65072
+#define EzConsts_SCmdPolygon 65073
+#define EzConsts_SCmdSketch 65074
+#define EzConsts_sCmdArc 65075
+#define EzConsts_SCmdEllipse 65076
+#define EzConsts_SCmdSpline 65077
+#define EzConsts_SCmdSplineText 65078
+#define EzConsts_SCmdRectangle 65079
+#define EzConsts_SCmdSymbol 65080
+#define EzConsts_SCmdTextSymbol 65081
+#define EzConsts_SCmdText 65082
+#define EzConsts_SCmdHorzGLine 65083
+#define EzConsts_SCmdVertGLine 65084
+#define EzConsts_SCmdMoveGLine 65085
+#define EzConsts_SCmdHints 65086
+#define EzConsts_SCmdPictRef 65087
+#define EzConsts_sDimParallelInfo 65088
+#define EzConsts_sPreviewInfo 65089
+#define EzConsts_sERMapperInfo 65090
+#define EzConsts_SDefaultDateFormat 65091
+#define EzConsts_SEntityField 65092
+#define EzConsts_SRecNoField 65093
+#define EzConsts_SSelection 65094
+#define EzConsts_SUTMZone 65095
+#define EzConsts_SCartesianFormat 65096
+#define EzConsts_SDegreesFormat 65097
+#define EzConsts_SCmdMove 65098
+#define EzConsts_SCmdScale 65099
+#define EzConsts_SCmdRotate 65100
+#define EzConsts_SCmdReshape 65101
+#define EzConsts_SCmdRotateText 65102
+#define EzConsts_SCmdLine 65103
+#define EzConsts_sSplineInfo 65104
+#define EzConsts_sTTTextInfo 65105
+#define EzConsts_sATTTextInfo 65106
+#define EzConsts_sTableInfo 65107
+#define EzConsts_sColumnInfo 65108
+#define EzConsts_sTableColumnInfo 65109
+#define EzConsts_sColumnTitleInfo 65110
+#define EzConsts_sRowDataInfo 65111
+#define EzConsts_sTitleCaption 65112
+#define EzConsts_sGroupCaption 65113
+#define EzConsts_sJustifTextInfo 65114
+#define EzConsts_sFittedTextInfo 65115
+#define EzConsts_sBlockInfo 65116
+#define EzConsts_sSplineTextInfo 65117
+#define EzConsts_sDimHorizInfo 65118
+#define EzConsts_sDimVertInfo 65119
+#define EzConsts_sTTFontInfo 65120
+#define EzConsts_sVectorFontInfo 65121
+#define EzConsts_sNoneInfo 65122
+#define EzConsts_sPointInfo 65123
+#define EzConsts_SPlaceInfo 65124
+#define EzConsts_sPolylineInfo 65125
+#define EzConsts_sPolygonInfo 65126
+#define EzConsts_sRectangleInfo 65127
+#define EzConsts_sArcInfo 65128
+#define EzConsts_sEllipseInfo 65129
+#define EzConsts_sPicRefInfo 65130
+#define EzConsts_sBmpRefInfo 65131
+#define EzConsts_sPersistBmpInfo 65132
+#define EzConsts_sBandsBmpInfo 65133
+#define EzConsts_sBandsTiffInfo 65134
+#define EzConsts_sCustomPicInfo 65135
+#define EzConsts_STIFFilter 65136
+#define EzConsts_STargaFilter 65137
+#define EzConsts_SPCXFilter 65138
+#define EzConsts_SPCDFilter 65139
+#define EzConsts_SPSDFilter 65140
+#define EzConsts_SPSPFilter 65141
+#define EzConsts_SPNGFilter 65142
+#define EzConsts_SEDBFilter 65143
+#define EzConsts_SChangeDirNotAllowed 65144
+#define EzConsts_SEz_GisVersion 65145
+#define EzConsts_SEz_CADVersion 65146
+#define EzConsts_sDataInfo 65147
+#define EzConsts_sFieldValue 65148
+#define EzConsts_sPenInfo 65149
+#define EzConsts_sBrushInfo 65150
+#define EzConsts_sSymbolInfo 65151
+#define EzConsts_SFilterEnabled 65152
+#define EzConsts_SBFFFolderName 65153
+#define EzConsts_SBFFSTatusText 65154
+#define EzConsts_SBFFCaption 65155
+#define EzConsts_SLLBCurrent 65156
+#define EzConsts_SLLBVisible 65157
+#define EzConsts_SLLBSelectable 65158
+#define EzConsts_SLLBLayerName 65159
+#define EzConsts_SNoImagesFound 65160
+#define EzConsts_SSelectImgTitle 65161
+#define EzConsts_SBandedImagesFilter 65162
+#define EzConsts_SBitmapFilter 65163
+#define EzConsts_SJPGFilter 65164
+#define EzConsts_SMetafileFilter 65165
+#define EzConsts_SICOFilter 65166
+#define EzConsts_SGIFFilter 65167
+#define EzConsts_SNetExpressionNotNumeric 65168
+#define EzConsts_SNetDirections1 65169
+#define EzConsts_SNetDirections2 65170
+#define EzConsts_SNetContinueStraight 65171
+#define EzConsts_SNetDirections3 65172
+#define EzConsts_SNetDirections4 65173
+#define EzConsts_SNetDirections5 65174
+#define EzConsts_SNetRight 65175
+#define EzConsts_SNetLeft 65176
+#define EzConsts_SNetCleaning 65177
+#define EzConsts_SNetUnits 65178
+#define EzConsts_SDGNWrongHeader 65179
+#define EzConsts_SNoneColorTextInColorPicker 65180
+#define EzConsts_SCustomTextInColorPicker 65181
+#define EzConsts_SLayerIndexOutOfRange 65182
+#define EzConsts_sDrawBoxCollectionNotSame 65183
+#define EzConsts_SWrongCADFile 65184
+#define EzConsts_SFileAlreadyExists 65185
+#define EzConsts_STextInfo 65186
+#define EzConsts_SErrWrongField 65187
+#define EzConsts_SThematicNotUpdated 65188
+#define EzConsts_SMBToomanyfields 65189
+#define EzConsts_SCalculatingRanges 65190
+#define EzConsts_SExpresionNull 65191
+#define EzConsts_SWrongFieldName 65192
+#define EzConsts_SCircleInfo 65193
+#define EzConsts_SBufferRefInfo 65194
+#define EzConsts_SOneSelection 65195
+#define EzConsts_SMultiSelection 65196
+#define EzConsts_SUnknownFormat 65197
+#define EzConsts_SNoNodeClicked 65198
+#define EzConsts_SNetSameNodes 65199
+#define EzConsts_SInsertXGuideLine 65200
+#define EzConsts_SInsertYGuideLine 65201
+#define EzConsts_SSelectGline 65202
+#define EzConsts_SMoveGLinetoNew 65203
+#define EzConsts_SUnrecognizedCommand 65204
+#define EzConsts_SShpFileNotFound 65205
+#define EzConsts_SThereAreNoLayers 65206
+#define EzConsts_SDLLLoadError 65207
+#define EzConsts_SGridTooDense 65208
+#define EzConsts_Sscrcanceled 65209
+#define EzConsts_SEmptyTable 65210
+#define EzConsts_SPageid 65211
+#define EzConsts_SROwCol 65212
+#define EzConsts_SWrongFontSize 65213
+#define EzConsts_SLoadingCAD 65214
+#define EzConsts_SSavingCAD 65215
+#define EzConsts_SDXFNoName 65216
+#define EzConsts_SDXFCannotSave 65217
+#define EzConsts_STextIsNotVisible 65218
+#define EzConsts_SInsertText 65219
+#define EzConsts_SEntityToReshape 65220
+#define EzConsts_SReshapeToPoint 65221
+#define EzConsts_SVertexToReshape 65222
+#define EzConsts_SVertexToDelete 65223
+#define EzConsts_SClickInterestPoint 65224
+#define EzConsts_SEntityToDrag 65225
+#define EzConsts_SDragFromCtrlPt 65226
+#define EzConsts_SDefineCircleCenter 65227
+#define EzConsts_SDefineCircle 65228
+#define EzConsts_SAreaAndPerimeter 65229
+#define EzConsts_SZoomUnZoom 65230
+#define EzConsts_SScrolling 65231
+#define EzConsts_SDXFLINEBad 65232
+#define EzConsts_SDXFPOLYLINEBad2 65233
+#define EzConsts_SDXFLWPOLYLINEBad2 65234
+#define EzConsts_SDXF3DFACEBad 65235
+#define EzConsts_SDXFSOLIDBad 65236
+#define EzConsts_SDXFCIRCLEBad 65237
+#define EzConsts_SDXFARCBad 65238
+#define EzConsts_SDXFATTDEFBad 65239
+#define EzConsts_SDXFATTRIBBad 65240
+#define EzConsts_SDXFThereIsNoHeader 65241
+#define EzConsts_SDXFThereIsNoLayers 65242
+#define EzConsts_SDXFThereIsNoBlocks 65243
+#define EzConsts_SDXFThereIsNoEntities 65244
+#define EzConsts_SDXFThereIsNoMaxMin 65245
+#define EzConsts_SDXFErrorInLine 65246
+#define EzConsts_SDXFDupLayer 65247
+#define EzConsts_SLayerAlreadyExists 65248
+#define EzConsts_SCannotCreateNewLayer 65249
+#define EzConsts_SWrongEzGIS 65250
+#define EzConsts_SProjEditSource 65251
+#define EzConsts_SProjEditDestin 65252
+#define EzConsts_SDXFReading 65253
+#define EzConsts_SDXFPolylineBad 65254
+#define EzConsts_SDXFInvalidFloat 65255
+#define EzConsts_SDXFInvalidInteger 65256
+#define EzConsts_SDXFFileReadingNow 65257
+#define EzConsts_SDXFUndefBlock 65258
+#define EzConsts_SDXFWrongBlockInfo 65259
+#define EzConsts_SDXFLWPolylineBad 65260
+#define EzConsts_SDXFPOINTBad 65261
+#define EzConsts_SDXFINSERTBad 65262
+#define EzConsts_SDXFTEXTBad 65263
+#define EzConsts_STrimCuttingEdge 65264
+#define EzConsts_SFirstExtensionLine 65265
+#define EzConsts_SSecondExtensionLine 65266
+#define EzConsts_SDefineTextLocation 65267
+#define EzConsts_SBlobErrNotEditing 65268
+#define EzConsts_SCannotOpenDesignMode 65269
+#define EzConsts_SLayerNotAssigned 65270
+#define EzConsts_SLayerEmpty 65271
+#define EzConsts_SExpressionEmpty 65272
+#define EzConsts_SWrongFieldnameCol 65273
+#define EzConsts_SGetRecordInvalid 65274
+#define EzConsts_SInsertNotAllowed 65275
+#define EzConsts_SWrongReadOnly 65276
+#define EzConsts_SLatLonMismatch 65277
+#define EzConsts_SWrongProjParams 65278
+#define EzConsts_SWrongProjector 65279
+#define EzConsts_SBreakSelectFirstPoint 65280
+#define EzConsts_SBreakSelectSecndPoint 65281
+#define EzConsts_SBreakWrongSelection 65282
+#define EzConsts_SBreakWrongEntity 65283
+#define EzConsts_SBreakNotClicked 65284
+#define EzConsts_STrimNoCuttingEdge 65285
+#define EzConsts_SExtendNoExtendEdge 65286
+#define EzConsts_STrimSelectEnt 65287
+#define EzConsts_SExtendSelectEnt 65288
+#define EzConsts_STrimWrongEntity 65289
+#define EzConsts_SExtendWrongEntity 65290
+#define EzConsts_SExtendWrongSegment 65291
+#define EzConsts_STrimOnlyOneCuttingEdge 65292
+#define EzConsts_SExtendOnlyOneCuttingEdge 65293
+#define EzConsts_SFilletWrongEntity 65294
+#define EzConsts_SFilletNotContiguous 65295
+#define EzConsts_SDefineBasePoint 65296
+#define EzConsts_SDefineEndPoint 65297
+#define EzConsts_SReferenceFirstPoint 65298
+#define EzConsts_SReferenceSecondPoint 65299
+#define EzConsts_STransformLastPoint 65300
+#define EzConsts_SRotTransformLastPoint 65301
+#define EzConsts_SDefineSecondSelection 65302
+#define EzConsts_SWarnNoSelection 65303
+#define EzConsts_SVertexSingleEntityError 65304
+#define EzConsts_SInsertVertexPoint 65305
+#define EzConsts_SVertexEntityBadError 65306
+#define EzConsts_SChangeGridOrigin 65307
+#define EzConsts_SShowHintCaption 65308
+#define EzConsts_SVectorialFirstPt 65309
+#define EzConsts_SVectorialSecondPt 65310
+#define EzConsts_SSelectRefEntity 65311
+#define EzConsts_SFirstPoint 65312
+#define EzConsts_SSecondPoint 65313
+#define EzConsts_SThirdPoint 65314
+#define EzConsts_SFourthPoint 65315
+#define EzConsts_SFifthPoint 65316
+#define EzConsts_SNextPoint 65317
+#define EzConsts_SClipPolygon 65318
+#define EzConsts_SCircleCenter 65319
+#define EzConsts_SCircleRadius 65320
+#define EzConsts_SArcSweepAngle 65321
+#define EzConsts_SCircleEndPoint 65322
+#define EzConsts_SRealTimeZoom 65323
+#define EzConsts_SDefineFirstZoomPoint 65324
+#define EzConsts_SDefineSecondZoomPoint 65325
+#define EzConsts_SNotEnoughData 65326
+#define EzConsts_SStartSingleSelect 65327
+#define EzConsts_SUndoDelete 65328
+#define EzConsts_SUndoInsert 65329
+#define EzConsts_SCannotUndo 65330
+#define EzConsts_SUndoTransform 65331
+#define EzConsts_SFlatScrollBarNotAllowed 65332
+#define EzConsts_SEntityOutOfBound 65333
+#define EzConsts_SInvalidSymbolFile 65334
+#define EzConsts_SSymbolOutOfBound 65335
+#define EzConsts_SInvalidSymbolVersion 65336
+#define EzConsts_SWrongImageFormat 65337
+#define EzConsts_SEntListIndexError 65338
+#define EzConsts_SEntListCountError 65339
+#define EzConsts_SEntListCapacityError 65340
+#define EzConsts_SVectorOutOfBound 65341
+#define EzConsts_SDefineFromPoint 65342
+#define EzConsts_SDefineToPoint 65343
+#define EzConsts_SPackingLayer 65344
+#define EzConsts_SWrongRecordsRecover 65345
+#define EzConsts_SExprFail 65346
+#define EzConsts_SCannotDeleteLayer 65347
+#define EzConsts_SInternalListError 65348
+#define EzConsts_SLayerFilesNotFound 65349
+#define EzConsts_SPrinterIsBusy 65350
+#define EzConsts_SGISListError 65351
+#define EzConsts_SGISUnassigned 65352
+#define EzConsts_SEzImplMissed 65353
+#define EzConsts_SNoGISDefined 65354
+#define EzConsts_SSelectinLayer 65355
+#define EzConsts_SEntityNotClosed 65356
+#define EzConsts_SMultiPartNotSupported 65357
+#define EzConsts_SLayerNotFound 65358
+#define EzConsts_SCannotGroup 65359
+#define EzConsts_SMsgInfo 65360
+#define EzConsts_SWrongBuffer 65361
+#define EzConsts_SCannotCreateBuffer 65362
+#define EzConsts_SCannotContainParams 65363
+#define EzConsts_SWrongLayername 65364
+#define EzConsts_SWrongParameters 65365
+#define EzConsts_SExprParserError 65366
+#define EzConsts_SBadExtension 65367
+#define EzConsts_SRestNotExclusive 65368
+#define EzConsts_SRestructuring 65369
+#define EzConsts_SDuplicateLayer 65370
+#define EzConsts_SRecnoInvalid 65371
+#define EzConsts_SRebuildTree 65372
+#define EzConsts_SDBFNotFound 65373
+#define EzConsts_SUpdateExtension 65374
+#define EzConsts_SThereAreNoDeleted 65375
+#define EzConsts_SRotateFmt 65376
+#define EzConsts_SNewEntityInfo 65377
+#define EzConsts_SIsInvalidFloatValue 65378
+#define EzConsts_SIsInvalidIntegerValue 65379
+#define EzConsts_SIsInvalidBoolValue 65380
+#define EzConsts_SLauncher 65381
+#define EzConsts_SDragDropClick 65382
+#define EzConsts_STextRefPtFirst 65383
+#define EzConsts_SIndivClickToEdit 65384
+#define EzConsts_SEntityClickCaption 65385
+#define EzConsts_SSymbolTextCaption 65386
+#define EzConsts_SSymbolText 65387
+#define EzConsts_SUnconnectedDrawBox 65388
+#define EzConsts_SMsgConfirm 65389
+#define EzConsts_SMsgError 65390
+#define EzConsts_SMsgWarning 65391
+#define MZLib_STooManyLDSymbols 65392
+#define MZLib_SInvalidBitLengthRepeat 65393
+#define MZLib_SIncorrectDataCheck 65394
+#define MZLib_SUnknownCompression 65395
+#define MZLib_SInvalidWindowSize 65396
+#define MZLib_SIncorrectHeaderCheck 65397
+#define MZLib_SNeedDictionary 65398
+#define JPG_sJPEGError 65399
+#define EzConsts_SCommand 65400
+#define EzConsts_SFeature 65401
+#define EzConsts_SRange 65402
+#define EzConsts_SFrequency 65403
+#define EzConsts_SSymbolCaption 65404
+#define EzConsts_SLinetypeCaption 65405
+#define EzConsts_SScaleFmt 65406
+#define EzConsts_STranslateFmt 65407
+#define MZLib_SStreamEnd 65408
+#define MZLib_SFileError 65409
+#define MZLib_SStreamError 65410
+#define MZLib_SDataError 65411
+#define MZLib_SInsufficientMemory 65412
+#define MZLib_SBufferError 65413
+#define MZLib_SIncompatibleVersion 65414
+#define MZLib_SInvalidDistanceCode 65415
+#define MZLib_SInvalidLengthCode 65416
+#define MZLib_SOversubscribedDBLTree 65417
+#define MZLib_SIncompleteDBLTree 65418
+#define MZLib_SOversubscribedLLTree 65419
+#define MZLib_SIncompleteLLTree 65420
+#define MZLib_SEmptyDistanceTree 65421
+#define MZLib_SInvalidBlockType 65422
+#define MZLib_SInvalidStoredBlockLengths 65423
+#define GraphicStrings_gesInvalidSubSampling 65424
+#define GraphicStrings_gesVerticalSubSamplingError 65425
+#define GraphicStrings_gesPreparing 65426
+#define GraphicStrings_gesLoadingData 65427
+#define GraphicStrings_gesUpsampling 65428
+#define GraphicStrings_gesTransfering 65429
+#define GraphicStrings_gesLZ77Error 65430
+#define GraphicStrings_gesJPEGEOI 65431
+#define GraphicStrings_gesJPEGStripSize 65432
+#define GraphicStrings_gesJPEGComponentCount 65433
+#define GraphicStrings_gesJPEGDataPrecision 65434
+#define GraphicStrings_gesJPEGSamplingFactors 65435
+#define GraphicStrings_gesJPEGBogusTableField 65436
+#define GraphicStrings_gesJPEGFractionalLine 65437
+#define GraphicStrings_gesWarning 65438
+#define MZLib_SNeedDict 65439
+#define GraphicStrings_gesInvalidColorFormat 65440
+#define GraphicStrings_gesStreamReadError 65441
+#define GraphicStrings_gesUnsupportedImage 65442
+#define GraphicStrings_gesUnsupportedFeature 65443
+#define GraphicStrings_gesInvalidCRC 65444
+#define GraphicStrings_gesCompression 65445
+#define GraphicStrings_gesExtraCompressedData 65446
+#define GraphicStrings_gesInvalidPalette 65447
+#define GraphicStrings_gesUnknownCriticalChunk 65448
+#define GraphicStrings_gesCompressionScheme 65449
+#define GraphicStrings_gesRLAPixelFormat 65450
+#define GraphicStrings_gesPSPFileType 65451
+#define GraphicStrings_gesIndexedNotSupported 65452
+#define GraphicStrings_gesConversionUnsupported 65453
+#define GraphicStrings_gesInvalidSampleDepth 65454
+#define GraphicStrings_gesInvalidPixelDepth 65455
+#define GraphicStrings_gesZSoftWord 65456
+#define GraphicStrings_gesAliasWaveFront 65457
+#define GraphicStrings_gesSGITrueColorAlpha 65458
+#define GraphicStrings_gesSGIMono 65459
+#define GraphicStrings_gesPhotoshop 65460
+#define GraphicStrings_gesPortable 65461
+#define GraphicStrings_gesPortablePixel 65462
+#define GraphicStrings_gesPortableGray 65463
+#define GraphicStrings_gesPortableMono 65464
+#define GraphicStrings_gesAutoDesk 65465
+#define GraphicStrings_gesKodakPhotoCD 65466
+#define GraphicStrings_gesCompuserve 65467
+#define GraphicStrings_gesHalo 65468
+#define GraphicStrings_gesPaintShopPro 65469
+#define GraphicStrings_gesPortableNetworkGraphic 65470
+#define GraphicStrings_gesInvalidImage 65471
+#define GraphicStrings_gesEPS 65472
+#define GraphicStrings_gesIcons 65473
+#define GraphicStrings_gesMetaFiles 65474
+#define GraphicStrings_gesEnhancedMetaFiles 65475
+#define GraphicStrings_gesJPGImages 65476
+#define GraphicStrings_gesJPEGImages 65477
+#define GraphicStrings_gesJPEImages 65478
+#define GraphicStrings_gesJFIFImages 65479
+#define GraphicStrings_gesTruevision 65480
+#define GraphicStrings_gesTIFF 65481
+#define GraphicStrings_gesMacTIFF 65482
+#define GraphicStrings_gesPCTIF 65483
+#define GraphicStrings_gesGFIFax 65484
+#define GraphicStrings_gesSGI 65485
+#define GraphicStrings_gesSGITrueColor 65486
+#define GraphicStrings_gesZSoft 65487
+#define GIFImage_sEmptyColorMap 65488
+#define GIFImage_sEmptyImage 65489
+#define GIFImage_sInvalidBitmapList 65490
+#define GIFImage_sInvalidReduction 65491
+#define GIFImage_sGIFImageFile 65492
+#define GIFImage_sProgressLoading 65493
+#define GIFImage_sProgressSaving 65494
+#define GIFImage_sProgressConverting 65495
+#define GIFImage_sProgressRendering 65496
+#define GIFImage_sProgressCopying 65497
+#define GIFImage_sProgressOptimizing 65498
+#define GraphicStrings_gesAllImages 65499
+#define GraphicStrings_gesRegistration 65500
+#define GraphicStrings_gesBitmaps 65501
+#define GraphicStrings_gesRLEBitmaps 65502
+#define GraphicStrings_gesDIBs 65503
+#define GIFImage_sBadBlock 65504
+#define GIFImage_sUnsupportedClass 65505
+#define GIFImage_sInvalidData 65506
+#define GIFImage_sBadHeight 65507
+#define GIFImage_sBadWidth 65508
+#define GIFImage_sFailedPaste 65509
+#define GIFImage_sScreenSizeExceeded 65510
+#define GIFImage_sNoColorTable 65511
+#define GIFImage_sBadPixelCoordinates 65512
+#define GIFImage_sUnsupportedBitmap 65513
+#define GIFImage_sInvalidPixelFormat 65514
+#define GIFImage_sBadDimension 65515
+#define GIFImage_sNoDIB 65516
+#define GIFImage_sInvalidStream 65517
+#define GIFImage_sInvalidColor 65518
+#define GIFImage_sInvalidBitSize 65519
+#define GIFImage_sOutOfData 65520
+#define GIFImage_sTooManyColors 65521
+#define GIFImage_sBadColorIndex 65522
+#define GIFImage_sBadVersion 65523
+#define GIFImage_sBadSignature 65524
+#define GIFImage_sScreenBadColorSize 65525
+#define GIFImage_sImageBadColorSize 65526
+#define GIFImage_sUnknownExtension 65527
+#define GIFImage_sBadExtensionLabel 65528
+#define GIFImage_sOutOfMemDIB 65529
+#define GIFImage_sDIBCreate 65530
+#define GIFImage_sDecodeTooFewBits 65531
+#define GIFImage_sDecodeCircular 65532
+#define GIFImage_sBadTrailer 65533
+#define GIFImage_sBadExtensionInstance 65534
+#define GIFImage_sBadBlockSize 65535
 STRINGTABLE
 BEGIN
+	fExpress_SHour,	"Hour( <Time> );Return the hour part of the time parameter"
+	fExpress_SMin,	"Min( <Time> );Return the minutes part of the time parameter"
+	fExpress_SSec,	"Sec( <Time> );Return the seconds part of the time parameter"
+	fExpress_SMSec,	"MSec( <Time> );Return the milliseconds part of the time parameter"
+	fExpress_STo_Char,	"TO_CHAR( expression );Converts the expression to a string of chars"
 	fExpress_STo_Date,	"TO_DATE( string_expression );Converts the string_expression to a date by using Windows Short Date Format"
 	fExpress_STo_Num,	"TO_NUM( string_expression );Converts the string_expression to a number"
 	fExpress_SDecode,	"DECODE(base_expr, compare1, value1, compare2, value2...,default);Similar to a nested IF-THEN-ELSE, base_expr compare against compare1,compare2,etc."
 	fExpress_SExpressionOkay,	"Expression is Okay"
-	EzHTMLmap_SHTMLTemplateError,	"HTML template not found or DrawBox undefined"
-	EzHTMLmap_SHTMLLayerError,	"The defined layer does not exists"
-	EzHTMLmap_SHTMLHintError,	"The draw box does not have assigned the OnShowHint event"
-	EzHTMLmap_SHTMLTemplateWrong,	"HTML template does not contain link code"
-	EzHTMLmap_SHTMLTagLink,	"<#EzGis>"
+	fExpress_SLime,	"Lime;Returns the numeric value of color"
+	fExpress_SYellow,	"Yellow;Returns the numeric value of color"
+	fExpress_SBlue,	"Blue;Returns the numeric value of color"
+	fExpress_SFuchsia,	"Fuchsia;Returns the numeric value of color"
+	fExpress_SAqua,	"Aqua;Returns the numeric value of color"
 	fExpress_SWhite,	"White;Returns the numeric value of color"
 	fExpress_SRGB,	"RGB(<Red>,<Green>,<Blue>);Returns a color that is a combination of red, green and blue (ranging from 0 to 255)"
 	fExpress_SText,	"Text(<Ent>);Returns the text of entity (if entity is of TEXT type)"
@@ -663,11 +668,11 @@ BEGIN
 	fExpress_SYear,	"Year( <Date> );Return the year part of the date parameter"
 	fExpress_SMonth,	"Month( <Date> );Return the month part of the date parameter"
 	fExpress_SDay,	"Day( <Date> );Return the day part of the date parameter"
-	fExpress_SHour,	"Hour( <Time> );Return the hour part of the time parameter"
-	fExpress_SMin,	"Min( <Time> );Return the minutes part of the time parameter"
-	fExpress_SSec,	"Sec( <Time> );Return the seconds part of the time parameter"
-	fExpress_SMSec,	"MSec( <Time> );Return the milliseconds part of the time parameter"
-	fExpress_STo_Char,	"TO_CHAR( expression );Converts the expression to a string of chars"
+	fExpress_SCentroidX,	"CentroidX(<Ent>);Returns the X coord of the entity's centroid."
+	fExpress_SCentroidY,	"CentroidY(<Ent>);Returns the Y coord of the entity's centroid."
+	fExpress_SType,	"Type(<Ent>);Returns a string describing the entity type. \\r\\ne.g.: (Polygon), (Polyline), etc."
+	fExpress_SCrLf,	"CrLf;Insert a new line in the result."
+	fExpress_SColor,	"Color(<Ent>);Retrieve the entity's color"
 	fExpress_SFillColor,	"FillColor(<Ent>);Retrieve the entity's fill color"
 	fExpress_SBlack,	"Black;Returns the numeric value of color"
 	fExpress_SMaroon,	"Maroon;Returns the numeric value of color"
@@ -679,11 +684,11 @@ BEGIN
 	fExpress_SGray,	"Gray;Returns the numeric value of color"
 	fExpress_SSilver,	"Silver;Returns the numeric value of color"
 	fExpress_SRed,	"Red;Returns the numeric value of color"
-	fExpress_SLime,	"Lime;Returns the numeric value of color"
-	fExpress_SYellow,	"Yellow;Returns the numeric value of color"
-	fExpress_SBlue,	"Blue;Returns the numeric value of color"
-	fExpress_SFuchsia,	"Fuchsia;Returns the numeric value of color"
-	fExpress_SAqua,	"Aqua;Returns the numeric value of color"
+	fExpress_SMaxExtentY,	"MaxExtentY(<Ent>);Returns maximum Y coord of entity"
+	fExpress_SMinExtentX,	"MinExtentX(<Ent>);Returns minimum X coord of entity"
+	fExpress_SMinExtentY,	"MinExtentY(<Ent>);Returns minimum Y coord of entity"
+	fExpress_SPerimeter,	"Perimeter(<Ent>);Returns the perimeter or length of the entity"
+	fExpress_SPI,	"PI;Pi the value of PI, 3.1415926535897932385"
 	fExpress_SPos,	"Pos(<Substr:String>, <S:String>);Pos returns the index value of the first character in a specified substring that occurs in a given string\r\ne.g.: Pos('SMITH', 'JOHN SMITH') returns 6."
 	fExpress_SPower,	"Power(<Base:double>, <Exponent:double>);Power raises Base to any power.\\r\\ne.g.: Power(Perimeter, 2.5)"
 	fExpress_SRound,	"Round(<X>);Round returns the value of X rounded to the nearest whole number"
@@ -695,11 +700,11 @@ BEGIN
 	fExpress_SCurDate,	"CurDate;Returns the current date"
 	fExpress_SFormateDateTime,	"FormatDateTime(<S:string>, <Date>);Formats the date-and-time value given by DATE using the format given by S.\r\ne.g.1: FormatDateTime('dd/mmm/yyyy', Routes.DueDate)\r\ne.g.2: FormatDateTime('dd mmm yyyy', Xbase1('Born_Date')"
 	fExpress_SFormatFloat,	"FormatFloat(<S:string>, <X:double>);Formats the floating-point value given by X using the format string given by S.\r\ne.g.1: FORMATFLOAT('$###,###.##', IMPORTE)\r\ne.g.2: FORMATFLOAT('###,##0.0000', NATIVE('AREA'))"
-	fExpress_SCentroidX,	"CentroidX(<Ent>);Returns the X coord of the entity's centroid."
-	fExpress_SCentroidY,	"CentroidY(<Ent>);Returns the Y coord of the entity's centroid."
-	fExpress_SType,	"Type(<Ent>);Returns a string describing the entity type. \\r\\ne.g.: (Polygon), (Polyline), etc."
-	fExpress_SCrLf,	"CrLf;Insert a new line in the result."
-	fExpress_SColor,	"Color(<Ent>);Retrieve the entity's color"
+	fExpress_SExprNative,	"Return value of field %s of native database file of layer"
+	fExpress_SAbs,	"Abs(<X>);The ABS function returns the absolute value of argument X"
+	fExpress_SArcTan,	"ArcTan(<X>);ArcTan calculates the arctangent of the given number X"
+	fExpress_SArea,	"Area( <Ent> );Returns the AREA of the entity"
+	fExpress_SPoints,	"Points( <Ent> );Returns the list of points for the entity"
 	fExpress_SCopy,	"Copy(<String>, <Index>, <Count>);The Copy function returns a substring of a String containing Count characters starting at Index.\r\ne.g.: Copy(NAME, 1, 10) + Copy(USERS.LAST_NAME, 1, 15)"
 	fExpress_SCos,	"Cos(<X>);Cos calculates the cosine of an angle X (in radians)"
 	fExpress_SExp,	"Exp(<X>);Exp returns the value of e raised to the power of X, where e is the base of the natural logarithms"
@@ -711,11 +716,519 @@ BEGIN
 	fExpress_SLn,	"Ln(<X>);Ln returns the natural log of a real expression. The Ln function returns the natural logarithm (Ln(e) = 1) of the real-type expression X"
 	fExpress_SLower,	"Lower(<S:string>);Lower returns a string with the same text as the string passed in S, but with all letters converted to lowercase"
 	fExpress_SMaxExtentX,	"MaxExtentX(<Ent>);Returns maximum X coord of entity"
-	fExpress_SMaxExtentY,	"MaxExtentY(<Ent>);Returns maximum Y coord of entity"
-	fExpress_SMinExtentX,	"MinExtentX(<Ent>);Returns minimum X coord of entity"
-	fExpress_SMinExtentY,	"MinExtentY(<Ent>);Returns minimum Y coord of entity"
-	fExpress_SPerimeter,	"Perimeter(<Ent>);Returns the perimeter or length of the entity"
-	fExpress_SPI,	"PI;Pi the value of PI, 3.1415926535897932385"
+	EzBaseExpr_SEXPR_CANNOTCASTTOSTRING,	"Cannot read %s as String"
+	EzBaseExpr_SEXPR_CANNOTCASTTOFLOAT,	"Cannot read %s as Float"
+	EzBaseExpr_SEXPR_CANNOTCASTTOINTEGER,	"Cannot read %s as Integer"
+	EzBaseExpr_SEXPR_CANNOTCASTTOBOOLEAN,	"Cannot read %s as boolean"
+	EzBaseExpr_SEXPR_WRONGUNARYOP,	"%s is not simple unary operator"
+	EzBaseExpr_SEXPR_WRONGBINARYOP,	"%s is not a simple binary operator"
+	EzBaseExpr_SEXPR_WRONGBOOLEANOP,	"cannot apply %s to boolean operands"
+	EzBaseExpr_SEXPR_WRONGRELATIONALOP,	"%s is not relational operator"
+	EzBaseExpr_SEXPR_WRONGPARAMETER,	"Invalid parameter to %s"
+	EzBaseExpr_SEXPR_INVALIDPARAMETERTO,	"Invalid parameter to %s"
+	EzHTMLmap_SHTMLTemplateError,	"HTML template not found or DrawBox undefined"
+	EzHTMLmap_SHTMLLayerError,	"The defined layer does not exists"
+	EzHTMLmap_SHTMLHintError,	"The draw box does not have assigned the OnShowHint event"
+	EzHTMLmap_SHTMLTemplateWrong,	"HTML template does not contain link code"
+	EzHTMLmap_SHTMLTagLink,	"<#EzGis>"
+	fExpress_SCustomGlobal,	"A global User Defined Function"
+	fProj_SProjectionDeleted,	"The projection was deleted from the database"
+	EzProjImpl_serr18,	"non-convergent inverse phi2"
+	EzProjImpl_serr19,	"acos/asin: |arg| >1.+1e-14"
+	EzProjImpl_serr23,	"lat_1 = 0"
+	EzProjImpl_serr24,	"lat_ts >= 90"
+	EzProjImpl_serr25,	"no distance between control points"
+	EzProjImpl_serr32,	"lat_0 = 0 or 90 or alpha = 90"
+	EzProjImpl_serr33,	"lat_1=lat_2 or lat_1=0 or lat_2=90"
+	EzProjImpl_serr34,	"elliptical usage required"
+	EzProjImpl_serr35,	"invalid UTM zone number"
+	EzProjections_serr0,	"Inverse conversion not implemented"
+	fPictureDef_SDefinePicTitle,	"Define image"
+	fPictureDef_SPictNotDefined,	"Image not already defined !"
+	EzBaseExpr_SEXPR_WRONGWHENEXPR,	"Expression in Case must be boolean"
+	EzBaseExpr_SEXPR_WRONGTHENEXPR,	"Expressions in THEN section must be all of same type"
+	EzBaseExpr_SEXPR_OPERATORINCOMPAT,	"Operator %s incompatible with %s"
+	EzConsts_SCmdRichText,	"RICHTEXT"
+	EzConsts_SCmdInsert,	"INSERT"
+	EzConsts_SCmdMirror,	"MIRROR"
+	EzConsts_SCmdCustomClick,	"CUSTOMCLICK"
+	EzConsts_SCmdDropSelection,	"DROP"
+	EzConsts_SCmdDragDrop,	"DRAG&DROP"
+	EzConsts_SCmdTracking,	"TRACKING"
+	EzConsts_SCmdArcSE,	"ARCSE"
+	EzConsts_SCmdArcFCS,	"ARCFCS"
+	EzConsts_SCmdNode,	"NODE"
+	EzConsts_SCmdNodeLink,	"NODELINK"
+	EzConsts_SCmdText500,	"TEXT500"
+	EzExprLex_SDefaultDateFormat,	"m/d/yyyy"
+	fProj_SConfirmAddToProj,	"Area you sure you want to add/update this projection ?"
+	fProj_SProjectionAdded,	"The projection was added/updated to the database"
+	fProj_SConfirmDeleteToProj,	"Area you sure you want to delete this projection ?"
+	EzConsts_SCmdTable,	"TABLE"
+	EzConsts_SCmdCalloutText,	"CALLOUTTEXT"
+	EzConsts_SCmdBulletLeader,	"BULLETLEADER"
+	EzConsts_SCmdBannerText,	"BANNER"
+	EzConsts_SCmdZoomAll,	"ZOOMALL"
+	EzConsts_SCmdScaleX,	"SCALEX"
+	EzConsts_SCmdScaleY,	"SCALEY"
+	EzConsts_SCmdJustifText,	"JUSTIFTEXT"
+	EzConsts_SCmdFittedText,	"FITTEDTEXT"
+	EzConsts_SCmdPoint,	"POINT"
+	EzConsts_SCmdDimHoriz,	"DIMHORZ"
+	EzConsts_SCmdDimVert,	"DIMVERT"
+	EzConsts_SCmdDimParall,	"DIMPARALL"
+	EzConsts_SCmdCircle2P,	"CIRCLE2P"
+	EzConsts_SCmdCircle3P,	"CIRCLE3P"
+	EzConsts_SCmdCircleCR,	"CIRCLECR"
+	EzConsts_SCmdZoomOut,	"ZOOMOUT"
+	EzConsts_SCmdZoomWindow,	"ZOOMWIN"
+	EzConsts_SCmdRealTimeZoom,	"REALTIMEZOOM"
+	EzConsts_SCmdRealTimeZoomB,	"REALTIMEZOOMB"
+	EzConsts_SCmdHandScroll,	"SCROLL"
+	EzConsts_SCmdClipPoly,	"CLIP"
+	EzConsts_SCmdSetClipPolyArea,	"CLIPPOLYAREA"
+	EzConsts_SCmdClipPolyline,	"CLIPPLINE"
+	EzConsts_SCmdDeleteVertex,	"DELVERTEX"
+	EzConsts_SCmdSetClipArea,	"SETCLIPAREA"
+	EzConsts_SCmdBreak,	"BREAK"
+	EzConsts_SCmdTrim,	"TRIM"
+	EzConsts_SCmdExtend,	"EXTEND"
+	EzConsts_SCmdFillet,	"FILLET"
+	EzConsts_SCmdAddMarker,	"MARKER"
+	EzConsts_SCmdPolygonBuffer,	"POLYGONBUFFER"
+	EzConsts_SCmdCustomPicture,	"CUSTOMPICTURE"
+	EzConsts_SCmdGeorefBitmap,	"GEOREFBITMAP"
+	EzConsts_SCmdBandsBitmap,	"BANDSBITMAP"
+	EzConsts_SCmdPersistBitmap,	"PERSISTBITMAP"
+	EzConsts_SCmdUndo,	"UNDO"
+	EzConsts_SCmdPan,	"PAN"
+	EzConsts_SCmdSelect,	"SELECT"
+	EzConsts_SCmdSelPLine,	"SELPLINE"
+	EzConsts_SCmdMeasures,	"MEASURES"
+	EzConsts_SCmdOffset,	"OFFSET"
+	EzConsts_SCmdInsertVertex,	"INSERTVERTEX"
+	EzConsts_SCmdGridOrigin,	"GRIDORIGIN"
+	EzConsts_SCmdEditDB,	"EDITDB"
+	EzConsts_SCmdPolygonSelect,	"POLYGONSEL"
+	EzConsts_SCmdCircleSelect,	"CIRCLESEL"
+	EzConsts_SCmdZoomIn,	"ZOOMIN"
+	EzConsts_SCmdPolyline,	"PLINE"
+	EzConsts_SCmdPolygon,	"POLYGON"
+	EzConsts_SCmdSketch,	"SKETCH"
+	EzConsts_sCmdArc,	"ARC"
+	EzConsts_SCmdEllipse,	"ELLIPSE"
+	EzConsts_SCmdSpline,	"SPLINE"
+	EzConsts_SCmdSplineText,	"SPLINETEXT"
+	EzConsts_SCmdRectangle,	"RECTANGLE"
+	EzConsts_SCmdSymbol,	"SYMBOL"
+	EzConsts_SCmdTextSymbol,	"TEXTSYMBOL"
+	EzConsts_SCmdText,	"TEXT"
+	EzConsts_SCmdHorzGLine,	"HGLINE"
+	EzConsts_SCmdVertGLine,	"VGLINE"
+	EzConsts_SCmdMoveGLine,	"MOVEGLINE"
+	EzConsts_SCmdHints,	"HINTS"
+	EzConsts_SCmdPictRef,	"PICTUREREF"
+	EzConsts_sDimParallelInfo,	"DimParallel (%f,%f),(%f,%f),%f"
+	EzConsts_sPreviewInfo,	"Preview %s,%d,%f,%f,%s,%f,%f,%f,%f"
+	EzConsts_sERMapperInfo,	"ERMapper %s,\"%s\",%d"
+	EzConsts_SDefaultDateFormat,	"m/d/yyyy"
+	EzConsts_SEntityField,	".ENT"
+	EzConsts_SRecNoField,	".RECNO"
+	EzConsts_SSelection,	"SELECTION"
+	EzConsts_SUTMZone,	"UTM Zone "
+	EzConsts_SCartesianFormat,	"###,###,###,##0.000000"
+	EzConsts_SDegreesFormat,	"###0.00000000000"
+	EzConsts_SCmdMove,	"MOVE"
+	EzConsts_SCmdScale,	"SCALE"
+	EzConsts_SCmdRotate,	"ROTATE"
+	EzConsts_SCmdReshape,	"RESHAPE"
+	EzConsts_SCmdRotateText,	"ROTATETEXT"
+	EzConsts_SCmdLine,	"LINE"
+	EzConsts_sSplineInfo,	"Spline %s"
+	EzConsts_sTTTextInfo,	"TrueTypeText (%f,%f),\"%s\",%d,%f,%f"
+	EzConsts_sATTTextInfo,	"TrueTypeText (%f,%f),\"%s\",%d,%f,%f"
+	EzConsts_sTableInfo,	"Table %s,%d,%d,%s,%s,%s,%d,$%.8x,%f,%f,$%.8x"
+	EzConsts_sColumnInfo,	"Column {"
+	EzConsts_sTableColumnInfo,	"%f,%s,$%.8x,%d,%d,%f"
+	EzConsts_sColumnTitleInfo,	"\"%s\",%d,$%.8x,%s,%f"
+	EzConsts_sRowDataInfo,	"\"%s\""
+	EzConsts_sTitleCaption,	"Title "
+	EzConsts_sGroupCaption,	"Group {"
+	EzConsts_sJustifTextInfo,	"JustifText (%f,%f),(%f,%f),\"%s\",%f,%f,$%.8x,%d,%d"
+	EzConsts_sFittedTextInfo,	"FittedText (%f,%f),\"%s\",%f,%f,%f,$%.8x"
+	EzConsts_sBlockInfo,	"Insert %s,\"%s\",%f,%f,%f,\"%s\""
+	EzConsts_sSplineTextInfo,	"SplineText %s,\"%s\",%s"
+	EzConsts_sDimHorizInfo,	"DimHorizontal (%f,%f),(%f,%f),%f"
+	EzConsts_sDimVertInfo,	"DimVertical (%f,%f),(%f,%f),%f"
+	EzConsts_sTTFontInfo,	"Font \"%s\",%s,%s,%s,%s,$%.8x,%d"
+	EzConsts_sVectorFontInfo,	"VectorFont \"%s\""
+	EzConsts_sNoneInfo,	"None"
+	EzConsts_sPointInfo,	"Point %s"
+	EzConsts_SPlaceInfo,	"Place %s,\"%s\""
+	EzConsts_sPolylineInfo,	"PLine %s"
+	EzConsts_sPolygonInfo,	"Polygon %s"
+	EzConsts_sRectangleInfo,	"Rectangle %s,%f"
+	EzConsts_sArcInfo,	"Arc %s"
+	EzConsts_sEllipseInfo,	"Ellipse %s,%f"
+	EzConsts_sPicRefInfo,	"PictureRef %s,\"%s\",%d,%f"
+	EzConsts_sBmpRefInfo,	"BitmapRef %s,%d,%f"
+	EzConsts_sPersistBmpInfo,	"PersistBitmap %s,\"%s\""
+	EzConsts_sBandsBmpInfo,	"BandsBitmap %s,\"%s\",%d"
+	EzConsts_sBandsTiffInfo,	"BandsTiff %s,\"%s\",%d"
+	EzConsts_sCustomPicInfo,	"CustPict %s"
+	EzConsts_STIFFilter,	"TIFF files (*.TIF)|*.TIF"
+	EzConsts_STargaFilter,	"True Vision images (*.TGA)|*.TGA"
+	EzConsts_SPCXFilter,	"PCX files (*.PCX)|*.PCX"
+	EzConsts_SPCDFilter,	"Kodak Photo CD images (*.PCD)|*.PCD"
+	EzConsts_SPSDFilter,	"PhotoShop images (*.PSD)|*.PSD;*.PDD"
+	EzConsts_SPSPFilter,	"PaintShopPro images (*.PSP)|*.PSP"
+	EzConsts_SPNGFilter,	"Portable Network Graphics images (*.PNG)|*.PNG"
+	EzConsts_SEDBFilter,	"EzGIS blocks (*.EDB)|*.EDB"
+	EzConsts_SChangeDirNotAllowed,	"You must select the file on the common subdir only !"
+	EzConsts_SEz_GisVersion,	"EzGIS Version 1.95 (Ene, 2003)"
+	EzConsts_SEz_CADVersion,	"EzCAD Version 1.95 (Ene, 2003)"
+	EzConsts_sDataInfo,	"Data Info"
+	EzConsts_sFieldValue,	"%s : %s "
+	EzConsts_sPenInfo,	"Pen %d,$%.8x,%f"
+	EzConsts_sBrushInfo,	"Brush %d,$%.8x,$%.8x"
+	EzConsts_sSymbolInfo,	"Symbol %d,%f,%f"
+	EzConsts_SFilterEnabled,	"A filter is active"
+	EzConsts_SBFFFolderName,	"C:\\"
+	EzConsts_SBFFSTatusText,	"Plase select folder"
+	EzConsts_SBFFCaption,	"Select Folder"
+	EzConsts_SLLBCurrent,	"Current"
+	EzConsts_SLLBVisible,	"Visible"
+	EzConsts_SLLBSelectable,	"Selectable"
+	EzConsts_SLLBLayerName,	"Name"
+	EzConsts_SNoImagesFound,	"No images/files found on %s"
+	EzConsts_SSelectImgTitle,	"Select Image/Element"
+	EzConsts_SBandedImagesFilter,	"Windows Bitmaps (*.BMP)|*.BMP|ESRI Band Interleaved by Line (*.BIL)|*.BIL|TIFF files (*.TIF)|*.TIF"
+	EzConsts_SBitmapFilter,	"Windows Bitmap (*.BMP)|*.BMP"
+	EzConsts_SJPGFilter,	"Jpeg (*.JPG) |*.JPG"
+	EzConsts_SMetafileFilter,	"Windows Metafile (*.WMF)|*.WMF|Windows Enhanced Metafile (*.EMF)|*.EMF"
+	EzConsts_SICOFilter,	"Windows ICON files (*.ICO)|*.ICO"
+	EzConsts_SGIFFilter,	"Compuserve Gif (*.GIF)|*.GIF"
+	EzConsts_SNetExpressionNotNumeric,	"Exprssion is not of numeric type"
+	EzConsts_SNetDirections1,	"Starting from Picked Point %d"
+	EzConsts_SNetDirections2,	"  Travel on %s for %.*n %s"
+	EzConsts_SNetContinueStraight,	"Continue Straight onto %s"
+	EzConsts_SNetDirections3,	"Turn %s onto %s"
+	EzConsts_SNetDirections4,	"Total cost of traveling is %.*n %s"
+	EzConsts_SNetDirections5,	"====================="
+	EzConsts_SNetRight,	"Right"
+	EzConsts_SNetLeft,	"Left"
+	EzConsts_SNetCleaning,	"Cleaning up layer..."
+	EzConsts_SNetUnits,	"Units"
+	EzConsts_SDGNWrongHeader,	"File `%s' does not have expected DGN header"
+	EzConsts_SNoneColorTextInColorPicker,	"Transparent"
+	EzConsts_SCustomTextInColorPicker,	"&More Colors..."
+	EzConsts_SLayerIndexOutOfRange,	"Layer index out of range"
+	EzConsts_sDrawBoxCollectionNotSame,	"All member of collection must have same TEzBaseGIS"
+	EzConsts_SWrongCADFile,	"This file is not a EzCAD file !"
+	EzConsts_SFileAlreadyExists,	"The file already exists !"
+	EzConsts_STextInfo,	"Height: %.2n Points; %.2n units"
+	EzConsts_SErrWrongField,	"Wrong field definition"
+	EzConsts_SThematicNotUpdated,	"Thematic map is out of date !"
+	EzConsts_SMBToomanyfields,	"Too many fields selected for thematic creation"
+	EzConsts_SCalculatingRanges,	"Calculating..."
+	EzConsts_SExpresionNull,	"Expression is empty"
+	EzConsts_SWrongFieldName,	"Field name does not exists"
+	EzConsts_SCircleInfo,	"Radius = %.*n; Area = %.*n; Perimeter = %.*n"
+	EzConsts_SBufferRefInfo,	"Radius = %.*n"
+	EzConsts_SOneSelection,	"Selected on Layer %s, Recno %d"
+	EzConsts_SMultiSelection,	"%d selected entities"
+	EzConsts_SUnknownFormat,	"Unknown file format"
+	EzConsts_SNoNodeClicked,	"Node was not clicked"
+	EzConsts_SNetSameNodes,	"Cannot link to same node"
+	EzConsts_SInsertXGuideLine,	"X Coord for guideline :"
+	EzConsts_SInsertYGuideLine,	"Y Coord for guideline :"
+	EzConsts_SSelectGline,	"Select the guideline to move"
+	EzConsts_SMoveGLinetoNew,	"Move the guideline to its new position"
+	EzConsts_SUnrecognizedCommand,	"Unknown Command !"
+	EzConsts_SShpFileNotFound,	"File %s was not found !\r\nCannot import the file"
+	EzConsts_SThereAreNoLayers,	"You need at least one layer !"
+	EzConsts_SDLLLoadError,	"Error loading DLL library !"
+	EzConsts_SGridTooDense,	"Grid too dense to display"
+	EzConsts_Sscrcanceled,	"Script canceled"
+	EzConsts_SEmptyTable,	"<Empty Table>"
+	EzConsts_SPageid,	"Page %d"
+	EzConsts_SROwCol,	"Row %d, Col %d"
+	EzConsts_SWrongFontSize,	"Font size too small !"
+	EzConsts_SLoadingCAD,	"Loading Layer %s"
+	EzConsts_SSavingCAD,	"Saving Layer %s"
+	EzConsts_SDXFNoName,	"Tried to add a layer with no name"
+	EzConsts_SDXFCannotSave,	"Maybe destination path is on CDrom or\r\nnot enough disk space,Can't save. Warning!"
+	EzConsts_STextIsNotVisible,	"Text is invisible !\r\nThe inserted text will be invisible"
+	EzConsts_SInsertText,	"Click the text insertion point"
+	EzConsts_SEntityToReshape,	"Select an entity to modify"
+	EzConsts_SReshapeToPoint,	"Move to point (Hold down CTRL key to change rotate origin):"
+	EzConsts_SVertexToReshape,	"Select vertex to modify"
+	EzConsts_SVertexToDelete,	"Select node to delete"
+	EzConsts_SClickInterestPoint,	"Please click the point"
+	EzConsts_SEntityToDrag,	"Select an entity to drag & drop"
+	EzConsts_SDragFromCtrlPt,	"Drag from control point"
+	EzConsts_SDefineCircleCenter,	"Click the center of the circle selection"
+	EzConsts_SDefineCircle,	"Move mouse to define the circle selection"
+	EzConsts_SAreaAndPerimeter,	"Area = %.*n %s\r\nLength = %.*n %s\r\nAngle = %.2n\r\nPoints = %.2n"
+	EzConsts_SZoomUnZoom,	"Click a point to zoomin/zoomout"
+	EzConsts_SScrolling,	"Press Pick button and move the mouse to pan"
+	EzConsts_SDXFLINEBad,	"Error reading LINE entity"
+	EzConsts_SDXFPOLYLINEBad2,	"Error reading POLYLINE entity"
+	EzConsts_SDXFLWPOLYLINEBad2,	"Error reading LWPOLYLINE entity"
+	EzConsts_SDXF3DFACEBad,	"Error reading 3DFACE entity"
+	EzConsts_SDXFSOLIDBad,	"Error reading SOLID entity"
+	EzConsts_SDXFCIRCLEBad,	"Error reading CIRCLE entity"
+	EzConsts_SDXFARCBad,	"Error reading ARC entity"
+	EzConsts_SDXFATTDEFBad,	"Error reading ATTDEF entity"
+	EzConsts_SDXFATTRIBBad,	"Error reading ATTRIB entity"
+	EzConsts_SDXFThereIsNoHeader,	"No Header or invalid Header section in DXF file"
+	EzConsts_SDXFThereIsNoLayers,	"No Layers or Tables section invalid in DXF file"
+	EzConsts_SDXFThereIsNoBlocks,	"No Blocks or Blocks section invalid DXF file"
+	EzConsts_SDXFThereIsNoEntities,	"There are no Entities or Entities section is invalid in DXF file"
+	EzConsts_SDXFThereIsNoMaxMin,	"File does not contain Max/Min extents. Calculating..."
+	EzConsts_SDXFErrorInLine,	"An error ocurred in line or near to "
+	EzConsts_SDXFDupLayer,	"Tried to create a layer with duplicated name"
+	EzConsts_SLayerAlreadyExists,	"There is a layer with same name.\r\nDo you want to replace existing layer ?"
+	EzConsts_SCannotCreateNewLayer,	"New layer cannot be created !"
+	EzConsts_SWrongEzGIS,	"GIS property unassigned"
+	EzConsts_SProjEditSource,	"Select Source File Coordinate System"
+	EzConsts_SProjEditDestin,	"Select Destination File Coordinate System"
+	EzConsts_SDXFReading,	"Reading AutoCAD file..."
+	EzConsts_SDXFPolylineBad,	"Polyline contained more than %d vertices %d"
+	EzConsts_SDXFInvalidFloat,	"Invalid Floating point conversion"
+	EzConsts_SDXFInvalidInteger,	"Invalid Integer conversion"
+	EzConsts_SDXFFileReadingNow,	" DXF File reading now.."
+	EzConsts_SDXFUndefBlock,	"Undefined Block reference error"
+	EzConsts_SDXFWrongBlockInfo,	"This drawing have wrong block information,\r\nbut continue reading with ignoreing ..."
+	EzConsts_SDXFLWPolylineBad,	"LwPolyline contained more than %d  vertices %d"
+	EzConsts_SDXFPOINTBad,	"Error reading POINT entity "
+	EzConsts_SDXFINSERTBad,	"Error reading INSERT entity"
+	EzConsts_SDXFTEXTBad,	"Error reading TEXT entity"
+	EzConsts_STrimCuttingEdge,	"Cannot trim the cutting edge"
+	EzConsts_SFirstExtensionLine,	"First extension line origin"
+	EzConsts_SSecondExtensionLine,	"Second extension line origin"
+	EzConsts_SDefineTextLocation,	"Text Location"
+	EzConsts_SBlobErrNotEditing,	"Dataset not in edit or insert mode"
+	EzConsts_SCannotOpenDesignMode,	"Cannot open on design mode"
+	EzConsts_SLayerNotAssigned,	"Layer property is not assigned or is not visible"
+	EzConsts_SLayerEmpty,	"Layer name is not defined"
+	EzConsts_SExpressionEmpty,	"Expression or field name cannot be empty"
+	EzConsts_SWrongFieldnameCol,	"Wrong field name column %d"
+	EzConsts_SGetRecordInvalid,	"Error reading record"
+	EzConsts_SInsertNotAllowed,	"Insertion is not allowed"
+	EzConsts_SWrongReadOnly,	"Cannot change readonly property when dataset is active"
+	EzConsts_SLatLonMismatch,	"Destination file is in different coordinate system\r\nAction canceled"
+	EzConsts_SWrongProjParams,	"Parameters for the projection are wrong"
+	EzConsts_SWrongProjector,	"Projector property not defined"
+	EzConsts_SBreakSelectFirstPoint,	"Select first point of entity"
+	EzConsts_SBreakSelectSecndPoint,	"Select second point"
+	EzConsts_SBreakWrongSelection,	"You must pick on same entity"
+	EzConsts_SBreakWrongEntity,	"Cannot break this entity"
+	EzConsts_SBreakNotClicked,	"No entities found"
+	EzConsts_STrimNoCuttingEdge,	"No cutting edge selected yet"
+	EzConsts_SExtendNoExtendEdge,	"No extend edge selected yet"
+	EzConsts_STrimSelectEnt,	"Select entity to trim"
+	EzConsts_SExtendSelectEnt,	"Select entity to extend"
+	EzConsts_STrimWrongEntity,	"Cannot trim this entity"
+	EzConsts_SExtendWrongEntity,	"Cannot extend this entity"
+	EzConsts_SExtendWrongSegment,	"Cannot extend this segment"
+	EzConsts_STrimOnlyOneCuttingEdge,	"Supported only one cutting edge"
+	EzConsts_SExtendOnlyOneCuttingEdge,	"Supported only one extending edge"
+	EzConsts_SFilletWrongEntity,	"Cannot fillet this entity"
+	EzConsts_SFilletNotContiguous,	"No contiguous segments picked"
+	EzConsts_SDefineBasePoint,	"Base point :"
+	EzConsts_SDefineEndPoint,	"Last point :"
+	EzConsts_SReferenceFirstPoint,	"Reference length, first point :"
+	EzConsts_SReferenceSecondPoint,	"Referenge length, second point :"
+	EzConsts_STransformLastPoint,	"Last point :"
+	EzConsts_SRotTransformLastPoint,	"Last point or angle :"
+	EzConsts_SDefineSecondSelection,	"Other corner of selection"
+	EzConsts_SWarnNoSelection,	"No entities selected !"
+	EzConsts_SVertexSingleEntityError,	"Only one entity must be selected for the operation !"
+	EzConsts_SInsertVertexPoint,	"Click in the new point for the selected vertex"
+	EzConsts_SVertexEntityBadError,	"You can add vertexes to Polylines and Polygons only !"
+	EzConsts_SChangeGridOrigin,	"Please click the new Grid Origin :"
+	EzConsts_SShowHintCaption,	"Move mouse over an entity, then click for show hint. Click again for stacked entities. <Esc> finish"
+	EzConsts_SVectorialFirstPt,	"Define area. First corner:"
+	EzConsts_SVectorialSecondPt,	"Define area. Other corner:"
+	EzConsts_SSelectRefEntity,	"Please select the reference entity"
+	EzConsts_SFirstPoint,	"First point :"
+	EzConsts_SSecondPoint,	"Second point :"
+	EzConsts_SThirdPoint,	"Third point :"
+	EzConsts_SFourthPoint,	"Fourth point :"
+	EzConsts_SFifthPoint,	"Fifth point :"
+	EzConsts_SNextPoint,	"Next point :"
+	EzConsts_SClipPolygon,	"Clipping entity, "
+	EzConsts_SCircleCenter,	"Center :"
+	EzConsts_SCircleRadius,	"Radius :"
+	EzConsts_SArcSweepAngle,	"Define sweep angle:"
+	EzConsts_SCircleEndPoint,	"Identify First Arc End Point"
+	EzConsts_SRealTimeZoom,	"Press Pick button and drag vertically to zoom"
+	EzConsts_SDefineFirstZoomPoint,	"First corner"
+	EzConsts_SDefineSecondZoomPoint,	"other corner"
+	EzConsts_SNotEnoughData,	"Need more points to build entity !"
+	EzConsts_SStartSingleSelect,	"Click an entity to select. SHIFT for single select"
+	EzConsts_SUndoDelete,	"Undo erase"
+	EzConsts_SUndoInsert,	"Undo insert"
+	EzConsts_SCannotUndo,	"Cannot undo"
+	EzConsts_SUndoTransform,	"Undo transform"
+	EzConsts_SFlatScrollBarNotAllowed,	"Flat ScrollBar cannot be used \r\nthe version of COMCTL32.dll in this system is lower than 4.71"
+	EzConsts_SEntityOutOfBound,	"Entity number out of range !"
+	EzConsts_SInvalidSymbolFile,	"Wrong file format for symbols"
+	EzConsts_SSymbolOutOfBound,	"Symbol number out of range !"
+	EzConsts_SInvalidSymbolVersion,	"File version is wrong !"
+	EzConsts_SWrongImageFormat,	"This file format is not supported"
+	EzConsts_SEntListIndexError,	"List index out of bounds"
+	EzConsts_SEntListCountError,	"List count error"
+	EzConsts_SEntListCapacityError,	"Capacity error"
+	EzConsts_SVectorOutOfBound,	"Vector out of bound"
+	EzConsts_SDefineFromPoint,	"From point :"
+	EzConsts_SDefineToPoint,	"To point :"
+	EzConsts_SPackingLayer,	"Packing layer..."
+	EzConsts_SWrongRecordsRecover,	"Cannot recover %d damaged records"
+	EzConsts_SExprFail,	"Expression is not of boolean type !"
+	EzConsts_SCannotDeleteLayer,	"Layer cannot be deleted.\r\nProbably is being used in a network"
+	EzConsts_SInternalListError,	"Internal list error"
+	EzConsts_SLayerFilesNotFound,	"Cannot found the formerly files of this layer %s !\r\nThe layer is deleted from the map"
+	EzConsts_SPrinterIsBusy,	"Принтер недоступен"
+	EzConsts_SGISListError,	"Wrong Index in DrawBoxList"
+	EzConsts_SGISUnassigned,	"Unassigned"
+	EzConsts_SEzImplMissed,	"You must include unit ezimpl.pas in your project"
+	EzConsts_SNoGISDefined,	"No basic component linked"
+	EzConsts_SSelectinLayer,	"Selecting layer "
+	EzConsts_SEntityNotClosed,	"Entity is not closed. Cannot clip"
+	EzConsts_SMultiPartNotSupported,	"Multi-part entities not supported in this release"
+	EzConsts_SLayerNotFound,	"Layer name not found"
+	EzConsts_SCannotGroup,	"Can group entities from same layer only"
+	EzConsts_SMsgInfo,	"Information"
+	EzConsts_SWrongBuffer,	"Cannot create a buffer from this polyline"
+	EzConsts_SCannotCreateBuffer,	"Cannot create buffer for this kind of entity"
+	EzConsts_SCannotContainParams,	"Field %s of datatabase cannot have parameters !"
+	EzConsts_SWrongLayername,	"Wrong layer name %s, or layer is not visible or editable"
+	EzConsts_SWrongParameters,	"Parameter(s) invalid for function %s"
+	EzConsts_SExprParserError,	" %s at line : %d, Column: %d, token: %s"
+	EzConsts_SBadExtension,	"Corner coords are wrong !\r\nFirst corner must be at lower left"
+	EzConsts_SRestNotExclusive,	"Cannot open file in exclusive mode !"
+	EzConsts_SRestructuring,	"Restructuring table"
+	EzConsts_SDuplicateLayer,	"Layer name already exists or\r\nthere is a file with same name on disk."
+	EzConsts_SRecnoInvalid,	"Recno out of range"
+	EzConsts_SRebuildTree,	"Rebuilding r-tree %s..."
+	EzConsts_SDBFNotFound,	"Base datafile of this layer cannot be found.\r\nThe layer is kept without an attached DBF file"
+	EzConsts_SUpdateExtension,	"Updating layer %s"
+	EzConsts_SThereAreNoDeleted,	"There are no deleted entities. Do you wish to\r\ncontinue to do an evaluation of this file ?"
+	EzConsts_SRotateFmt,	"< %.3f"
+	EzConsts_SNewEntityInfo,	"< %.*n, DX = %.*n, DY = %.*n, Area = %.*n, Dist = %.*n"
+	EzConsts_SIsInvalidFloatValue,	"Invalid floating point value %s"
+	EzConsts_SIsInvalidIntegerValue,	"Invalid integer value %s"
+	EzConsts_SIsInvalidBoolValue,	"Invalid boolean value %s"
+	EzConsts_SLauncher,	"Launcher"
+	EzConsts_SDragDropClick,	"Click desired entity that you wish to drag"
+	EzConsts_STextRefPtFirst,	"Please define location of text"
+	EzConsts_SIndivClickToEdit,	"Click desired entity on the map to show/edit information"
+	EzConsts_SEntityClickCaption,	"Click an entity on the map"
+	EzConsts_SSymbolTextCaption,	"Symbol text"
+	EzConsts_SSymbolText,	"Text :"
+	EzConsts_SUnconnectedDrawBox,	"The Component is not connected to a TEzBaseDrawBox"
+	EzConsts_SMsgConfirm,	"Confirm"
+	EzConsts_SMsgError,	"Error"
+	EzConsts_SMsgWarning,	"Warning"
+	MZLib_STooManyLDSymbols,	"too many length or distance symbols"
+	MZLib_SInvalidBitLengthRepeat,	"invalid bit length repeat"
+	MZLib_SIncorrectDataCheck,	"incorrect data check"
+	MZLib_SUnknownCompression,	"unknown compression method"
+	MZLib_SInvalidWindowSize,	"invalid window size"
+	MZLib_SIncorrectHeaderCheck,	"incorrect header check"
+	MZLib_SNeedDictionary,	"need dictionary"
+	JPG_sJPEGError,	"JPEG error #%d"
+	EzConsts_SCommand,	"Command: "
+	EzConsts_SFeature,	"Feature"
+	EzConsts_SRange,	"Range"
+	EzConsts_SFrequency,	"Frequency"
+	EzConsts_SSymbolCaption,	"SYMBOL %d"
+	EzConsts_SLinetypeCaption,	"LINETYPE %d"
+	EzConsts_SScaleFmt,	"Scale = %.3f %%"
+	EzConsts_STranslateFmt,	"DX = %.3f, DY = %.3f, < %.3f"
+	MZLib_SStreamEnd,	"stream end"
+	MZLib_SFileError,	"file error"
+	MZLib_SStreamError,	"stream error"
+	MZLib_SDataError,	"data error"
+	MZLib_SInsufficientMemory,	"insufficient memory"
+	MZLib_SBufferError,	"buffer error"
+	MZLib_SIncompatibleVersion,	"incompatible version"
+	MZLib_SInvalidDistanceCode,	"invalid distance code"
+	MZLib_SInvalidLengthCode,	"invalid literal/length code"
+	MZLib_SOversubscribedDBLTree,	"oversubscribed dynamic bit lengths tree"
+	MZLib_SIncompleteDBLTree,	"incomplete dynamic bit lengths tree"
+	MZLib_SOversubscribedLLTree,	"oversubscribed literal/length tree"
+	MZLib_SIncompleteLLTree,	"incomplete literal/length tree"
+	MZLib_SEmptyDistanceTree,	"empty distance tree with lengths"
+	MZLib_SInvalidBlockType,	"invalid block type"
+	MZLib_SInvalidStoredBlockLengths,	"invalid stored block lengths"
+	GraphicStrings_gesInvalidSubSampling,	"Subsampling value is invalid. Allowed are 1, 2 and 4."
+	GraphicStrings_gesVerticalSubSamplingError,	"Vertical subsampling value must be <= horizontal subsampling value."
+	GraphicStrings_gesPreparing,	"Preparing..."
+	GraphicStrings_gesLoadingData,	"Loading data..."
+	GraphicStrings_gesUpsampling,	"Upsampling..."
+	GraphicStrings_gesTransfering,	"Transfering..."
+	GraphicStrings_gesLZ77Error,	"LZ77 decompression error."
+	GraphicStrings_gesJPEGEOI,	"JPEG decompression error. Unexpected end of input."
+	GraphicStrings_gesJPEGStripSize,	"Improper JPEG strip/tile size."
+	GraphicStrings_gesJPEGComponentCount,	"Improper JPEG component count."
+	GraphicStrings_gesJPEGDataPrecision,	"Improper JPEG data precision."
+	GraphicStrings_gesJPEGSamplingFactors,	"Improper JPEG sampling factors."
+	GraphicStrings_gesJPEGBogusTableField,	"Bogus JPEG tables field."
+	GraphicStrings_gesJPEGFractionalLine,	"Fractional JPEG scanline unsupported."
+	GraphicStrings_gesWarning,	"Warning"
+	MZLib_SNeedDict,	"need dictionary"
+	GraphicStrings_gesInvalidColorFormat,	"Invalid color format in %s file."
+	GraphicStrings_gesStreamReadError,	"Stream read error in %s file."
+	GraphicStrings_gesUnsupportedImage,	"Cannot load image. Unsupported %s image format."
+	GraphicStrings_gesUnsupportedFeature,	"Cannot load image. %s not supported for %s files."
+	GraphicStrings_gesInvalidCRC,	"Cannot load image. CRC error found in %s file."
+	GraphicStrings_gesCompression,	"Cannot load image. Compression error found in %s file."
+	GraphicStrings_gesExtraCompressedData,	"Cannot load image. Extra compressed data found in %s file."
+	GraphicStrings_gesInvalidPalette,	"Cannot load image. Palette in %s file is invalid."
+	GraphicStrings_gesUnknownCriticalChunk,	"Cannot load PNG image. Unexpected but critical chunk detected."
+	GraphicStrings_gesCompressionScheme,	"The compression scheme is"
+	GraphicStrings_gesRLAPixelFormat,	"Image formats other than RGB and RGBA are"
+	GraphicStrings_gesPSPFileType,	"File versions other than 3 or 4 are"
+	GraphicStrings_gesIndexedNotSupported,	"Conversion between indexed and non-indexed pixel formats is not supported."
+	GraphicStrings_gesConversionUnsupported,	"Color conversion failed. Could not find a proper method."
+	GraphicStrings_gesInvalidSampleDepth,	"Color depth is invalid. Bits per sample must be 1, 2, 4, 8 or 16."
+	GraphicStrings_gesInvalidPixelDepth,	"Sample count per pixel does not correspond to the given color scheme."
+	GraphicStrings_gesZSoftWord,	"Word 5.x screen capture images"
+	GraphicStrings_gesAliasWaveFront,	"Alias/Wavefront images"
+	GraphicStrings_gesSGITrueColorAlpha,	"SGI true color images with alpha"
+	GraphicStrings_gesSGIMono,	"SGI black/white images"
+	GraphicStrings_gesPhotoshop,	"Photoshop images"
+	GraphicStrings_gesPortable,	"Portable map images"
+	GraphicStrings_gesPortablePixel,	"Portable pixel map images"
+	GraphicStrings_gesPortableGray,	"Portable gray map images"
+	GraphicStrings_gesPortableMono,	"Portable bitmap images"
+	GraphicStrings_gesAutoDesk,	"Autodesk images"
+	GraphicStrings_gesKodakPhotoCD,	"Kodak Photo-CD images"
+	GraphicStrings_gesCompuserve,	"CompuServe images"
+	GraphicStrings_gesHalo,	"Dr. Halo images"
+	GraphicStrings_gesPaintShopPro,	"Paintshop Pro images"
+	GraphicStrings_gesPortableNetworkGraphic,	"Portable network graphic images"
+	GraphicStrings_gesInvalidImage,	"Cannot load image. Invalid or unexpected %s image format."
+	GraphicStrings_gesEPS,	"Encapsulated Postscript images"
+	GraphicStrings_gesIcons,	"Windows icons"
+	GraphicStrings_gesMetaFiles,	"Windows metafiles"
+	GraphicStrings_gesEnhancedMetaFiles,	"Windows enhanced meta files"
+	GraphicStrings_gesJPGImages,	"JPG images"
+	GraphicStrings_gesJPEGImages,	"JPEG images"
+	GraphicStrings_gesJPEImages,	"JPE images"
+	GraphicStrings_gesJFIFImages,	"JFIF images"
+	GraphicStrings_gesTruevision,	"Truevision images"
+	GraphicStrings_gesTIFF,	"Tagged image file format images"
+	GraphicStrings_gesMacTIFF,	"Macintosh TIFF images"
+	GraphicStrings_gesPCTIF,	"PC TIF images"
+	GraphicStrings_gesGFIFax,	"GFI fax images"
+	GraphicStrings_gesSGI,	"SGI images"
+	GraphicStrings_gesSGITrueColor,	"SGI true color images"
+	GraphicStrings_gesZSoft,	"ZSoft Paintbrush images"
+	GIFImage_sEmptyColorMap,	"Color table is empty"
 	GIFImage_sEmptyImage,	"Image is empty"
 	GIFImage_sInvalidBitmapList,	"Invalid bitmap list"
 	GIFImage_sInvalidReduction,	"Invalid reduction method"
@@ -726,12 +1239,12 @@ BEGIN
 	GIFImage_sProgressRendering,	"Rendering..."
 	GIFImage_sProgressCopying,	"Copying..."
 	GIFImage_sProgressOptimizing,	"Optimizing..."
-	fExpress_SCustomGlobal,	"A global User Defined Function"
-	fExpress_SExprNative,	"Return value of field %s of native database file of layer"
-	fExpress_SAbs,	"Abs(<X>);The ABS function returns the absolute value of argument X"
-	fExpress_SArcTan,	"ArcTan(<X>);ArcTan calculates the arctangent of the given number X"
-	fExpress_SArea,	"Area( <Ent> );Returns the AREA of the entity"
-	fExpress_SPoints,	"Points( <Ent> );Returns the list of points for the entity"
+	GraphicStrings_gesAllImages,	"All images"
+	GraphicStrings_gesRegistration,	"Attempt to register %s twice."
+	GraphicStrings_gesBitmaps,	"Windows bitmaps"
+	GraphicStrings_gesRLEBitmaps,	"Run length encoded Windows bitmaps"
+	GraphicStrings_gesDIBs,	"Device independant Windows bitmaps"
+	GIFImage_sBadBlock,	"Unknown GIF block type"
 	GIFImage_sUnsupportedClass,	"Object type not supported for operation"
 	GIFImage_sInvalidData,	"Invalid GIF data"
 	GIFImage_sBadHeight,	"Image height too small for contained frames"
@@ -747,7 +1260,7 @@ BEGIN
 	GIFImage_sInvalidStream,	"Invalid stream operation"
 	GIFImage_sInvalidColor,	"Color not in color table"
 	GIFImage_sInvalidBitSize,	"Invalid Bits Per Pixel value"
-	GIFImage_sEmptyColorMap,	"Color table is empty"
+	GIFImage_sOutOfData,	"Premature end of data"
 	GIFImage_sTooManyColors,	"Color table overflow"
 	GIFImage_sBadColorIndex,	"Invalid color index"
 	GIFImage_sBadVersion,	"Unsupported GIF version"
@@ -763,531 +1276,18 @@ BEGIN
 	GIFImage_sBadTrailer,	"Invalid Image trailer"
 	GIFImage_sBadExtensionInstance,	"Internal error: Extension Instance does not match Extension Label"
 	GIFImage_sBadBlockSize,	"Unsupported Application Extension block size"
-	GIFImage_sBadBlock,	"Unknown GIF block type"
-	GraphicStrings_gesPreparing,	"Preparing..."
-	GraphicStrings_gesLoadingData,	"Loading data..."
-	GraphicStrings_gesUpsampling,	"Upsampling..."
-	GraphicStrings_gesTransfering,	"Transfering..."
-	GraphicStrings_gesLZ77Error,	"LZ77 decompression error."
-	GraphicStrings_gesJPEGEOI,	"JPEG decompression error. Unexpected end of input."
-	GraphicStrings_gesJPEGStripSize,	"Improper JPEG strip/tile size."
-	GraphicStrings_gesJPEGComponentCount,	"Improper JPEG component count."
-	GraphicStrings_gesJPEGDataPrecision,	"Improper JPEG data precision."
-	GraphicStrings_gesJPEGSamplingFactors,	"Improper JPEG sampling factors."
-	GraphicStrings_gesJPEGBogusTableField,	"Bogus JPEG tables field."
-	GraphicStrings_gesJPEGFractionalLine,	"Fractional JPEG scanline unsupported."
-	GraphicStrings_gesWarning,	"Warning"
-	fPictureDef_SDefinePicTitle,	"Define image"
-	fPictureDef_SPictNotDefined,	"Image not already defined !"
-	GIFImage_sOutOfData,	"Premature end of data"
-	GraphicStrings_gesUnsupportedImage,	"Cannot load image. Unsupported %s image format."
-	GraphicStrings_gesUnsupportedFeature,	"Cannot load image. %s not supported for %s files."
-	GraphicStrings_gesInvalidCRC,	"Cannot load image. CRC error found in %s file."
-	GraphicStrings_gesCompression,	"Cannot load image. Compression error found in %s file."
-	GraphicStrings_gesExtraCompressedData,	"Cannot load image. Extra compressed data found in %s file."
-	GraphicStrings_gesInvalidPalette,	"Cannot load image. Palette in %s file is invalid."
-	GraphicStrings_gesUnknownCriticalChunk,	"Cannot load PNG image. Unexpected but critical chunk detected."
-	GraphicStrings_gesCompressionScheme,	"The compression scheme is"
-	GraphicStrings_gesRLAPixelFormat,	"Image formats other than RGB and RGBA are"
-	GraphicStrings_gesPSPFileType,	"File versions other than 3 or 4 are"
-	GraphicStrings_gesIndexedNotSupported,	"Conversion between indexed and non-indexed pixel formats is not supported."
-	GraphicStrings_gesConversionUnsupported,	"Color conversion failed. Could not find a proper method."
-	GraphicStrings_gesInvalidSampleDepth,	"Color depth is invalid. Bits per sample must be 1, 2, 4, 8 or 16."
-	GraphicStrings_gesInvalidPixelDepth,	"Sample count per pixel does not correspond to the given color scheme."
-	GraphicStrings_gesInvalidSubSampling,	"Subsampling value is invalid. Allowed are 1, 2 and 4."
-	GraphicStrings_gesVerticalSubSamplingError,	"Vertical subsampling value must be <= horizontal subsampling value."
-	GraphicStrings_gesSGITrueColorAlpha,	"SGI true color images with alpha"
-	GraphicStrings_gesSGIMono,	"SGI black/white images"
-	GraphicStrings_gesPhotoshop,	"Photoshop images"
-	GraphicStrings_gesPortable,	"Portable map images"
-	GraphicStrings_gesPortablePixel,	"Portable pixel map images"
-	GraphicStrings_gesPortableGray,	"Portable gray map images"
-	GraphicStrings_gesPortableMono,	"Portable bitmap images"
-	GraphicStrings_gesAutoDesk,	"Autodesk images"
-	GraphicStrings_gesKodakPhotoCD,	"Kodak Photo-CD images"
-	GraphicStrings_gesCompuserve,	"CompuServe images"
-	GraphicStrings_gesHalo,	"Dr. Halo images"
-	GraphicStrings_gesPaintShopPro,	"Paintshop Pro images"
-	GraphicStrings_gesPortableNetworkGraphic,	"Portable network graphic images"
-	GraphicStrings_gesInvalidImage,	"Cannot load image. Invalid or unexpected %s image format."
-	GraphicStrings_gesInvalidColorFormat,	"Invalid color format in %s file."
-	GraphicStrings_gesStreamReadError,	"Stream read error in %s file."
-	GraphicStrings_gesMetaFiles,	"Windows metafiles"
-	GraphicStrings_gesEnhancedMetaFiles,	"Windows enhanced meta files"
-	GraphicStrings_gesJPGImages,	"JPG images"
-	GraphicStrings_gesJPEGImages,	"JPEG images"
-	GraphicStrings_gesJPEImages,	"JPE images"
-	GraphicStrings_gesJFIFImages,	"JFIF images"
-	GraphicStrings_gesTruevision,	"Truevision images"
-	GraphicStrings_gesTIFF,	"Tagged image file format images"
-	GraphicStrings_gesMacTIFF,	"Macintosh TIFF images"
-	GraphicStrings_gesPCTIF,	"PC TIF images"
-	GraphicStrings_gesGFIFax,	"GFI fax images"
-	GraphicStrings_gesSGI,	"SGI images"
-	GraphicStrings_gesSGITrueColor,	"SGI true color images"
-	GraphicStrings_gesZSoft,	"ZSoft Paintbrush images"
-	GraphicStrings_gesZSoftWord,	"Word 5.x screen capture images"
-	GraphicStrings_gesAliasWaveFront,	"Alias/Wavefront images"
-	MZLib_SInvalidBlockType,	"invalid block type"
-	MZLib_SInvalidStoredBlockLengths,	"invalid stored block lengths"
-	MZLib_STooManyLDSymbols,	"too many length or distance symbols"
-	MZLib_SInvalidBitLengthRepeat,	"invalid bit length repeat"
-	MZLib_SIncorrectDataCheck,	"incorrect data check"
-	MZLib_SUnknownCompression,	"unknown compression method"
-	MZLib_SInvalidWindowSize,	"invalid window size"
-	MZLib_SIncorrectHeaderCheck,	"incorrect header check"
-	MZLib_SNeedDictionary,	"need dictionary"
-	GraphicStrings_gesAllImages,	"All images"
-	GraphicStrings_gesRegistration,	"Attempt to register %s twice."
-	GraphicStrings_gesBitmaps,	"Windows bitmaps"
-	GraphicStrings_gesRLEBitmaps,	"Run length encoded Windows bitmaps"
-	GraphicStrings_gesDIBs,	"Device independant Windows bitmaps"
-	GraphicStrings_gesEPS,	"Encapsulated Postscript images"
-	GraphicStrings_gesIcons,	"Windows icons"
-	JPG_sJPEGError,	"JPEG error #%d"
-	MZLib_SNeedDict,	"need dictionary"
-	MZLib_SStreamEnd,	"stream end"
-	MZLib_SFileError,	"file error"
-	MZLib_SStreamError,	"stream error"
-	MZLib_SDataError,	"data error"
-	MZLib_SInsufficientMemory,	"insufficient memory"
-	MZLib_SBufferError,	"buffer error"
-	MZLib_SIncompatibleVersion,	"incompatible version"
-	MZLib_SInvalidDistanceCode,	"invalid distance code"
-	MZLib_SInvalidLengthCode,	"invalid literal/length code"
-	MZLib_SOversubscribedDBLTree,	"oversubscribed dynamic bit lengths tree"
-	MZLib_SIncompleteDBLTree,	"incomplete dynamic bit lengths tree"
-	MZLib_SOversubscribedLLTree,	"oversubscribed literal/length tree"
-	MZLib_SIncompleteLLTree,	"incomplete literal/length tree"
-	MZLib_SEmptyDistanceTree,	"empty distance tree with lengths"
-	EzBaseExpr_SEXPR_INVALIDPARAMETERTO,	"Invalid parameter to %s"
-	EzExprLex_SDefaultDateFormat,	"m/d/yyyy"
-	EzProjImpl_serr18,	"non-convergent inverse phi2"
-	EzProjImpl_serr19,	"acos/asin: |arg| >1.+1e-14"
-	EzProjImpl_serr23,	"lat_1 = 0"
-	EzProjImpl_serr24,	"lat_ts >= 90"
-	EzProjImpl_serr25,	"no distance between control points"
-	EzProjImpl_serr32,	"lat_0 = 0 or 90 or alpha = 90"
-	EzProjImpl_serr33,	"lat_1=lat_2 or lat_1=0 or lat_2=90"
-	EzProjImpl_serr34,	"elliptical usage required"
-	EzProjImpl_serr35,	"invalid UTM zone number"
-	fProj_SConfirmAddToProj,	"Area you sure you want to add/update this projection ?"
-	fProj_SProjectionAdded,	"The projection was added/updated to the database"
-	fProj_SConfirmDeleteToProj,	"Area you sure you want to delete this projection ?"
-	fProj_SProjectionDeleted,	"The projection was deleted from the database"
-	EzProjections_serr0,	"Inverse conversion not implemented"
-	EzConsts_SCmdArcFCS,	"ARCFCS"
-	EzConsts_SCmdNode,	"NODE"
-	EzConsts_SCmdNodeLink,	"NODELINK"
-	EzConsts_SCmdText500,	"TEXT500"
-	EzBaseExpr_SEXPR_WRONGWHENEXPR,	"Expression in Case must be boolean"
-	EzBaseExpr_SEXPR_WRONGTHENEXPR,	"Expressions in THEN section must be all of same type"
-	EzBaseExpr_SEXPR_OPERATORINCOMPAT,	"Operator %s incompatible with %s"
-	EzBaseExpr_SEXPR_CANNOTCASTTOSTRING,	"Cannot read %s as String"
-	EzBaseExpr_SEXPR_CANNOTCASTTOFLOAT,	"Cannot read %s as Float"
-	EzBaseExpr_SEXPR_CANNOTCASTTOINTEGER,	"Cannot read %s as Integer"
-	EzBaseExpr_SEXPR_CANNOTCASTTOBOOLEAN,	"Cannot read %s as boolean"
-	EzBaseExpr_SEXPR_WRONGUNARYOP,	"%s is not simple unary operator"
-	EzBaseExpr_SEXPR_WRONGBINARYOP,	"%s is not a simple binary operator"
-	EzBaseExpr_SEXPR_WRONGBOOLEANOP,	"cannot apply %s to boolean operands"
-	EzBaseExpr_SEXPR_WRONGRELATIONALOP,	"%s is not relational operator"
-	EzBaseExpr_SEXPR_WRONGPARAMETER,	"Invalid parameter to %s"
-	EzConsts_SCmdFittedText,	"FITTEDTEXT"
-	EzConsts_SCmdPoint,	"POINT"
-	EzConsts_SCmdDimHoriz,	"DIMHORZ"
-	EzConsts_SCmdDimVert,	"DIMVERT"
-	EzConsts_SCmdDimParall,	"DIMPARALL"
-	EzConsts_SCmdCircle2P,	"CIRCLE2P"
-	EzConsts_SCmdCircle3P,	"CIRCLE3P"
-	EzConsts_SCmdCircleCR,	"CIRCLECR"
-	EzConsts_SCmdRichText,	"RICHTEXT"
-	EzConsts_SCmdInsert,	"INSERT"
-	EzConsts_SCmdMirror,	"MIRROR"
-	EzConsts_SCmdCustomClick,	"CUSTOMCLICK"
-	EzConsts_SCmdDropSelection,	"DROP"
-	EzConsts_SCmdDragDrop,	"DRAG&DROP"
-	EzConsts_SCmdTracking,	"TRACKING"
-	EzConsts_SCmdArcSE,	"ARCSE"
-	EzConsts_SCmdDeleteVertex,	"DELVERTEX"
-	EzConsts_SCmdSetClipArea,	"SETCLIPAREA"
-	EzConsts_SCmdBreak,	"BREAK"
-	EzConsts_SCmdTrim,	"TRIM"
-	EzConsts_SCmdExtend,	"EXTEND"
-	EzConsts_SCmdFillet,	"FILLET"
-	EzConsts_SCmdAddMarker,	"MARKER"
-	EzConsts_SCmdPolygonBuffer,	"POLYGONBUFFER"
-	EzConsts_SCmdTable,	"TABLE"
-	EzConsts_SCmdCalloutText,	"CALLOUTTEXT"
-	EzConsts_SCmdBulletLeader,	"BULLETLEADER"
-	EzConsts_SCmdBannerText,	"BANNER"
-	EzConsts_SCmdZoomAll,	"ZOOMALL"
-	EzConsts_SCmdScaleX,	"SCALEX"
-	EzConsts_SCmdScaleY,	"SCALEY"
-	EzConsts_SCmdJustifText,	"JUSTIFTEXT"
-	EzConsts_SCmdMeasures,	"MEASURES"
-	EzConsts_SCmdOffset,	"OFFSET"
-	EzConsts_SCmdInsertVertex,	"INSERTVERTEX"
-	EzConsts_SCmdGridOrigin,	"GRIDORIGIN"
-	EzConsts_SCmdEditDB,	"EDITDB"
-	EzConsts_SCmdPolygonSelect,	"POLYGONSEL"
-	EzConsts_SCmdCircleSelect,	"CIRCLESEL"
-	EzConsts_SCmdZoomIn,	"ZOOMIN"
-	EzConsts_SCmdZoomOut,	"ZOOMOUT"
-	EzConsts_SCmdZoomWindow,	"ZOOMWIN"
-	EzConsts_SCmdRealTimeZoom,	"REALTIMEZOOM"
-	EzConsts_SCmdRealTimeZoomB,	"REALTIMEZOOMB"
-	EzConsts_SCmdHandScroll,	"SCROLL"
-	EzConsts_SCmdClipPoly,	"CLIP"
-	EzConsts_SCmdSetClipPolyArea,	"CLIPPOLYAREA"
-	EzConsts_SCmdClipPolyline,	"CLIPPLINE"
-	EzConsts_SCmdSymbol,	"SYMBOL"
-	EzConsts_SCmdTextSymbol,	"TEXTSYMBOL"
-	EzConsts_SCmdText,	"TEXT"
-	EzConsts_SCmdHorzGLine,	"HGLINE"
-	EzConsts_SCmdVertGLine,	"VGLINE"
-	EzConsts_SCmdMoveGLine,	"MOVEGLINE"
-	EzConsts_SCmdHints,	"HINTS"
-	EzConsts_SCmdPictRef,	"PICTUREREF"
-	EzConsts_SCmdCustomPicture,	"CUSTOMPICTURE"
-	EzConsts_SCmdGeorefBitmap,	"GEOREFBITMAP"
-	EzConsts_SCmdBandsBitmap,	"BANDSBITMAP"
-	EzConsts_SCmdPersistBitmap,	"PERSISTBITMAP"
-	EzConsts_SCmdUndo,	"UNDO"
-	EzConsts_SCmdPan,	"PAN"
-	EzConsts_SCmdSelect,	"SELECT"
-	EzConsts_SCmdSelPLine,	"SELPLINE"
-	EzConsts_SCartesianFormat,	"###,###,###,##0.000000"
-	EzConsts_SDegreesFormat,	"###0.00000000000"
-	EzConsts_SCmdMove,	"MOVE"
-	EzConsts_SCmdScale,	"SCALE"
-	EzConsts_SCmdRotate,	"ROTATE"
-	EzConsts_SCmdReshape,	"RESHAPE"
-	EzConsts_SCmdRotateText,	"ROTATETEXT"
-	EzConsts_SCmdLine,	"LINE"
-	EzConsts_SCmdPolyline,	"PLINE"
-	EzConsts_SCmdPolygon,	"POLYGON"
-	EzConsts_SCmdSketch,	"SKETCH"
-	EzConsts_sCmdArc,	"ARC"
-	EzConsts_SCmdEllipse,	"ELLIPSE"
-	EzConsts_SCmdSpline,	"SPLINE"
-	EzConsts_SCmdSplineText,	"SPLINETEXT"
-	EzConsts_SCmdRectangle,	"RECTANGLE"
-	EzConsts_sTitleCaption,	"Title "
-	EzConsts_sGroupCaption,	"Group {"
-	EzConsts_sJustifTextInfo,	"JustifText (%f,%f),(%f,%f),\"%s\",%f,%f,$%.8x,%d,%d"
-	EzConsts_sFittedTextInfo,	"FittedText (%f,%f),\"%s\",%f,%f,%f,$%.8x"
-	EzConsts_sBlockInfo,	"Insert %s,\"%s\",%f,%f,%f,\"%s\""
-	EzConsts_sSplineTextInfo,	"SplineText %s,\"%s\",%s"
-	EzConsts_sDimHorizInfo,	"DimHorizontal (%f,%f),(%f,%f),%f"
-	EzConsts_sDimVertInfo,	"DimVertical (%f,%f),(%f,%f),%f"
-	EzConsts_sDimParallelInfo,	"DimParallel (%f,%f),(%f,%f),%f"
-	EzConsts_sPreviewInfo,	"Preview %s,%d,%f,%f,%s,%f,%f,%f,%f"
-	EzConsts_sERMapperInfo,	"ERMapper %s,\"%s\",%d"
-	EzConsts_SDefaultDateFormat,	"m/d/yyyy"
-	EzConsts_SEntityField,	".ENT"
-	EzConsts_SRecNoField,	".RECNO"
-	EzConsts_SSelection,	"SELECTION"
-	EzConsts_SUTMZone,	"UTM Zone "
-	EzConsts_sArcInfo,	"Arc %s"
-	EzConsts_sEllipseInfo,	"Ellipse %s,%f"
-	EzConsts_sPicRefInfo,	"PictureRef %s,\"%s\",%d,%f"
-	EzConsts_sBmpRefInfo,	"BitmapRef %s,%d,%f"
-	EzConsts_sPersistBmpInfo,	"PersistBitmap %s,\"%s\""
-	EzConsts_sBandsBmpInfo,	"BandsBitmap %s,\"%s\",%d"
-	EzConsts_sBandsTiffInfo,	"BandsTiff %s,\"%s\",%d"
-	EzConsts_sCustomPicInfo,	"CustPict %s"
-	EzConsts_sSplineInfo,	"Spline %s"
-	EzConsts_sTTTextInfo,	"TrueTypeText (%f,%f),\"%s\",%d,%f,%f"
-	EzConsts_sATTTextInfo,	"TrueTypeText (%f,%f),\"%s\",%d,%f,%f"
-	EzConsts_sTableInfo,	"Table %s,%d,%d,%s,%s,%s,%d,$%.8x,%f,%f,$%.8x"
-	EzConsts_sColumnInfo,	"Column {"
-	EzConsts_sTableColumnInfo,	"%f,%s,$%.8x,%d,%d,%f"
-	EzConsts_sColumnTitleInfo,	"\"%s\",%d,$%.8x,%s,%f"
-	EzConsts_sRowDataInfo,	"\"%s\""
-	EzConsts_SChangeDirNotAllowed,	"You must select the file on the common subdir only !"
-	EzConsts_SEz_GisVersion,	"EzGIS Version 1.95 (Ene, 2003)"
-	EzConsts_SEz_CADVersion,	"EzCAD Version 1.95 (Ene, 2003)"
-	EzConsts_sDataInfo,	"Data Info"
-	EzConsts_sFieldValue,	"%s : %s "
-	EzConsts_sPenInfo,	"Pen %d,$%.8x,%f"
-	EzConsts_sBrushInfo,	"Brush %d,$%.8x,$%.8x"
-	EzConsts_sSymbolInfo,	"Symbol %d,%f,%f"
-	EzConsts_sTTFontInfo,	"Font \"%s\",%s,%s,%s,%s,$%.8x,%d"
-	EzConsts_sVectorFontInfo,	"VectorFont \"%s\""
-	EzConsts_sNoneInfo,	"None"
-	EzConsts_sPointInfo,	"Point %s"
-	EzConsts_SPlaceInfo,	"Place %s,\"%s\""
-	EzConsts_sPolylineInfo,	"PLine %s"
-	EzConsts_sPolygonInfo,	"Polygon %s"
-	EzConsts_sRectangleInfo,	"Rectangle %s,%f"
-	EzConsts_SNoImagesFound,	"No images/files found on %s"
-	EzConsts_SSelectImgTitle,	"Select Image/Element"
-	EzConsts_SBandedImagesFilter,	"Windows Bitmaps (*.BMP)|*.BMP|ESRI Band Interleaved by Line (*.BIL)|*.BIL|TIFF files (*.TIF)|*.TIF"
-	EzConsts_SBitmapFilter,	"Windows Bitmap (*.BMP)|*.BMP"
-	EzConsts_SJPGFilter,	"Jpeg (*.JPG) |*.JPG"
-	EzConsts_SMetafileFilter,	"Windows Metafile (*.WMF)|*.WMF|Windows Enhanced Metafile (*.EMF)|*.EMF"
-	EzConsts_SICOFilter,	"Windows ICON files (*.ICO)|*.ICO"
-	EzConsts_SGIFFilter,	"Compuserve Gif (*.GIF)|*.GIF"
-	EzConsts_STIFFilter,	"TIFF files (*.TIF)|*.TIF"
-	EzConsts_STargaFilter,	"True Vision images (*.TGA)|*.TGA"
-	EzConsts_SPCXFilter,	"PCX files (*.PCX)|*.PCX"
-	EzConsts_SPCDFilter,	"Kodak Photo CD images (*.PCD)|*.PCD"
-	EzConsts_SPSDFilter,	"PhotoShop images (*.PSD)|*.PSD;*.PDD"
-	EzConsts_SPSPFilter,	"PaintShopPro images (*.PSP)|*.PSP"
-	EzConsts_SPNGFilter,	"Portable Network Graphics images (*.PNG)|*.PNG"
-	EzConsts_SEDBFilter,	"EzGIS blocks (*.EDB)|*.EDB"
-	EzConsts_SNetLeft,	"Left"
-	EzConsts_SNetCleaning,	"Cleaning up layer..."
-	EzConsts_SNetUnits,	"Units"
-	EzConsts_SDGNWrongHeader,	"File `%s' does not have expected DGN header"
-	EzConsts_SNoneColorTextInColorPicker,	"Transparent"
-	EzConsts_SCustomTextInColorPicker,	"&More Colors..."
-	EzConsts_SLayerIndexOutOfRange,	"Layer index out of range"
-	EzConsts_sDrawBoxCollectionNotSame,	"All member of collection must have same TEzBaseGIS"
-	EzConsts_SFilterEnabled,	"A filter is active"
-	EzConsts_SBFFFolderName,	"C:\\"
-	EzConsts_SBFFSTatusText,	"Plase select folder"
-	EzConsts_SBFFCaption,	"Select Folder"
-	EzConsts_SLLBCurrent,	"Current"
-	EzConsts_SLLBVisible,	"Visible"
-	EzConsts_SLLBSelectable,	"Selectable"
-	EzConsts_SLLBLayerName,	"Name"
-	EzConsts_SWrongFieldName,	"Field name does not exists"
-	EzConsts_SCircleInfo,	"Radius = %.*n; Area = %.*n; Perimeter = %.*n"
-	EzConsts_SBufferRefInfo,	"Radius = %.*n"
-	EzConsts_SOneSelection,	"Selected on Layer %s, Recno %d"
-	EzConsts_SMultiSelection,	"%d selected entities"
-	EzConsts_SUnknownFormat,	"Unknown file format"
-	EzConsts_SNoNodeClicked,	"Node was not clicked"
-	EzConsts_SNetSameNodes,	"Cannot link to same node"
-	EzConsts_SNetExpressionNotNumeric,	"Exprssion is not of numeric type"
-	EzConsts_SNetDirections1,	"Starting from Picked Point %d"
-	EzConsts_SNetDirections2,	"  Travel on %s for %.*n %s"
-	EzConsts_SNetContinueStraight,	"Continue Straight onto %s"
-	EzConsts_SNetDirections3,	"Turn %s onto %s"
-	EzConsts_SNetDirections4,	"Total cost of traveling is %.*n %s"
-	EzConsts_SNetDirections5,	"====================="
-	EzConsts_SNetRight,	"Right"
-	EzConsts_SGridTooDense,	"Grid too dense to display"
-	EzConsts_Sscrcanceled,	"Script canceled"
-	EzConsts_SEmptyTable,	"<Empty Table>"
-	EzConsts_SPageid,	"Page %d"
-	EzConsts_SROwCol,	"Row %d, Col %d"
-	EzConsts_SWrongFontSize,	"Font size too small !"
-	EzConsts_SLoadingCAD,	"Loading Layer %s"
-	EzConsts_SSavingCAD,	"Saving Layer %s"
-	EzConsts_SWrongCADFile,	"This file is not a EzCAD file !"
-	EzConsts_SFileAlreadyExists,	"The file already exists !"
-	EzConsts_STextInfo,	"Height: %.2n Points; %.2n units"
-	EzConsts_SErrWrongField,	"Wrong field definition"
-	EzConsts_SThematicNotUpdated,	"Thematic map is out of date !"
-	EzConsts_SMBToomanyfields,	"Too many fields selected for thematic creation"
-	EzConsts_SCalculatingRanges,	"Calculating..."
-	EzConsts_SExpresionNull,	"Expression is empty"
-	EzConsts_SClickInterestPoint,	"Please click the point"
-	EzConsts_SEntityToDrag,	"Select an entity to drag & drop"
-	EzConsts_SDragFromCtrlPt,	"Drag from control point"
-	EzConsts_SDefineCircleCenter,	"Click the center of the circle selection"
-	EzConsts_SDefineCircle,	"Move mouse to define the circle selection"
-	EzConsts_SAreaAndPerimeter,	"Area = %.*n %s\r\nLength = %.*n %s\r\nAngle = %.2n\r\nPoints = %.2n"
-	EzConsts_SZoomUnZoom,	"Click a point to zoomin/zoomout"
-	EzConsts_SScrolling,	"Press Pick button and move the mouse to pan"
-	EzConsts_SInsertXGuideLine,	"X Coord for guideline :"
-	EzConsts_SInsertYGuideLine,	"Y Coord for guideline :"
-	EzConsts_SSelectGline,	"Select the guideline to move"
-	EzConsts_SMoveGLinetoNew,	"Move the guideline to its new position"
-	EzConsts_SUnrecognizedCommand,	"Unknown Command !"
-	EzConsts_SShpFileNotFound,	"File %s was not found !\r\nCannot import the file"
-	EzConsts_SThereAreNoLayers,	"You need at least one layer !"
-	EzConsts_SDLLLoadError,	"Error loading DLL library !"
-	EzConsts_SDXFATTRIBBad,	"Error reading ATTRIB entity"
-	EzConsts_SDXFThereIsNoHeader,	"No Header or invalid Header section in DXF file"
-	EzConsts_SDXFThereIsNoLayers,	"No Layers or Tables section invalid in DXF file"
-	EzConsts_SDXFThereIsNoBlocks,	"No Blocks or Blocks section invalid DXF file"
-	EzConsts_SDXFThereIsNoEntities,	"There are no Entities or Entities section is invalid in DXF file"
-	EzConsts_SDXFThereIsNoMaxMin,	"File does not contain Max/Min extents. Calculating..."
-	EzConsts_SDXFErrorInLine,	"An error ocurred in line or near to "
-	EzConsts_SDXFDupLayer,	"Tried to create a layer with duplicated name"
-	EzConsts_SDXFNoName,	"Tried to add a layer with no name"
-	EzConsts_SDXFCannotSave,	"Maybe destination path is on CDrom or\r\nnot enough disk space,Can't save. Warning!"
-	EzConsts_STextIsNotVisible,	"Text is invisible !\r\nThe inserted text will be invisible"
-	EzConsts_SInsertText,	"Click the text insertion point"
-	EzConsts_SEntityToReshape,	"Select an entity to modify"
-	EzConsts_SReshapeToPoint,	"Move to point (Hold down CTRL key to change rotate origin):"
-	EzConsts_SVertexToReshape,	"Select vertex to modify"
-	EzConsts_SVertexToDelete,	"Select node to delete"
-	EzConsts_SDXFInvalidInteger,	"Invalid Integer conversion"
-	EzConsts_SDXFFileReadingNow,	" DXF File reading now.."
-	EzConsts_SDXFUndefBlock,	"Undefined Block reference error"
-	EzConsts_SDXFWrongBlockInfo,	"This drawing have wrong block information,\r\nbut continue reading with ignoreing ..."
-	EzConsts_SDXFLWPolylineBad,	"LwPolyline contained more than %d  vertices %d"
-	EzConsts_SDXFPOINTBad,	"Error reading POINT entity "
-	EzConsts_SDXFINSERTBad,	"Error reading INSERT entity"
-	EzConsts_SDXFTEXTBad,	"Error reading TEXT entity"
-	EzConsts_SDXFLINEBad,	"Error reading LINE entity"
-	EzConsts_SDXFPOLYLINEBad2,	"Error reading POLYLINE entity"
-	EzConsts_SDXFLWPOLYLINEBad2,	"Error reading LWPOLYLINE entity"
-	EzConsts_SDXF3DFACEBad,	"Error reading 3DFACE entity"
-	EzConsts_SDXFSOLIDBad,	"Error reading SOLID entity"
-	EzConsts_SDXFCIRCLEBad,	"Error reading CIRCLE entity"
-	EzConsts_SDXFARCBad,	"Error reading ARC entity"
-	EzConsts_SDXFATTDEFBad,	"Error reading ATTDEF entity"
-	EzConsts_SExpressionEmpty,	"Expression or field name cannot be empty"
-	EzConsts_SWrongFieldnameCol,	"Wrong field name column %d"
-	EzConsts_SGetRecordInvalid,	"Error reading record"
-	EzConsts_SInsertNotAllowed,	"Insertion is not allowed"
-	EzConsts_SWrongReadOnly,	"Cannot change readonly property when dataset is active"
-	EzConsts_SLatLonMismatch,	"Destination file is in different coordinate system\r\nAction canceled"
-	EzConsts_SWrongProjParams,	"Parameters for the projection are wrong"
-	EzConsts_SWrongProjector,	"Projector property not defined"
-	EzConsts_SLayerAlreadyExists,	"There is a layer with same name.\r\nDo you want to replace existing layer ?"
-	EzConsts_SCannotCreateNewLayer,	"New layer cannot be created !"
-	EzConsts_SWrongEzGIS,	"GIS property unassigned"
-	EzConsts_SProjEditSource,	"Select Source File Coordinate System"
-	EzConsts_SProjEditDestin,	"Select Destination File Coordinate System"
-	EzConsts_SDXFReading,	"Reading AutoCAD file..."
-	EzConsts_SDXFPolylineBad,	"Polyline contained more than %d vertices %d"
-	EzConsts_SDXFInvalidFloat,	"Invalid Floating point conversion"
-	EzConsts_SExtendSelectEnt,	"Select entity to extend"
-	EzConsts_STrimWrongEntity,	"Cannot trim this entity"
-	EzConsts_SExtendWrongEntity,	"Cannot extend this entity"
-	EzConsts_SExtendWrongSegment,	"Cannot extend this segment"
-	EzConsts_STrimOnlyOneCuttingEdge,	"Supported only one cutting edge"
-	EzConsts_SExtendOnlyOneCuttingEdge,	"Supported only one extending edge"
-	EzConsts_SFilletWrongEntity,	"Cannot fillet this entity"
-	EzConsts_SFilletNotContiguous,	"No contiguous segments picked"
-	EzConsts_STrimCuttingEdge,	"Cannot trim the cutting edge"
-	EzConsts_SFirstExtensionLine,	"First extension line origin"
-	EzConsts_SSecondExtensionLine,	"Second extension line origin"
-	EzConsts_SDefineTextLocation,	"Text Location"
-	EzConsts_SBlobErrNotEditing,	"Dataset not in edit or insert mode"
-	EzConsts_SCannotOpenDesignMode,	"Cannot open on design mode"
-	EzConsts_SLayerNotAssigned,	"Layer property is not assigned or is not visible"
-	EzConsts_SLayerEmpty,	"Layer name is not defined"
-	EzConsts_SVertexSingleEntityError,	"Only one entity must be selected for the operation !"
-	EzConsts_SInsertVertexPoint,	"Click in the new point for the selected vertex"
-	EzConsts_SVertexEntityBadError,	"You can add vertexes to Polylines and Polygons only !"
-	EzConsts_SChangeGridOrigin,	"Please click the new Grid Origin :"
-	EzConsts_SShowHintCaption,	"Move mouse over an entity, then click for show hint. Click again for stacked entities. <Esc> finish"
-	EzConsts_SVectorialFirstPt,	"Define area. First corner:"
-	EzConsts_SVectorialSecondPt,	"Define area. Other corner:"
-	EzConsts_SSelectRefEntity,	"Please select the reference entity"
-	EzConsts_SBreakSelectFirstPoint,	"Select first point of entity"
-	EzConsts_SBreakSelectSecndPoint,	"Select second point"
-	EzConsts_SBreakWrongSelection,	"You must pick on same entity"
-	EzConsts_SBreakWrongEntity,	"Cannot break this entity"
-	EzConsts_SBreakNotClicked,	"No entities found"
-	EzConsts_STrimNoCuttingEdge,	"No cutting edge selected yet"
-	EzConsts_SExtendNoExtendEdge,	"No extend edge selected yet"
-	EzConsts_STrimSelectEnt,	"Select entity to trim"
-	EzConsts_SCircleRadius,	"Radius :"
-	EzConsts_SArcSweepAngle,	"Define sweep angle:"
-	EzConsts_SCircleEndPoint,	"Identify First Arc End Point"
-	EzConsts_SRealTimeZoom,	"Press Pick button and drag vertically to zoom"
-	EzConsts_SDefineFirstZoomPoint,	"First corner"
-	EzConsts_SDefineSecondZoomPoint,	"other corner"
-	EzConsts_SNotEnoughData,	"Need more points to build entity !"
-	EzConsts_SStartSingleSelect,	"Click an entity to select. SHIFT for single select"
-	EzConsts_SDefineBasePoint,	"Base point :"
-	EzConsts_SDefineEndPoint,	"Last point :"
-	EzConsts_SReferenceFirstPoint,	"Reference length, first point :"
-	EzConsts_SReferenceSecondPoint,	"Referenge length, second point :"
-	EzConsts_STransformLastPoint,	"Last point :"
-	EzConsts_SRotTransformLastPoint,	"Last point or angle :"
-	EzConsts_SDefineSecondSelection,	"Other corner of selection"
-	EzConsts_SWarnNoSelection,	"No entities selected !"
-	EzConsts_SInvalidSymbolVersion,	"File version is wrong !"
-	EzConsts_SWrongImageFormat,	"This file format is not supported"
-	EzConsts_SEntListIndexError,	"List index out of bounds"
-	EzConsts_SEntListCountError,	"List count error"
-	EzConsts_SEntListCapacityError,	"Capacity error"
-	EzConsts_SVectorOutOfBound,	"Vector out of bound"
-	EzConsts_SDefineFromPoint,	"From point :"
-	EzConsts_SDefineToPoint,	"To point :"
-	EzConsts_SFirstPoint,	"First point :"
-	EzConsts_SSecondPoint,	"Second point :"
-	EzConsts_SThirdPoint,	"Third point :"
-	EzConsts_SFourthPoint,	"Fourth point :"
-	EzConsts_SFifthPoint,	"Fifth point :"
-	EzConsts_SNextPoint,	"Next point :"
-	EzConsts_SClipPolygon,	"Clipping entity, "
-	EzConsts_SCircleCenter,	"Center :"
-	EzConsts_SGISUnassigned,	"Unassigned"
-	EzConsts_SEzImplMissed,	"You must include unit ezimpl.pas in your project"
-	EzConsts_SNoGISDefined,	"No basic component linked"
-	EzConsts_SSelectinLayer,	"Selecting layer "
-	EzConsts_SEntityNotClosed,	"Entity is not closed. Cannot clip"
-	EzConsts_SMultiPartNotSupported,	"Multi-part entities not supported in this release"
-	EzConsts_SLayerNotFound,	"Layer name not found"
-	EzConsts_SCannotGroup,	"Can group entities from same layer only"
-	EzConsts_SUndoDelete,	"Undo erase"
-	EzConsts_SUndoInsert,	"Undo insert"
-	EzConsts_SCannotUndo,	"Cannot undo"
-	EzConsts_SUndoTransform,	"Undo transform"
-	EzConsts_SFlatScrollBarNotAllowed,	"Flat ScrollBar cannot be used \r\nthe version of COMCTL32.dll in this system is lower than 4.71"
-	EzConsts_SEntityOutOfBound,	"Entity number out of range !"
-	EzConsts_SInvalidSymbolFile,	"Wrong file format for symbols"
-	EzConsts_SSymbolOutOfBound,	"Symbol number out of range !"
-	EzConsts_SRestNotExclusive,	"Cannot open file in exclusive mode !"
-	EzConsts_SRestructuring,	"Restructuring table"
-	EzConsts_SDuplicateLayer,	"Layer name already exists or\r\nthere is a file with same name on disk."
-	EzConsts_SRecnoInvalid,	"Recno out of range"
-	EzConsts_SRebuildTree,	"Rebuilding r-tree %s..."
-	EzConsts_SDBFNotFound,	"Base datafile of this layer cannot be found.\r\nThe layer is kept without an attached DBF file"
-	EzConsts_SUpdateExtension,	"Updating layer %s"
-	EzConsts_SThereAreNoDeleted,	"There are no deleted entities. Do you wish to\r\ncontinue to do an evaluation of this file ?"
-	EzConsts_SPackingLayer,	"Packing layer..."
-	EzConsts_SWrongRecordsRecover,	"Cannot recover %d damaged records"
-	EzConsts_SExprFail,	"Expression is not of boolean type !"
-	EzConsts_SCannotDeleteLayer,	"Layer cannot be deleted.\r\nProbably is being used in a network"
-	EzConsts_SInternalListError,	"Internal list error"
-	EzConsts_SLayerFilesNotFound,	"Cannot found the formerly files of this layer %s !\r\nThe layer is deleted from the map"
-	EzConsts_SPrinterIsBusy,	"Принтер недоступен"
-	EzConsts_SGISListError,	"Wrong Index in DrawBoxList"
-	EzConsts_SIndivClickToEdit,	"Click desired entity on the map to show/edit information"
-	EzConsts_SEntityClickCaption,	"Click an entity on the map"
-	EzConsts_SSymbolTextCaption,	"Symbol text"
-	EzConsts_SSymbolText,	"Text :"
-	EzConsts_SUnconnectedDrawBox,	"The Component is not connected to a TEzBaseDrawBox"
-	EzConsts_SMsgConfirm,	"Confirm"
-	EzConsts_SMsgError,	"Error"
-	EzConsts_SMsgWarning,	"Warning"
-	EzConsts_SMsgInfo,	"Information"
-	EzConsts_SWrongBuffer,	"Cannot create a buffer from this polyline"
-	EzConsts_SCannotCreateBuffer,	"Cannot create buffer for this kind of entity"
-	EzConsts_SCannotContainParams,	"Field %s of datatabase cannot have parameters !"
-	EzConsts_SWrongLayername,	"Wrong layer name %s, or layer is not visible or editable"
-	EzConsts_SWrongParameters,	"Parameter(s) invalid for function %s"
-	EzConsts_SExprParserError,	" %s at line : %d, Column: %d, token: %s"
-	EzConsts_SBadExtension,	"Corner coords are wrong !\r\nFirst corner must be at lower left"
-	EzConsts_SCommand,	"Command: "
-	EzConsts_SFeature,	"Feature"
-	EzConsts_SRange,	"Range"
-	EzConsts_SFrequency,	"Frequency"
-	EzConsts_SSymbolCaption,	"SYMBOL %d"
-	EzConsts_SLinetypeCaption,	"LINETYPE %d"
-	EzConsts_SScaleFmt,	"Scale = %.3f %%"
-	EzConsts_STranslateFmt,	"DX = %.3f, DY = %.3f, < %.3f"
-	EzConsts_SRotateFmt,	"< %.3f"
-	EzConsts_SNewEntityInfo,	"< %.*n, DX = %.*n, DY = %.*n, Area = %.*n, Dist = %.*n"
-	EzConsts_SIsInvalidFloatValue,	"Invalid floating point value %s"
-	EzConsts_SIsInvalidIntegerValue,	"Invalid integer value %s"
-	EzConsts_SIsInvalidBoolValue,	"Invalid boolean value %s"
-	EzConsts_SLauncher,	"Launcher"
-	EzConsts_SDragDropClick,	"Click desired entity that you wish to drag"
-	EzConsts_STextRefPtFirst,	"Please define location of text"
 END
 
 /* ..\Res\ezexpryacc.res */
-/* C:\Projects\kis\Components\EzGIS\Source\fProj.DFM */
+/* fProj.DFM */
+/* fTextEditor.dfm */
+/* fVectorialText.DFM */
+/* fRichEdit.DFM */
+/* fPictureDef.DFM */
 /* ..\Res\Ezscryacc.res */
-/* C:\Projects\kis\Components\EzGIS\Source\fVectorialText.DFM */
-/* C:\Projects\kis\Components\EzGIS\Source\fTextEditor.dfm */
-/* C:\Projects\kis\Components\EzGIS\Source\fPictureDef.DFM */
-/* C:\Projects\kis\Components\EzGIS\Source\fRichEdit.DFM */
-/* C:\Projects\kis\Components\EzGIS\Source\..\RES\EzGISRES.dcr */
-/* C:\Projects\kis\Components\EzGIS\Source\fMemoEditor.DFM */
-/* C:\Projects\kis\Components\EzGIS\Source\fExpress.DFM */
-/* C:\Projects\kis\Components\EzGIS\Source\..\RES\EZREGRES.DCR */
+/* ..\RES\EzGISRES.dcr */
+/* fExpress.DFM */
+/* fMemoEditor.DFM */
+/* ..\RES\EZREGRES.DCR */
 /* C:\Projects\kis\Components\EzGIS\Source\EzGISD7.res */
 /* C:\Projects\kis\Components\EzGIS\Source\EzGISD7.drf */

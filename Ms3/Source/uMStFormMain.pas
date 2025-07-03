@@ -1049,8 +1049,12 @@ begin
     begin
       if (ActionID = 'PROJECT_LINE') then
       begin
-        if CursorState = csCoord then
-          SavePointListToMPObject();
+        if Sender is TEzAction then
+          if not TEzAction(Sender).Cancelled then
+          begin
+            if CursorState = csCoord then
+              SavePointListToMPObject();
+          end;
         CursorState := csNone;
       end;
     end;
@@ -1257,6 +1261,8 @@ end;
 
 procedure TmstClientMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  CmdLine.Clear();
+  //
   mstClientAppModule.Layers.LayerControl := nil;
   mstClientAppModule.LogUserAcion('Выход', '');
 end;
@@ -1785,28 +1791,32 @@ var
   ObjList: ImstMPModuleObjList;
   Browser: ImstMPBrowser;
 begin
-  // прерываем действие в CmdLine
-  CursorState := csNone;
-  // копируем список точек в буфер
-  Obj := SavePointsToMPObject();
-  if Obj <> nil then
-  begin
-    try
-      if mstClientAppModule.MP.EditNewObject(Obj) then
-      begin
-        Obj.CheckState := ocsEdited;
-        mstClientAppModule.MP.LoadToGis(Obj.DatabaseId, False, False);
-        ListView.Clear;
-        DrawBox.RegenDrawing();
-        //
-        ObjList := mstClientAppModule.ObjList;
-        Browser := ObjList.Browser();
-        if Assigned(Browser) then
-          Browser.LocateObj(Obj.DatabaseId);
+  try
+    CmdLine.CurrentAction.Finished := True;
+    // копируем список точек в буфер
+    Obj := SavePointsToMPObject();
+    if Obj <> nil then
+    begin
+      try
+        if mstClientAppModule.MP.EditNewObject(Obj) then
+        begin
+          Obj.CheckState := ocsEdited;
+          mstClientAppModule.MP.LoadToGis(Obj.DatabaseId, False, False);
+          ListView.Clear;
+          DrawBox.RegenDrawing();
+          //
+          ObjList := mstClientAppModule.ObjList;
+          Browser := ObjList.Browser();
+          if Assigned(Browser) then
+            Browser.LocateObj(Obj.DatabaseId);
+        end;
+      finally
+        Obj.Free;
       end;
-    finally
-      Obj.Free;
     end;
+  finally
+    // прерываем действие в CmdLine
+    CursorState := csNone;
   end;
 end;
 
@@ -3152,7 +3162,7 @@ procedure TmstClientMainForm.DrawBoxCustomClick(Sender: TObject; X, Y: Integer; 
 var
   ActId: string;
 begin
-  if FDragtext then
+  if FDragText then
     Exit;
   if (mstClientAppModule.Mode = amPrint) and (mstPrintModule.PrintAreaId > 0) and (CursorState in [csNone, csArrow]) and (CmdLine.CurrentAction is TTheDefaultAction) then
   begin

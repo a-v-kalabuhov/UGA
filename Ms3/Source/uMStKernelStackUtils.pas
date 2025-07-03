@@ -5,12 +5,13 @@ interface
 uses
   SysUtils, ComCtrls, Math,
   uVCLUtils,
-  uMStKernelConsts,
-  uMStClassesLots, uMStClassesProjects;
+  uMStKernelConsts, uMStKernelClasses,
+  uMStClassesLots, uMStClassesProjects, uMStClassesProjectsMP;
 
   procedure ContoursToListView(ListView: TListView; Contours: TmstLotContours);
   procedure PointsToListView(ListView: TListView; aPoints: TmstLotPoints);
   procedure ProjectToListView(ListView: TListView; Prj: TmstProject);
+  procedure MPObjectToListView(ListView: TListView; Obj: TmstMPObject);
 
 implementation
 
@@ -183,6 +184,60 @@ begin
       Item := ListView.Items.Add;
       Item.Caption := 'Проверен';
       if Prj.Confirmed then
+        S := 'Да'
+      else
+        S := 'Нет';
+      Item.SubItems.Add(S);
+    end;
+    AutoSelectListViewColumnWidth(ListView);
+  finally
+    ListView.Items.EndUpdate;
+  end;
+end;
+
+procedure MPObjectToListView(ListView: TListView; Obj: TmstMPObject);
+var
+  Item: TListItem;
+  S: string;
+begin
+  if not Assigned(ListView) then
+    Exit;
+  ListView.Items.BeginUpdate;
+  try
+    ListView.Clear;
+    ListView.Columns.Clear;
+    with ListView.Columns.Add do
+    begin
+      Caption := 'Поле';
+      AutoSize := False;
+    end;
+    with ListView.Columns.Add do
+    begin
+      Caption := 'Данные';
+      AutoSize := False;
+    end;
+    //
+    if Assigned(Obj) then
+    begin
+      Item := ListView.Items.Add;
+      Item.Caption := 'Адрес';
+      Item.SubItems.Add(Obj.Address);
+      //
+      Item := ListView.Items.Add;
+      Item.Caption := 'Номер';
+      Item.SubItems.Add(Obj.DocNumber);
+      //
+      Item := ListView.Items.Add;
+      Item.Caption := 'Дата';
+      if Obj.DocDate = 0 then
+        S := ''
+      else
+        S := DateToStr(Obj.DocDate);
+      Item.SubItems.Add(S);
+      //
+      Item := ListView.Items.Add;
+      Item.Caption := 'Проверен';
+      if Obj.Confirmed then
         S := 'Да'
       else
         S := 'Нет';

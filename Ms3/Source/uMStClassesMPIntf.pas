@@ -67,6 +67,7 @@ type
   ImstMPBrowser = interface
     ['{FF25E26F-1B7D-43D7-BF45-332C9841AABC}']
     procedure Browse();
+    procedure RedrawGUI;
     procedure LocateObj(const ObjId: Integer);
   end;
 

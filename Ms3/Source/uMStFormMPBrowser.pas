@@ -187,11 +187,12 @@ type
   private
     FFastSearchColName: string;
     procedure SetFastSearchCol(aCol: TColumn);
+    function IntLocateObj(const ObjId: Integer): Boolean;
   private
     procedure Notify(const ObjId: Integer; Op: TRowOperation);
   private
     procedure LocateObj(const ObjId: Integer);
-    function IntLocateObj(const ObjId: Integer): Boolean;
+    procedure RedrawGUI();
   public
     procedure Browse();
     //
@@ -1064,6 +1065,11 @@ begin
           memBrowser2.Delete();
       end;
   end;
+end;
+
+procedure TmstMPBrowserForm.RedrawGUI;
+begin
+  Repaint;
 end;
 
 procedure TmstMPBrowserForm.RefreshCurrentRow;
