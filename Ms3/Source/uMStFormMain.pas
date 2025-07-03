@@ -24,7 +24,7 @@ uses
   uMStKernelStackConsts, uMStKernelIBX, uMStConsts, uMStClassesMPIntf,
   uMStImport, uMstImportFactory, uMStClassesProjectsEz,
   uMStClassesWatermarkDraw, uMstClassesLots, uMStClassesProjects, uMStClassesProjectsSearch, uMStClassesProjectsMIFExport,
-  uMstDialogFactory, uMStClassesProjectsMP, 
+  uMstDialogFactory, uMStClassesProjectsMP, uMStClassesPointsImport,
   uMStModuleMapMngrIBX, uMStModuleProjectImport, uMstModuleMasterPlan, uMStDialogMPLineColors,
   uMStFormLayerBrowser, uMStClassesProjectsExportToMP;
 
@@ -551,6 +551,8 @@ type
     procedure acLotUnloadAllUpdate(Sender: TObject);
     procedure acCopyProjectsToMPExecute(Sender: TObject);
     procedure acCopyProjectsToMPUpdate(Sender: TObject);
+    procedure acPastePointsUpdate(Sender: TObject);
+    procedure acPastePointsExecute(Sender: TObject);
   private
     FPoints: TMstPointArray;
     FCursorState: TCursorState;
@@ -613,6 +615,9 @@ type
     procedure CloseProjectsBrowser();
     procedure CloseMPBrowser();
     procedure DisplayMPClassSettings();
+    //
+    procedure LoadPointsFromText(const Txt: string);
+    function ReadPointsFromText(const aText: string): TmstImportedPointList;
   private
     procedure WmRestorePanels(var Message: TMessage); message WM_RESTORE_PANELS;
     procedure WMPaint(var Msg: TWMPaint); message WM_PAINT;
@@ -1565,6 +1570,58 @@ begin
   end;
 end;
 
+procedure TmstClientMainForm.LoadPointsFromText(const Txt: string);
+var
+  Pts: TmstImportedPointList;
+  I: Integer;
+  J: Integer;
+  XCol, YCol: TmstImportedPointsColumn;
+  Pt: TEzPoint;
+  Dlg: ImstImportPointsDialog;
+  R: TEzRect;
+  DisplayRect: Boolean;
+begin
+  Pts := ReadPointsFromText(Txt);
+  if Assigned(Pts) then
+  try
+    Dlg := TmstDialogFactory.NewPointsImportDialog();
+    if not Dlg.Execute(Pts) then
+      Exit;
+    //
+    DisplayRect := Pts.ReplaceOldPoints or (TmstMeasureAction(CmdLine.CurrentAction).Entity.Points.Count = 1);
+    try
+      if Pts.ReplaceOldPoints then
+        TmstMeasureAction(CmdLine.CurrentAction).ClearPoints;
+      //
+      J := -1;
+      if ListView.Selected <> nil then
+        J := ListView.Selected.Index;
+      XCol := Pts.Columns[Pts.XIndex];
+      YCol := Pts.Columns[Pts.YIndex];
+      for I := 0 to Pred(XCol.Count) do
+      begin
+        Pt.X := XCol.Coord[I];
+        Pt.Y := YCol.Coord[I];
+        Pt := CityToDecartPoint(Pt);
+        TmstMeasureAction(CmdLine.CurrentAction).InsertPoint(Pt, J + 1);
+        Inc(J);
+      end;
+
+      if DisplayRect then
+      begin
+        R := TmstMeasureAction(CmdLine.CurrentAction).Extenstion;
+        InflateRect2D(R, (R.xmax - R.xmin) / 20, (R.ymax - R.ymin) / 20);
+        DrawBox.ZoomWindow(R);
+      end;
+      TmstMeasureAction(CmdLine.CurrentAction).OnPaint(DrawBox);
+    finally
+      DrawBox.RegenDrawing;
+    end;
+  finally
+    Pts.Free;
+  end;
+end;
+
 procedure TmstClientMainForm.LoadProjects(const ALeft, ATop, ARight, ABottom: Double);
 var
   Frm: TmstLoadLotProgressForm;
@@ -1743,6 +1800,50 @@ begin
     S := '0';
   end;
   mstClientAppModule.SetOption('Session', 'ViewInCK36', S);
+end;
+
+function TmstClientMainForm.ReadPointsFromText(const aText: string): TmstImportedPointList;
+var
+  Stream1, Stream2: TStream;
+  MaxCount: Integer;
+  MaxSep: Char;
+  Tmp: TmstImportedPointList;
+  I: Integer;
+begin
+  Result := nil;
+  //
+  MaxCount := -1;
+  MaxSep := TmstImportedPointList.LastSeparator;
+  //
+  Tmp := TmstImportedPointList.Create;
+  Tmp.Text := aText;
+  //
+  if (MaxCount < Tmp.ColCount) and (Tmp.XIndex >= 0) and (Tmp.YIndex >= 0) then
+  begin
+    MaxCount := Tmp.ColCount;
+    MaxSep := Tmp.Separator;
+  end;
+  //
+  Tmp.Separator := #9;
+  if (MaxCount < Tmp.ColCount) and (Tmp.XIndex >= 0) and (Tmp.YIndex >= 0) then
+  begin
+    MaxCount := Tmp.ColCount;
+    MaxSep := Tmp.Separator;
+  end;
+  //
+  Tmp.Separator := #32;
+  if (MaxCount < Tmp.ColCount) and (Tmp.XIndex >= 0) and (Tmp.YIndex >= 0) then
+  begin
+    MaxCount := Tmp.ColCount;
+    MaxSep := Tmp.Separator;
+  end;
+  //
+  Tmp.Separator := MaxSep;
+  //
+  if (Tmp.XIndex >= 0) and (Tmp.YIndex >= 0) then
+    Result := Tmp
+  else
+    Tmp.Free;
 end;
 
 procedure TmstClientMainForm.ReleaseImage(Sender: TObject);
@@ -2336,6 +2437,7 @@ begin
   else
   begin
     CursorState := csCoord;
+    ListView.Clear;
     Act := TmstMeasureAction.CreateAction(CmdLine);
     Act.OnPointListChange := ShowCoord;
     Act.ShowResult := False;
@@ -2347,6 +2449,28 @@ procedure TmstClientMainForm.acMPPickupPointsUpdate(Sender: TObject);
 begin
   acMPPickupPoints.Enabled := CursorState in [csNone, csArrow];
   acMPPickupPoints.Checked := CursorState = csCoord;
+end;
+
+procedure TmstClientMainForm.acPastePointsExecute(Sender: TObject);
+var
+  Txt: string;
+begin
+  Txt := ClipBoard.AsText;
+  LoadPointsFromText(Txt);
+end;
+
+procedure TmstClientMainForm.acPastePointsUpdate(Sender: TObject);
+var
+  B: Boolean;
+begin
+  try
+    B := Clipboard.HasFormat(CF_TEXT);
+    B := B and (Length(Clipboard.AsText) > 0);
+    acPastePoints.Enabled := B;
+  except
+    B := False;
+  end;
+  acPastePoints.Enabled := B and (CursorState = csCoord);
 end;
 
 procedure TmstClientMainForm.acPrintPrepareExecute(Sender: TObject);

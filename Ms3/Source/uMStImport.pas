@@ -74,6 +74,11 @@ type
     property Settings: ImstImportSettings read GetSettings;
   end;
 
+  ImstImportPointsDialog = interface
+    ['{201EDDCD-7F9B-42D5-9374-EA592657521F}']
+    function Execute(aPointsList: TObject): Boolean;
+  end;
+
 implementation
 
 end.

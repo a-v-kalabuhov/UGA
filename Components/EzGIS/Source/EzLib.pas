@@ -448,6 +448,7 @@ Function MirrorAroundX: TEzMatrix;
 { Clipping functions }
 Function IntersectRect2D( Const r1, r2: TEzRect ): TEzRect;
 Function UnionRect2D( Const r1, r2: TEzRect ): TEzRect;
+Function UnionRectAndPoint2D( Const R: TEzRect; const Pt: TEzPoint ): TEzRect;
 Function ClipLine2D( Const Clip: TEzRect; Var X1, Y1, X2, Y2: Double ): TEzClipCodes;
 Function ClipLineLeftRight2D( Const Clip: TEzRect; Var X1, Y1, X2, Y2: Double ): TEzClipCodes;
 Function ClipLineUpBottom2D( Const Clip: TEzRect; Var X1, Y1, X2, Y2: Double ): TEzClipCodes;
@@ -4381,6 +4382,14 @@ Begin
   result.x2 := dmax( r1.x2, r2.x2 );
   result.y2 := dmax( r1.y2, r2.y2 );
 End;
+
+Function UnionRectAndPoint2D( Const R: TEzRect; const Pt: TEzPoint ): TEzRect;
+begin
+  result.x1 := dmin( R.x1, Pt.x );
+  result.y1 := dmin( R.y1, Pt.y );
+  result.x2 := dmax( R.x2, Pt.x );
+  result.y2 := dmax( R.y2, Pt.y );
+end;
 
 Function IsRectEmpty2D( Const R: TEzRect ): Boolean;
 Begin

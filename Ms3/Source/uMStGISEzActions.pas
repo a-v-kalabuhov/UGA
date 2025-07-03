@@ -47,6 +47,7 @@ type
     procedure ReplacePoint(const Pt: TEzPoint; Index: Integer); override;
     procedure RemovePoint(Index: Integer); override;
     procedure ClearPoints; override;
+    function Extenstion: TEzRect;
     //
     property ShowResult: Boolean read FShowResult write SetShowResult;
   end;
@@ -562,6 +563,30 @@ begin
       with CmdLine.ActiveDrawBox do Invalidate;
     end;
   UpdateLastPoint;
+end;
+
+function TmstMeasureAction.Extenstion: TEzRect;
+var
+  Pt: TEzPoint;
+  Tmp: TEzEntity;
+begin
+  Result := NULL_EXTENSION;
+  if FEntity.Points.Count > 0 then
+  begin
+    Pt := FEntity.Points[FEntity.Points.Count - 1];
+    if EqualPoint2D(Pt, CmdLine.CurrentPoint) then
+    begin
+      Tmp := FEntity.Clone;
+      try
+        Tmp.Points.Delete(Tmp.Points.Count - 1);
+        Result := Tmp.FBox;
+      finally
+        Tmp.Free;
+      end;
+    end
+    else
+      Result := FEntity.FBox;
+  end;
 end;
 
 procedure TmstMeasureAction.UpdateLastPoint;

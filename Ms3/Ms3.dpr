@@ -116,7 +116,9 @@ uses
   uMStClassesProjectsExportToMP in 'Source\uMStClassesProjectsExportToMP.pas',
   uMStClassesProjectsIntf in 'Source\uMStClassesProjectsIntf.pas',
   uMStClassesMPVoltages in 'Source\uMStClassesMPVoltages.pas',
-  uMStClassesMPPressures in 'Source\uMStClassesMPPressures.pas';
+  uMStClassesMPPressures in 'Source\uMStClassesMPPressures.pas',
+  uMStClassesPointsImport in 'Source\uMStClassesPointsImport.pas',
+  uMStDialogPointsImport in 'Source\uMStDialogPointsImport.pas' {MstDialogImportPointsForm};
 
 {$R *.RES}
 
@@ -127,9 +129,9 @@ begin
   Application.Title := 'Планшетохранилище 3.1';
   try
     Application.CreateForm(TmstClientAppModule, mstClientAppModule);
-    Application.CreateForm(TmstPrintModule, mstPrintModule);
-    Application.CreateForm(TmstClientMainForm, mstClientMainForm);
-    Application.CreateForm(TmstDefaultActionsModule, mstDefaultActionsModule);
+  Application.CreateForm(TmstPrintModule, mstPrintModule);
+  Application.CreateForm(TmstClientMainForm, mstClientMainForm);
+  Application.CreateForm(TmstDefaultActionsModule, mstDefaultActionsModule);
   except
     on E: Exception do
     begin
