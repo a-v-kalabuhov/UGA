@@ -65,7 +65,8 @@ const
 
   procedure ToCK36(const _X, _Y: double; var X, Y: double; DoRound: boolean = false); overload;
   procedure ToCK36(var X, Y: double; DoRound: boolean = false); overload;
-  procedure ToVRN(const _X, _Y: double; var X, Y: double; DoRound: boolean = false);
+  procedure ToVRN(const _X, _Y: double; var X, Y: double; DoRound: boolean = false); overload;
+  procedure ToVRN(var X, Y: double; DoRound: boolean = false); overload;
 
 implementation
 
@@ -238,6 +239,15 @@ begin //  ToVRN
     X := GeoRound(X);
     Y := GeoRound(Y);
   end;
+end;
+
+procedure ToVRN(var X, Y: double; DoRound: boolean = false);
+var
+  X1, Y1: Double;
+begin
+  ToVRN(X, Y, X1, Y1, DoRound);
+  X := X1;
+  Y := Y1;
 end;
 
 end.

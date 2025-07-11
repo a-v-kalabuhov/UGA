@@ -4,11 +4,12 @@ interface
 
 uses
   SysUtils, Classes, Windows, Clipbrd,
-  uStringUtils;
+  uStringUtils, uGeoUtils;
 
 type
   TPointUtils = class
   private
+    class function IntReadXYFromText(const aText: string; const FieldDelimiter: Char; var X, Y: Double; var MSK36: Boolean): Boolean;
     class function ReadXYFromText(const aText: string; var X, Y: Double; var MSK36: Boolean): Boolean;
   public
     class procedure PointToClipboard(const Xgeo, Ygeo: Double; const MSK36: Boolean);
@@ -18,6 +19,96 @@ type
 implementation
 
 { TPointUtils }
+
+class function TPointUtils.IntReadXYFromText(const aText: string; const FieldDelimiter: Char; var X, Y: Double;
+  var MSK36: Boolean): Boolean;
+var
+  Tmp: TStringList;
+  S: string;
+begin
+  Result := False;
+  Tmp := TStringList.Create;
+  try
+    Tmp.Delimiter := FieldDelimiter;
+    Tmp.StrictDelimiter := True;
+    Tmp.DelimitedText := aText;
+    // комбинации:
+    // 1 - координата, 2 - координата, 3 - СК или отсутствует
+    // 1 - номер, 2 - координата, 3 - координата, 4 - СК или отсутствует
+
+    // проверяем вторую конфигурацию
+    if Tmp.Count >= 3 then
+    begin
+      if TStringConverter.StrToFloat(Trim(Tmp[1])) then
+      begin
+        X := TStringConverter.FloatValue;
+        if TStringConverter.StrToFloat(Trim(Tmp[2])) then
+        begin
+          Y := TStringConverter.FloatValue;
+          //
+          Result := True;
+          //
+          if Tmp.Count = 3 then
+          begin
+            MSK36 := TGeoUtils.IsMCK36(X, Y);
+            Exit;
+          end
+          else
+          begin
+            S := AnsiUpperCase(Trim(Tmp[3]));
+            if S = 'MSK36' then
+            begin
+              MSK36 := True;
+              Result := True;
+              Exit;
+            end
+            else
+              if S = 'VRN' then
+                MSK36 := False
+              else
+                MSK36 := TGeoUtils.IsMCK36(X, Y);
+          end;
+        end;
+        Exit;
+      end;
+    end;
+    // проверяем первую конфигурацию
+    if TStringConverter.StrToFloat(Trim(Tmp[0])) then
+    begin
+      X := TStringConverter.FloatValue;
+      if TStringConverter.StrToFloat(Trim(Tmp[1])) then
+      begin
+        Y := TStringConverter.FloatValue;
+        //
+        Result := True;
+        //
+        if Tmp.Count = 2 then
+        begin
+          MSK36 := TGeoUtils.IsMCK36(X, Y);
+          Exit;
+        end
+        else
+        begin
+          S := AnsiUpperCase(Trim(Tmp[2]));
+          if S = 'MSK36' then
+          begin
+            MSK36 := True;
+            Result := True;
+            Exit;
+          end
+          else
+            if S = 'VRN' then
+              MSK36 := False
+            else
+              MSK36 := TGeoUtils.IsMCK36(X, Y);
+        end;
+      end;
+      Exit;
+    end;
+  finally
+    Tmp.Free;
+  end;
+end;
 
 class function TPointUtils.PointFromClipboard(var Xgeo, Ygeo: Double; var MSK36: Boolean): Boolean;
 begin
@@ -47,38 +138,10 @@ begin
 end;
 
 class function TPointUtils.ReadXYFromText(const aText: string; var X, Y: Double; var MSK36: Boolean): Boolean;
-var
-  Tmp: TStringList;
-  S: string;
 begin
-  Result := False;
-  Tmp := TStringList.Create;
-  try
-    Tmp.Delimiter := #9;
-    Tmp.StrictDelimiter := True;
-    Tmp.DelimitedText := aText;
-    if Tmp.Count < 3 then
-      Exit;
-    if TStringConverter.StrToFloat(Trim(Tmp[0])) then
-    begin
-      X := TStringConverter.FloatValue;
-      if TStringConverter.StrToFloat(Trim(Tmp[1])) then
-      begin
-        Y := TStringConverter.FloatValue;
-        S := AnsiUpperCase(Trim(Tmp[2]));
-        if S = 'MSK36' then
-          MSK36 := True
-        else
-          if S = 'VRN' then
-            MSK36 := False
-          else
-            Result := False;
-        
-      end;
-    end;
-  finally
-    Tmp.Free;
-  end;
+  Result := IntReadXYFromText(aText, #9, X, Y, MSK36);
+  if not Result then
+    Result := IntReadXYFromText(aText, ';', X, Y, MSK36);
 end;
 
 end.

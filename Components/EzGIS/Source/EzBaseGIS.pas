@@ -5190,7 +5190,7 @@ Begin
       If Not HideVertexNumber And Not ( EntID In [idPlace, idJustifVectText, idFittedVectText] ) Then
       Begin
         If I <> FSelectedVertex Then
-          Canvas.TextOut( TmpPt.X + UseWdt + 1, TmpPt.Y + UseWdt + 1, IntToStr( I ) );
+          Canvas.TextOut( TmpPt.X + UseWdt + 1, TmpPt.Y + UseWdt + 1, IntToStr( I + 1 ) );
       End;
     End;
   Finally

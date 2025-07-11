@@ -505,6 +505,11 @@ end;
 procedure TmstMPBrowserForm.acViewFastSearchExecute(Sender: TObject);
 begin
   pnlFastSearch.Visible := not pnlFastSearch.Visible;
+  if pnlFastSearch.Visible then
+  begin
+    SetFastSearchCol(kaDBGrid1.CurrentCol);
+    edFastSearch.SetFocus;
+  end;
 end;
 
 procedure TmstMPBrowserForm.acViewFastSearchUpdate(Sender: TObject);

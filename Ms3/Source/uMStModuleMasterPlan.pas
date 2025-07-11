@@ -7,7 +7,7 @@ uses
   IBCustomDataSet, IBUpdateSQL, DB, IBQuery, IBDatabase,
   EzBaseGIS, EzLib, EzBase,
   RxMemDS,
-  uCommonUtils, uGC,
+  uCommonUtils, uGC, uGeoUtils, uCK36,
   uEzEntityCSConvert, uEzIntersection, uEzGeometry, uEzRectRelation, uEzEntityDivide,
   uMStConsts,
   uMStClassesProjects, uMStClassesProjectsMP, uMStKernelGISUtils, uMStClassesMasterPlan, uMStKernelIBX,
@@ -624,6 +624,9 @@ begin
       X, Y, Dummy, False, True, False)
   then
   begin
+    if TGeoUtils.IsMCK36(X, Y) then
+      ToVRN(X, Y, False);
+    
     // получили точку
     if not LocateObj(ObjId, memEzData) then
       raise Exception.Create('TmstMasterPlanModule.DivideObj - LocateObj(ObjId, memEzData)');
@@ -633,14 +636,24 @@ begin
     try
       // формируем две новых ентити
       Divider.Divide(Point2D(Y, X), FiveMm);
+      //
+      // а что есть не получилось разделить объект по этой точке? Надо кидать исключение!
+      if (Divider.Result1 = nil) or (Divider.Result2 = nil) then
+      begin
+        ShowMessage(
+          'Не удалось разделить объект!' + sLineBreak +
+          'Расстояние от точки до объекта: ' + Format('%8.2f', [Divider.Distance])
+        );
+        Exit;
+      end;
       // - после этого вытаскиваем объект из БД и заменяем ему энтити на новую
       TheObj := GetObjByDbId(ObjId, False);
       TheObj.ReplaceEntity(Divider.Result1, False);
       // - потом клонируем объект, создаём ему новый ID, назвачаем вторую энтити и сохраняем
       NewObj := TmstMPObject.Create;
-      NewObj.Assign(TheObj);
+      NewObj.Assign(TheObj); // потеряли гуид
       NewObj.DatabaseId := 0;
-      NewObj.RestoreGuid();
+      NewObj.RestoreGuid(); // восстановили гуид
       NewObj.ReplaceEntity(Divider.Result2, True);
       //
       SaveMPObjectAndCoords(TheObj);
@@ -648,8 +661,9 @@ begin
       //
       RefreshObjList();
       //
-      if IsLoaded(NewObj.DatabaseId) then
-        LoadToGis(NewObj.DatabaseId, False, False);
+      if LocateObj(NewObj.DatabaseId, memEzData) then
+        if not IsLoaded(NewObj.DatabaseId) then
+          LoadToGis(NewObj.DatabaseId, True, False);
       //
       UpdateIntersectListAfterDivision(ObjId, TheObj, NewObj);
     finally

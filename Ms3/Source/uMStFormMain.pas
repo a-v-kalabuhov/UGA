@@ -68,7 +68,7 @@ type
 
   TEntityState = (esNone, esResizePointFound, esResizing);
 
-  TmstClientMainForm = class(TForm)
+  TmstClientMainForm = class(TForm, ImstCoordView)
     MainMenu: TMainMenu;
     StatusBar: TStatusBar;
     ActionList: TActionList;
@@ -329,7 +329,7 @@ type
     acProjectBrowse: TAction;
     acProjectFindByAddress: TAction;
     N48: TMenuItem;
-    N361: TMenuItem;
+    miDisplayCoordsInMCK36: TMenuItem;
     acProjectAdd2: TAction;
     N49: TMenuItem;
     N50: TMenuItem;
@@ -526,7 +526,7 @@ type
     procedure acLayerBrowserExecute(Sender: TObject);
     procedure acProjectBrowseExecute(Sender: TObject);
     procedure acProjectFindByAddressExecute(Sender: TObject);
-    procedure N361Click(Sender: TObject);
+    procedure miDisplayCoordsInMCK36Click(Sender: TObject);
     procedure acProjectAdd2Execute(Sender: TObject);
     procedure acProjectExportUpdate(Sender: TObject);
     procedure acProjectExportExecute(Sender: TObject);
@@ -631,6 +631,11 @@ type
     procedure DoSwitchScrollCommand();
     procedure DoRunAutoScroll(Shift: TShiftState; const X, Y: Integer; const WX, WY: Double);
   private
+    //ImstCoordView
+    procedure CoordSystemChanged(const Value: TCoordSystem);
+  private
+    FLastDisplayedPoint: TEzPoint;
+    procedure DisplayLastCoordinates(WX, WY: Double);
     procedure SavePointListToMPObject();
     function SavePointsToMPObject(): TmstMPObject;
   public
@@ -751,7 +756,11 @@ begin
   if TmstPointForm.ShowTargetPoint(P, b) then
   begin
     if mstClientAppModule.ViewCoordSystem = csMCK36 then
-      ToCK36(P.x, P.y, False);
+    begin
+      if TGeoUtils.IsMCK36(P.x, P.y) then
+        ToVRN(P.x, P.y, False);
+//      ToCK36(P.x, P.y, False);
+    end;
     //
     Tmp := P.y;
     P.y := P.x;
@@ -1132,16 +1141,23 @@ begin
   end;
 end;
 
+procedure TmstClientMainForm.DisplayLastCoordinates(WX, WY: Double);
+begin
+  FLastDisplayedPoint.x := WX;
+  FLastDisplayedPoint.y := WY;
+  if miDisplayCoordsInMCK36.Checked then
+  begin
+    uCK36.ToCK36(WY, WX);
+  end;
+  StatusBar.Panels[0].Text := 'X: ' + FloatToStrF(WY, ffFixed, 10, 2) + '; Y: ' + FloatToStrF(WX, ffFixed, 10, 2);
+end;
+
 procedure TmstClientMainForm.DrawBoxMouseMove2D(Sender: TObject; Shift: TShiftState; X, Y: Integer; const WX, WY: Double);   // +
 begin
   try
     WorldX := WX;
     WorldY := WY;
-    if N361.Checked then
-    begin
-      uCK36.ToCK36(WY, WX, WorldY, WorldX);
-    end;
-    StatusBar.Panels[0].Text := 'X: ' + FloatToStrF(WorldY, ffFixed, 10, 2) + '; Y: ' + FloatToStrF(WorldX, ffFixed, 10, 2);
+    DisplayLastCoordinates(WX, WY);
     if ssLeft in Shift then
     begin
       if mstClientAppModule.Mode = amPrint then
@@ -1665,13 +1681,6 @@ begin
   S := mstClientAppModule.GetOption('Session', 'Map500Search', '');
   if S <> '' then
     edtFastFindMap.Text := S;
-  S := mstClientAppModule.GetOption('Session', 'ViewInCK36', '0');
-  if not TryStrToInt(S, I) then
-    I := 0;
-  if I <> 0 then
-    mstClientAppModule.ViewCoordSystem := csMCK36
-  else
-    mstClientAppModule.ViewCoordSystem := csVrn;
 end;
 
 procedure TmstClientMainForm.LoadWatermark(aMapMngr: TMStIBXMapMngr);
@@ -1784,11 +1793,11 @@ begin
   acFindLotByAddressExecute(Sender);
 end;
 
-procedure TmstClientMainForm.N361Click(Sender: TObject);
+procedure TmstClientMainForm.miDisplayCoordsInMCK36Click(Sender: TObject);
 var
   S: string;
 begin
-  N361.Checked := not N361.Checked;
+  miDisplayCoordsInMCK36.Checked := not miDisplayCoordsInMCK36.Checked;
   if mstClientAppModule.ViewCoordSystem = csVrn then
   begin
     mstClientAppModule.ViewCoordSystem := csMCK36;
@@ -2112,6 +2121,12 @@ end;
 procedure TmstClientMainForm.acCopySelectedExecute(Sender: TObject);
 begin
   CopyPoints(False);
+end;
+
+procedure TmstClientMainForm.CoordSystemChanged(const Value: TCoordSystem);
+begin
+  miDisplayCoordsInMCK36.Checked := Value = csMCK36;
+  DisplayLastCoordinates(FLastDisplayedPoint.x, FLastDisplayedPoint.y);
 end;
 
 procedure TmstClientMainForm.CopyPoints(all: Boolean);

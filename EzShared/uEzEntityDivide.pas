@@ -14,6 +14,7 @@ type
     FResult1: TEzEntity;
     FResult2: TEzEntity;
     FDelta: Double;
+    FDistance: Double;
   public
     constructor Create(aEntity: TEzEntity);
     destructor Destroy; override;
@@ -22,6 +23,7 @@ type
     //
     property Result1: TEzEntity read FResult1;
     property Result2: TEzEntity read FResult2;
+    property Distance: Double read FDistance;
   end;
 
 implementation
@@ -52,9 +54,12 @@ var
   I1: Integer;
   I2: Integer;
   A, B: TEzPoint;
+  D: Double;
 begin
   FreeAndNil(FResult1);
   FreeAndNil(FResult2);
+  //
+  FDistance := MaxInt;
   FDelta := aDelta;
   Tmp := TEzVector.Create(0);
   R1 := TEzVector.Create(0);
@@ -66,6 +71,17 @@ begin
     if (FEntity.EntityID = idPolygon) and not Closed then
     begin
       Tmp.Add(FEntity.Points[0]);
+    end;
+    // считаем расстояние до объекта
+    I2 := 1;
+    for I1 := 0 to Tmp.Count - 2 do
+    begin
+      A := Tmp[I1];
+      B := Tmp[I2];
+      Inc(I2);
+      TGeometry.DistanceLinePoint(DivPoint, A, B, FDelta, D);
+      if D < FDistance then
+        FDistance := D;
     end;
     //
     I2 := 1;
@@ -97,10 +113,17 @@ begin
     for I := I2 to Tmp.Count - 1 do
        R2.Add(Tmp[I]);
     //
-    FResult1 := TEzPolyLine.Create(0, True);
-    FResult1.Points.AddVector(R1);
-    FResult2 := TEzPolyLine.Create(0, True);
-    FResult2.Points.AddVector(R2);
+    if (R2.Count = 0) or (R1.Count = 0) then
+    begin
+
+    end
+    else
+    begin
+      FResult1 := TEzPolyLine.Create(0, True);
+      FResult1.Points.AddVector(R1);
+      FResult2 := TEzPolyLine.Create(0, True);
+      FResult2.Points.AddVector(R2);
+    end;
   finally
     R2.Free;
     R1.Free;

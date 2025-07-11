@@ -82,7 +82,7 @@ type
     class function GetNeighbourMap(const Nomenclature: String; const Position: TNeighbour4): string;
     class function IsNomenclatureValid(const aNomenclature: String; const StrictNumbers: Boolean): Boolean;
     class function GetNomenclature(const aNomenclature: String; const StrictNumbers: Boolean): TNomenclature;
-    class function IsMCK36(const X, Y: Double): Boolean;
+    class function IsMCK36(const Xgeo, Ygeo: Double): Boolean;
   private
     class function GetPart1(const aValue: String): TPart1;
     class function GetPart2(const aValue: String; const StrictCheck: Boolean): TPart2;
@@ -659,12 +659,12 @@ begin
   Result := (aValue = RR) or (aValue = LL) or (aValue = RL) or (aValue = LR);
 end;
 
-class function TGeoUtils.IsMCK36(const X, Y: Double): Boolean;
+class function TGeoUtils.IsMCK36(const Xgeo, Ygeo: Double): Boolean;
 var
   Coords: TCoords;
 begin
-  Coords.X := X;
-  Coords.Y := Y;
+  Coords.X := Xgeo;
+  Coords.Y := Ygeo;
   Coords.Geo := True;
   Result := Coords.GetCoordSystem() = csMCK36;
 end;

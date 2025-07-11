@@ -265,6 +265,8 @@ type
     function GetAppSettings: ImstAppSettings;
     function GetProjects: ImstProjects;
     function GetDb: IDb;
+  private
+    procedure LoadCKOptions;
   public
     procedure UnloadAllLots;
   public
@@ -1018,6 +1020,21 @@ begin
   LinkLotsToLayer;
 end;
 
+procedure TMStClientAppModule.LoadCKOptions();
+var
+  S: string;
+  I: Integer;
+begin
+  S := mstClientAppModule.GetOption('Session', 'ViewInCK36', '0');
+  if not TryStrToInt(S, I) then
+    I := 0;
+  if I <> 0 then
+    Self.ViewCoordSystem := csMCK36
+  else
+    Self.ViewCoordSystem := csVrn;
+
+end;
+
 function TMStClientAppModule.InitMainForm(ErrorHandler: TmstHandler;
   ProgressHandler: TmstProgressEvent): Boolean;
 begin
@@ -1034,6 +1051,8 @@ begin
     //
     FNetTypes.Load(FMapMngr as IDb);
     mstClientMainForm.LoadNetTypes();
+    //
+    Subscribe(mstClientMainForm);
   except
     Result := False;
     Application.HandleException(Self);
@@ -1424,6 +1443,7 @@ end;
 procedure TMStClientAppModule.Subscribe(aView: ImstCoordView);
 begin
   FCoordViews.Add(aView);
+  NotifyCoordViews();
 end;
 
 procedure TMStClientAppModule.TurnOffLayer(Sender: TObject; aLayer: TmstLayer);
@@ -2298,6 +2318,7 @@ begin
   FUser := TmstUser.Create;
   FUser.Id := GetLastUserId;
   FUser.OfficeId := GetLastUserOfficeId;
+  LoadCKOptions();
 end;
 
 procedure TMStClientAppModule.BeforeAddLotToList(aList: TmstLotList; var aLot: TmstLot);
