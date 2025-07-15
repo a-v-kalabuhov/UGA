@@ -46,7 +46,7 @@ type
     FImportEzLayer: TEzBaseLayer;
     FImportLayer: TmstLayer;
     FImportedLayers: TList;
-    FDeletedLayers: TObjectList;
+    FDeletedLayers: TStringList;
     procedure DeleteLayer();
     function GetLayer(): TmstLayer;
     procedure LoadLayers();
@@ -106,16 +106,18 @@ var
   Sel: TListItem;
   I1, I2: Integer;
   Itm: TListItem;
+  L: TmstLayer;
 begin
   Sel := lvLayers.Selected;
   if Assigned(Sel) then
   begin
     lvLayers.Items.BeginUpdate;
     try
+      L := GetLayer();
       I1 := Sel.Index;
       I2 := I1 + 1;
       Itm := lvLayers.Items.Insert(I2);
-      SetLayer(Itm, GetLayer());
+      SetLayer(Itm, L);
       lvLayers.DeleteSelected;
       Itm.Selected := True;
     finally
@@ -231,8 +233,7 @@ begin
   // удаляем из него лишние слои
   for I := 0 to FDeletedLayers.Count - 1 do
   begin
-    L := FDeletedLayers[I] as TmstLayer;
-    DeleteLayerFiles(L.Name, ZipFiles);
+    DeleteLayerFiles(FDeletedLayers[I], ZipFiles);
   end;
   // добавляем файлы новых слоёв
   for I := 0 to FImportedLayers.Count - 1 do
@@ -320,7 +321,7 @@ begin
     if FImportedLayers.IndexOf(L) > 0 then
       FImportedLayers.Remove(L)
     else
-      FDeletedLayers.Add(L);
+      FDeletedLayers.Add(L.Name);
     mstClientAppModule.MapMngr.DeleteLayer(L);
     mstClientAppModule.Layers.Remove(L);
     lvLayers.DeleteSelected;
@@ -343,7 +344,7 @@ end;
 procedure TMStFormLayers.FormCreate(Sender: TObject);
 begin
   FImportedLayers := TList.Create;
-  FDeletedLayers := TObjectList.Create;
+  FDeletedLayers := TStringList.Create;
 end;
 
 procedure TMStFormLayers.FormDestroy(Sender: TObject);
@@ -363,12 +364,19 @@ end;
 function TMStFormLayers.GetLayer: TmstLayer;
 var
   Itm: TListItem;
+  Tmp: TObject;
 begin
+  Result := nil;
   Itm := lvLayers.Selected;
-  if Assigned(Itm) then
-    Result := Itm.Data
-  else
-    Result := nil;
+  if Assigned(Itm) and (Itm.Data <> nil) then
+  begin
+    Tmp := Itm.Data;
+    try
+      if (Tmp is TmstLayer) then
+        Result := Itm.Data;
+    except
+    end;
+  end;
 end;
 
 function TMStFormLayers.ImportMifFile(const aFileName: string): Boolean;
@@ -556,7 +564,7 @@ begin
   Itm.Caption := mstLayer.Caption;
   Itm.Data := mstLayer;
   if mstLayer.LayerType = ID_LT_IMPORTED then
-    Itm.SubItems.Add('импорт.')
+    Itm.SubItems.Add('импортированный')
   else
     Itm.SubItems.Add('');
 end;

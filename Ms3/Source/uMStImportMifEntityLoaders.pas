@@ -368,7 +368,7 @@ begin
       FPen.Color := GetColor(aColor);
       // TODO : тип линии не устанавливается, всегда сплошная
       FPen.Style := 1; //StrToInt(PenLines[1]) - 1;
-      FPen.Width := StrToIntDef(PenLines[0], 0);
+      FPen.Width := StrToIntDef(PenLines[0], 0) / 10;
 //      if FPen.Width > 0 then
 //        FPen.Width := -FPen.Width;
 //      FPen.Width := 0
@@ -494,9 +494,11 @@ begin
   Result := nil;
   try
     ReadLine();
+    RegionPartCount := 0;
     if not TryStrToInt(FLineParts[1], RegionPartCount) then
       Exit;
     ReadNextLine();
+    PointCount := 0;
     if not TryStrToInt(FLineParts[0], PointCount) then
       Exit;
     // Get Combined Region Color

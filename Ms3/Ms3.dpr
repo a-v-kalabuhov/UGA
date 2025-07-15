@@ -52,12 +52,7 @@ uses
   uMStImportEzLotLoaders in 'Source\uMStImportEzLotLoaders.pas',
   uMStKernelIBX in 'Source\uMStKernelIBX.pas',
   uMStImport in 'Source\uMStImport.pas',
-  uMstImportFactory in 'Source\uMstImportFactory.pas',
-  uMstDialogFactory in 'Source\uMstDialogFactory.pas',
-  uMstImportMidMif in 'Source\uMstImportMidMif.pas',
   uMStDialogImportLayer in 'Source\uMStDialogImportLayer.pas' {MstDialogImportLayerForm},
-  uMStImportMifEntityLoaders in 'Source\uMStImportMifEntityLoaders.pas',
-  uMstImportMifBase in 'Source\uMstImportMifBase.pas',
   uMStFormLayers in 'Source\uMStFormLayers.pas' {MStFormLayers},
   uMStFormImportProgress in 'Source\uMStFormImportProgress.pas' {MStImportProgressForm},
   uMStImportDbImporter in 'Source\uMStImportDbImporter.pas',
@@ -118,7 +113,12 @@ uses
   uMStClassesMPVoltages in 'Source\uMStClassesMPVoltages.pas',
   uMStClassesMPPressures in 'Source\uMStClassesMPPressures.pas',
   uMStClassesPointsImport in 'Source\uMStClassesPointsImport.pas',
-  uMStDialogPointsImport in 'Source\uMStDialogPointsImport.pas' {MstDialogImportPointsForm};
+  uMStDialogPointsImport in 'Source\uMStDialogPointsImport.pas' {MstDialogImportPointsForm},
+  uMstDialogFactory in 'Source\uMstDialogFactory.pas',
+  uMstImportFactory in 'Source\uMstImportFactory.pas',
+  uMstImportMidMif in 'Source\uMstImportMidMif.pas',
+  uMstImportMifBase in 'Source\uMstImportMifBase.pas',
+  uMStImportMifEntityLoaders in 'Source\uMStImportMifEntityLoaders.pas';
 
 {$R *.RES}
 
@@ -129,9 +129,9 @@ begin
   Application.Title := 'Планшетохранилище 3.1';
   try
     Application.CreateForm(TmstClientAppModule, mstClientAppModule);
-    Application.CreateForm(TmstPrintModule, mstPrintModule);
-    Application.CreateForm(TmstClientMainForm, mstClientMainForm);
-    Application.CreateForm(TmstDefaultActionsModule, mstDefaultActionsModule);
+  Application.CreateForm(TmstPrintModule, mstPrintModule);
+  Application.CreateForm(TmstClientMainForm, mstClientMainForm);
+  Application.CreateForm(TmstDefaultActionsModule, mstDefaultActionsModule);
   except
     on E: Exception do
     begin

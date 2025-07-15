@@ -712,14 +712,13 @@ begin
     Exit;                                
   if not FCanGrow and (Count + aVector.Count > FLast) then
     EzGISError(SVectorOutOfBound);
-    Cnt := FCount;
+  Cnt := FCount;
   AddVector(aVector);
   // если нет частей, то добавляем первую
   if Cnt > 0 then
   begin
     if Parts.Count = 0 then
-      Parts.Add(Cnt)
-    else
+      Parts.Add(0);
     if Parts.Last <> Cnt then
       Parts.Add(FCount);
   end;
