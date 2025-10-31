@@ -2,7 +2,7 @@ object mstClientMainForm: TmstClientMainForm
   Left = 35
   Top = 238
   Caption = #1055#1083#1072#1085#1096#1077#1090#1086#1093#1088#1072#1085#1080#1083#1080#1097#1077' 2.2'
-  ClientHeight = 756
+  ClientHeight = 796
   ClientWidth = 1055
   Color = clBtnFace
   Constraints.MinHeight = 300
@@ -29,7 +29,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 850
     Top = 0
     Width = 5
-    Height = 737
+    Height = 777
     Align = alRight
     ExplicitLeft = 876
     ExplicitHeight = 637
@@ -43,7 +43,7 @@ object mstClientMainForm: TmstClientMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 737
+    Top = 777
     Width = 1055
     Height = 19
     Panels = <
@@ -56,20 +56,22 @@ object mstClientMainForm: TmstClientMainForm
       item
         Width = 150
       end>
+    ExplicitTop = 737
   end
   object pnMain: TPanel
     Left = 0
     Top = 0
     Width = 850
-    Height = 737
+    Height = 777
     Align = alClient
     Caption = 'pnMain'
     TabOrder = 1
+    ExplicitHeight = 737
     object Splitter1: TSplitter
       Left = 251
       Top = 52
       Width = 6
-      Height = 660
+      Height = 700
       OnMoved = Splitter1Moved
       ExplicitHeight = 560
     end
@@ -218,7 +220,7 @@ object mstClientMainForm: TmstClientMainForm
     end
     object CmdLine: TEzCmdLine
       Left = 1
-      Top = 712
+      Top = 752
       Width = 848
       Height = 24
       DrawBoxList = <
@@ -240,14 +242,16 @@ object mstClientMainForm: TmstClientMainForm
       Visible = False
       OnActionChange = CmdLineActionChange
       OnAfterCommand = CmdLineAfterCommand
+      ExplicitTop = 712
     end
     object pnLeft: TPanel
       Left = 1
       Top = 52
       Width = 250
-      Height = 660
+      Height = 700
       Align = alLeft
       TabOrder = 2
+      ExplicitHeight = 660
       object Splitter2: TSplitter
         Left = 1
         Top = 323
@@ -286,7 +290,7 @@ object mstClientMainForm: TmstClientMainForm
         Left = 1
         Top = 353
         Width = 248
-        Height = 306
+        Height = 346
         Align = alClient
         BevelEdges = []
         BorderStyle = bsNone
@@ -319,6 +323,7 @@ object mstClientMainForm: TmstClientMainForm
         SmallImages = ImageList
         TabOrder = 1
         ViewStyle = vsReport
+        ExplicitHeight = 306
       end
       object ToolBar2: TToolBar
         Left = 1
@@ -418,21 +423,27 @@ object mstClientMainForm: TmstClientMainForm
           Top = 0
           Action = acSavePointList
         end
+        object ToolButton52: TToolButton
+          Left = 177
+          Top = 0
+          Action = acLocateCoordList
+        end
       end
     end
     object pnCenter: TPanel
       Left = 257
       Top = 52
       Width = 592
-      Height = 660
+      Height = 700
       Align = alClient
       Caption = 'pnCenter'
       TabOrder = 3
+      ExplicitHeight = 660
       object DrawBox: TEzDrawBox
         Left = 1
         Top = 52
         Width = 590
-        Height = 607
+        Height = 647
         BorderStyle = bsNone
         UseThread = False
         Align = alClient
@@ -464,6 +475,9 @@ object mstClientMainForm: TmstClientMainForm
         OnAfterSelect = DrawBoxAfterSelect
         OnZoomChange = DrawBoxZoomChange
         OnCustomClick = DrawBoxCustomClick
+        ExplicitLeft = 0
+        ExplicitTop = 116
+        ExplicitHeight = 627
       end
       object tbReport: TToolBar
         Left = 1
@@ -824,9 +838,10 @@ object mstClientMainForm: TmstClientMainForm
     Left = 855
     Top = 0
     Width = 200
-    Height = 737
+    Height = 777
     Align = alRight
     TabOrder = 2
+    ExplicitHeight = 737
     object LayersListBox: TCheckListBox
       Left = 1
       Top = 1
@@ -842,7 +857,7 @@ object mstClientMainForm: TmstClientMainForm
       Left = 1
       Top = 233
       Width = 198
-      Height = 503
+      Height = 543
       Align = alClient
       CheckImageKind = ckSystemFlat
       Color = clInfoBk
@@ -856,6 +871,7 @@ object mstClientMainForm: TmstClientMainForm
       NodeDataSize = 4
       TabOrder = 1
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+      ExplicitHeight = 503
       Columns = <>
     end
   end
@@ -1535,6 +1551,13 @@ object mstClientMainForm: TmstClientMainForm
       OnExecute = acLotUnloadAllExecute
       OnUpdate = acLotUnloadAllUpdate
     end
+    object acLocateCoordList: TAction
+      Category = 'CoordsList'
+      Caption = #1055#1086#1082#1072#1079#1072#1090#1100' '#1085#1072' '#1082#1072#1088#1090#1077
+      Hint = #1055#1086#1082#1072#1079#1072#1090#1100' '#1088#1077#1079#1091#1083#1100#1090#1072#1090' '#1085#1072' '#1082#1072#1088#1090#1077
+      ImageIndex = 77
+      OnExecute = acLocateCoordListExecute
+    end
   end
   object Preferences: TEzModifyPreferences
     PointEntitySize = 0
@@ -1586,7 +1609,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 80
     Top = 256
     Bitmap = {
-      494C0101550078018C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010155007801940210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000006001000001002000000000000060
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4541,6 +4564,9 @@ object mstClientMainForm: TmstClientMainForm
       Caption = '-'
       Visible = False
     end
+    object N66: TMenuItem
+      Action = acLocateCoordList
+    end
     object DXF2: TMenuItem
       Action = acExport2DXF
       Visible = False
@@ -4563,7 +4589,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 460
     Top = 224
     Bitmap = {
-      494C0101120013007C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010112001300840210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

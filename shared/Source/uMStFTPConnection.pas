@@ -139,7 +139,8 @@ begin
   S := 'data/gisdata.zip';
   Result := TMemoryStream.Create;
   try
-    IntGetFile(S, Result, True);
+    if not IntGetFile(S, Result, True) then
+      FreeAndNil(Result);
   except
     FreeAndNil(Result);
     raise;
@@ -149,33 +150,50 @@ end;
 function TMStFTPConnection.GetImgFile(const FileName: String; out ImageExt: TftpImageExt): TStream;
 var
   S: String;
+  Root: string;
 begin
-  Result := TMemoryStream.Create;
+  Result := nil;
   try
-    S := 'Planshet/' + GetMapImageFileName(FileName);
+    Root := 'Planshet/';
+    S := Root + GetMapImageFileName(FileName);
+    Result := TMemoryStream.Create;
     if IntGetFile(S, Result, False) then
     begin
       ImageExt := ftpGFA;
       Exit;
-    end;
-    S := 'Planshet/' + GetMapImageFileName(FileName, 'bmp');
+    end
+    else
+      FreeAndNil(Result);
+    //
+    S := Root + GetMapImageFileName(FileName, 'bmp');
+    Result := TMemoryStream.Create;
     if IntGetFile(S, Result, False) then
     begin
       ImageExt := ftpBMP;
       Exit;
-    end;
-    S := 'Planshet/' + GetMapImageFileName(FileName, 'jpg');
+    end
+    else
+      FreeAndNil(Result);
+    //
+    S := Root + GetMapImageFileName(FileName, 'jpg');
+    Result := TMemoryStream.Create;
     if IntGetFile(S, Result, False) then
     begin
       ImageExt := ftpJPEG;
       Exit;
-    end;
-    S := 'Planshet/' + GetMapImageFileName(FileName, 'jpeg');
+    end
+    else
+      FreeAndNil(Result);
+    //
+    S := Root + GetMapImageFileName(FileName, 'jpeg');
+    Result := TMemoryStream.Create;
     if IntGetFile(S, Result, True) then
     begin
       ImageExt := ftpJPEG;
       Exit;
-    end;
+    end
+    else
+      FreeAndNil(Result);
   except
     FreeAndNil(Result);
     raise;
@@ -192,20 +210,20 @@ end;
 
 function TMStFTPConnection.IntGetFile(const FileName: String; FileData: TStream; const RaiseError: Boolean): Boolean;
 begin
+  Result := False;
   SetUserData;
   //  FTP.Login;
   try
-    FTP.Connect;
     try
+      FTP.Connect;
       FTP.Get(FileName, FileData, False);
       Result := True;
-    finally
-      FTP.Disconnect;
+    except
+      if RaiseError then
+        raise;
     end;
-  except
-    Result := False;
-    if RaiseError then
-      raise;
+  finally
+    FTP.Disconnect;
   end;
 end;
 

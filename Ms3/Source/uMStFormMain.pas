@@ -371,6 +371,9 @@ type
     acLotUnloadAll: TAction;
     acCopyProjectsToMP: TAction;
     N65: TMenuItem;
+    acLocateCoordList: TAction;
+    N66: TMenuItem;
+    ToolButton52: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -553,6 +556,7 @@ type
     procedure acCopyProjectsToMPUpdate(Sender: TObject);
     procedure acPastePointsUpdate(Sender: TObject);
     procedure acPastePointsExecute(Sender: TObject);
+    procedure acLocateCoordListExecute(Sender: TObject);
   private
     FPoints: TMstPointArray;
     FCursorState: TCursorState;
@@ -1105,12 +1109,6 @@ end;
 
 procedure TmstClientMainForm.DrawBoxMouseDown2D(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer; const WX, WY: Double);
 begin
-  if Button = mbRight then
-  begin
-    // возможно здесь надо сбросить какие-то параметры текущего состояния
-    DoDrawBoxPopup(X, Y, WX, WY);
-  end
-  else
   if (Button = mbMiddle) then
   begin
     DoSwitchScrollCommand();
@@ -1186,6 +1184,12 @@ begin
     FDragText := False;
     CmdLine.CurrentAction.OnMouseDown(DrawBox, mbLeft, [], X, Y, WX, WY);
   end
+  else
+  if Button = mbRight then
+  begin
+    // возможно здесь надо сбросить какие-то параметры текущего состояния
+    DoDrawBoxPopup(X, Y, WX, WY);
+  end;
 end;
 
 procedure TmstClientMainForm.DrawBoxZoomChange(Sender: TObject; const Scale: Double);
@@ -2029,47 +2033,50 @@ begin
     if Length(FPoints) > 0 then
       Finalize(FPoints);
     //allocate memory for array
-    if Vector.Count > 0 then
-      SetLength(FPoints, Vector.Count);
-    with ListView do
+    if Vector <> nil then
     begin
-      Clear;
-      for I := 0 to Pred(Vector.Count) do
-        with Items.Add do
-        begin
-          Caption := IntToStr(I + 1);
-          SubItems.Add(Format('%0.2f', [Vector[I].Y]));
-          SubItems.Add(Format('%0.2f', [Vector[I].X]));
-          FPoints[I].Name := Caption;
-          FPoints[I].X := Vector[I].Y;
-          FPoints[I].Y := Vector[I].X;
-          if Vector.Count < 2 then
+      if Vector.Count > 0 then
+        SetLength(FPoints, Vector.Count);
+      with ListView do
+      begin
+        Clear;
+        for I := 0 to Pred(Vector.Count) do
+          with Items.Add do
           begin
-            LenStr := '';
-            AzimStr := '';
-            FPoints[I].Length := 0;
-            FPoints[I].Azimuth := 0;
-          end
-          else
-          begin
-            Pt1 := Vector[I];
-            if I = Pred(Vector.Count) then
-              Pt2 := Vector[0]
+            Caption := IntToStr(I + 1);
+            SubItems.Add(Format('%0.2f', [Vector[I].Y]));
+            SubItems.Add(Format('%0.2f', [Vector[I].X]));
+            FPoints[I].Name := Caption;
+            FPoints[I].X := Vector[I].Y;
+            FPoints[I].Y := Vector[I].X;
+            if Vector.Count < 2 then
+            begin
+              LenStr := '';
+              AzimStr := '';
+              FPoints[I].Length := 0;
+              FPoints[I].Azimuth := 0;
+            end
             else
-              Pt2 := Vector[Succ(I)];
-            L := Dist2D(Pt1, Pt2);
-            FPoints[I].Length := L;
-            LenStr := Format('%0.2f', [L]);
-            //AzimStr := GetDegreeCorner(Angle2D(Pt11, Pt22), True);
-            Azimuth := CalcAzimuth(Pt1.y, Pt1.x, Pt2.y, Pt2.x);
-            FPoints[I].Azimuth := Azimuth;
-            AzimStr := GetDegreeCorner(Azimuth);
+            begin
+              Pt1 := Vector[I];
+              if I = Pred(Vector.Count) then
+                Pt2 := Vector[0]
+              else
+                Pt2 := Vector[Succ(I)];
+              L := Dist2D(Pt1, Pt2);
+              FPoints[I].Length := L;
+              LenStr := Format('%0.2f', [L]);
+              //AzimStr := GetDegreeCorner(Angle2D(Pt11, Pt22), True);
+              Azimuth := CalcAzimuth(Pt1.y, Pt1.x, Pt2.y, Pt2.x);
+              FPoints[I].Azimuth := Azimuth;
+              AzimStr := GetDegreeCorner(Azimuth);
+            end;
+            SubItems.Add(LenStr);
+            SubItems.Add(AzimStr);
+            ImageIndex := 42;
           end;
-          SubItems.Add(LenStr);
-          SubItems.Add(AzimStr);
-          ImageIndex := 42;
-        end;
-      AutoSelectListViewColumnWidth(ListView, 16);
+        AutoSelectListViewColumnWidth(ListView, 16);
+      end;
     end;
   except
     DebugMessage(Self.Name, 'ShowCoord');
@@ -2456,6 +2463,7 @@ begin
     Act := TmstMeasureAction.CreateAction(CmdLine);
     Act.OnPointListChange := ShowCoord;
     Act.ShowResult := False;
+    Act.StopOnRightClick := False;
     CmdLine.Push(Act, True, 'CALC', 'PROJECT_LINE');
   end;
 end;
@@ -2623,6 +2631,19 @@ begin
   acLoadLots.Enabled := mstClientAppModule.Mode <> amPrint;
 end;
 
+procedure TmstClientMainForm.acLocateCoordListExecute(Sender: TObject);
+var
+  Exten: TEzRect;
+begin
+  if not (CmdLine.CurrentAction is TmstMeasureAction) then
+    Exit;
+  Exten := TmstMeasureAction(CmdLine.CurrentAction).Extenstion;
+  if EqualRect2D(Exten, NULL_EXTENSION) then
+    Exit;
+  InflateRect2D(Exten, Rect2DWidth(Exten) / 20, Rect2DHeight(Exten) / 20);
+  DrawBox.SetViewTo(Exten.xmin, Exten.ymin, Exten.xmax, Exten.ymax );
+end;
+
 procedure TmstClientMainForm.acCalcUpdate(Sender: TObject);
 begin
   acCalc.Enabled := (mstClientAppModule.Mode <> amPrint);
@@ -2727,6 +2748,7 @@ begin
   MenuItem.Caption := 'Загрузить отводы';
   MenuItem.Tag := REG_LOTS;
   MenuItem.OnClick := LoadLotsClick;
+  MenuItem.Enabled := CursorState <> csCoord;
   //
   if GIS.Layers.LayerByName('M500').LayerInfo.Visible then
   begin
@@ -3514,13 +3536,13 @@ begin
   if (ActId <> 'SCROLL') and (ActId <> 'CALC') then
   begin
     CursorState := csReadyToDrag;
-    CmdLine.Clear;
+//    CmdLine.Clear;
     CmdLine.DoCommand('SCROLL', 'SCROLL');
   end
   else
   begin
     CursorState := csArrow;
-    CmdLine.Clear;
+//    CmdLine.Clear;
     DrawBox.Cursor := crDefault;
   end;
 end;

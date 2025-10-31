@@ -723,19 +723,25 @@ begin
            StrToInt(mstClientAppModule.GetOption('FTP', 'Port', '21')));
       // качаем файл
       InStream := GetImgFile(aMap.MapName, ImgExt);
-      try
-        // увеличиваем счетчик файлов на 1
-        aMapList.IncCounter;
-        InStream.Position := 0;
-        FileName := Directory + IntToStr(aMapList.ImageCounter) + '.map';
-        OutStream := TFileStream.Create(FileName, fmCreate);
+      if inStream <> nil then
+      begin
         try
-          OutStream.CopyFrom(InStream, InStream.Size);
+          if InStream.Size > 0 then
+          begin
+            // увеличиваем счетчик файлов на 1
+            aMapList.IncCounter;
+            InStream.Position := 0;
+            FileName := Directory + IntToStr(aMapList.ImageCounter) + '.map';
+            OutStream := TFileStream.Create(FileName, fmCreate);
+            try
+              OutStream.CopyFrom(InStream, InStream.Size);
+            finally
+              FreeAndNil(OutStream);
+            end;
+          end;
         finally
-          FreeAndNil(OutStream);
+          FreeAndNil(InStream);
         end;
-      finally
-        FreeAndNil(InStream);
       end;
       // обновляем параметры aMap
       aMap.FileName := FileName;

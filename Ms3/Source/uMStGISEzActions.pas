@@ -32,8 +32,10 @@ type
   TmstMeasureAction = class(TmstAddEntityAction)
   private
     FShowResult: Boolean;
+    FStopOnRightClick: Boolean;
     procedure DoNextPoint(Sender: TObject);
     procedure SetShowResult(const Value: Boolean);
+    procedure SetStopOnRightClick(const Value: Boolean);
   protected
     procedure MyMouseDown(Sender: TObject; Button: TMouseButton; Shift:
       TShiftState; X, Y: Integer; const WX, WY: Double); override;
@@ -50,6 +52,7 @@ type
     function Extenstion: TEzRect;
     //
     property ShowResult: Boolean read FShowResult write SetShowResult;
+    property StopOnRightClick: Boolean read FStopOnRightClick write SetStopOnRightClick;
   end;
 
   TmstAddLotAction = Class(TmstAddEntityAction)
@@ -95,12 +98,15 @@ constructor TmstMeasureAction.CreateAction(CmdLine: TEzCmdLine);
 begin
   inherited CreateAction(CmdLine, TEzPolyline.CreateEntity([{Point2D(0, 0)}]));
   FShowResult := True;
+  FStopOnRightClick := True;
 end;
 
 procedure TmstMeasureAction.MyMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer; const WX,
   WY: Double);
 begin
+  if (Button = mbRight) and not StopOnRightClick then
+    Exit;
   inherited;
   UpdateViews;
   UpdateResult;
@@ -177,6 +183,11 @@ end;
 procedure TmstMeasureAction.SetShowResult(const Value: Boolean);
 begin
   FShowResult := Value;
+end;
+
+procedure TmstMeasureAction.SetStopOnRightClick(const Value: Boolean);
+begin
+  FStopOnRightClick := Value;
 end;
 
 procedure TmstMeasureAction.UpdateResult;
