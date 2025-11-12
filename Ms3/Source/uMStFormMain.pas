@@ -2640,6 +2640,17 @@ begin
   Exten := TmstMeasureAction(CmdLine.CurrentAction).Extenstion;
   if EqualRect2D(Exten, NULL_EXTENSION) then
     Exit;
+  if SameValue(Exten.X1, Exten.X2) then
+  begin
+    Exten.xmin := Exten.X1 - 10;
+    Exten.xmax := Exten.X1 + 10;
+  end;
+  if SameValue(Exten.Y1, Exten.Y2) then
+  begin
+    Exten.ymin := Exten.Y1 - 10;
+    Exten.ymax := Exten.Y1 + 10;
+  end;
+
   InflateRect2D(Exten, Rect2DWidth(Exten) / 20, Rect2DHeight(Exten) / 20);
   DrawBox.SetViewTo(Exten.xmin, Exten.ymin, Exten.xmax, Exten.ymax );
 end;
