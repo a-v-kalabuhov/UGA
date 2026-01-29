@@ -1653,6 +1653,7 @@ Type
 
     Function CreateEntityFromText( Const EntityText: String ): TEzEntity;
 
+    procedure ZoomOnPoint(const WX, WY, ZoomPercent: Double; const IsZoomIn: Boolean);
     Procedure ZoomToExtension;
     Procedure ZoomToLayerRef( Const LayerName: String );
     Function PickEntity( Const X, Y: Double; Aperture: Integer; Const LayerName: String;
@@ -7423,6 +7424,27 @@ Begin
   End;
   Repaint;
 End;
+
+procedure TEzBaseDrawBox.ZoomOnPoint(const WX, WY, ZoomPercent: Double; const IsZoomIn: Boolean);
+Var 
+  OldPoint, NewPoint, MidPoint: TEzPoint;
+  DevOldPoint: TPoint;
+Begin
+  // ZoomPercent can be 0.85 (as an example) as we use in Zoom In
+  OldPoint := Point2D( WX, WY );
+  DevOldPoint:= Self.Grapher.RealToPoint( OldPoint );
+  Self.Grapher.InUpdate := true; //for don't generate two history views
+  If IsZoomIn Then
+    Self.Grapher.Zoom( ZoomPercent )
+  Else  // is a zoom out
+    Self.Grapher.Zoom( 1 / ZoomPercent );
+  Self.Grapher.InUpdate := false;
+  NewPoint := Self.Grapher.PointToReal( DevOldPoint );
+  MidPoint := Self.Grapher.CurrentParams.MidPoint;
+  { in every zoom the point clicked must stay on same mouse coordinates }
+  Self.Grapher.ReCentre( MidPoint.X + ( OldPoint.X - NewPoint.X ),  MidPoint.Y + ( OldPoint.Y - NewPoint.Y ) );
+  Self.Repaint;
+end;
 
 Procedure TEzBaseDrawBox.ZoomToExtension;
 Var

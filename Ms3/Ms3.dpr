@@ -118,7 +118,8 @@ uses
   uMstImportFactory in 'Source\uMstImportFactory.pas',
   uMstImportMidMif in 'Source\uMstImportMidMif.pas',
   uMstImportMifBase in 'Source\uMstImportMifBase.pas',
-  uMStImportMifEntityLoaders in 'Source\uMStImportMifEntityLoaders.pas';
+  uMStImportMifEntityLoaders in 'Source\uMStImportMifEntityLoaders.pas',
+  uMStModuleMPColorSettings in 'Source\uMStModuleMPColorSettings.pas' {mstMPColorSettingsModule: TDataModule};
 
 {$R *.RES}
 

@@ -412,7 +412,7 @@ type
     procedure acGoToPointExecute(Sender: TObject);
     procedure GISBeforeClose(Sender: TObject);
     procedure CmdLineAfterCommand(Sender: TObject; const Command, ActionID: string);
-    procedure FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; const aMousePos: TPoint; var Handled: Boolean);
     procedure acMapByNameExecute(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure DrawBoxBeforeSelect(Sender: TObject; Layer: TEzBaseLayer; Recno: Integer; var CanSelect: Boolean);
@@ -1322,17 +1322,18 @@ begin
   FSelector.Free;
 end;
 
-procedure TmstClientMainForm.FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+procedure TmstClientMainForm.FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; const aMousePos: TPoint; var Handled: Boolean);
+var
+  WPt: TEzPoint;
+  Pt: TPoint;
 begin
-  with pnCenter do
-    if PointInRect(MousePos, Rect(Left, Top, Left + Width, Top + Height)) then
-    begin
-      Handled := true;
-      if WheelDelta > 0 then
-        DrawBox.ZoomIn(90)
-      else
-        DrawBox.ZoomOut(90);
-    end;
+  if PointInRect(aMousePos, pnCenter.BoundsRect) then
+  begin
+    Pt := DrawBox.ScreenToClient(aMousePos);
+    WPt := DrawBox.Grapher.PointToReal(Pt);
+    DrawBox.ZoomOnPoint(WPt.X, WPt.Y, 0.9, WheelDelta > 0);
+    Handled := True;
+  end;
 end;
 
 procedure TmstClientMainForm.FormResize(Sender: TObject);   // +
@@ -1680,7 +1681,6 @@ end;
 procedure TmstClientMainForm.LoadSessionOptions;
 var
   S: string;
-  I: Integer;
 begin
   S := mstClientAppModule.GetOption('Session', 'Map500Search', '');
   if S <> '' then
@@ -1817,11 +1817,9 @@ end;
 
 function TmstClientMainForm.ReadPointsFromText(const aText: string): TmstImportedPointList;
 var
-  Stream1, Stream2: TStream;
   MaxCount: Integer;
   MaxSep: Char;
   Tmp: TmstImportedPointList;
-  I: Integer;
 begin
   Result := nil;
   //

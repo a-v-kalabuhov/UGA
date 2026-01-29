@@ -11,6 +11,14 @@ uses
 type
   TmstImportSource = (srcDXF, srcExcel);
 
+  TMPLineDrawParams = record
+    LineColor: TColor;
+    EdgeColor: TColor;
+    HasEdge: Boolean;
+    LineWidth: Integer;
+    EdgingWidth: Integer;
+  end;
+
   ImstMPModule = interface
     ['{9950B1D8-F72C-409E-BEE9-A06839D82445}']
     function Classifier: TmstMPClassifier;
@@ -33,7 +41,7 @@ type
     function FindIntersects(const ObjId: Integer): TmpIntersectionInfo;
     procedure IntersectDialog(Found: TmpIntersectionInfo);
     procedure IntersectionsDialogClosed(Dlg: TObject);
-    function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
+    function IsObjectVisible(const ObjId: Integer; var aLineParams: TMPLineDrawParams): Boolean;
     procedure SetObjCheckState(const ObjId: Integer; CheckState: TmstMPObjectCheckState);
     procedure UpdateLayersVisibility(aLayers: TmstLayerList);
     //

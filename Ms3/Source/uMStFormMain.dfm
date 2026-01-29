@@ -56,7 +56,6 @@ object mstClientMainForm: TmstClientMainForm
       item
         Width = 150
       end>
-    ExplicitTop = 737
   end
   object pnMain: TPanel
     Left = 0
@@ -66,7 +65,6 @@ object mstClientMainForm: TmstClientMainForm
     Align = alClient
     Caption = 'pnMain'
     TabOrder = 1
-    ExplicitHeight = 737
     object Splitter1: TSplitter
       Left = 251
       Top = 52
@@ -242,7 +240,6 @@ object mstClientMainForm: TmstClientMainForm
       Visible = False
       OnActionChange = CmdLineActionChange
       OnAfterCommand = CmdLineAfterCommand
-      ExplicitTop = 712
     end
     object pnLeft: TPanel
       Left = 1
@@ -251,7 +248,6 @@ object mstClientMainForm: TmstClientMainForm
       Height = 700
       Align = alLeft
       TabOrder = 2
-      ExplicitHeight = 660
       object Splitter2: TSplitter
         Left = 1
         Top = 323
@@ -323,7 +319,6 @@ object mstClientMainForm: TmstClientMainForm
         SmallImages = ImageList
         TabOrder = 1
         ViewStyle = vsReport
-        ExplicitHeight = 306
       end
       object ToolBar2: TToolBar
         Left = 1
@@ -438,7 +433,6 @@ object mstClientMainForm: TmstClientMainForm
       Align = alClient
       Caption = 'pnCenter'
       TabOrder = 3
-      ExplicitHeight = 660
       object DrawBox: TEzDrawBox
         Left = 1
         Top = 52
@@ -475,9 +469,6 @@ object mstClientMainForm: TmstClientMainForm
         OnAfterSelect = DrawBoxAfterSelect
         OnZoomChange = DrawBoxZoomChange
         OnCustomClick = DrawBoxCustomClick
-        ExplicitLeft = 0
-        ExplicitTop = 116
-        ExplicitHeight = 627
       end
       object tbReport: TToolBar
         Left = 1
@@ -600,7 +591,7 @@ object mstClientMainForm: TmstClientMainForm
           Height = 21
           Hint = #1052#1072#1089#1096#1090#1072#1073' '#1086#1090#1095#1077#1090#1072
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 0
           OnChange = cbReportScaleChange
           Items.Strings = (
@@ -784,7 +775,7 @@ object mstClientMainForm: TmstClientMainForm
         Left = 115
         Top = 0
         Width = 67
-        Height = 22
+        Height = 13
         Caption = '      '#1055#1083#1072#1085#1096#1077#1090':'
         Layout = tlCenter
       end
@@ -810,7 +801,7 @@ object mstClientMainForm: TmstClientMainForm
         Left = 265
         Top = 0
         Width = 61
-        Height = 22
+        Height = 13
         Caption = '        '#1054#1090#1074#1086#1076':'
         Layout = tlCenter
       end
@@ -841,7 +832,6 @@ object mstClientMainForm: TmstClientMainForm
     Height = 777
     Align = alRight
     TabOrder = 2
-    ExplicitHeight = 737
     object LayersListBox: TCheckListBox
       Left = 1
       Top = 1
@@ -871,7 +861,6 @@ object mstClientMainForm: TmstClientMainForm
       NodeDataSize = 4
       TabOrder = 1
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
-      ExplicitHeight = 503
       Columns = <>
     end
   end
@@ -1609,7 +1598,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 80
     Top = 256
     Bitmap = {
-      494C010155007801940210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010155007801AC0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000006001000001002000000000000060
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4589,7 +4578,7 @@ object mstClientMainForm: TmstClientMainForm
     Left = 460
     Top = 224
     Bitmap = {
-      494C010112001300840210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101120013009C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

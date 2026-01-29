@@ -42,6 +42,10 @@ type
     function GetCheckState: TmstMPObjectCheckState;
     function GetMpClassId: Integer;
     function GetTableVersion: Integer;
+    function GetDrawn: Boolean;
+    function GetProjected: Boolean;
+    function GetDismantled: Boolean;
+    function GetHasCertif: Boolean;
   public
     constructor Create(aBrowserDs: TDataSet);
     //
@@ -50,6 +54,10 @@ type
     property CheckState: TmstMPObjectCheckState read GetCheckState;
     property MpClassId: Integer read GetMpClassId;
     property TableVersion: Integer read GetTableVersion;
+    property Drawn: Boolean read GetDrawn;
+    property Projected: Boolean read GetProjected;
+    property HasCertif: Boolean read GetHasCertif;
+    property Dismantled: Boolean read GetDismantled;
   end;
 
   TmstMPObjectAdapter = class
@@ -197,6 +205,21 @@ begin
   Result := TmstMPObjectCheckState(FDataSet.FieldByName(SF_CHECK_STATE).AsInteger);
 end;
 
+function TmstMPObjectBrowserAdapter.GetDismantled: Boolean;
+begin
+  Result := FDataSet.FieldByName(SF_DISMANTLED).AsInteger = 1;
+end;
+
+function TmstMPObjectBrowserAdapter.GetDrawn: Boolean;
+begin
+  Result := FDataSet.FieldByName(SF_DRAWN).AsInteger = 1;
+end;
+
+function TmstMPObjectBrowserAdapter.GetHasCertif: Boolean;
+begin
+  Result := FDataSet.FieldByName(SF_HAS_CERTIF).AsInteger = 1;
+end;
+
 function TmstMPObjectBrowserAdapter.GetId: Integer;
 begin
   Result := FDataSet.FieldByName(SF_ID).AsInteger;
@@ -205,6 +228,11 @@ end;
 function TmstMPObjectBrowserAdapter.GetMpClassId: Integer;
 begin
   Result := FDataSet.FieldByName(SF_MASTER_PLAN_CLASS_ID).AsInteger;
+end;
+
+function TmstMPObjectBrowserAdapter.GetProjected: Boolean;
+begin
+  Result := FDataSet.FieldByName(SF_PROJECTED).AsInteger = 1;
 end;
 
 function TmstMPObjectBrowserAdapter.GetTableVersion: Integer;

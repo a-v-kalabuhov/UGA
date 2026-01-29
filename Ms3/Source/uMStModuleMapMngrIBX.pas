@@ -18,7 +18,8 @@ uses
   uMStImportEzClasses,
   uMStDialogLogin,
   uMStClassesLots, uMStClassesProjects, uMStClassesProjectsMP,
-  uMStModuleStats, uMStModuleGlobalParameters, uMStFTPConnection, uMStModuleOrders, uMStModuleLotData;
+  uMStModuleStats, uMStModuleGlobalParameters, uMStFTPConnection, uMStModuleOrders, uMStModuleLotData,
+  uMStModuleMPColorSettings;
 
 type
   TmstDataKind = (dkMaps, dkLayers, dkStreets, dkAddresses, dkLotsMain);
@@ -137,6 +138,9 @@ type
   public
     function GetSqlText(Conn: IIBXConnection; const aName: string): string;
     function GetSqlTextOrCrash(Conn: IIBXConnection; const aName: string): string;
+  public
+    procedure LoadSettingValue(const aSettingName: string; out Value: string; out Exists: Boolean);
+    procedure SaveSettingValue(const aSettingName: string; const Value: string);
   end;
 
 implementation
@@ -200,8 +204,12 @@ const
   SQL_GET_OBJECT_SEMANTIC = 'SELECT * FROM LAYERS_SEMANTIC WHERE OBJECT_ID=:OBJECT_ID';
   SQL_LOG_ERROR = 'INSERT INTO ERROR_LOG ("MESSAGE", CLASS_NAME, NATIVE_MESSAGE, NATIVE_CLASS_NAME, DEBUG_INFO, OBJECT_INFO) '
     + 'VALUES(:MES, :CLASS, ''-'', ''-'', :INFO, :INFO2)';
-  SQL_GET_SETTINGS = 'SELECT * FROM SETTINGS';
+//  SQL_GET_SETTINGS = 'SELECT * FROM SETTINGS';
   SQL_GET_MP_LAYERS = 'SELECT * FROM MASTER_PLAN_LAYERS ORDER BY ID, GROUP_ID';
+
+  SQ_GET_SETTING_VALUE = 'SELECT NAME, "VALUE" FROM SETTINGS WHERE NAME=:NAME';
+  SQ_INSERT_SETTING_VALUE = 'INSERT INTO SETTINGS (NAME, "VALUE") VALUES (:NAME, :VALUE)';
+  SQ_UPDATE_SETTING_VALUE = 'UPDATE SETTINGS SET "VALUE"=:VALUE WHERE NAME=:NAME';
 
 const
   ProjectPlanSubLayers: array [0..9] of string = (
@@ -252,6 +260,33 @@ begin
   Conn.SetParam(dsSaveLayer, SF_VISIBLE, aLayer.Visible);
   Conn.SetParam(dsSaveLayer, SF_LAYER_POSITION, aLayer.Position);
   Conn.ExecDataSet(dsSaveLayer);
+end;
+
+procedure TMStIBXMapMngr.SaveSettingValue(const aSettingName, Value: string);
+var
+  Conn: IIBXConnection;
+  Ds: TDataSet;
+  Sql: string;
+  Exists: Boolean;
+  NewId: Integer;
+begin
+  Conn := GetConnection(cmReadWrite, dmKis);
+  Ds := Conn.GetDataSet(SQ_GET_SETTING_VALUE);
+  Conn.SetParam(Ds, SF_NAME, aSettingName);
+  Ds.Open;
+  try
+    Exists := Ds.RecordCount > 0;
+  finally
+    Ds.Close;
+  end;
+  if Exists then
+    Sql := SQ_UPDATE_SETTING_VALUE
+  else
+    Sql := SQ_INSERT_SETTING_VALUE;
+  Ds := Conn.GetDataSet(Sql);
+  Conn.SetParam(Ds, SF_NAME, aSettingName);
+  Conn.SetParam(Ds, SF_VALUE, Value);
+  Conn.ExecDataSet(Ds);
 end;
 
 function TMStIBXMapMngr.SelectOrg(var Id: Integer; out OrgName: string): Boolean;
@@ -470,29 +505,53 @@ end;
 
 procedure TMStIBXMapMngr.LoadSettings;
 var
-  Conn: IIBXConnection;
-  DataSet: TDataSet;
   SettName, SettVal: string;
   VFloat: Double;
+  Exists: Boolean;
+  VInt: Integer;
 begin
-  Conn := GetConnection(cmReadOnly, dmKis);
-  DataSet := Conn.GetDataSet(SQL_GET_SETTINGS);
+  LoadSettingValue('PROJECT_LINE_WIDTH', SettVal, Exists);
+  if Exists then
   begin
-    DataSet.Active := True;
-    while not DataSet.Eof do
-    begin
-      SettName := DataSet.FieldByName(SF_NAME).AsString;
-      SettVal := DataSet.FieldByName(SF_VALUE).AsString;
-      if SettName = 'PROJECT_LINE_WIDTH' then
-      begin
-        if TryStrToFloat(SettVal, VFloat) then
-        begin
-          TProjectsSettings.PenWidth := VFloat;
-        end;
-      end;
-      DataSet.Next;
-    end;
-    DataSet.Active := False;
+    if TryStrToFloat(SettVal, VFloat) then
+      TProjectsSettings.PenWidth := VFloat;
+  end;
+  //
+  TmstMPColorSettingsModule.LinePenWidth := 1;
+  LoadSettingValue('MP_LINE_WIDTH', SettVal, Exists);
+  if Exists then
+  begin
+    if TryStrToInt(SettVal, VInt) then
+      TmstMPColorSettingsModule.LinePenWidth := VInt;
+  end;
+  //
+  TmstMPColorSettingsModule.EdgingWidth := 1;
+  LoadSettingValue('MP_EDGING_WIDTH', SettVal, Exists);
+  if Exists then
+  begin
+    if TryStrToInt(SettVal, VInt) then
+      TmstMPColorSettingsModule.EdgingWidth := VInt;
+  end;
+end;
+
+procedure TMStIBXMapMngr.LoadSettingValue(const aSettingName: string; out Value: string; out Exists: Boolean);
+var
+  Conn: IIBXConnection;
+  Ds: TDataSet;
+  Sql: string;
+  NewId: Integer;
+begin
+  Value := '';
+  Conn := GetConnection(cmReadOnly, dmKis);
+  Ds := Conn.GetDataSet(SQ_GET_SETTING_VALUE);
+  Conn.SetParam(Ds, SF_NAME, aSettingName);
+  Ds.Open;
+  try
+    Exists := Ds.RecordCount > 0;
+    if Exists then
+      Value := Ds.FieldByName(SF_VALUE).AsString;
+  finally
+    Ds.Close;
   end;
 end;
 

@@ -14,7 +14,8 @@ uses
   uMStModuleProjectImport, uMStClassesProjectsEz, uMStClassesMPClassif, uMStClassesMPIntf, uMStKernelClasses,
   uMStFormMPBrowser, uMStKernelClassesQueryIndex, uMStKernelAppSettings, uMStClassesMPObjectAdapter,
   uMStDialogMPObjectSemantics, uMStClassesMPMIFExport, uMStModuleMPImportExcel,
-  uMStClassesProjectsMPIntersect, uMStDialogMPIntersections, uMStClassesProjectsExportToMP;
+  uMStClassesProjectsMPIntersect, uMStDialogMPIntersections, uMStClassesProjectsExportToMP,
+  uMStModuleMPColorSettings;
 
 type
   TObjIdEvent = procedure (ObjId: Integer) of object;
@@ -91,7 +92,7 @@ type
     function FindIntersects(const ObjId: Integer): TmpIntersectionInfo;
     procedure IntersectDialog(Found: TmpIntersectionInfo);
     procedure IntersectionsDialogClosed(Dlg: TObject);
-    function IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
+    function IsObjectVisible(const ObjId: Integer; var aLineParams: TMPLineDrawParams): Boolean;
     procedure SetObjCheckState(const ObjId: Integer; CheckState: TmstMPObjectCheckState);
     procedure UpdateLayersVisibility(aLayers: TmstLayerList);
     //
@@ -479,12 +480,11 @@ begin
     FIdxObjects.GetFirstRow(ObjId);
     Vrs := Conn.GenNextValue(SG_MP_OBJECTS_TABLE_VERSION);
     Ds := Conn.GetDataSet(SQL_COPY_MP_OBJECT_TO_DRAWN);
-    Conn.SetParam(Ds, SF_ID, ObjId);
-    NewObjId := Conn.GetGenValue(SG_MP_OBJECTS);
+    NewObjId := Conn.GenNextValue(SG_MP_OBJECTS);
     Conn.SetParam(Ds, SF_NEW_ID, NewObjId);
     Conn.SetParam(Ds, SF_TABLE_VERSION, Vrs);
     Conn.SetParam(Ds, SF_OBJ_ID, GetUniqueString(False, True));
-    Conn.SetParam(Ds, SF_LINKED_OBJ_ID, FMPAdapter.Id);
+    Conn.SetParam(Ds, SF_LINKED_OBJ_ID, FMPAdapter.MpClassId);
     Conn.SetParam(Ds, SF_ID, ObjId);
     Conn.ExecDataSet(Ds);
   finally
@@ -1330,9 +1330,10 @@ begin
   Result := FEzAdapter.Loaded;
 end;
 
-function TmstMasterPlanModule.IsObjectVisible(const ObjId: Integer; var aLineColor: TColor): Boolean;
+function TmstMasterPlanModule.IsObjectVisible(const ObjId: Integer; var aLineParams: TMPLineDrawParams): Boolean;
 var
   CatId, StatusId: Integer;
+  I: Integer;
 begin
   memObjects.RecNo := FIdxObjects.GetFirstRow(ObjId);
   StatusId := FMPAdapter.Status;
@@ -1340,9 +1341,37 @@ begin
   if Result then
   begin
     CatId := FClassifier.GetClassCategoryId(FMPAdapter.MpClassId);
-    Result := FClassifier.GetMPCategoryVisible(FMPAdapter.Status, CatId);
+    Result := FClassifier.GetMPCategoryVisible(StatusId, CatId);
     if Result then
-      aLineColor := FClassifier.GetClassCategoryColor(FMPAdapter.MpClassId);
+    begin
+      aLineParams.LineColor := FClassifier.GetClassCategoryColor(FMPAdapter.MpClassId);
+      aLineParams.HasEdge := False;
+      aLineParams.EdgeColor := clNone;
+      //
+      memBrowser.RecNo := FIdxBrowser.GetFirstRow(ObjId);
+      for I := 0 to TmstMPColorSettingsModule.Count - 1 do
+      begin
+        if TmstMPColorSettingsModule.Status[I].StatusId = StatusId then
+        begin
+          aLineParams.HasEdge := TmstMPColorSettingsModule.Status[I].HasBackColor;
+          aLineParams.EdgeColor := TmstMPColorSettingsModule.Status[I].BackColor;
+          aLineParams.LineWidth := TmstMPColorSettingsModule.LinePenWidth;
+          aLineParams.EdgingWidth := TmstMPColorSettingsModule.EdgingWidth;
+          Break;
+        end;
+      end;
+//      aLineParams.HasEdge := FBrowserAdapter.Projected and not FBrowserAdapter.Drawn;
+//      if aLineParams.HasEdge then
+//      begin
+//        if FBrowserAdapter.HasCertif then
+//          aLineParams.EdgeColor := clGray
+//        else
+//        if FBrowserAdapter.Dismantled then
+//          aLineParams.EdgeColor := clRed
+//        else
+//          aLineParams.EdgeColor := clYellow;
+//      end;
+    end;
   end;
 end;
 
@@ -1778,6 +1807,9 @@ begin
     Exit;
   Ent := FEzAdapter.GetEntity();
   try
+    // объект загрузился с ошибкой
+    if Ent.FOriginalSize <= 4 then
+      Exit;
 //        if FMPAdapter.CK36 then
 //          TEzCSConverter.EntityToVrn(Ent, not FMPAdapter.ExchangeXY);
 //        if FMPAdapter.ExchangeXY then

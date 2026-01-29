@@ -436,6 +436,7 @@ begin
   FObject.HasCertif := chbHasCertif.Checked;
   FObject.CertifNumber := edCertifNumber.Text;
   FObject.CertifDate := GetDate(edCertifDate.Text);
+  FObject.LinkedObjectGuid := edLinkedGuid.Text;
   //
   FObject.DiameterComment := edDiamComment.Text;
   FObject.VoltageComment := edVoltComment.Text;

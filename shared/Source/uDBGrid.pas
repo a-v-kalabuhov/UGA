@@ -70,8 +70,7 @@ type
     property CaptionLineCount: Integer read FLineCount write SetLineCount default 1;
     //
     property OnCanShowEdit: TLogicColumnEvent read FOnCanShowEdit write FOnCanShowEdit;
-    property OnCellColors: TGetCellColorsEvent read FOnCellColors
-      write FOnCellColors;
+    property OnCellColors: TGetCellColorsEvent read FOnCellColors write FOnCellColors;
     property OnCreateEditor: TCreateEditorEvent read FOnCreateEditor write SetOnCreateEditor;
     property OnEditorChange: TNotifyEvent read FOnEditorChange write FOnEditorChange;
     property OnEditorExit: TNotifyEvent read FOnEditorExit write FOnEditorExit;

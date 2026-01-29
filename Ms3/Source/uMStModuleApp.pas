@@ -121,6 +121,8 @@ type
     procedure InitMP(const ProgressStep: Integer);
     procedure DownloadMP;
     procedure LinkMPToLayer;
+    //
+    procedure InitMPColorSettings();
     // Загрузка данных о планшетах в список FMaps
     procedure ReLoadMaps;
     // Загрузка данных в слои из списков
@@ -175,7 +177,7 @@ type
     procedure LocateSelectedLotContourInStack(Sender: TObject; AObject: TmstObject);
   private
     function IsMPLayer(aLayer: TEzBaseLayer): Boolean;
-    function GetMPObjectisVisible(aLayer: TEzBaseLayer; aRecNo: Integer; var LineColor: TColor): Boolean;
+    function GetMPObjectisVisible(aLayer: TEzBaseLayer; aRecNo: Integer; var aLineParams: TMPLineDrawParams): Boolean;
   private
     FMasterPlan: ImstMPModule;
     FViewCoordSystem: TCoordSystem;
@@ -323,7 +325,7 @@ uses
   uMStConsts,
   uMStKernelGISUtils, uMStKernelConsts, uMStKernelClassesOptions, uMStClassesProjectsUtils,
   uMStFormMain, uMStFormLayers, uMStFormSplash,
-  uMStModulePrint, uMStModuleMasterPlan;
+  uMStModulePrint, uMStModuleMasterPlan, uMStModuleMPColorSettings;
 
 const
   PROP_COL = 'Columns.';
@@ -644,7 +646,7 @@ begin
   Result := FMasterPlan;
 end;
 
-function TMStClientAppModule.GetMPObjectisVisible(aLayer: TEzBaseLayer; aRecNo: Integer; var LineColor: TColor): Boolean;
+function TMStClientAppModule.GetMPObjectisVisible(aLayer: TEzBaseLayer; aRecNo: Integer; var aLineParams: TMPLineDrawParams): Boolean;
 var
   DbId: Integer;
 begin
@@ -656,7 +658,7 @@ begin
   begin
     aLayer.Recno := aRecNo;
     DbId := aLayer.RecEntity().ExtID;
-    Result := MP.IsObjectVisible(DbId, LineColor);
+    Result := MP.IsObjectVisible(DbId, aLineParams);
   end;
 end;
 
@@ -808,6 +810,9 @@ begin
     ProgressInit('Загрузка данных завершена', 100, 500);
     //
     FMapMngr.LoadSettings();
+    //
+    InitMPColorSettings();
+    //
     Result := True;
   except
     Result := False;
@@ -1072,6 +1077,11 @@ begin
   DownloadMP();
   ProgressInit(ProgressStep);
   LinkMPToLayer();
+end;
+
+procedure TMStClientAppModule.InitMPColorSettings;
+begin
+  TmstMPColorSettingsModule.Init();
 end;
 
 procedure TMStClientAppModule.InitStreets;
@@ -2200,6 +2210,8 @@ procedure TMStClientAppModule.GISBeforePaintEntity(Sender: TObject;
 var
   Clr: TColor;
   MPLayer: Boolean;
+  LineParams: TMPLineDrawParams;
+  SecondLine: TEzEntity;
 begin
   MPLayer := False;
   Layer.Recno := Recno;
@@ -2218,10 +2230,32 @@ begin
   if IsMPLayer(Layer) then
   begin
     MPLayer := True;
-    CanShow := GetMPObjectIsVisible(Layer, Recno, Clr);
+    CanShow := GetMPObjectIsVisible(Layer, Recno, LineParams);
     if CanShow then
       if Entity is TEzOpenedEntity then
-        TEzOpenedEntity(Entity).PenTool.Color := Clr;
+      begin
+        TEzOpenedEntity(Entity).PenTool.Color := LineParams.LineColor;
+        if LineParams.LineWidth = 0 then
+          LineParams.LineWidth := 1;
+        TEzOpenedEntity(Entity).PenTool.Width := -LineParams.LineWidth;
+        // рисуем окантовку или нет
+        if LineParams.HasEdge then
+        begin
+          // если рисуем окантовку,
+          // то надо рисовать две линии
+          // первую как широкую и полупрозрачную
+          // вторую как тонкую
+          // тонкую надо добавить в EntList
+          if EntList = nil then
+            EntList := TEzEntityList.Create;
+          EntList.Add(Entity.Clone);
+          // первая линия
+          TEzOpenedEntity(Entity).PenTool.Color := LineParams.EdgeColor;
+          if LineParams.EdgingWidth = 0 then
+            LineParams.EdgingWidth := 1;
+          TEzOpenedEntity(Entity).PenTool.Width := -LineParams.EdgingWidth * 2;
+        end;
+      end;
     if Entity.ExtID = TMPSettings.FIntersectObjId then
     begin
       if not TMPSettings.FIntersectPt1Empty then
